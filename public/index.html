@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Madrid TCG Events</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f0f13;
+      --surface:   #1a1a24;
+      --surface2:  #22222f;
+      --border:    #2e2e3f;
+      --accent:    #c084fc;
+      --accent-dim:#7c3aed;
+      --today-bg:  rgba(192,132,252,.07);
+      --today-bdr: rgba(192,132,252,.35);
+      --text:      #e2e2f0;
+      --text-muted:#6b6b8a;
+      --radius:    8px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .page { max-width: 1400px; margin: 0 auto; padding: 1.25rem 1rem; }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-bottom: 1.25rem;
+    }
+    .site-header h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .site-header .subtitle {
+      font-size: .8rem;
+      color: var(--text-muted);
+      margin-top: .15rem;
+    }
+
+    /* ── Nav bar ──────────────────────────────────────────────────── */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .week-range {
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text);
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .count-badge {
+      font-size: .78rem;
+      color: var(--text-muted);
+      margin-left: .25rem;
+    }
+    .count-badge span { color: var(--accent); font-weight: 600; }
+
+    /* ── Buttons ──────────────────────────────────────────────────── */
+    .btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      cursor: pointer;
+      font-size: .8rem;
+      padding: .35rem .75rem;
+      transition: border-color .15s, color .15s, background .15s;
+      white-space: nowrap;
+    }
+    .btn:hover   { border-color: var(--accent); color: var(--accent); }
+    .btn.current { border-color: var(--accent-dim); color: var(--accent); }
+
+    /* ── Filters ──────────────────────────────────────────────────── */
+    .filters {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      align-items: flex-end;
+    }
+
+    .filter-group { display: flex; flex-direction: column; gap: .2rem; }
+    .filter-group label { font-size: .7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+
+    input[type="text"],
+    select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      padding: .35rem .6rem;
+      font-size: .82rem;
+      outline: none;
+      transition: border-color .15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input[type="text"] { width: 180px; }
+    select             { min-width: 130px; }
+    input:focus, select:focus { border-color: var(--accent); }
+
+    /* ── View toggle buttons ──────────────────────────────────────── */
+    .view-toggle {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .view-toggle button {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: .78rem;
+      padding: .3rem .65rem;
+      transition: background .15s, color .15s;
+    }
+    .view-toggle button + button { border-left: 1px solid var(--border); }
+    .view-toggle button.active   { background: var(--accent-dim); color: #fff; }
+    .view-toggle button:not(.active):hover { color: var(--accent); }
+
+    /* ── Calendar wrapper ─────────────────────────────────────────── */
+
+    /* HORIZONTAL: 7 columns, scrollable if too narrow */
+    .cal-wrap.view-horizontal { overflow-x: auto; }
+    .cal-wrap.view-horizontal .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(148px, 1fr));
+      gap: .5rem;
+      align-items: start;
+      min-width: 700px;   /* triggers scroll on narrow viewports */
+    }
+
+    /* VERTICAL: single column stack, header pinned left */
+    .cal-wrap.view-vertical .cal-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: .5rem;
+      align-items: start;
+    }
+    .cal-wrap.view-vertical .day-col {
+      display: flex;
+      align-items: flex-start;
+    }
+    .cal-wrap.view-vertical .day-header {
+      width: 72px;
+      min-width: 72px;
+      border-bottom: none;
+      border-right: 1px solid var(--border);
+      padding: .6rem .5rem;
+      align-self: stretch;
+      justify-content: center;
+    }
+    .cal-wrap.view-vertical .day-events { flex: 1; }
+
+    /* ── Shared day styles ────────────────────────────────────────── */
+    .day-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .day-col.is-today {
+      background: var(--today-bg);
+      border-color: var(--today-bdr);
+    }
+
+    .day-header {
+      padding: .45rem .6rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: .1rem;
+    }
+    .day-header .dow {
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+    }
+    .day-col.is-today .day-header .dow { color: var(--accent); }
+    .day-header .dom {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .day-col.is-today .day-header .dom { color: var(--accent); }
+
+    .day-events { padding: .4rem; display: flex; flex-direction: column; gap: .35rem; }
+
+    .no-events {
+      padding: .5rem .4rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ── Event card ───────────────────────────────────────────────── */
+    .ev-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .45rem .55rem;
+      cursor: pointer;
+      transition: border-color .12s, transform .12s;
+    }
+    .ev-card:hover  { border-color: var(--accent); transform: translateY(-1px); }
+    .ev-card:active { transform: translateY(0); }
+
+    .ev-time  { font-size: .72rem; color: var(--text-muted); margin-bottom: .15rem; }
+    .ev-title { font-size: .82rem; font-weight: 600; line-height: 1.25; margin-bottom: .3rem; }
+
+    .ev-tags  { display: flex; flex-wrap: wrap; gap: .2rem; }
+
+    .tag {
+      font-size: .65rem;
+      font-weight: 500;
+      padding: .1rem .4rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .tag.game  { color: var(--accent);  border-color: var(--accent-dim);  background: rgba(192,132,252,.08); }
+    .tag.store { color: var(--text-muted); }
+    .tag.fmt   { color: #67e8f9; border-color: #0e7490; background: rgba(103,232,249,.06); }
+    .tag.price { color: #86efac; border-color: #166534; background: rgba(134,239,172,.06); }
+
+    /* Clickable chips */
+    .tag.game, .tag.store, .tag.fmt { cursor: pointer; transition: background .12s, border-color .12s, color .12s; }
+    .tag.game:hover  { background: rgba(192,132,252,.2);  border-color: var(--accent); }
+    .tag.store:hover { background: var(--surface2); border-color: var(--accent-dim); color: var(--accent); }
+    .tag.fmt:hover   { background: rgba(103,232,249,.15); border-color: #67e8f9; }
+
+    /* Active (filter applied) */
+    .tag.game.active  { background: rgba(192,132,252,.28); border-color: var(--accent);  color: #fff; }
+    .tag.store.active { background: rgba(124,58,237,.25);  border-color: var(--accent-dim); color: var(--accent); }
+    .tag.fmt.active   { background: rgba(103,232,249,.2);  border-color: #67e8f9; color: #67e8f9; }
+
+    /* ── Loading / empty ──────────────────────────────────────────── */
+    .state-msg {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      font-size: .9rem;
+    }
+
+    /* ── Back to top ──────────────────────────────────────────────── */
+    .back-to-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent-dim);
+      color: #fff;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 2px 16px rgba(192,132,252,.35);
+      transition: background .15s, transform .15s;
+      z-index: 200;
+    }
+    .back-to-top:hover { background: var(--accent); transform: translateY(-2px); }
+
+    /* ── Responsive defaults ──────────────────────────────────────── */
+    @media (max-width: 500px) {
+      .site-header { flex-direction: column; align-items: flex-start; }
+      .filters { gap: .4rem; }
+      input[type="text"] { width: 120px; }
+      select { min-width: 110px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Site header -->
+  <div class="site-header">
+    <div>
+      <h1>Madrid TCG Events</h1>
+      <div class="subtitle">TCG tournaments and events in Madrid</div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <button class="btn" @click="prevWeek">← Prev</button>
+    <button class="btn current" @click="goToday">Today</button>
+    <button class="btn" @click="nextWeek">Next →</button>
+    <span class="week-range" x-text="weekRangeLabel"></span>
+    <span class="count-badge" x-show="!loading">
+      <span x-text="weekEventCount"></span>
+      event<template x-if="weekEventCount !== 1">s</template> this week
+    </span>
+    <div class="view-toggle" style="margin-left:auto">
+      <button :class="{ active: viewMode === 'vertical' }"   @click="setView('vertical')">≡ Vertical</button>
+      <button :class="{ active: viewMode === 'horizontal' }" @click="setView('horizontal')">⊞ Horizontal</button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-group">
+      <label>Search</label>
+      <input type="text" placeholder="Title…" x-model.debounce.250ms="filters.search" />
+    </div>
+    <div class="filter-group">
+      <label>Game</label>
+      <select x-model="filters.game">
+        <option value="">All</option>
+        <template x-for="g in gameOptions" :key="g">
+          <option :value="g" x-text="g"></option>
+        </template>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Store</label>
+      <select x-model="filters.store">
+        <option value="">All</option>
+        <template x-for="s in storeOptions" :key="s">
+          <option :value="s" x-text="s"></option>
+        </template>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Format</label>
+      <select x-model="filters.format">
+        <option value="">All</option>
+        <template x-for="f in formatOptions" :key="f">
+          <option :value="f" x-text="f"></option>
+        </template>
+      </select>
+    </div>
+    <button class="btn" style="align-self:flex-end" @click="resetFilters">✕ Clear</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="state-msg" x-show="loading">Loading events…</div>
+
+  <!-- Calendar grid -->
+  <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading">
+  <div class="cal-grid">
+    <template x-for="day in weekDays" :key="day.iso">
+      <div class="day-col" :id="'day-' + day.iso" :class="{ 'is-today': day.isToday }">
+
+        <!-- Day header -->
+        <div class="day-header">
+          <div class="dow" x-text="day.dow"></div>
+          <div class="dom" x-text="day.dom"></div>
+        </div>
+
+        <!-- Events list -->
+        <div class="day-events">
+          <template x-if="day.events.length === 0">
+            <div class="no-events">No events</div>
+          </template>
+          <template x-for="e in day.events" :key="e.source_url + e.datetime_start">
+            <div class="ev-card" @click="openEvent(e)">
+              <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
+              <div class="ev-title" x-text="e.title"></div>
+              <div class="ev-tags">
+                <span class="tag game"
+                  :class="{ active: filters.game === (e.game || 'Unknown') }"
+                  @click.stop="toggleFilter('game', e.game || 'Unknown')"
+                  x-text="e.game || 'Unknown'"></span>
+                <span class="tag store"
+                  :class="{ active: filters.store === e.store }"
+                  @click.stop="toggleFilter('store', e.store)"
+                  x-text="e.store"></span>
+                <span class="tag fmt"
+                  x-show="e.format"
+                  :class="{ active: filters.format === e.format }"
+                  @click.stop="toggleFilter('format', e.format)"
+                  x-text="e.format"></span>
+                <span class="tag price"
+                  x-show="e.price_eur != null"
+                  x-text="fmtPrice(e.price_eur)"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+
+      </div>
+    </template>
+  </div>
+  </div><!-- /.cal-wrap -->
+
+</div>
+
+<!-- Back to top — only in vertical view, appears after 400px scroll -->
+<button
+  class="back-to-top"
+  x-show="viewMode === 'vertical' && showBackToTop"
+  x-transition:enter="transition ease-out duration-200"
+  x-transition:enter-start="opacity-0 translate-y-2"
+  x-transition:enter-end="opacity-100 translate-y-0"
+  x-transition:leave="transition ease-in duration-150"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+  title="Back to top"
+>↑</button>
+<script>
+/* ── Helpers ───────────────────────────────────────────────────────── */
+
+// Returns YYYY-MM-DD string for a Date object, in local time
+function isoDay(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Monday of the week containing `d`
+function weekMonday(d) {
+  const copy = new Date(d);
+  const dow = copy.getDay();            // 0=Sun … 6=Sat
+  const delta = (dow === 0) ? -6 : 1 - dow; // shift to Monday
+  copy.setDate(copy.getDate() + delta);
+  copy.setHours(0, 0, 0, 0);
+  return copy;
+}
+
+function addDays(d, n) {
+  const copy = new Date(d);
+  copy.setDate(copy.getDate() + n);
+  return copy;
+}
+
+function formatShort(d) {
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+/* ── Alpine app ────────────────────────────────────────────────────── */
+function app() {
+  return {
+    events:       [],
+    loading:      true,
+    weekStart:    weekMonday(new Date()),
+    filters:      { search: '', game: '', store: '', format: '' },
+    showBackToTop: false,
+
+    // 'horizontal' for desktop, 'vertical' for mobile — persisted in localStorage
+    viewMode: localStorage.getItem('tcg-view')
+      || (window.innerWidth >= 900 ? 'horizontal' : 'vertical'),
+
+    /* ── Init ──────────────────────────────────────────────────────── */
+    async init() {
+      // Show Back to top after 400px scroll
+      window.addEventListener('scroll', () => {
+        this.showBackToTop = window.scrollY > 400;
+      }, { passive: true });
+
+      try {
+        const res = await fetch('events.json');
+        this.events = await res.json();
+      } catch (err) {
+        console.error('Failed to load events.json', err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    setView(mode) {
+      this.viewMode = mode;
+      localStorage.setItem('tcg-view', mode);
+    },
+
+    /* ── Scroll to a day column by ISO date ────────────────────────── */
+    scrollToDay(iso) {
+      const el = document.getElementById('day-' + iso);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+
+    /* ── Navigation ────────────────────────────────────────────────── */
+    prevWeek() { this.weekStart = addDays(this.weekStart, -7); },
+    nextWeek() { this.weekStart = addDays(this.weekStart, +7); },
+    goToday() {
+      this.weekStart = weekMonday(new Date());
+      // In vertical view scroll to today after Alpine re-renders the week
+      if (this.viewMode === 'vertical') {
+        this.$nextTick(() => this.scrollToDay(isoDay(new Date())));
+      }
+    },
+
+    /* ── Filter options (all events, not just current week) ─────────── */
+    get gameOptions() {
+      return [...new Set(this.events.map(e => e.game || 'Unknown'))].sort();
+    },
+    get storeOptions() {
+      return [...new Set(this.events.map(e => e.store))].sort();
+    },
+    get formatOptions() {
+      return [...new Set(this.events.map(e => e.format).filter(Boolean))].sort();
+    },
+
+    /* ── Toggle a filter chip (game/store/format) ───────────────────── */
+    // If the filter already equals the chip value → clear it; else apply it.
+    toggleFilter(field, value) {
+      this.filters[field] = this.filters[field] === value ? '' : value;
+    },
+
+    /* ── Filtered event list ────────────────────────────────────────── */
+    get filteredEvents() {
+      const s   = this.filters.search.toLowerCase().trim();
+      const g   = this.filters.game;
+      const st  = this.filters.store;
+      const fmt = this.filters.format;
+      return this.events.filter(e => {
+        if (s   && !e.title.toLowerCase().includes(s)) return false;
+        if (g   && (e.game || 'Unknown') !== g)        return false;
+        if (st  && e.store !== st)                     return false;
+        if (fmt && e.format !== fmt)                   return false;
+        return true;
+      });
+    },
+
+    /* ── 7-day array for the current week ───────────────────────────── */
+    get weekDays() {
+      const todayISO = isoDay(new Date());
+      const DOW_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+      // Build a map: ISO date → sorted events
+      const byDay = {};
+      for (const e of this.filteredEvents) {
+        const day = e.datetime_start.slice(0, 10);
+        if (!byDay[day]) byDay[day] = [];
+        byDay[day].push(e);
+      }
+
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(this.weekStart, i);
+        const iso = isoDay(d);
+        const evs = (byDay[iso] || []).slice().sort(
+          (a, b) => a.datetime_start.localeCompare(b.datetime_start)
+        );
+        days.push({
+          iso,
+          dow: DOW_LABELS[i],
+          dom: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+          isToday: iso === todayISO,
+          events: evs,
+        });
+      }
+      return days;
+    },
+
+    /* ── Week header label ──────────────────────────────────────────── */
+    get weekRangeLabel() {
+      const sun = addDays(this.weekStart, 6);
+      const from = this.weekStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const to   = sun.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      return `${from} – ${to}`;
+    },
+
+    /* ── Events this week (after filters) ───────────────────────────── */
+    get weekEventCount() {
+      return this.weekDays.reduce((n, d) => n + d.events.length, 0);
+    },
+
+    /* ── Formatters ────────────────────────────────────────────────── */
+    formatTime(iso) {
+      if (!iso) return '';
+      return new Date(iso).toLocaleTimeString('en-GB', {
+        hour: '2-digit', minute: '2-digit',
+        timeZone: 'Europe/Madrid',
+      });
+    },
+
+    fmtPrice(p) {
+      if (p == null) return '';
+      return (p % 1 === 0 ? p : p.toFixed(2)) + ' €';
+    },
+
+    openEvent(e) {
+      if (e.source_url) window.open(e.source_url, '_blank', 'noopener');
+    },
+
+    resetFilters() {
+      this.filters = { search: '', game: '', store: '', format: '' };
+    },
+  };
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "total_events": 181,
+  "by_store": {
+    "Micelion Games": 146,
+    "Metropolis Center": 35
+  },
+  "by_game": {
+    "Magic: The Gathering": 63,
+    "Riftbound": 25,
+    "One Piece": 18,
+    "Digimon": 17,
+    "Pokémon": 16,
+    "Star Wars: Unlimited": 9,
+    "Lorcana": 9,
+    "Weiß Schwarz": 9,
+    "Unknown": 7,
+    "Naruto Mythos": 5,
+    "Yu-Gi-Oh!": 3
+  },
+  "failed_scrapers": [],
+  "generated_at": "2026-04-24T23:17:58.493466+02:00"
+}

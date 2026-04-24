@@ -1,0 +1,50 @@
+name: Update events
+
+on:
+  schedule:
+    # Daily at 06:00 UTC (08:00 Madrid in summer, 07:00 in winter)
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run aggregator
+        run: python aggregator.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- public/events.json public/events_stats.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git add public/events.json public/events_stats.json
+          git commit -m "chore: update events.json ($(date -u +'%Y-%m-%d %H:%M UTC'))"
+          git push
