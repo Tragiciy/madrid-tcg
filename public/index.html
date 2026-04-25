@@ -294,6 +294,63 @@
        muted and slightly tighter — it's already inside its own card. */
     .seg-cell .seg-header { padding: .1rem .1rem .2rem; }
 
+    /* Clickable seg-header (horizontal collapse). */
+    .seg-header.is-clickable {
+      cursor: pointer;
+      user-select: none;
+      transition: color .12s, background .12s;
+      border-radius: 4px;
+    }
+    .seg-header.is-clickable:hover { color: var(--text); background: rgba(0,0,0,.03); }
+
+    /* Chevron — small CSS-drawn caret. Down when expanded, right when
+       collapsed. */
+    .seg-chev {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(45deg) translate(-1px, -1px);
+      transition: transform .15s;
+      opacity: .55;
+      margin-right: .15rem;
+    }
+    .seg-chev.is-collapsed {
+      transform: rotate(-45deg) translate(-1px, 1px);
+    }
+
+    /* When the segment is collapsed, slightly mute the header so the
+       collapsed state is recognisable from the row level. */
+    .seg-cell.is-collapsed .seg-header { opacity: .75; }
+    .seg-cell.is-collapsed { padding-bottom: .25rem; }
+
+    /* ── Today highlighting (horizontal grid) ─────────────────────── */
+    /* Empty cells normally use --surface2 — override so today's empty
+       slots still read as part of today's column. */
+    .seg-cell.is-today.is-empty {
+      background: var(--today-bg);
+      border-color: var(--today-bdr);
+      border-style: dashed;
+    }
+    /* Past segment in today's column — recessive but still readable.
+       Background is restated so cascade order can never strip the
+       today tint when .is-past is also applied. */
+    .seg-cell.is-today.is-past {
+      opacity: .55;
+      background: var(--today-bg);
+    }
+    .seg-cell.is-today.is-past .ev-card { box-shadow: none; }
+
+    /* Day-header cell of today: keep a stronger accent border so the
+       column header still dominates. */
+    .day-header-cell.is-today { border-color: var(--today-bdr); border-width: 1px; }
+
+    /* Past event card (today only) — minor opacity dip; keeps colours
+       legible but signals it has already started. */
+    .ev-card.is-past { opacity: .55; }
+    .ev-card.is-past:hover { opacity: .85; }
+
     /* Cards inside horizontal cells stay compact (replaces old
        .cal-wrap.view-horizontal .ev-card rules) */
     .cal-grid-h .ev-card  { padding: .3rem .4rem; border-radius: 5px; }
@@ -631,17 +688,29 @@
       <template x-for="(seg, sIdx) in activeSegments" :key="seg.key">
         <template x-for="(day, dIdx) in weekDays" :key="seg.key + '-' + day.iso">
           <div class="day-cell seg-cell"
-               :class="{ 'is-today': day.isToday, 'is-empty': cellEvents(day, seg.key).length === 0 }"
+               :class="[
+                 day.isToday ? 'is-today' : '',
+                 cellEvents(day, seg.key).length === 0 ? 'is-empty' : '',
+                 collapsedSegments[seg.key] ? 'is-collapsed' : '',
+                 isSegmentPast(seg.key, day.iso) ? 'is-past' : ''
+               ]"
                :style="`grid-column: ${dIdx + 1}; grid-row: ${sIdx + 2};`">
-            <!-- segment header: hidden in focus mode and on empty cells -->
-            <div class="seg-header"
-                 x-show="!focusMode && cellEvents(day, seg.key).length > 0">
+            <!-- segment header: hidden in focus mode and on empty cells.
+                 Click toggles global collapse for this segment. -->
+            <div class="seg-header is-clickable"
+                 x-show="!focusMode && cellEvents(day, seg.key).length > 0"
+                 @click="toggleSegmentCollapse(seg.key)"
+                 :title="collapsedSegments[seg.key] ? 'Expand' : 'Collapse'">
+              <span class="seg-chev" :class="{ 'is-collapsed': collapsedSegments[seg.key] }"></span>
               <span x-text="seg.label"></span>
               <span class="seg-header-count" x-text="'· ' + cellEvents(day, seg.key).length"></span>
               <span class="seg-range" x-text="seg.shortRange"></span>
             </div>
             <template x-for="e in cellEvents(day, seg.key)" :key="e.source_url + e.datetime_start">
-              <div class="ev-card" :class="getGameClass(e.game)" @click="openEvent(e)">
+              <div class="ev-card"
+                   :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '' ]"
+                   x-show="!collapsedSegments[seg.key]"
+                   @click="openEvent(e)">
                 <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
                 <div class="ev-title" x-text="e.title"></div>
                 <div class="ev-tags">
@@ -694,7 +763,9 @@
                   <span class="seg-range" x-text="seg.shortRange"></span>
                 </div>
                 <template x-for="e in seg.events" :key="e.source_url + e.datetime_start">
-                  <div class="ev-card" :class="getGameClass(e.game)" @click="openEvent(e)">
+                  <div class="ev-card"
+                       :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '' ]"
+                       @click="openEvent(e)">
                     <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
                     <div class="ev-title" x-text="e.title"></div>
                     <div class="ev-tags">
@@ -790,6 +861,26 @@ function segmentForHour(h) {
   return 'late';
 }
 
+// Returns { iso, hour, minute, minutesSinceMidnight } in Europe/Madrid.
+// Builds a real Date whose internal time matches Madrid wall-clock by
+// roundtripping through toLocaleString('en-US', { timeZone: 'Europe/Madrid' }).
+// Date methods (getHours, getMinutes, etc.) then read out the Madrid values
+// directly — no string parsing or token assembly.
+function readMadridNow() {
+  const m = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Madrid' }));
+  const y  = m.getFullYear();
+  const mo = String(m.getMonth() + 1).padStart(2, '0');
+  const d  = String(m.getDate()).padStart(2, '0');
+  const hour   = m.getHours();
+  const minute = m.getMinutes();
+  return {
+    iso: `${y}-${mo}-${d}`,
+    hour,
+    minute,
+    minutesSinceMidnight: hour * 60 + minute,
+  };
+}
+
 /* ── Alpine app ────────────────────────────────────────────────────── */
 function app() {
   return {
@@ -798,12 +889,18 @@ function app() {
     weekStart:    weekMonday(new Date()),
     filters:      { search: '', game: '', store: '', format: '' },
     segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
+    // Independent of segmentFilter: collapsed segments still occupy a
+    // grid row (alignment preserved) but their cards are hidden.
+    collapsedSegments: { morning: false, afternoon: false, evening: false, late: false },
     SEGMENTS,
     showBackToTop: false,
+    // Reactive Europe/Madrid clock — refreshed every minute. Used to
+    // mark past segments and past events on today.
+    nowMadrid: readMadridNow(),
 
-    // 'horizontal' for desktop, 'vertical' for mobile — persisted in localStorage
-    viewMode: localStorage.getItem('tcg-view')
-      || (window.innerWidth >= 900 ? 'horizontal' : 'vertical'),
+    // Default to horizontal; respect localStorage if user previously
+    // switched to vertical.
+    viewMode: localStorage.getItem('tcg-view') || 'horizontal',
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
@@ -811,6 +908,11 @@ function app() {
       window.addEventListener('scroll', () => {
         this.showBackToTop = window.scrollY > 400;
       }, { passive: true });
+
+      // Run once immediately, then refresh the Madrid clock every minute
+      // so past-segment / past-event styling progresses without a reload.
+      this.nowMadrid = readMadridNow();
+      setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
 
       try {
         const res = await fetch('events.json');
@@ -864,6 +966,33 @@ function app() {
     /* ── Toggle a time-segment chip ─────────────────────────────────── */
     toggleSegment(key) {
       this.segmentFilter[key] = !this.segmentFilter[key];
+    },
+
+    /* ── Toggle a segment's collapsed state (cards hidden, header
+         visible). Independent of segmentFilter — collapse keeps the
+         row in the grid so alignment is preserved. */
+    toggleSegmentCollapse(key) {
+      this.collapsedSegments[key] = !this.collapsedSegments[key];
+    },
+
+    /* ── For today's column only: a segment is "past" iff its end
+         time has already elapsed. Otherwise it's upcoming (no class).
+         Returns false for non-today columns. */
+    isSegmentPast(segKey, dayIso) {
+      if (dayIso !== this.nowMadrid.iso) return false;
+      const s = SEGMENTS.find(x => x.key === segKey);
+      if (!s) return false;
+      return (s.end * 60) <= this.nowMadrid.minutesSinceMidnight;
+    },
+
+    /* ── True if the event already started (Europe/Madrid). Only
+         meaningful for events on today; safe to call on any event. */
+    isEventPast(e) {
+      if (!e || !e.datetime_start) return false;
+      if (e.datetime_start.slice(0, 10) !== this.nowMadrid.iso) return false;
+      const h = parseInt(e.datetime_start.slice(11, 13), 10);
+      const m = parseInt(e.datetime_start.slice(14, 16), 10);
+      return (h * 60 + m) < this.nowMadrid.minutesSinceMidnight;
     },
 
     /* ── Bucket an event ISO string into a segment key ──────────────── */
