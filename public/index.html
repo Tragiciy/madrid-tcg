@@ -146,10 +146,9 @@
 
     /* ── Calendar wrapper ─────────────────────────────────────────── */
 
-    /* HORIZONTAL: 7 columns, scrollable if too narrow */
+    /* HORIZONTAL: 7 equal columns that fit the container on desktop */
     .cal-wrap.view-horizontal {
       overflow-x: auto;
-      /* soft fade hint that content scrolls */
       scrollbar-width: thin;
       scrollbar-color: var(--border) transparent;
     }
@@ -157,41 +156,54 @@
     .cal-wrap.view-horizontal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     .cal-wrap.view-horizontal .cal-grid {
       display: grid;
-      grid-template-columns: repeat(7, minmax(248px, 1fr));
-      gap: .55rem;
-      align-items: start;
-      min-width: 1740px;  /* 7 × 248 + gaps — triggers scroll below ~1800px */
-      padding-bottom: .25rem; /* breathing room above scrollbar */
-    }
-
-    /* Compact cards in horizontal view */
-    .cal-wrap.view-horizontal .ev-card  { padding: .35rem .45rem; }
-    .cal-wrap.view-horizontal .ev-title { font-size: .78rem; line-height: 1.2; margin-bottom: .22rem; }
-    .cal-wrap.view-horizontal .ev-tags  { gap: .15rem; }
-    .cal-wrap.view-horizontal .tag      { padding: .08rem .35rem; font-size: .62rem; }
-    /* Time shown once per group label — hide per-card time */
-    .cal-wrap.view-horizontal .ev-time  { display: none; }
-
-    /* Time-group header: shown once per distinct start time */
-    .time-group {
-      display: flex;
-      align-items: center;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: .4rem;
-      padding: .3rem .1rem .15rem;
-      font-size: .68rem;
-      font-weight: 600;
-      letter-spacing: .05em;
-      color: var(--text-muted);
-      text-transform: uppercase;
+      align-items: start;
     }
-    .time-group::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--border);
+    /* On narrow viewports (<900px), fall back to horizontal scroll
+       with a usable minimum column width so cards stay readable. */
+    @media (max-width: 900px) {
+      .cal-wrap.view-horizontal .cal-grid {
+        grid-template-columns: repeat(7, minmax(160px, 1fr));
+        min-width: 1140px;
+        padding-bottom: .25rem;
+      }
     }
-    /* No top padding for the very first group in a day */
-    .day-events > .time-group:first-child { padding-top: .1rem; }
+
+    /* Compact day header in horizontal view */
+    .cal-wrap.view-horizontal .day-header {
+      padding: .35rem .5rem;
+      flex-direction: row;
+      align-items: baseline;
+      gap: .35rem;
+    }
+    .cal-wrap.view-horizontal .day-header .dow { font-size: .65rem; }
+    .cal-wrap.view-horizontal .day-header .dom { font-size: .88rem; }
+
+    /* Tighter events list + empty-day shrink */
+    .cal-wrap.view-horizontal .day-events { padding: .3rem; gap: .25rem; }
+    .cal-wrap.view-horizontal .no-events  { padding: .3rem .25rem; font-size: .7rem; }
+
+    /* Compact cards */
+    .cal-wrap.view-horizontal .ev-card  { padding: .3rem .4rem; border-radius: 5px; }
+    .cal-wrap.view-horizontal .ev-time  { font-size: .66rem; margin-bottom: .1rem; }
+    .cal-wrap.view-horizontal .ev-title {
+      font-size: .74rem;
+      line-height: 1.18;
+      margin-bottom: .2rem;
+      /* clamp long titles to 2 lines with ellipsis */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
+    .cal-wrap.view-horizontal .ev-tags  { gap: .15rem; }
+    .cal-wrap.view-horizontal .tag      { padding: .05rem .32rem; font-size: .6rem; }
+    /* Low-priority chips hidden in narrow columns to avoid overflow */
+    @media (max-width: 1200px) {
+      .cal-wrap.view-horizontal .tag.price { display: none; }
+    }
 
     /* VERTICAL: single column stack, header pinned left */
     .cal-wrap.view-vertical .cal-grid {
@@ -420,66 +432,29 @@
             <div class="no-events">No events</div>
           </template>
 
-          <!-- HORIZONTAL: group by start time, show time once per group -->
-          <template x-if="viewMode === 'horizontal' && day.events.length">
-            <template x-for="group in day.timeGroups" :key="group.time">
-              <div>
-                <div class="time-group" x-text="group.time"></div>
-                <div style="display:flex;flex-direction:column;gap:.35rem;">
-                  <template x-for="e in group.events" :key="e.source_url + e.datetime_start">
-                    <div class="ev-card" @click="openEvent(e)">
-                      <div class="ev-title" x-text="e.title"></div>
-                      <div class="ev-tags">
-                        <span class="tag game"
-                          :class="{ active: filters.game === (e.game || 'Unknown') }"
-                          @click.stop="toggleFilter('game', e.game || 'Unknown')"
-                          x-text="e.game || 'Unknown'"></span>
-                        <span class="tag store"
-                          :class="{ active: filters.store === e.store }"
-                          @click.stop="toggleFilter('store', e.store)"
-                          x-text="e.store"></span>
-                        <span class="tag fmt"
-                          x-show="e.format"
-                          :class="{ active: filters.format === e.format }"
-                          @click.stop="toggleFilter('format', e.format)"
-                          x-text="e.format"></span>
-                        <span class="tag price"
-                          x-show="e.price_eur != null"
-                          x-text="fmtPrice(e.price_eur)"></span>
-                      </div>
-                    </div>
-                  </template>
-                </div>
+          <template x-for="e in day.events" :key="e.source_url + e.datetime_start">
+            <div class="ev-card" @click="openEvent(e)">
+              <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
+              <div class="ev-title" x-text="e.title"></div>
+              <div class="ev-tags">
+                <span class="tag game"
+                  :class="{ active: filters.game === (e.game || 'Unknown') }"
+                  @click.stop="toggleFilter('game', e.game || 'Unknown')"
+                  x-text="e.game || 'Unknown'"></span>
+                <span class="tag store"
+                  :class="{ active: filters.store === e.store }"
+                  @click.stop="toggleFilter('store', e.store)"
+                  x-text="e.store"></span>
+                <span class="tag fmt"
+                  x-show="e.format"
+                  :class="{ active: filters.format === e.format }"
+                  @click.stop="toggleFilter('format', e.format)"
+                  x-text="e.format"></span>
+                <span class="tag price"
+                  x-show="e.price_eur != null"
+                  x-text="fmtPrice(e.price_eur)"></span>
               </div>
-            </template>
-          </template>
-
-          <!-- VERTICAL: unchanged — flat list with per-card time -->
-          <template x-if="viewMode === 'vertical' && day.events.length">
-            <template x-for="e in day.events" :key="e.source_url + e.datetime_start">
-              <div class="ev-card" @click="openEvent(e)">
-                <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
-                <div class="ev-title" x-text="e.title"></div>
-                <div class="ev-tags">
-                  <span class="tag game"
-                    :class="{ active: filters.game === (e.game || 'Unknown') }"
-                    @click.stop="toggleFilter('game', e.game || 'Unknown')"
-                    x-text="e.game || 'Unknown'"></span>
-                  <span class="tag store"
-                    :class="{ active: filters.store === e.store }"
-                    @click.stop="toggleFilter('store', e.store)"
-                    x-text="e.store"></span>
-                  <span class="tag fmt"
-                    x-show="e.format"
-                    :class="{ active: filters.format === e.format }"
-                    @click.stop="toggleFilter('format', e.format)"
-                    x-text="e.format"></span>
-                  <span class="tag price"
-                    x-show="e.price_eur != null"
-                    x-text="fmtPrice(e.price_eur)"></span>
-                </div>
-              </div>
-            </template>
+            </div>
           </template>
         </div>
 
