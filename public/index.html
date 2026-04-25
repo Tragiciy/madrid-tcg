@@ -10,17 +10,26 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0f0f13;
-      --surface:   #1a1a24;
-      --surface2:  #22222f;
-      --border:    #2e2e3f;
-      --accent:    #c084fc;
-      --accent-dim:#7c3aed;
-      --today-bg:  rgba(192,132,252,.07);
-      --today-bdr: rgba(192,132,252,.35);
-      --text:      #e2e2f0;
-      --text-muted:#6b6b8a;
-      --radius:    8px;
+      /* Light theme tokens */
+      --bg:         #f6f7fb;
+      --surface:    #ffffff;
+      --surface2:   #fafbfd;
+      --border:     #e3e5ec;
+      --border-strong: #c9ccd6;
+      --accent:     #7c3aed;       /* primary purple */
+      --accent-dim: #a78bfa;       /* lighter purple */
+      --accent-soft:rgba(124,58,237,.10);
+      --today-bg:   rgba(124,58,237,.07);
+      --today-bdr:  rgba(124,58,237,.35);
+      --text:       #1f2937;
+      --text-muted: #6b7280;
+      --radius:     8px;
+      --shadow-sm:  0 1px 2px rgba(15,23,42,.04);
+      --shadow-md:  0 2px 8px rgba(15,23,42,.06);
+
+      /* Default card accent (used when no game class applied) */
+      --card-tint:   #ffffff;
+      --card-accent: #c9ccd6;
     }
 
     body {
@@ -141,12 +150,81 @@
       transition: background .15s, color .15s;
     }
     .view-toggle button + button { border-left: 1px solid var(--border); }
-    .view-toggle button.active   { background: var(--accent-dim); color: #fff; }
+    .view-toggle button.active   { background: var(--accent); color: #fff; }
+
+    /* ── Time-segment filter chips ─────────────────────────────────── */
+    .seg-filter {
+      display: flex;
+      gap: .3rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .seg-filter .seg-label {
+      font-size: .7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-right: .15rem;
+    }
+    .seg-chip {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: .72rem;
+      font-weight: 500;
+      padding: .25rem .65rem;
+      transition: background .12s, border-color .12s, color .12s, opacity .12s;
+      user-select: none;
+    }
+    .seg-chip:hover { border-color: var(--accent-dim); color: var(--accent); }
+    .seg-chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent-dim);
+      color: var(--accent);
+    }
+    .seg-chip:not(.active) { opacity: .55; }
+    .seg-chip:not(.active):hover { opacity: 1; }
+    .seg-chip .seg-count {
+      font-size: .62rem;
+      margin-left: .25rem;
+      opacity: .7;
+    }
+
+    /* Segment header inside a day column */
+    .seg-header {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .35rem .1rem .15rem;
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .seg-header .seg-header-count {
+      font-weight: 500;
+      opacity: .75;
+    }
+    .seg-header .seg-range {
+      margin-left: auto;
+      font-weight: 500;
+      letter-spacing: .04em;
+      opacity: .55;
+      font-size: .58rem;
+    }
+    .day-events > .seg-block:first-child > .seg-header { padding-top: .1rem; }
+    .seg-block { display: flex; flex-direction: column; gap: .25rem; }
     .view-toggle button:not(.active):hover { color: var(--accent); }
 
     /* ── Calendar wrapper ─────────────────────────────────────────── */
 
-    /* HORIZONTAL: 7 equal columns that fit the container on desktop */
+    /* HORIZONTAL: single global grid, 7 cols × (header + N segment rows).
+       All cells in the same row align to the same height, so a given
+       segment sits at the same vertical position across every day. */
     .cal-wrap.view-horizontal {
       overflow-x: auto;
       scrollbar-width: thin;
@@ -154,20 +232,86 @@
     }
     .cal-wrap.view-horizontal::-webkit-scrollbar       { height: 8px; }
     .cal-wrap.view-horizontal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    .cal-wrap.view-horizontal .cal-grid {
+    .cal-grid-h {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: .4rem;
-      align-items: start;
+      column-gap: .4rem;
+      row-gap: .4rem;
+      align-items: stretch;
     }
-    /* On narrow viewports (<900px), fall back to horizontal scroll
-       with a usable minimum column width so cards stay readable. */
     @media (max-width: 900px) {
-      .cal-wrap.view-horizontal .cal-grid {
+      .cal-grid-h {
         grid-template-columns: repeat(7, minmax(160px, 1fr));
         min-width: 1140px;
         padding-bottom: .25rem;
       }
+    }
+
+    /* All cells share a card-like surface so each column reads as a
+       continuous strip. */
+    .day-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+      padding: .35rem;
+    }
+    .day-cell.is-today { background: var(--today-bg); border-color: var(--today-bdr); }
+
+    /* Day-header cell (row 1). Compact, single-line. */
+    .day-header-cell {
+      flex-direction: row;
+      align-items: baseline;
+      gap: .35rem;
+      padding: .35rem .5rem;
+    }
+    .day-header-cell .dow {
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+    }
+    .day-header-cell.is-today .dow { color: var(--accent); }
+    .day-header-cell .dom { font-size: .88rem; font-weight: 700; color: var(--text); }
+    .day-header-cell.is-today .dom { color: var(--accent); }
+
+    /* Segment cell. min-height keeps an empty cell visible (~10px) so
+       totally empty days still register a placeholder for alignment. */
+    .seg-cell { padding: .3rem .35rem .35rem; min-height: 10px; }
+    .seg-cell.is-empty {
+      background: var(--surface2);
+      box-shadow: none;
+      border-style: dashed;
+      border-color: #eef0f4;
+      padding: 0;
+    }
+
+    /* Inside a seg-cell (horizontal grid only) the seg-header line is
+       muted and slightly tighter — it's already inside its own card. */
+    .seg-cell .seg-header { padding: .1rem .1rem .2rem; }
+
+    /* Cards inside horizontal cells stay compact (replaces old
+       .cal-wrap.view-horizontal .ev-card rules) */
+    .cal-grid-h .ev-card  { padding: .3rem .4rem; border-radius: 5px; }
+    .cal-grid-h .ev-time  { font-size: .66rem; margin-bottom: .1rem; }
+    .cal-grid-h .ev-title {
+      font-size: .74rem;
+      line-height: 1.18;
+      margin-bottom: .2rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
+    .cal-grid-h .ev-tags  { gap: .15rem; }
+    .cal-grid-h .tag      { padding: .05rem .32rem; font-size: .6rem; }
+    @media (max-width: 1200px) {
+      .cal-grid-h .tag.price { display: none; }
     }
 
     /* Compact day header in horizontal view */
@@ -233,6 +377,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
+      box-shadow: var(--shadow-sm);
     }
     .day-col.is-today {
       background: var(--today-bg);
@@ -272,18 +417,25 @@
 
     /* ── Event card ───────────────────────────────────────────────── */
     .ev-card {
-      background: var(--surface2);
+      /* Per-card tint + accent injected by .game-* classes below.
+         Defaults are neutral so unstyled cards still look fine. */
+      background: var(--card-tint, #ffffff);
       border: 1px solid var(--border);
+      border-left: 3px solid var(--card-accent, var(--border-strong));
       border-radius: 6px;
       padding: .45rem .55rem;
       cursor: pointer;
-      transition: border-color .12s, transform .12s;
+      transition: border-color .12s, transform .12s, box-shadow .12s;
     }
-    .ev-card:hover  { border-color: var(--accent); transform: translateY(-1px); }
+    .ev-card:hover  {
+      border-color: var(--card-accent, var(--accent-dim));
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
     .ev-card:active { transform: translateY(0); }
 
     .ev-time  { font-size: .72rem; color: var(--text-muted); margin-bottom: .15rem; }
-    .ev-title { font-size: .82rem; font-weight: 600; line-height: 1.25; margin-bottom: .3rem; }
+    .ev-title { font-size: .82rem; font-weight: 600; line-height: 1.25; margin-bottom: .3rem; color: var(--text); }
 
     .ev-tags  { display: flex; flex-wrap: wrap; gap: .2rem; }
 
@@ -293,23 +445,49 @@
       padding: .1rem .4rem;
       border-radius: 999px;
       border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
       white-space: nowrap;
     }
-    .tag.game  { color: var(--accent);  border-color: var(--accent-dim);  background: rgba(192,132,252,.08); }
-    .tag.store { color: var(--text-muted); }
-    .tag.fmt   { color: #67e8f9; border-color: #0e7490; background: rgba(103,232,249,.06); }
-    .tag.price { color: #86efac; border-color: #166534; background: rgba(134,239,172,.06); }
+    /* Game chip uses the per-card accent so it ties visually to the card */
+    .tag.game  {
+      color: var(--card-accent, var(--accent));
+      border-color: var(--card-accent, var(--accent-dim));
+      background: var(--card-tint, var(--accent-soft));
+    }
+    .tag.store { color: var(--text-muted); background: var(--surface2); }
+    .tag.fmt   { color: #0e7490; border-color: #a5f3fc; background: #ecfeff; }
+    .tag.price { color: #15803d; border-color: #bbf7d0; background: #f0fdf4; font-weight: 600; }
 
     /* Clickable chips */
     .tag.game, .tag.store, .tag.fmt { cursor: pointer; transition: background .12s, border-color .12s, color .12s; }
-    .tag.game:hover  { background: rgba(192,132,252,.2);  border-color: var(--accent); }
-    .tag.store:hover { background: var(--surface2); border-color: var(--accent-dim); color: var(--accent); }
-    .tag.fmt:hover   { background: rgba(103,232,249,.15); border-color: #67e8f9; }
+    .tag.game:hover  { filter: brightness(.96); }
+    .tag.store:hover { border-color: var(--accent-dim); color: var(--accent); }
+    .tag.fmt:hover   { background: #cffafe; border-color: #67e8f9; }
 
     /* Active (filter applied) */
-    .tag.game.active  { background: rgba(192,132,252,.28); border-color: var(--accent);  color: #fff; }
-    .tag.store.active { background: rgba(124,58,237,.25);  border-color: var(--accent-dim); color: var(--accent); }
-    .tag.fmt.active   { background: rgba(103,232,249,.2);  border-color: #67e8f9; color: #67e8f9; }
+    .tag.game.active  {
+      background: var(--card-accent, var(--accent));
+      border-color: var(--card-accent, var(--accent));
+      color: #fff;
+    }
+    .tag.store.active { background: var(--accent-soft);   border-color: var(--accent); color: var(--accent); }
+    .tag.fmt.active   { background: #a5f3fc; border-color: #0891b2; color: #0e7490; }
+
+    /* ── Per-game palette ─────────────────────────────────────────── */
+    /* Each class sets the card tint + accent. Tints are deliberately
+       very low-opacity so the page still reads as a neutral light UI. */
+    .game-mtg       { --card-tint: #fff7ed; --card-accent: #f97316; }   /* vibrant orange */
+    .game-starwars  { --card-tint: #eff6ff; --card-accent: #2563eb; }   /* blue */
+    .game-riftbound { --card-tint: #ecfeff; --card-accent: #06b6d4; }   /* cyan */
+    .game-onepiece  { --card-tint: #fef2f2; --card-accent: #dc2626; }   /* crimson */
+    .game-pokemon   { --card-tint: #fefce8; --card-accent: #eab308; }   /* yellow */
+    .game-lorcana   { --card-tint: #faf5ff; --card-accent: #9333ea; }   /* purple */
+    .game-digimon   { --card-tint: #f0fdf4; --card-accent: #16a34a; }   /* green */
+    .game-yugioh    { --card-tint: #fce7f3; --card-accent: #db2777; }   /* pink/magenta */
+    .game-weiss     { --card-tint: #f9fafb; --card-accent: #4b5563; }   /* gray */
+    .game-naruto    { --card-tint: #f1f5f9; --card-accent: #475569; }   /* muted slate */
+    .game-unknown   { --card-tint: #f9fafb; --card-accent: #9ca3af; }   /* gray */
 
     /* ── Loading / empty ──────────────────────────────────────────── */
     .state-msg {
@@ -328,16 +506,16 @@
       height: 42px;
       border-radius: 50%;
       border: none;
-      background: var(--accent-dim);
+      background: var(--accent);
       color: #fff;
       font-size: 1.1rem;
       line-height: 1;
       cursor: pointer;
-      box-shadow: 0 2px 16px rgba(192,132,252,.35);
+      box-shadow: 0 4px 16px rgba(124,58,237,.30);
       transition: background .15s, transform .15s;
       z-index: 200;
     }
-    .back-to-top:hover { background: var(--accent); transform: translateY(-2px); }
+    .back-to-top:hover { background: #6d28d9; transform: translateY(-2px); }
 
     /* ── Responsive defaults ──────────────────────────────────────── */
     @media (max-width: 500px) {
@@ -411,56 +589,142 @@
     <button class="btn" style="align-self:flex-end" @click="resetFilters">✕ Clear</button>
   </div>
 
+  <!-- Time-segment filter -->
+  <div class="seg-filter" x-show="!loading">
+    <span class="seg-label">Time</span>
+    <template x-for="s in SEGMENTS" :key="s.key">
+      <button
+        class="seg-chip"
+        :class="{ active: segmentFilter[s.key] }"
+        @click="toggleSegment(s.key)"
+        :title="s.range"
+      >
+        <span x-text="s.label"></span>
+        <span class="seg-count" x-text="segmentTotals[s.key]" x-show="segmentTotals[s.key] > 0"></span>
+      </button>
+    </template>
+  </div>
+
   <!-- Loading -->
   <div class="state-msg" x-show="loading">Loading events…</div>
 
   <!-- Calendar grid -->
   <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading">
-  <div class="cal-grid">
-    <template x-for="day in weekDays" :key="day.iso">
-      <div class="day-col" :id="'day-' + day.iso" :class="{ 'is-today': day.isToday }">
 
-        <!-- Day header -->
-        <div class="day-header">
+    <!-- ── HORIZONTAL: global grid; segments aligned across days ── -->
+    <div class="cal-grid cal-grid-h"
+         x-show="viewMode === 'horizontal'"
+         :style="`grid-template-rows: auto repeat(${activeSegments.length}, auto)`">
+
+      <!-- Day-header row -->
+      <template x-for="(day, dIdx) in weekDays" :key="'h-' + day.iso">
+        <div class="day-cell day-header-cell"
+             :class="{ 'is-today': day.isToday }"
+             :id="'day-' + day.iso"
+             :style="`grid-column: ${dIdx + 1}; grid-row: 1;`">
           <div class="dow" x-text="day.dow"></div>
           <div class="dom" x-text="day.dom"></div>
         </div>
+      </template>
 
-        <!-- Events list -->
-        <div class="day-events">
-          <template x-if="day.events.length === 0">
-            <div class="no-events">No events</div>
-          </template>
-
-          <template x-for="e in day.events" :key="e.source_url + e.datetime_start">
-            <div class="ev-card" @click="openEvent(e)">
-              <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
-              <div class="ev-title" x-text="e.title"></div>
-              <div class="ev-tags">
-                <span class="tag game"
-                  :class="{ active: filters.game === (e.game || 'Unknown') }"
-                  @click.stop="toggleFilter('game', e.game || 'Unknown')"
-                  x-text="e.game || 'Unknown'"></span>
-                <span class="tag store"
-                  :class="{ active: filters.store === e.store }"
-                  @click.stop="toggleFilter('store', e.store)"
-                  x-text="e.store"></span>
-                <span class="tag fmt"
-                  x-show="e.format"
-                  :class="{ active: filters.format === e.format }"
-                  @click.stop="toggleFilter('format', e.format)"
-                  x-text="e.format"></span>
-                <span class="tag price"
-                  x-show="e.price_eur != null"
-                  x-text="fmtPrice(e.price_eur)"></span>
-              </div>
+      <!-- Segment × day cells (one row per active segment) -->
+      <template x-for="(seg, sIdx) in activeSegments" :key="seg.key">
+        <template x-for="(day, dIdx) in weekDays" :key="seg.key + '-' + day.iso">
+          <div class="day-cell seg-cell"
+               :class="{ 'is-today': day.isToday, 'is-empty': cellEvents(day, seg.key).length === 0 }"
+               :style="`grid-column: ${dIdx + 1}; grid-row: ${sIdx + 2};`">
+            <!-- segment header: hidden in focus mode and on empty cells -->
+            <div class="seg-header"
+                 x-show="!focusMode && cellEvents(day, seg.key).length > 0">
+              <span x-text="seg.label"></span>
+              <span class="seg-header-count" x-text="'· ' + cellEvents(day, seg.key).length"></span>
+              <span class="seg-range" x-text="seg.shortRange"></span>
             </div>
-          </template>
-        </div>
+            <template x-for="e in cellEvents(day, seg.key)" :key="e.source_url + e.datetime_start">
+              <div class="ev-card" :class="getGameClass(e.game)" @click="openEvent(e)">
+                <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
+                <div class="ev-title" x-text="e.title"></div>
+                <div class="ev-tags">
+                  <span class="tag game"
+                    :class="{ active: filters.game === (e.game || 'Unknown') }"
+                    @click.stop="toggleFilter('game', e.game || 'Unknown')"
+                    x-text="e.game || 'Unknown'"></span>
+                  <span class="tag store"
+                    :class="{ active: filters.store === e.store }"
+                    @click.stop="toggleFilter('store', e.store)"
+                    x-text="e.store"></span>
+                  <span class="tag fmt"
+                    x-show="e.format"
+                    :class="{ active: filters.format === e.format }"
+                    @click.stop="toggleFilter('format', e.format)"
+                    x-text="e.format"></span>
+                  <span class="tag price"
+                    x-show="e.price_eur != null"
+                    x-text="fmtPrice(e.price_eur)"></span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+      </template>
+    </div>
 
-      </div>
-    </template>
-  </div>
+    <!-- ── VERTICAL: per-day stacked layout (unchanged) ── -->
+    <div class="cal-grid" x-show="viewMode === 'vertical'">
+      <template x-for="day in weekDays" :key="day.iso">
+        <div class="day-col" :id="'day-' + day.iso" :class="{ 'is-today': day.isToday }">
+
+          <!-- Day header -->
+          <div class="day-header">
+            <div class="dow" x-text="day.dow"></div>
+            <div class="dom" x-text="day.dom"></div>
+          </div>
+
+          <!-- Events list — grouped by time segment -->
+          <div class="day-events">
+            <template x-if="day.segments.length === 0">
+              <div class="no-events">No events</div>
+            </template>
+
+            <template x-for="seg in day.segments" :key="seg.key">
+              <div class="seg-block">
+                <div class="seg-header" x-show="!focusMode">
+                  <span x-text="seg.label"></span>
+                  <span class="seg-header-count" x-text="'· ' + seg.count"></span>
+                  <span class="seg-range" x-text="seg.shortRange"></span>
+                </div>
+                <template x-for="e in seg.events" :key="e.source_url + e.datetime_start">
+                  <div class="ev-card" :class="getGameClass(e.game)" @click="openEvent(e)">
+                    <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
+                    <div class="ev-title" x-text="e.title"></div>
+                    <div class="ev-tags">
+                      <span class="tag game"
+                        :class="{ active: filters.game === (e.game || 'Unknown') }"
+                        @click.stop="toggleFilter('game', e.game || 'Unknown')"
+                        x-text="e.game || 'Unknown'"></span>
+                      <span class="tag store"
+                        :class="{ active: filters.store === e.store }"
+                        @click.stop="toggleFilter('store', e.store)"
+                        x-text="e.store"></span>
+                      <span class="tag fmt"
+                        x-show="e.format"
+                        :class="{ active: filters.format === e.format }"
+                        @click.stop="toggleFilter('format', e.format)"
+                        x-text="e.format"></span>
+                      <span class="tag price"
+                        x-show="e.price_eur != null"
+                        x-text="fmtPrice(e.price_eur)"></span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+
+        </div>
+      </template>
+    </div>
+
   </div><!-- /.cal-wrap -->
 
 </div>
@@ -509,6 +773,23 @@ function formatShort(d) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
+/* ── Time segments ─────────────────────────────────────────────────── */
+// Boundaries are [start, end) on local Madrid hours (events ISO strings
+// already carry the +02:00/+01:00 offset, so slice(11,13) gives Madrid hour).
+const SEGMENTS = [
+  { key: 'morning',   label: 'Morning',   range: '09:00 – 12:00', shortRange: '<12',   start: 0,  end: 12 },
+  { key: 'afternoon', label: 'Afternoon', range: '12:00 – 16:00', shortRange: '12–16', start: 12, end: 16 },
+  { key: 'evening',   label: 'Evening',   range: '16:00 – 19:00', shortRange: '16–19', start: 16, end: 19 },
+  { key: 'late',      label: 'Late',      range: '19:00+',        shortRange: '19+',   start: 19, end: 30 },
+];
+
+function segmentForHour(h) {
+  if (h < 12) return 'morning';
+  if (h < 16) return 'afternoon';
+  if (h < 19) return 'evening';
+  return 'late';
+}
+
 /* ── Alpine app ────────────────────────────────────────────────────── */
 function app() {
   return {
@@ -516,6 +797,8 @@ function app() {
     loading:      true,
     weekStart:    weekMonday(new Date()),
     filters:      { search: '', game: '', store: '', format: '' },
+    segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
+    SEGMENTS,
     showBackToTop: false,
 
     // 'horizontal' for desktop, 'vertical' for mobile — persisted in localStorage
@@ -578,7 +861,17 @@ function app() {
       this.filters[field] = this.filters[field] === value ? '' : value;
     },
 
-    /* ── Filtered event list ────────────────────────────────────────── */
+    /* ── Toggle a time-segment chip ─────────────────────────────────── */
+    toggleSegment(key) {
+      this.segmentFilter[key] = !this.segmentFilter[key];
+    },
+
+    /* ── Bucket an event ISO string into a segment key ──────────────── */
+    segmentOf(iso) {
+      return segmentForHour(parseInt(iso.slice(11, 13), 10));
+    },
+
+    /* ── Filtered event list (search/game/store/format/segment) ─────── */
     get filteredEvents() {
       const s   = this.filters.search.toLowerCase().trim();
       const g   = this.filters.game;
@@ -589,8 +882,50 @@ function app() {
         if (g   && (e.game || 'Unknown') !== g)        return false;
         if (st  && e.store !== st)                     return false;
         if (fmt && e.format !== fmt)                   return false;
+        if (!this.segmentFilter[this.segmentOf(e.datetime_start)]) return false;
         return true;
       });
+    },
+
+    /* ── Segments to render as global rows in horizontal view.
+         Order is fixed (Morning → Afternoon → Evening → Late).
+         A segment is included only if user-enabled AND has at least
+         one event in the current week (after non-segment filters). */
+    get activeSegments() {
+      const totals = this.segmentTotals;
+      return SEGMENTS.filter(s => this.segmentFilter[s.key] && totals[s.key] > 0);
+    },
+
+    /* ── Focus mode: only one segment is active → drop segment headers
+         from cells so the layout reads as a flat list per day. */
+    get focusMode() {
+      return this.activeSegments.length === 1;
+    },
+
+    /* ── Lookup events for a specific (day, segment) cell. ─────────── */
+    cellEvents(day, segKey) {
+      return (day.segmentMap && day.segmentMap[segKey]) || [];
+    },
+
+    /* ── Total events per segment in the current week (any filter
+         applied EXCEPT segment filter — so chip counts stay stable) ── */
+    get segmentTotals() {
+      const totals = { morning: 0, afternoon: 0, evening: 0, late: 0 };
+      const s   = this.filters.search.toLowerCase().trim();
+      const g   = this.filters.game;
+      const st  = this.filters.store;
+      const fmt = this.filters.format;
+      const weekEnd = addDays(this.weekStart, 7);
+      for (const e of this.events) {
+        if (s   && !e.title.toLowerCase().includes(s)) continue;
+        if (g   && (e.game || 'Unknown') !== g)        continue;
+        if (st  && e.store !== st)                     continue;
+        if (fmt && e.format !== fmt)                   continue;
+        const d = new Date(e.datetime_start);
+        if (d < this.weekStart || d >= weekEnd) continue;
+        totals[this.segmentOf(e.datetime_start)]++;
+      }
+      return totals;
     },
 
     /* ── 7-day array for the current week ───────────────────────────── */
@@ -614,14 +949,22 @@ function app() {
           (a, b) => a.datetime_start.localeCompare(b.datetime_start)
         );
 
-        // Group by start time (HH:MM) for horizontal view
-        const groupMap = new Map();
-        for (const e of evs) {
-          const t = this.formatTime(e.datetime_start);
-          if (!groupMap.has(t)) groupMap.set(t, []);
-          groupMap.get(t).push(e);
-        }
-        const timeGroups = Array.from(groupMap, ([time, events]) => ({ time, events }));
+        // Bucket events into segments. The map is exhaustive (one entry
+        // per segment, possibly empty) so the horizontal grid can ask
+        // "is this (day, segment) cell empty?" without a re-scan.
+        const buckets = { morning: [], afternoon: [], evening: [], late: [] };
+        for (const e of evs) buckets[this.segmentOf(e.datetime_start)].push(e);
+        // Vertical view still renders segments per-day, so we also keep
+        // the compact array (empties skipped) it expects.
+        const segments = SEGMENTS
+          .filter(s => buckets[s.key].length > 0)
+          .map(s => ({
+            key: s.key,
+            label: s.label,
+            shortRange: s.shortRange,
+            count: buckets[s.key].length,
+            events: buckets[s.key],
+          }));
 
         days.push({
           iso,
@@ -629,7 +972,8 @@ function app() {
           dom: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
           isToday: iso === todayISO,
           events: evs,
-          timeGroups,
+          segments,
+          segmentMap: buckets,
         });
       }
       return days;
@@ -664,6 +1008,23 @@ function app() {
 
     openEvent(e) {
       if (e.source_url) window.open(e.source_url, '_blank', 'noopener');
+    },
+
+    /* Map canonical game name → CSS class for per-card tint/accent. */
+    getGameClass(game) {
+      const map = {
+        'Magic: The Gathering': 'game-mtg',
+        'Star Wars: Unlimited': 'game-starwars',
+        'Riftbound':            'game-riftbound',
+        'One Piece':            'game-onepiece',
+        'Pokémon':              'game-pokemon',
+        'Lorcana':              'game-lorcana',
+        'Digimon':              'game-digimon',
+        'Yu-Gi-Oh!':            'game-yugioh',
+        'Weiß Schwarz':         'game-weiss',
+        'Naruto Mythos':        'game-naruto',
+      };
+      return map[game] || 'game-unknown';
     },
 
     resetFilters() {
