@@ -19,10 +19,12 @@ AJAX не нужен.
 """
 
 import logging
+import re
 from datetime import datetime, date
 from typing import Optional
 from zoneinfo import ZoneInfo
 
+from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
 logger = logging.getLogger(__name__)
@@ -59,6 +61,10 @@ _BLOCKED_DOMAINS = (
 FORMAT_KEYWORDS: list[tuple] = [
     ("store championship", "Store Championship"),
     ("prerelease",         "Prerelease"),
+    # cEDH must be checked before "commander" so the more specific
+    # competitive variant wins.
+    ("competitive elder dragon highlander", "cEDH"),
+    ("cedh",               "cEDH"),
     ("commander",         "Commander"),
     ("standard",          "Standard"),
     ("pioneer",           "Pioneer"),
@@ -74,6 +80,10 @@ FORMAT_KEYWORDS: list[tuple] = [
     ("bo1",               "BO1"),
     ("rcq",               "Store Championship"),
 ]
+
+# Per-event detail fetch timeout (ms). Detail pages are tiny once
+# resources are blocked; 12s is generous.
+DETAIL_FETCH_TIMEOUT = 12_000
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -115,11 +125,35 @@ def _parse_event(raw: dict, scraped_at: str) -> Optional[dict]:
         "title":          title,
         "datetime_start": datetime_start,
         "datetime_end":   datetime_end,
-        "price_eur":      None,
         "language":       LANGUAGE,
         "source_url":     raw.get("link") or None,
         "scraped_at":     scraped_at,
     }
+
+
+def _fetch_format_from_detail(page, url: str) -> Optional[str]:
+    """
+    Open the event detail page in the same Playwright context (cookie
+    challenge already cleared) and run the keyword scan against the
+    rendered text.
+
+    The detail page reliably contains a "Formato Modern" /
+    "Formato cEDH" line which our keyword list catches as a substring.
+    """
+    if not url:
+        return None
+    try:
+        page.goto(url, timeout=DETAIL_FETCH_TIMEOUT, wait_until="domcontentloaded")
+        html = page.content()
+    except PWTimeout:
+        logger.debug("%s: detail timeout %s", STORE, url)
+        return None
+    except Exception as exc:
+        logger.debug("%s: detail fetch failed %s: %s", STORE, url, exc)
+        return None
+
+    text = BeautifulSoup(html, "html.parser").get_text(" ", strip=True)
+    return _extract_format(text)
 
 
 def _route_handler(route):
@@ -165,6 +199,7 @@ def scrape() -> list[dict]:
     scraped_at = datetime.now(tz=TZ).isoformat()
     today_str = date.today().isoformat()
     all_raw: dict = {}
+    events: list[dict] = []
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(
@@ -213,11 +248,38 @@ def scrape() -> list[dict]:
                     break
 
                 month_data = _collect_month(page)
-                for day, events in month_data.items():
+                for day, day_evs in month_data.items():
                     if day not in all_raw:
-                        all_raw[day] = events
+                        all_raw[day] = day_evs
                 logger.info("%s: month %d — %d events across %d days",
                             STORE, i + 2, sum(len(v) for v in month_data.values()), len(month_data))
+
+            # ── Detail-page format enrichment ──────────────────────
+            # Parse events first, then fetch the detail page only for
+            # those whose title didn't already yield a format. The
+            # browser context stays open so the cookie challenge isn't
+            # re-triggered.
+            detail_cache: dict = {}
+            for date_str, day_events in all_raw.items():
+                if date_str < today_str:
+                    continue
+                for raw in day_events:
+                    try:
+                        parsed = _parse_event(raw, scraped_at)
+                        if not parsed:
+                            continue
+                        if parsed.get("format") is None and parsed.get("source_url"):
+                            url = parsed["source_url"]
+                            if url not in detail_cache:
+                                detail_cache[url] = _fetch_format_from_detail(page, url)
+                            parsed["format"] = detail_cache[url]
+                        events.append(parsed)
+                    except Exception as exc:
+                        logger.warning("%s: skipping event %r: %s",
+                                       STORE, raw.get("title"), exc)
+
+            logger.info("%s: detail fetches=%d  (events without title-format)",
+                        STORE, sum(1 for v in detail_cache))
 
         except PWTimeout as exc:
             logger.error("%s: scrape timed out: %s", STORE, exc)
@@ -229,19 +291,6 @@ def scrape() -> list[dict]:
             except Exception:
                 pass
             browser.close()
-
-    # Parse and filter
-    events = []
-    for date_str, day_events in all_raw.items():
-        if date_str < today_str:
-            continue
-        for raw in day_events:
-            try:
-                parsed = _parse_event(raw, scraped_at)
-                if parsed:
-                    events.append(parsed)
-            except Exception as exc:
-                logger.warning("%s: skipping event %r: %s", STORE, raw.get("title"), exc)
 
     events.sort(key=lambda e: e["datetime_start"])
     logger.info("%s: total events returned: %d", STORE, len(events))
