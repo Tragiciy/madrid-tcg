@@ -613,6 +613,13 @@
     .ev-title { font-size: .82rem; font-weight: 600; line-height: 1.25; margin-bottom: .3rem; color: var(--text); }
 
     .ev-tags  { display: flex; flex-wrap: wrap; gap: .2rem; }
+    .ev-footer {
+      align-items: center;
+      display: flex;
+      gap: .25rem;
+      justify-content: space-between;
+    }
+    .ev-footer .ev-tags { min-width: 0; }
 
     .tag {
       font-size: .65rem;
@@ -647,6 +654,34 @@
     }
     .tag.store.active { background: var(--accent-soft);   border-color: var(--accent); color: var(--accent); }
     .tag.fmt.active   { background: #a5f3fc; border-color: #0891b2; color: #0e7490; }
+
+    .calendar-btn {
+      align-items: center;
+      background: rgba(255, 255, 255, .52);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      flex: 0 0 auto;
+      font-size: .65rem;
+      font-weight: 600;
+      gap: .18rem;
+      line-height: 1;
+      min-height: 22px;
+      padding: .15rem .38rem;
+      transition: background .12s, border-color .12s, color .12s;
+      white-space: nowrap;
+    }
+    .calendar-btn:hover {
+      background: #fff;
+      border-color: var(--accent-dim);
+      color: var(--accent);
+    }
+    .calendar-btn svg {
+      height: 12px;
+      width: 12px;
+    }
 
     /* ── Per-game palette ─────────────────────────────────────────── */
     /* Each class sets the card tint + accent. Tints are deliberately
@@ -908,19 +943,33 @@
                        @click="openEvent(e)">
                     <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
                     <div class="ev-title" x-text="e.title"></div>
-                    <div class="ev-tags">
-                      <span class="tag game"
-                        :class="{ active: isSelected('game', e.game || 'Unknown') }"
-                        @click.stop="toggleFilter('game', e.game || 'Unknown')"
-                        x-text="e.game || 'Unknown'"></span>
-                      <span class="tag store"
-                        :class="{ active: isSelected('store', e.store) }"
-                        @click.stop="toggleFilter('store', e.store)"
-                        x-text="e.store"></span>
-                      <span class="tag fmt"
-                        :class="{ active: isSelected('format', e.format || 'Unknown') }"
-                        @click.stop="toggleFilter('format', e.format || 'Unknown')"
-                        x-text="e.format || 'Unknown'"></span>
+                    <div class="ev-footer">
+                      <div class="ev-tags">
+                        <span class="tag game"
+                          :class="{ active: isSelected('game', e.game || 'Unknown') }"
+                          @click.stop="toggleFilter('game', e.game || 'Unknown')"
+                          x-text="e.game || 'Unknown'"></span>
+                        <span class="tag store"
+                          :class="{ active: isSelected('store', e.store) }"
+                          @click.stop="toggleFilter('store', e.store)"
+                          x-text="e.store"></span>
+                        <span class="tag fmt"
+                          :class="{ active: isSelected('format', e.format || 'Unknown') }"
+                          @click.stop="toggleFilter('format', e.format || 'Unknown')"
+                          x-text="e.format || 'Unknown'"></span>
+                      </div>
+                      <button
+                        class="calendar-btn"
+                        type="button"
+                        x-show="canAddToCalendar(e)"
+                        @click.stop="openCalendar(e)"
+                        title="Add to Google Calendar"
+                        aria-label="Add to Google Calendar">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M8 2v4"></path><path d="M16 2v4"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path>
+                        </svg>
+                        <span>Cal</span>
+                      </button>
                     </div>
                   </div>
                 </template>
@@ -978,6 +1027,73 @@ function addDays(d, n) {
 
 function formatShort(d) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+const STORE_ADDRESSES = {
+  'Arte 9': 'Calle de Francisco Silvela, 21, 28028 Madrid',
+  'La Guarida Juegos': 'Calle de las Peñuelas, 14, Local 1, 28005 Madrid',
+  'Metropolis Center': 'Calle Andrés Mellado, 22, 28015 Madrid',
+  'Micelion Games': 'Avenida del Mediterráneo, 8, 28007 Madrid',
+};
+
+function googleCalendarDate(d) {
+  if (!(d instanceof Date) || Number.isNaN(d.getTime())) return null;
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Madrid',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(d).reduce((acc, part) => {
+    if (part.type !== 'literal') acc[part.type] = part.value;
+    return acc;
+  }, {});
+  return `${parts.year}${parts.month}${parts.day}T${parts.hour}${parts.minute}${parts.second}`;
+}
+
+function calendarTitle(e) {
+  const game = e.game || 'TCG';
+  const store = e.store || 'Unknown store';
+  return e.format ? `${game} — ${e.format} at ${store}` : `${game} event at ${store}`;
+}
+
+function calendarDetails(e) {
+  const lines = [
+    e.title ? `Event: ${e.title}` : null,
+    `Game: ${e.game || 'Unknown'}`,
+    e.format ? `Format: ${e.format}` : null,
+    `Store: ${e.store || 'Unknown'}`,
+    e.datetime_start ? `Date: ${new Date(e.datetime_start).toLocaleDateString('en-GB', { dateStyle: 'full', timeZone: 'Europe/Madrid' })}` : null,
+    e.datetime_start ? `Time: ${new Date(e.datetime_start).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' })}` : null,
+    e.notes ? `Notes: ${e.notes}` : null,
+    e.source_url ? `Source: ${e.source_url}` : null,
+  ];
+  return lines.filter(Boolean).join('\n');
+}
+
+function buildGoogleCalendarUrl(e) {
+  if (!e || !e.datetime_start) return null;
+  const start = new Date(e.datetime_start);
+  if (Number.isNaN(start.getTime())) return null;
+  const end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
+  const startText = googleCalendarDate(start);
+  const endText = googleCalendarDate(end);
+  if (!startText || !endText) return null;
+
+  const location = STORE_ADDRESSES[e.store] || e.store || '';
+  const params = [
+    ['action', 'TEMPLATE'],
+    ['text', calendarTitle(e)],
+    ['dates', `${startText}/${endText}`],
+    ['ctz', 'Europe/Madrid'],
+    ['details', calendarDetails(e)],
+    ['location', location],
+  ];
+  return 'https://calendar.google.com/calendar/render?' +
+    params.map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
 }
 
 /* ── Time segments ─────────────────────────────────────────────────── */
@@ -1394,6 +1510,15 @@ function app() {
       if (e.source_url) window.open(e.source_url, '_blank', 'noopener');
     },
 
+    canAddToCalendar(e) {
+      return Boolean(buildGoogleCalendarUrl(e));
+    },
+
+    openCalendar(e) {
+      const url = buildGoogleCalendarUrl(e);
+      if (url) window.open(url, '_blank', 'noopener');
+    },
+
     /* ── Card HTML for a horizontal grid cell.
          Built as a string and injected via x-html on the cell's
          .seg-cards div. We do this because Alpine's nested
@@ -1418,14 +1543,26 @@ function app() {
         const past = this.isEventPast(e);
         const time = this.formatTime(e.datetime_start);
         const url = e.source_url || '';
+        const calendarUrl = buildGoogleCalendarUrl(e);
+        const calendarButton = calendarUrl
+          ? `<button class="calendar-btn" type="button" data-calendar-url="${esc(calendarUrl)}" title="Add to Google Calendar" aria-label="Add to Google Calendar">` +
+              `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
+                `<path d="M8 2v4"></path><path d="M16 2v4"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path>` +
+              `</svg>` +
+              `<span>Cal</span>` +
+            `</button>`
+          : '';
         out.push(
           `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-url="${esc(url)}">` +
             `<div class="ev-time">${esc(time)}</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
-            `<div class="ev-tags">` +
-              `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
-              `<span class="tag store${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}">${esc(e.store)}</span>` +
-              `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
+            `<div class="ev-footer">` +
+              `<div class="ev-tags">` +
+                `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
+                `<span class="tag store${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}">${esc(e.store)}</span>` +
+                `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
+              `</div>` +
+              calendarButton +
             `</div>` +
           `</div>`
         );
@@ -1437,6 +1574,12 @@ function app() {
          Chip click → toggle that filter and stop propagation.
          Card click (anywhere else inside .ev-card) → open source_url. */
     onGridClick(ev) {
+      const calendarButton = ev.target.closest('[data-calendar-url]');
+      if (calendarButton) {
+        ev.stopPropagation();
+        window.open(calendarButton.dataset.calendarUrl, '_blank', 'noopener');
+        return;
+      }
       const tag = ev.target.closest('[data-filter]');
       if (tag) {
         ev.stopPropagation();
