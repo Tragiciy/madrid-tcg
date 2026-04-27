@@ -282,6 +282,10 @@
     /* Segment cell. min-height keeps an empty cell visible (~10px) so
        totally empty days still register a placeholder for alignment. */
     .seg-cell { padding: .3rem .35rem .35rem; min-height: 10px; }
+    /* Container for the event cards inside a seg-cell — stacked, with
+       the same gap the seg-cell flex layout used to provide. */
+    .seg-card-list { display: flex; flex-direction: column; gap: .25rem; }
+    .seg-cards     { display: flex; flex-direction: column; gap: .25rem; }
     .seg-cell.is-empty {
       background: var(--surface2);
       box-shadow: none;
@@ -367,9 +371,6 @@
     }
     .cal-grid-h .ev-tags  { gap: .15rem; }
     .cal-grid-h .tag      { padding: .05rem .32rem; font-size: .6rem; }
-    @media (max-width: 1200px) {
-      .cal-grid-h .tag.price { display: none; }
-    }
 
     /* Compact day header in horizontal view */
     .cal-wrap.view-horizontal .day-header {
@@ -401,10 +402,6 @@
     }
     .cal-wrap.view-horizontal .ev-tags  { gap: .15rem; }
     .cal-wrap.view-horizontal .tag      { padding: .05rem .32rem; font-size: .6rem; }
-    /* Low-priority chips hidden in narrow columns to avoid overflow */
-    @media (max-width: 1200px) {
-      .cal-wrap.view-horizontal .tag.price { display: none; }
-    }
 
     /* VERTICAL: single column stack, header pinned left */
     .cal-wrap.view-vertical .cal-grid {
@@ -514,7 +511,6 @@
     }
     .tag.store { color: var(--text-muted); background: var(--surface2); }
     .tag.fmt   { color: #0e7490; border-color: #a5f3fc; background: #ecfeff; }
-    .tag.price { color: #15803d; border-color: #bbf7d0; background: #f0fdf4; font-weight: 600; }
 
     /* Clickable chips */
     .tag.game, .tag.store, .tag.fmt { cursor: pointer; transition: background .12s, border-color .12s, color .12s; }
@@ -671,6 +667,7 @@
     <!-- ── HORIZONTAL: global grid; segments aligned across days ── -->
     <div class="cal-grid cal-grid-h"
          x-show="viewMode === 'horizontal'"
+         @click="onGridClick($event)"
          :style="`grid-template-rows: auto repeat(${activeSegments.length}, auto)`">
 
       <!-- Day-header row -->
@@ -684,57 +681,37 @@
         </div>
       </template>
 
-      <!-- Segment × day cells (one row per active segment) -->
-      <template x-for="(seg, sIdx) in activeSegments" :key="seg.key">
-        <template x-for="(day, dIdx) in weekDays" :key="seg.key + '-' + day.iso">
-          <div class="day-cell seg-cell"
-               :class="[
-                 day.isToday ? 'is-today' : '',
-                 cellEvents(day, seg.key).length === 0 ? 'is-empty' : '',
-                 collapsedSegments[seg.key] ? 'is-collapsed' : '',
-                 isSegmentPast(seg.key, day.iso) ? 'is-past' : ''
-               ]"
-               :style="`grid-column: ${dIdx + 1}; grid-row: ${sIdx + 2};`">
-            <!-- segment header: hidden in focus mode and on empty cells.
-                 Click toggles global collapse for this segment. -->
-            <div class="seg-header is-clickable"
-                 x-show="!focusMode && cellEvents(day, seg.key).length > 0"
-                 @click="toggleSegmentCollapse(seg.key)"
-                 :title="collapsedSegments[seg.key] ? 'Expand' : 'Collapse'">
-              <span class="seg-chev" :class="{ 'is-collapsed': collapsedSegments[seg.key] }"></span>
-              <span x-text="seg.label"></span>
-              <span class="seg-header-count" x-text="'· ' + cellEvents(day, seg.key).length"></span>
-              <span class="seg-range" x-text="seg.shortRange"></span>
-            </div>
-            <template x-for="e in cellEvents(day, seg.key)" :key="e.source_url + e.datetime_start">
-              <div class="ev-card"
-                   :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '' ]"
-                   x-show="!collapsedSegments[seg.key]"
-                   @click="openEvent(e)">
-                <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
-                <div class="ev-title" x-text="e.title"></div>
-                <div class="ev-tags">
-                  <span class="tag game"
-                    :class="{ active: filters.game === (e.game || 'Unknown') }"
-                    @click.stop="toggleFilter('game', e.game || 'Unknown')"
-                    x-text="e.game || 'Unknown'"></span>
-                  <span class="tag store"
-                    :class="{ active: filters.store === e.store }"
-                    @click.stop="toggleFilter('store', e.store)"
-                    x-text="e.store"></span>
-                  <span class="tag fmt"
-                    x-show="e.format"
-                    :class="{ active: filters.format === e.format }"
-                    @click.stop="toggleFilter('format', e.format)"
-                    x-text="e.format"></span>
-                  <span class="tag price"
-                    x-show="e.price_eur != null"
-                    x-text="fmtPrice(e.price_eur)"></span>
-                </div>
-              </div>
-            </template>
+      <!-- Segment × day cells, flattened to a single x-for to avoid
+           Alpine's triple-nested-template processing quirk. -->
+      <template x-for="cell in cells" :key="cell.key">
+        <div class="day-cell seg-cell"
+             :class="[
+               cell.isToday ? 'is-today' : '',
+               cell.isEmpty ? 'is-empty' : '',
+               collapsedSegments[cell.seg.key] ? 'is-collapsed' : '',
+               cell.isPast ? 'is-past' : ''
+             ]"
+             :style="`grid-column: ${cell.dIdx + 1}; grid-row: ${cell.sIdx + 2};`">
+          <!-- Header always present when the cell has events, regardless
+               of collapsed state. -->
+          <div class="seg-header is-clickable"
+               x-show="!focusMode && cell.events.length > 0"
+               @click="toggleSegmentCollapse(cell.seg.key)"
+               :title="collapsedSegments[cell.seg.key] ? 'Expand' : 'Collapse'">
+            <span class="seg-chev" :class="{ 'is-collapsed': collapsedSegments[cell.seg.key] }"></span>
+            <span x-text="cell.seg.label"></span>
+            <span class="seg-header-count" x-text="'· ' + cell.events.length"></span>
+            <span class="seg-range" x-text="cell.seg.shortRange"></span>
           </div>
-        </template>
+          <!-- Cards rendered as raw HTML to bypass an Alpine quirk where
+               nested <template x-for> inside dynamically cloned content
+               doesn't re-fire when the outer iterable rebuilds. The grid
+               root has a single delegated @click that handles card
+               clicks and chip toggles via data- attributes. -->
+          <div class="seg-cards"
+               x-html="cellCardsHtml(cell)"
+               x-show="!collapsedSegments[cell.seg.key]"></div>
+        </div>
       </template>
     </div>
 
@@ -782,9 +759,6 @@
                         :class="{ active: filters.format === e.format }"
                         @click.stop="toggleFilter('format', e.format)"
                         x-text="e.format"></span>
-                      <span class="tag price"
-                        x-show="e.price_eur != null"
-                        x-text="fmtPrice(e.price_eur)"></span>
                     </div>
                   </div>
                 </template>
@@ -1036,6 +1010,39 @@ function app() {
       return (day.segmentMap && day.segmentMap[segKey]) || [];
     },
 
+    /* ── Flat cell list for the horizontal grid.
+         Two flat lists are returned by separate getters:
+           cells       — one per (segment, day) pair, used to render
+                         placeholders/headers placed via grid-row/col.
+           cellsAndCards — Alpine refused to wire a nested
+                         <template x-for> in the cell content
+                         (the inner template stayed unprocessed),
+                         so we iterate events at the same outer
+                         level and place each card into its
+                         corresponding grid cell via inline style.
+                         This avoids any template nesting. */
+    get cells() {
+      const segs = this.activeSegments;
+      const days = this.weekDays;
+      const out = [];
+      for (let s = 0; s < segs.length; s++) {
+        for (let d = 0; d < days.length; d++) {
+          const seg = segs[s];
+          const day = days[d];
+          const events = (day.segmentMap && day.segmentMap[seg.key]) || [];
+          out.push({
+            key:     seg.key + '-' + day.iso,
+            seg, day, sIdx: s, dIdx: d,
+            events,
+            isEmpty: events.length === 0,
+            isToday: day.isToday,
+            isPast:  this.isSegmentPast(seg.key, day.iso),
+          });
+        }
+      }
+      return out;
+    },
+
     /* ── Total events per segment in the current week (any filter
          applied EXCEPT segment filter — so chip counts stay stable) ── */
     get segmentTotals() {
@@ -1130,13 +1137,68 @@ function app() {
       });
     },
 
-    fmtPrice(p) {
-      if (p == null) return '';
-      return (p % 1 === 0 ? p : p.toFixed(2)) + ' €';
-    },
-
     openEvent(e) {
       if (e.source_url) window.open(e.source_url, '_blank', 'noopener');
+    },
+
+    /* ── Card HTML for a horizontal grid cell.
+         Built as a string and injected via x-html on the cell's
+         .seg-cards div. We do this because Alpine's nested
+         <template x-for> inside the per-cell clones produced by the
+         outer x-for left the inner template unprocessed (the inner
+         x-for ran once with an empty array and never re-fired even
+         after events.json finished loading). x-html re-evaluates
+         reactively whenever cell.events changes, so the cards stay
+         in sync. Click handling is delegated at the grid level. */
+    cellCardsHtml(cell) {
+      const events = this.cellEvents(cell.day, cell.seg.key);
+      if (!events.length) return '';
+      const esc = s => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+      const fGame = this.filters.game;
+      const fStore = this.filters.store;
+      const fFormat = this.filters.format;
+      const out = [];
+      for (const e of events) {
+        const game = e.game || 'Unknown';
+        const gameClass = this.getGameClass(e.game);
+        const past = this.isEventPast(e);
+        const time = this.formatTime(e.datetime_start);
+        const url = e.source_url || '';
+        const fmtChip = e.format
+          ? `<span class="tag fmt${fFormat === e.format ? ' active' : ''}" data-filter="format" data-value="${esc(e.format)}">${esc(e.format)}</span>`
+          : '';
+        out.push(
+          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-url="${esc(url)}">` +
+            `<div class="ev-time">${esc(time)}</div>` +
+            `<div class="ev-title">${esc(e.title)}</div>` +
+            `<div class="ev-tags">` +
+              `<span class="tag game${fGame === game ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
+              `<span class="tag store${fStore === e.store ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}">${esc(e.store)}</span>` +
+              fmtChip +
+            `</div>` +
+          `</div>`
+        );
+      }
+      return out.join('');
+    },
+
+    /* ── Delegated click on the horizontal grid.
+         Chip click → toggle that filter and stop propagation.
+         Card click (anywhere else inside .ev-card) → open source_url. */
+    onGridClick(ev) {
+      const tag = ev.target.closest('[data-filter]');
+      if (tag) {
+        ev.stopPropagation();
+        this.toggleFilter(tag.dataset.filter, tag.dataset.value);
+        return;
+      }
+      const card = ev.target.closest('.ev-card[data-url]');
+      if (card && card.dataset.url) {
+        window.open(card.dataset.url, '_blank', 'noopener');
+      }
     },
 
     /* Map canonical game name → CSS class for per-card tint/accent. */

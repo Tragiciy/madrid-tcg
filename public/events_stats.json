@@ -1,22 +1,101 @@
 {
-  "total_events": 181,
+  "total_events": 491,
+  "active_events": 316,
   "by_store": {
-    "Micelion Games": 146,
-    "Metropolis Center": 35
+    "Arte 9": {
+      "total": 313,
+      "active": 173,
+      "raw_this_run": 173,
+      "previous_raw": 178,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "anomaly": null
+    },
+    "Micelion Games": {
+      "total": 146,
+      "active": 136,
+      "raw_this_run": 136,
+      "previous_raw": 145,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "anomaly": null
+    },
+    "Metropolis Center": {
+      "total": 32,
+      "active": 7,
+      "raw_this_run": 7,
+      "previous_raw": 32,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "anomaly": "sharp_drop"
+    }
   },
   "by_game": {
-    "Magic: The Gathering": 63,
-    "Riftbound": 25,
-    "One Piece": 18,
+    "Magic: The Gathering": 236,
+    "Riftbound": 54,
+    "Lorcana": 53,
+    "Unknown": 35,
+    "Star Wars: Unlimited": 31,
+    "One Piece": 26,
+    "Pokémon": 22,
     "Digimon": 17,
-    "Pokémon": 16,
-    "Star Wars: Unlimited": 9,
-    "Lorcana": 9,
-    "Weiß Schwarz": 9,
-    "Unknown": 7,
+    "Weiß Schwarz": 10,
     "Naruto Mythos": 5,
-    "Yu-Gi-Oh!": 3
+    "Yu-Gi-Oh!": 2
+  },
+  "scrapers": {
+    "scrapers.arte9": {
+      "store": "Arte 9",
+      "raw": 173,
+      "valid": 173,
+      "dropped": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "error": null,
+      "previous_raw": 178,
+      "anomaly": null
+    },
+    "scrapers.metropolis_center": {
+      "store": "Metropolis Center",
+      "raw": 7,
+      "valid": 7,
+      "dropped": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "error": null,
+      "previous_raw": 32,
+      "anomaly": "sharp_drop"
+    },
+    "scrapers.micelion_games": {
+      "store": "Micelion Games",
+      "raw": 136,
+      "valid": 136,
+      "dropped": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "error": null,
+      "previous_raw": 145,
+      "anomaly": null
+    }
   },
   "failed_scrapers": [],
-  "generated_at": "2026-04-24T23:17:58.493466+02:00"
+  "generated_at": "2026-04-27T14:10:12.512479+02:00"
 }
