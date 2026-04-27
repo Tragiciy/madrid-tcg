@@ -109,6 +109,12 @@ GAME_CANONICAL: dict = {
     "weiss": "Weiß Schwarz",
     "weiss schwarz": "Weiß Schwarz",
     "weiß schwarz": "Weiß Schwarz",
+    # Final Fantasy TCG. "final fantasy tcg" must come before
+    # "final fantasy" so the longer match wins; both normalise to the
+    # same canonical name.
+    "final fantasy tcg": "Final Fantasy TCG",
+    "fftcg":             "Final Fantasy TCG",
+    "final fantasy":     "Final Fantasy TCG",
     # Title-driven
     "liga star wars": "Star Wars: Unlimited",
     "rcq": "Magic: The Gathering",
@@ -134,6 +140,7 @@ ALLOWED_GAMES: set = {
     "Weiß Schwarz",
     "Riftbound",
     "Naruto Mythos",
+    "Final Fantasy TCG",
 }
 
 # Keep in sync with FORMAT_KEYWORDS values in scrapers/*.py.
