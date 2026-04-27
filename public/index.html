@@ -132,6 +132,127 @@
     select             { min-width: 130px; }
     input:focus, select:focus { border-color: var(--accent); }
 
+    .facet {
+      position: relative;
+      width: 150px;
+    }
+    .facet-btn {
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      font-size: .82rem;
+      gap: .3rem;
+      justify-content: space-between;
+      min-height: 34px;
+      padding: .35rem .55rem;
+      text-align: left;
+      transition: border-color .15s, color .15s;
+      width: 100%;
+    }
+    .facet-btn:hover,
+    .facet-btn[aria-expanded="true"] { border-color: var(--accent); }
+    .facet-summary {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .facet-caret { color: var(--text-muted); flex: 0 0 auto; font-size: .7rem; }
+    .facet-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, .14);
+      left: 0;
+      max-height: 280px;
+      overflow: auto;
+      padding: .25rem;
+      position: absolute;
+      top: calc(100% + .25rem);
+      width: min(230px, calc(100vw - 2rem));
+      z-index: 20;
+    }
+    .facet-actions {
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      margin: -.1rem -.1rem .25rem;
+      padding: 0 0 .25rem;
+    }
+    .facet-clear {
+      background: transparent;
+      border: 0;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: .72rem;
+      padding: .15rem .25rem;
+    }
+    .facet-option {
+      align-items: center;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      gap: .35rem;
+      letter-spacing: 0;
+      min-height: 28px;
+      padding: .18rem .3rem;
+      text-transform: none;
+      white-space: nowrap;
+    }
+    .filter-group .facet-option {
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .facet-option:hover { background: var(--surface2); }
+    .facet-option:has(input:checked) {
+      background: var(--accent-soft);
+      box-shadow: inset 0 0 0 1px var(--accent-dim);
+    }
+    .facet-option input {
+      appearance: none;
+      -webkit-appearance: none;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: #fff;
+      display: inline-flex;
+      flex: 0 0 auto;
+      height: 13px;
+      justify-content: center;
+      margin: 0;
+      width: 13px;
+    }
+    .facet-option input:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .facet-option input:checked::after {
+      content: "✓";
+      font-size: .62rem;
+      line-height: 1;
+    }
+    .facet-option-label {
+      flex: 1 1 auto;
+      font-size: .76rem;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .facet-option-count {
+      color: var(--text-muted);
+      flex: 0 0 auto;
+      font-size: .68rem;
+      padding-left: .4rem;
+    }
+    .facet-empty {
+      color: var(--text-muted);
+      font-size: .78rem;
+      padding: .35rem;
+    }
+
     /* ── View toggle buttons ──────────────────────────────────────── */
     .view-toggle {
       display: flex;
@@ -576,7 +697,9 @@
       .site-header { flex-direction: column; align-items: flex-start; }
       .filters { gap: .4rem; }
       input[type="text"] { width: 120px; }
-      select { min-width: 110px; }
+      select, .facet { min-width: 110px; width: 100%; }
+      .filter-group { width: 100%; }
+      .facet-panel { width: 100%; }
     }
   </style>
 </head>
@@ -599,7 +722,7 @@
     <span class="week-range" x-text="weekRangeLabel"></span>
     <span class="count-badge" x-show="!loading">
       <span x-text="weekEventCount"></span>
-      event<template x-if="weekEventCount !== 1">s</template> this week
+      <span x-text="weekEventCount === 1 ? 'event' : 'events'"></span> this week
     </span>
     <div class="view-toggle" style="margin-left:auto">
       <button :class="{ active: viewMode === 'vertical' }"   @click="setView('vertical')">≡ Vertical</button>
@@ -608,37 +731,76 @@
   </div>
 
   <!-- Filters -->
-  <div class="filters">
+  <div class="filters" @keydown.escape.window="openFacet = null">
     <div class="filter-group">
       <label>Search</label>
       <input type="text" placeholder="Title…" x-model.debounce.250ms="filters.search" />
     </div>
     <div class="filter-group">
       <label>Game</label>
-      <select x-model="filters.game">
-        <option value="">All</option>
-        <template x-for="g in gameOptions" :key="g">
-          <option :value="g" x-text="g"></option>
-        </template>
-      </select>
+      <div class="facet" @click.outside="openFacet = openFacet === 'game' ? null : openFacet">
+        <button class="facet-btn" type="button" @click="toggleFacetPanel('game')" :aria-expanded="openFacet === 'game'">
+          <span class="facet-summary" x-text="facetSummary('game', 'All games')"></span>
+          <span class="facet-caret">▾</span>
+        </button>
+        <div class="facet-panel" x-show="openFacet === 'game'">
+          <div class="facet-actions" x-show="filters.game.length">
+            <button class="facet-clear" type="button" @click="clearFacet('game')">All</button>
+          </div>
+          <template x-for="g in gameOptions" :key="g">
+            <label class="facet-option">
+              <input type="checkbox" :checked="isSelected('game', g)" @change="toggleFilter('game', g)">
+              <span class="facet-option-label" x-text="g"></span>
+              <span class="facet-option-count" x-text="facetOptionCount('game', g)"></span>
+            </label>
+          </template>
+          <div class="facet-empty" x-show="gameOptions.length === 0">No games</div>
+        </div>
+      </div>
     </div>
     <div class="filter-group">
       <label>Store</label>
-      <select x-model="filters.store">
-        <option value="">All</option>
-        <template x-for="s in storeOptions" :key="s">
-          <option :value="s" x-text="s"></option>
-        </template>
-      </select>
+      <div class="facet" @click.outside="openFacet = openFacet === 'store' ? null : openFacet">
+        <button class="facet-btn" type="button" @click="toggleFacetPanel('store')" :aria-expanded="openFacet === 'store'">
+          <span class="facet-summary" x-text="facetSummary('store', 'All stores')"></span>
+          <span class="facet-caret">▾</span>
+        </button>
+        <div class="facet-panel" x-show="openFacet === 'store'">
+          <div class="facet-actions" x-show="filters.store.length">
+            <button class="facet-clear" type="button" @click="clearFacet('store')">All</button>
+          </div>
+          <template x-for="s in storeOptions" :key="s">
+            <label class="facet-option">
+              <input type="checkbox" :checked="isSelected('store', s)" @change="toggleFilter('store', s)">
+              <span class="facet-option-label" x-text="s"></span>
+              <span class="facet-option-count" x-text="facetOptionCount('store', s)"></span>
+            </label>
+          </template>
+          <div class="facet-empty" x-show="storeOptions.length === 0">No stores</div>
+        </div>
+      </div>
     </div>
     <div class="filter-group">
       <label>Format</label>
-      <select x-model="filters.format">
-        <option value="">All</option>
-        <template x-for="f in formatOptions" :key="f">
-          <option :value="f" x-text="f"></option>
-        </template>
-      </select>
+      <div class="facet" @click.outside="openFacet = openFacet === 'format' ? null : openFacet">
+        <button class="facet-btn" type="button" @click="toggleFacetPanel('format')" :aria-expanded="openFacet === 'format'">
+          <span class="facet-summary" x-text="facetSummary('format', 'All formats')"></span>
+          <span class="facet-caret">▾</span>
+        </button>
+        <div class="facet-panel" x-show="openFacet === 'format'">
+          <div class="facet-actions" x-show="filters.format.length">
+            <button class="facet-clear" type="button" @click="clearFacet('format')">All</button>
+          </div>
+          <template x-for="f in formatOptions" :key="f">
+            <label class="facet-option">
+              <input type="checkbox" :checked="isSelected('format', f)" @change="toggleFilter('format', f)">
+              <span class="facet-option-label" x-text="f"></span>
+              <span class="facet-option-count" x-text="facetOptionCount('format', f)"></span>
+            </label>
+          </template>
+          <div class="facet-empty" x-show="formatOptions.length === 0">No formats</div>
+        </div>
+      </div>
     </div>
     <button class="btn" style="align-self:flex-end" @click="resetFilters">✕ Clear</button>
   </div>
@@ -748,18 +910,17 @@
                     <div class="ev-title" x-text="e.title"></div>
                     <div class="ev-tags">
                       <span class="tag game"
-                        :class="{ active: filters.game === (e.game || 'Unknown') }"
+                        :class="{ active: isSelected('game', e.game || 'Unknown') }"
                         @click.stop="toggleFilter('game', e.game || 'Unknown')"
                         x-text="e.game || 'Unknown'"></span>
                       <span class="tag store"
-                        :class="{ active: filters.store === e.store }"
+                        :class="{ active: isSelected('store', e.store) }"
                         @click.stop="toggleFilter('store', e.store)"
                         x-text="e.store"></span>
                       <span class="tag fmt"
-                        x-show="e.format"
-                        :class="{ active: filters.format === e.format }"
-                        @click.stop="toggleFilter('format', e.format)"
-                        x-text="e.format"></span>
+                        :class="{ active: isSelected('format', e.format || 'Unknown') }"
+                        @click.stop="toggleFilter('format', e.format || 'Unknown')"
+                        x-text="e.format || 'Unknown'"></span>
                     </div>
                   </div>
                 </template>
@@ -862,8 +1023,9 @@ function app() {
     events:       [],
     loading:      true,
     weekStart:    weekMonday(new Date()),
-    filters:      { search: '', game: '', store: '', format: '' },
+    filters:      { search: '', game: [], store: [], format: [] },
     segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
+    openFacet: null,
     // Independent of segmentFilter: collapsed segments still occupy a
     // grid row (alignment preserved) but their cards are hidden.
     collapsedSegments: { morning: false, afternoon: false, evening: false, late: false },
@@ -883,6 +1045,9 @@ function app() {
       window.addEventListener('scroll', () => {
         this.showBackToTop = window.scrollY > 400;
       }, { passive: true });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') this.openFacet = null;
+      });
 
       // Run once immediately, then refresh the Madrid clock every minute
       // so past-segment / past-event styling progresses without a reload.
@@ -892,11 +1057,14 @@ function app() {
       try {
         const res = await fetch('events.json');
         this.events = await res.json();
+        this.cleanupFilters();
       } catch (err) {
         console.error('Failed to load events.json', err);
       } finally {
         this.loading = false;
       }
+
+      this.$watch('filters.search', () => this.cleanupFilters());
     },
 
     setView(mode) {
@@ -911,36 +1079,119 @@ function app() {
     },
 
     /* ── Navigation ────────────────────────────────────────────────── */
-    prevWeek() { this.weekStart = addDays(this.weekStart, -7); },
-    nextWeek() { this.weekStart = addDays(this.weekStart, +7); },
+    prevWeek() {
+      this.weekStart = addDays(this.weekStart, -7);
+      this.cleanupFilters();
+    },
+    nextWeek() {
+      this.weekStart = addDays(this.weekStart, +7);
+      this.cleanupFilters();
+    },
     goToday() {
       this.weekStart = weekMonday(new Date());
+      this.cleanupFilters();
       // In vertical view scroll to today after Alpine re-renders the week
       if (this.viewMode === 'vertical') {
         this.$nextTick(() => this.scrollToDay(isoDay(new Date())));
       }
     },
 
-    /* ── Filter options (all events, not just current week) ─────────── */
+    /* ── Faceted filter options ─────────────────────────────────────── */
     get gameOptions() {
-      return [...new Set(this.events.map(e => e.game || 'Unknown'))].sort();
+      return this.availableOptions('game');
     },
     get storeOptions() {
-      return [...new Set(this.events.map(e => e.store))].sort();
+      return this.availableOptions('store');
     },
     get formatOptions() {
-      return [...new Set(this.events.map(e => e.format).filter(Boolean))].sort();
+      return this.availableOptions('format');
+    },
+
+    valueFor(field, e) {
+      if (field === 'game') return e.game || 'Unknown';
+      if (field === 'store') return e.store || 'Unknown';
+      if (field === 'format') return e.format || 'Unknown';
+      return '';
+    },
+
+    selectedValues(field) {
+      return Array.isArray(this.filters[field]) ? this.filters[field] : [];
+    },
+
+    isSelected(field, value) {
+      return this.selectedValues(field).includes(value);
+    },
+
+    toggleFacetPanel(field) {
+      this.openFacet = this.openFacet === field ? null : field;
+    },
+
+    clearFacet(field) {
+      this.filters[field] = [];
+      this.cleanupFilters();
+    },
+
+    facetSummary(field, fallback) {
+      const values = this.selectedValues(field);
+      if (!values.length) return fallback;
+      if (values.length === 1) return values[0];
+      if (values.length === 2) return `${values[0]} + ${values[1]}`;
+      return `${values.length} ${this.facetPlural(field)}`;
+    },
+
+    facetPlural(field) {
+      return field === 'game' ? 'games' : field === 'store' ? 'stores' : 'formats';
+    },
+
+    availableOptions(field) {
+      const values = new Set();
+      for (const e of this.events) {
+        if (this.eventMatches(e, { ignore: field, includeWeek: true })) {
+          values.add(this.valueFor(field, e));
+        }
+      }
+      return [...values].sort();
+    },
+
+    facetOptionCount(field, value) {
+      let count = 0;
+      for (const e of this.events) {
+        if (
+          this.valueFor(field, e) === value &&
+          this.eventMatches(e, { ignore: field, includeWeek: true })
+        ) {
+          count++;
+        }
+      }
+      return count;
+    },
+
+    cleanupFilters() {
+      for (const field of ['game', 'store', 'format']) {
+        const allowed = new Set(this.availableOptions(field));
+        const next = this.selectedValues(field).filter(v => allowed.has(v));
+        if (next.length !== this.selectedValues(field).length) {
+          this.filters[field] = next;
+        }
+      }
     },
 
     /* ── Toggle a filter chip (game/store/format) ───────────────────── */
-    // If the filter already equals the chip value → clear it; else apply it.
+    // If selected, remove it; otherwise add it to the facet group.
     toggleFilter(field, value) {
-      this.filters[field] = this.filters[field] === value ? '' : value;
+      if (!value) return;
+      const values = this.selectedValues(field).slice();
+      const idx = values.indexOf(value);
+      if (idx >= 0) values.splice(idx, 1);
+      else values.push(value);
+      this.filters[field] = values;
+      this.cleanupFilters();
     },
 
     /* ── Toggle a time-segment chip ─────────────────────────────────── */
     toggleSegment(key) {
       this.segmentFilter[key] = !this.segmentFilter[key];
+      this.cleanupFilters();
     },
 
     /* ── Toggle a segment's collapsed state (cards hidden, header
@@ -975,20 +1226,31 @@ function app() {
       return segmentForHour(parseInt(iso.slice(11, 13), 10));
     },
 
+    isInCurrentWeek(e) {
+      const d = new Date(e.datetime_start);
+      const weekEnd = addDays(this.weekStart, 7);
+      return d >= this.weekStart && d < weekEnd;
+    },
+
+    eventMatches(e, opts = {}) {
+      const ignore = opts.ignore || null;
+      const includeSegment = opts.includeSegment !== false;
+      const includeWeek = opts.includeWeek === true;
+      const s = this.filters.search.toLowerCase().trim();
+      if (s && !e.title.toLowerCase().includes(s)) return false;
+      if (includeWeek && !this.isInCurrentWeek(e)) return false;
+      if (includeSegment && !this.segmentFilter[this.segmentOf(e.datetime_start)]) return false;
+      for (const field of ['game', 'store', 'format']) {
+        if (ignore === field) continue;
+        const selected = this.selectedValues(field);
+        if (selected.length && !selected.includes(this.valueFor(field, e))) return false;
+      }
+      return true;
+    },
+
     /* ── Filtered event list (search/game/store/format/segment) ─────── */
     get filteredEvents() {
-      const s   = this.filters.search.toLowerCase().trim();
-      const g   = this.filters.game;
-      const st  = this.filters.store;
-      const fmt = this.filters.format;
-      return this.events.filter(e => {
-        if (s   && !e.title.toLowerCase().includes(s)) return false;
-        if (g   && (e.game || 'Unknown') !== g)        return false;
-        if (st  && e.store !== st)                     return false;
-        if (fmt && e.format !== fmt)                   return false;
-        if (!this.segmentFilter[this.segmentOf(e.datetime_start)]) return false;
-        return true;
-      });
+      return this.events.filter(e => this.eventMatches(e));
     },
 
     /* ── Segments to render as global rows in horizontal view.
@@ -1048,18 +1310,8 @@ function app() {
          applied EXCEPT segment filter — so chip counts stay stable) ── */
     get segmentTotals() {
       const totals = { morning: 0, afternoon: 0, evening: 0, late: 0 };
-      const s   = this.filters.search.toLowerCase().trim();
-      const g   = this.filters.game;
-      const st  = this.filters.store;
-      const fmt = this.filters.format;
-      const weekEnd = addDays(this.weekStart, 7);
       for (const e of this.events) {
-        if (s   && !e.title.toLowerCase().includes(s)) continue;
-        if (g   && (e.game || 'Unknown') !== g)        continue;
-        if (st  && e.store !== st)                     continue;
-        if (fmt && e.format !== fmt)                   continue;
-        const d = new Date(e.datetime_start);
-        if (d < this.weekStart || d >= weekEnd) continue;
+        if (!this.eventMatches(e, { includeSegment: false, includeWeek: true })) continue;
         totals[this.segmentOf(e.datetime_start)]++;
       }
       return totals;
@@ -1158,27 +1410,22 @@ function app() {
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
-      const fGame = this.filters.game;
-      const fStore = this.filters.store;
-      const fFormat = this.filters.format;
       const out = [];
       for (const e of events) {
         const game = e.game || 'Unknown';
+        const fmt = e.format || 'Unknown';
         const gameClass = this.getGameClass(e.game);
         const past = this.isEventPast(e);
         const time = this.formatTime(e.datetime_start);
         const url = e.source_url || '';
-        const fmtChip = e.format
-          ? `<span class="tag fmt${fFormat === e.format ? ' active' : ''}" data-filter="format" data-value="${esc(e.format)}">${esc(e.format)}</span>`
-          : '';
         out.push(
           `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-url="${esc(url)}">` +
             `<div class="ev-time">${esc(time)}</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
             `<div class="ev-tags">` +
-              `<span class="tag game${fGame === game ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
-              `<span class="tag store${fStore === e.store ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}">${esc(e.store)}</span>` +
-              fmtChip +
+              `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
+              `<span class="tag store${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}">${esc(e.store)}</span>` +
+              `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
             `</div>` +
           `</div>`
         );
@@ -1221,7 +1468,8 @@ function app() {
     },
 
     resetFilters() {
-      this.filters = { search: '', game: '', store: '', format: '' };
+      this.filters = { search: '', game: [], store: [], format: [] };
+      this.openFacet = null;
     },
   };
 }
