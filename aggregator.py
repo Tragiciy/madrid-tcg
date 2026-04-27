@@ -103,6 +103,7 @@ GAME_CANONICAL: dict = {
     "yu-gi-oh!": "Yu-Gi-Oh!",
     # Flesh and Blood
     "flesh and blood": "Flesh and Blood",
+    "flesh & blood": "Flesh and Blood",
     "fab": "Flesh and Blood",
     # Weiss Schwarz
     "weiss": "Weiß Schwarz",
@@ -111,6 +112,9 @@ GAME_CANONICAL: dict = {
     # Title-driven
     "liga star wars": "Star Wars: Unlimited",
     "rcq": "Magic: The Gathering",
+    "presentacion riftbound": "Riftbound",
+    "presentación riftbound": "Riftbound",
+    "riftbound unleashed": "Riftbound",
     "riftbound": "Riftbound",
     "nexus nights": "Riftbound",
     "nexus night": "Riftbound",
@@ -126,6 +130,7 @@ ALLOWED_GAMES: set = {
     "Yu-Gi-Oh!",
     "Lorcana",
     "Star Wars: Unlimited",
+    "Flesh and Blood",
     "Weiß Schwarz",
     "Riftbound",
     "Naruto Mythos",
@@ -138,6 +143,8 @@ ALLOWED_FORMATS: set = {
     "Weekly", "Casual", "BO3", "BO1",
     # SWU competitive format used by Arte 9.
     "Premier",
+    # Flesh and Blood organised-play event type.
+    "Armory",
 }
 
 
