@@ -95,7 +95,7 @@ Rules:
   - Existing event NOT in fresh → kept on disk, `is_active = False`.
 - **No future-only filter**. Past events live forever in `events.json`.
 - **Sort** by `datetime_start` before write.
-- **Allowlists**: `ALLOWED_GAMES` (10 entries), `ALLOWED_FORMATS` (17 entries incl. `Premier`).
+- **Allowlists**: `ALLOWED_GAMES` (11 entries), `ALLOWED_FORMATS` (18 entries incl. `Premier`, `Armory`).
 
 ## 6. Observability (`events_stats.json`)
 Per-store entries shape:
@@ -138,7 +138,7 @@ Rules:
   - `readMadridNow()` via `new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Madrid' }))`. Refreshed every 60 s.
   - Past today-segments and past today-events dim to `opacity .55` (`.85` on hover).
   - Past events are **muted, never hidden**.
-- Per-game accent: 11 palettes — `getGameClass(event.game)` → `.game-*` class sets `--card-tint` and `--card-accent`. Card border-left + chip pull from these vars. `Premier` recognised as a format value.
+- Per-game accent: 12 palettes — `getGameClass(event.game)` → `.game-*` class sets `--card-tint` and `--card-accent`. Card border-left + chip pull from these vars. `Premier` recognised as a format value.
 - Other UX: week nav (Prev/Next/Today), Today scroll-to-day in vertical, Back to top button after 400 px scroll.
 
 ## 8. Arte 9 title pipeline — critical
@@ -180,10 +180,11 @@ After heading is selected, split on en-dash/em-dash separator, keep head verbati
 
 ## 9. Format normalisation
 Canonical values must be in `aggregator.ALLOWED_FORMATS`:
-`Store Championship, Prerelease, cEDH, Commander, Standard, Pioneer, Modern, Legacy, Pauper, Sealed, Draft, League, Weekly, Casual, BO3, BO1, Premier`.
+`Store Championship, Prerelease, cEDH, Commander, Standard, Pioneer, Modern, Legacy, Pauper, Sealed, Draft, League, Weekly, Casual, BO3, BO1, Premier, Armory`.
 
 Mappings (case-insensitive substring):
 - `Formato Premier` / `Premier` → `Premier` *(must precede `Liga`/`League`)*
+- `Armory` → `Armory`
 - `Formato Modern` → `Modern`
 - `Formato Standard` → `Standard`
 - `Presentación` / `Presentaciones` → `Prerelease`
