@@ -943,6 +943,21 @@
                        @click="openEvent(e)">
                     <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
                     <div class="ev-title" x-text="e.title"></div>
+<<<<<<< new-teindas
+                    <div class="ev-tags">
+                      <span class="tag game"
+                        :class="{ active: isSelected('game', e.game || 'Unknown') }"
+                        @click.stop="toggleFilter('game', e.game || 'Unknown')"
+                        x-text="e.game || 'Unknown'"></span>
+                      <span class="tag store"
+                        :class="{ active: isSelected('store', e.store) }"
+                        @click.stop="toggleFilter('store', e.store)"
+                        x-text="e.store"></span>
+                      <span class="tag fmt"
+                        :class="{ active: isSelected('format', e.format || 'Unknown') }"
+                        @click.stop="toggleFilter('format', e.format || 'Unknown')"
+                        x-text="e.format || 'Unknown'"></span>
+=======
                     <div class="ev-footer">
                       <div class="ev-tags">
                         <span class="tag game"
@@ -970,6 +985,7 @@
                         </svg>
                         <span>Cal</span>
                       </button>
+>>>>>>> main
                     </div>
                   </div>
                 </template>
@@ -1543,6 +1559,8 @@ function app() {
         const past = this.isEventPast(e);
         const time = this.formatTime(e.datetime_start);
         const url = e.source_url || '';
+<<<<<<< new-teindas
+=======
         const calendarUrl = buildGoogleCalendarUrl(e);
         const calendarButton = calendarUrl
           ? `<button class="calendar-btn" type="button" data-calendar-url="${esc(calendarUrl)}" title="Add to Google Calendar" aria-label="Add to Google Calendar">` +
@@ -1552,10 +1570,17 @@ function app() {
               `<span>Cal</span>` +
             `</button>`
           : '';
+>>>>>>> main
         out.push(
           `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-url="${esc(url)}">` +
             `<div class="ev-time">${esc(time)}</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
+<<<<<<< new-teindas
+            `<div class="ev-tags">` +
+              `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
+              `<span class="tag store${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}">${esc(e.store)}</span>` +
+              `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
+=======
             `<div class="ev-footer">` +
               `<div class="ev-tags">` +
                 `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
@@ -1563,6 +1588,7 @@ function app() {
                 `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
               `</div>` +
               calendarButton +
+>>>>>>> main
             `</div>` +
           `</div>`
         );

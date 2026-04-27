@@ -1,11 +1,11 @@
 {
-  "total_events": 451,
-  "active_events": 433,
+  "total_events": 606,
+  "active_events": 587,
   "by_store": {
     "Arte 9": {
-      "total": 178,
-      "active": 173,
-      "raw_this_run": 173,
+      "total": 192,
+      "active": 187,
+      "raw_this_run": 187,
       "previous_raw": 173,
       "dropped_this_run": 0,
       "drop_reasons": {
@@ -20,6 +20,19 @@
       "active": 136,
       "raw_this_run": 136,
       "previous_raw": 136,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "anomaly": null
+    },
+    "Jupiter Juegos": {
+      "total": 141,
+      "active": 140,
+      "raw_this_run": 140,
+      "previous_raw": 141,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -56,11 +69,11 @@
     }
   },
   "by_game": {
-    "Magic: The Gathering": 183,
-    "Riftbound": 86,
-    "Lorcana": 32,
+    "Magic: The Gathering": 235,
+    "Riftbound": 115,
+    "One Piece": 67,
+    "Lorcana": 66,
     "Flesh and Blood": 28,
-    "One Piece": 27,
     "Pokémon": 21,
     "Star Wars: Unlimited": 20,
     "Digimon": 18,
@@ -72,8 +85,8 @@
   "scrapers": {
     "scrapers.arte9": {
       "store": "Arte 9",
-      "raw": 173,
-      "valid": 173,
+      "raw": 187,
+      "valid": 187,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -81,6 +94,19 @@
       },
       "error": null,
       "previous_raw": 173,
+      "anomaly": null
+    },
+    "scrapers.jupiter_juegos": {
+      "store": "Jupiter Juegos",
+      "raw": 140,
+      "valid": 140,
+      "dropped": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "error": null,
+      "previous_raw": 141,
       "anomaly": null
     },
     "scrapers.la_guarida_juegos": {
@@ -124,5 +150,5 @@
     }
   },
   "failed_scrapers": [],
-  "generated_at": "2026-04-27T15:19:24.337776+02:00"
+  "generated_at": "2026-04-27T20:08:25.114547+02:00"
 }
