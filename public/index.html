@@ -478,7 +478,7 @@
 
     /* Cards inside horizontal cells stay compact (replaces old
        .cal-wrap.view-horizontal .ev-card rules) */
-    .cal-grid-h .ev-card  { padding: .3rem .4rem; border-radius: 5px; }
+    .cal-grid-h .ev-card  { padding: .3rem .4rem 1.85rem .4rem; border-radius: 5px; }
     .cal-grid-h .ev-time  { font-size: .66rem; margin-bottom: .1rem; }
     .cal-grid-h .ev-title {
       font-size: .74rem;
@@ -508,7 +508,7 @@
     .cal-wrap.view-horizontal .no-events  { padding: .3rem .25rem; font-size: .7rem; }
 
     /* Compact cards */
-    .cal-wrap.view-horizontal .ev-card  { padding: .3rem .4rem; border-radius: 5px; }
+    .cal-wrap.view-horizontal .ev-card  { padding: .3rem .4rem 1.85rem .4rem; border-radius: 5px; }
     .cal-wrap.view-horizontal .ev-time  { font-size: .66rem; margin-bottom: .1rem; }
     .cal-wrap.view-horizontal .ev-title {
       font-size: .74rem;
@@ -598,7 +598,11 @@
       border: 1px solid var(--border);
       border-left: 3px solid var(--card-accent, var(--border-strong));
       border-radius: 6px;
-      padding: .45rem .55rem;
+      /* Extra bottom padding reserves the floating .calendar-btn slot
+         (positioned absolutely in the bottom-right corner), so the
+         tag row never sits underneath it. */
+      padding: .45rem .55rem 2rem .55rem;
+      position: relative;
       cursor: pointer;
       transition: border-color .12s, transform .12s, box-shadow .12s;
     }
@@ -613,11 +617,14 @@
     .ev-title { font-size: .82rem; font-weight: 600; line-height: 1.25; margin-bottom: .3rem; color: var(--text); }
 
     .ev-tags  { display: flex; flex-wrap: wrap; gap: .2rem; }
+    /* Footer used to flex-justify the calendar button to the right.
+       The button is now absolute-positioned (see .calendar-btn), so
+       the footer just hosts the tag row left-aligned. */
     .ev-footer {
       align-items: center;
       display: flex;
       gap: .25rem;
-      justify-content: space-between;
+      justify-content: flex-start;
     }
     .ev-footer .ev-tags { min-width: 0; }
 
@@ -656,6 +663,12 @@
     .tag.fmt.active   { background: #a5f3fc; border-color: #0891b2; color: #0e7490; }
 
     .calendar-btn {
+      /* Pinned to the card's bottom-right corner so it never overlaps
+         the title or the tag row, regardless of how chips wrap. The
+         containing block is .ev-card via position: relative above. */
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
       align-items: center;
       background: rgba(255, 255, 255, .52);
       border: 1px solid var(--border);
@@ -672,6 +685,9 @@
       padding: .15rem .38rem;
       transition: background .12s, border-color .12s, color .12s;
       white-space: nowrap;
+      /* Lift above the card content so it can't be visually clipped
+         by tag chips that happen to extend full width on the last row. */
+      z-index: 1;
     }
     .calendar-btn:hover {
       background: #fff;
