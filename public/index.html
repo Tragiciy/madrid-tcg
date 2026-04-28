@@ -777,8 +777,8 @@
       <span x-text="weekEventCount === 1 ? 'event' : 'events'"></span> this week
     </span>
     <div class="view-toggle" style="margin-left:auto">
-      <button :class="{ active: viewMode === 'vertical' }"   @click="setView('vertical')">≡ Vertical</button>
       <button :class="{ active: viewMode === 'horizontal' }" @click="setView('horizontal')">⊞ Horizontal</button>
+      <button :class="{ active: viewMode === 'vertical' }"   @click="setView('vertical')">≡ Vertical</button>
     </div>
   </div>
 
@@ -880,8 +880,8 @@
   <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading">
 
     <!-- ── HORIZONTAL: global grid; segments aligned across days ── -->
+    <template x-if="viewMode === 'horizontal'">
     <div class="cal-grid cal-grid-h"
-         x-show="viewMode === 'horizontal'"
          @click="onGridClick($event)"
          :style="`grid-template-rows: auto repeat(${activeSegments.length}, auto)`">
 
@@ -929,9 +929,11 @@
         </div>
       </template>
     </div>
+    </template>
 
     <!-- ── VERTICAL: per-day stacked layout (unchanged) ── -->
-    <div class="cal-grid" x-show="viewMode === 'vertical'">
+    <template x-if="viewMode === 'vertical'">
+    <div class="cal-grid">
       <template x-for="day in weekDays" :key="day.iso">
         <div class="day-col" :id="'day-' + day.iso" :class="{ 'is-today': day.isToday }">
 
@@ -997,6 +999,7 @@
         </div>
       </template>
     </div>
+    </template>
 
   </div><!-- /.cal-wrap -->
 
@@ -1171,8 +1174,9 @@ function app() {
     nowMadrid: readMadridNow(),
 
     // Default to horizontal; respect localStorage if user previously
-    // switched to vertical.
-    viewMode: localStorage.getItem('tcg-view') || 'horizontal',
+    // switched to vertical. Key is versioned so that the old default-
+    // vertical era's persisted 'vertical' values don't carry over.
+    viewMode: localStorage.getItem('tcg-view-v2') || 'horizontal',
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
@@ -1204,7 +1208,7 @@ function app() {
 
     setView(mode) {
       this.viewMode = mode;
-      localStorage.setItem('tcg-view', mode);
+      localStorage.setItem('tcg-view-v2', mode);
     },
 
     /* ── Scroll to a day column by ISO date ────────────────────────── */
