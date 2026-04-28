@@ -1350,11 +1350,14 @@ function app() {
       return (s.end * 60) <= this.nowMadrid.minutesSinceMidnight;
     },
 
-    /* ── True if the event already started (Europe/Madrid). Only
-         meaningful for events on today; safe to call on any event. */
+    /* ── True if the event already started (Europe/Madrid).
+         Compares full datetime: any earlier day is past; on the
+         same day, falls through to a time-of-day check. */
     isEventPast(e) {
       if (!e || !e.datetime_start) return false;
-      if (e.datetime_start.slice(0, 10) !== this.nowMadrid.iso) return false;
+      const dayPart = e.datetime_start.slice(0, 10);
+      if (dayPart < this.nowMadrid.iso) return true;
+      if (dayPart > this.nowMadrid.iso) return false;
       const h = parseInt(e.datetime_start.slice(11, 13), 10);
       const m = parseInt(e.datetime_start.slice(14, 16), 10);
       return (h * 60 + m) < this.nowMadrid.minutesSinceMidnight;
