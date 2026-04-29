@@ -26,10 +26,10 @@ import requests
 from bs4 import BeautifulSoup
 
 try:
-    from aggregator import GAME_CANONICAL
+    from scrapers.shared import GAME_KEYWORDS
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from aggregator import GAME_CANONICAL
+    from scrapers.shared import GAME_KEYWORDS
 
 logger = logging.getLogger(__name__)
 
@@ -202,9 +202,9 @@ def _extract_format(text: str) -> Optional[str]:
 
 def _extract_game(text: str) -> Optional[str]:
     lower = (text or "").lower()
-    for keyword in sorted(GAME_CANONICAL, key=len, reverse=True):
+    for keyword, canonical in GAME_KEYWORDS:
         if keyword in lower:
-            return GAME_CANONICAL[keyword]
+            return canonical
     return None
 
 
