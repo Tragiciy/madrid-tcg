@@ -503,14 +503,20 @@ def build_stats(events: list[dict],
         ms["previous_raw"] = info.get("previous_raw")
         ms["anomaly"] = info.get("anomaly")
 
+    total_scrapers = len(scraper_stats)
+    failed_count = len(failed_scrapers)
+
     return {
-        "total_events":  len(events),
-        "active_events": sum(1 for e in events if e.get("is_active")),
-        "by_store":      by_store,
-        "by_game":       dict(by_game.most_common()),
-        "scrapers":      scraper_stats,
-        "failed_scrapers": failed_scrapers,
-        "generated_at":  generated_at,
+        "total_events":       len(events),
+        "active_events":      sum(1 for e in events if e.get("is_active")),
+        "total_scrapers":     total_scrapers,
+        "successful_scrapers": total_scrapers - failed_count,
+        "failed_scrapers_count": failed_count,
+        "by_store":           by_store,
+        "by_game":            dict(by_game.most_common()),
+        "scrapers":           scraper_stats,
+        "failed_scrapers":    failed_scrapers,
+        "generated_at":       generated_at,
     }
 
 
@@ -638,7 +644,7 @@ def main() -> None:
     )
 
     # 5. Sort and persist.
-    merged.sort(key=lambda e: e["datetime_start"])
+    merged.sort(key=lambda e: (e["datetime_start"], e.get("store", ""), e.get("title", "")))
     write_events(merged)
 
     # 6. Build stats first (so anomaly flags propagate into scraper_stats),
