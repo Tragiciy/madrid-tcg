@@ -1,223 +1,455 @@
-# Madrid TCG Aggregator — Agent Handoff Spec
+# PROJECT_CONTEXT
 
-Operational context for a coding agent (Claude / Codex / etc.) picking up
-this repo. Optimised for action, not for human reading.
+Technical reference for AI agents and developers working on this repository.
+Describes the project as it currently exists — not as it could be.
 
-## 1. Goal
-- Static Madrid TCG event aggregator.
-- Pipeline: `scrapers/*.py` → `aggregator.py` → `public/events.json` → Alpine.js frontend (`public/index.html`).
-- Daily refresh via GitHub Actions; site served via GitHub Pages.
-- Frontend is a static SPA — no backend, no build step.
+The project has two halves that meet at one file:
 
-## 2. Architecture
+1. A **Python data pipeline** (`scrapers/` + `aggregator.py`) that produces
+   `public/events.json`.
+2. A **single-page Alpine.js frontend** (`public/index.html`) that consumes
+   `public/events.json`.
+
+Most of this document is about the frontend, because that is where almost all
+of the runtime logic, state, and rendering complexity lives.
+
+---
+
+## 1. File structure
+
+| Path | Purpose |
+| --- | --- |
+| `public/index.html` | The entire frontend: HTML structure, inlined CSS in a `<style>` block, and JavaScript including the Alpine `app()` factory. ~1648 lines. |
+| `public/events.json` | The frontend's only data source. Array of event objects, sorted by `datetime_start`. Loaded once via `fetch('events.json')`. |
+| `public/events_stats.json` | Observability output from `aggregator.py` (per-store counts, anomaly flags). **The frontend never reads this file.** |
+| `aggregator.py` | Discovers `scrapers/*.py`, calls each `scrape()`, validates, normalises (`GAME_CANONICAL`, `ALLOWED_GAMES`, `ALLOWED_FORMATS`), merges with the previous `events.json` using a stable `event_key`, writes both `events.json` and `events_stats.json`. |
+| `scrapers/__init__.py` | Empty marker; makes `scrapers/` a package. |
+| `scrapers/<store>.py` | One module per store. Each exposes `scrape() -> list[dict]`. Currently: `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`, `metropolis_center`, `micelion_games`. |
+| `requirements.txt` | Python deps: `requests`, `beautifulsoup4`, `playwright`. |
+| `.github/workflows/update.yml` | Cron at `0 6 * * *` (daily 06:00 UTC). Runs `python aggregator.py` and commits diffs to `public/events.json` / `public/events_stats.json`. |
+| `.github/workflows/deploy-pages.yml` | GitHub-Pages-style publish workflow that uploads `public/` as a Pages artifact on push to `main`. The active deployment target is **Cloudflare Pages** at `https://tragiciy.github.io/madrid-tcg/`. |
+| `.gitignore` | Excludes `__pycache__/`, virtualenvs, Playwright local browsers, OS junk, and `.claude/`. |
+
+---
+
+## 2. Architecture overview
+
+The frontend is a **single Alpine.js component** scoped to the `<html>`
+element via `x-data="app()"` and initialised by `x-init="init()"`.
+
+Everything — primitive state, the events array, derived getters, formatters,
+event handlers, and the cell-card HTML builder — is a property on the same
+object returned by `app()` (`public/index.html:1159`). There is no separation
+between view logic and state, no component tree, no module boundary:
+
+- HTML is in the same file.
+- CSS is in a `<style>` block in the same file.
+- JavaScript helpers and the `app()` factory are in a `<script>` block in the
+  same file.
+
+This is intentional — it is what allows the project to ship without a build
+step. It also means any change to the frontend touches a single, large file
+and must respect tight coupling between the markup, the CSS class names, and
+the data model on `app()`.
+
+---
+
+## 3. Data flow
+
 ```
-scrapers/
-  __init__.py
-  micelion_games.py        # WCS Timetable AJAX, requests only
-  metropolis_center.py     # Playwright (cookie challenge + window.evcalEvents) + per-event detail fetch
-  arte9.py                 # Tribe Events REST (/wp-json/tribe/events/v1/events), requests + BS4
-aggregator.py              # Discovery, validation, merge, normalisation, observability
-public/
-  index.html               # Alpine.js v3.14.1 (CDN), no build
-  events.json              # Output, full historical record
-  events_stats.json        # Output, observability + per-store stats
-.github/workflows/
-  update.yml               # cron daily: runs aggregator.py, commits diffs
-  deploy-pages.yml         # publishes public/ to Pages on push to public/**
-requirements.txt           # requests, beautifulsoup4, playwright
-PROJECT_CONTEXT.md         # this file
+fetch('events.json')
+        │
+        ▼
+   this.events  ◀────────────────────────────────────────┐
+        │                                                 │
+        │  filters.search                                 │
+        │  filters.game[]   filters.store[]               │
+        │  filters.format[] segmentFilter{}               │
+        ▼                                                 │
+  eventMatches(e)  ─▶  filteredEvents (getter)            │
+        │                                                 │
+        │  weekStart                                      │
+        ▼                                                 │
+   weekDays (getter, 7 entries with segmentMap)           │
+        │                                                 │
+        ├── horizontal:  cells (getter) ─▶ cellCardsHtml ──▶ x-html injects strings
+        │                                                       │
+        │                                                       └─ delegated @click
+        │                                                          handled by onGridClick
+        │
+        └── vertical:    iterate weekDays → segments → events directly
 ```
 
-## 3. Data schema (events.json)
-```json
-{
-  "store":          "Arte 9",
-  "game":           "Riftbound | null",
-  "format":         "Prerelease | null",
-  "title":          "Presentación Riftbound Unleashed",
-  "datetime_start": "2026-05-02T10:00:00+02:00",
-  "datetime_end":   "ISO-8601 | null",
-  "language":       "es",
-  "source_url":     "https://...",
-  "scraped_at":     "2026-04-26T13:02:28+02:00",
-  "first_seen_at":  "2026-04-25T09:00:00+02:00",
-  "last_seen_at":   "2026-04-26T13:02:28+02:00",
-  "is_active":      true
-}
-```
+Key things to note:
 
-Rules:
-- `price_eur` was removed. **Do not reintroduce.**
-- `datetime_end` may be `null`. Frontend must tolerate.
-- All datetimes carry an explicit timezone offset (Europe/Madrid).
-- `events.json` is sorted by `datetime_start`.
+- `init()` is the only side-effect-on-load function. It registers a scroll
+  listener (for Back-to-top), an Escape-key listener (closes facet panels),
+  starts a 60-second `setInterval` that refreshes `nowMadrid`, fetches
+  `events.json`, then runs `cleanupFilters()` and a `$watch` on
+  `filters.search`.
+- `cleanupFilters()` prunes selected facet values that are no longer present
+  in the current visible set, so e.g. switching weeks doesn't leave a stale
+  filter that hides everything.
+- The frontend never POSTs anything. The only network call is `fetch('events.json')`.
 
-## 4. Scrapers — current state
+---
 
-### Micelion Games (`scrapers/micelion_games.py`)
-- Source: `POST https://miceliongames.com/wp-admin/admin-ajax.php` with `action=wcs_get_events_json`, `start=YYYY-MM-DD`, `end=YYYY-MM-DD`.
-- Transport: `requests` only. **No Playwright.**
-- TZ fix: API stamps Madrid wall-clock with a fake `+00:00`. `_to_madrid_iso` re-stamps `tzinfo=Europe/Madrid` instead of converting from UTC.
-- Format: keyword scan over title + excerpt. Includes `cEDH`, Spanish forms (`sellados → Sealed`, `presentaciones → Prerelease`, `liga → League`).
-- Window: ~90 days; server caps at ~3 months regardless.
-- Output omits `price_eur`.
+## 4. Core concepts
 
-### Metropolis Center (`scrapers/metropolis_center.py`)
-- Source: `https://metropolis-center.com/events/calendar` — JS cookie challenge (`dhd2`).
-- Transport: Playwright (chromium headless). Required.
-- Strategy: load calendar → read `window.evcalEvents` → click `.evnav-right` for `EXTRA_MONTHS=2` next months.
-- Resource blocking: `image/font/stylesheet/media/imageset` + analytics domains aborted.
-- Per-event detail fetch: when title alone yields no format, `_fetch_format_from_detail(page, url)` opens the event page (cookie carries over) and runs the keyword scan against the rendered text. Detail results cached by URL within one run.
-- Spanish format extraction supported via the same FORMAT_KEYWORDS list.
-- Output omits `price_eur`.
+These are the load-bearing pieces of frontend logic. Read them carefully
+before changing anything.
 
-### Arte 9 (`scrapers/arte9.py`)
-- Source: `GET https://arte9.com/wp-json/tribe/events/v1/events?per_page=50&page=N` — The Events Calendar REST API.
-- Transport: `requests` + BeautifulSoup. **No Playwright.**
-- API `start_date` is already Europe/Madrid local (no UTC bug).
-- API `title` field is empty; real name lives in description headings or must be synthesised. Title pipeline is the most fragile part of this scraper — see §8.
-- HTML entities unescaped (`html.unescape`) on heading text and category names.
-- Pagination walks until `< per_page` returned or `MAX_PAGES=20`.
+### `weekDays` (getter at the heart of rendering)
 
-## 5. Aggregator rules (`aggregator.py`)
-- **Dynamic discovery**: any `scrapers/*.py` (not `__init__.py`) is auto-loaded; module must expose `scrape() -> list[dict]`.
-- **Validation per event**: `_shape_drop_reason` returns `None | "missing_fields" | "bad_datetime"`. Required fields: `store`, `title`, `datetime_start`. Past events are NOT filtered out.
-- **Normalisation**:
-  - `_normalize_game(game, title)` → canonical via `GAME_CANONICAL` then `ALLOWED_GAMES` allowlist; else `None`.
-  - Format normalisation lives in scrapers; aggregator only owns `ALLOWED_FORMATS`.
-- **Stable identity** (`event_key(event)`):
-  1. `{store}|id:{source_event_id}` if scraper provides it.
-  2. Fallback: `{store}|{title}|{datetime_start}|{location}`.
-- **Merge** (`merge_events(existing, fresh, now_iso)`):
-  - Upsert by `event_key`. Fresh data overrides everything except `first_seen_at`.
-  - New event → `first_seen_at = last_seen_at = now`, `is_active = True`.
-  - Existing event seen this run → keep `first_seen_at`, refresh `last_seen_at`, `is_active = True`.
-  - Existing event NOT in fresh → kept on disk, `is_active = False`.
-- **No future-only filter**. Past events live forever in `events.json`.
-- **Sort** by `datetime_start` before write.
-- **Allowlists**: `ALLOWED_GAMES` (11 entries), `ALLOWED_FORMATS` (18 entries incl. `Premier`, `Armory`).
+A 7-element array, one per day of the current week starting at `weekStart`
+(always a Monday — `weekMonday()` does the shift). Each entry has:
 
-## 6. Observability (`events_stats.json`)
-Per-store entries shape:
-```json
-"Arte 9": {
-  "total":            178,
-  "active":           173,
-  "raw_this_run":     178,
-  "previous_raw":     178,
-  "dropped_this_run": 0,
-  "drop_reasons":     { "missing_fields": 0, "bad_datetime": 0 },
-  "scraper_failed":   false,
-  "anomaly":          null
-}
-```
-Top-level: `total_events`, `active_events`, `by_store`, `by_game`, `scrapers` (per-module raw map), `failed_scrapers`, `generated_at`.
+- `iso` — `YYYY-MM-DD`
+- `dow` — short day-of-week label (`Mon`…`Sun`)
+- `dom` — short formatted date (e.g. `29 Apr`)
+- `isToday` — boolean, comparing `iso` to local `Date` today
+- `events` — `filteredEvents` for this day, sorted ascending by `datetime_start`
+- `segments` — **compact** array of segment blocks (only segments that have
+  events). Used by the vertical view.
+- `segmentMap` — **exhaustive** map `{ morning, afternoon, evening, late }`
+  with arrays (possibly empty). Used by the horizontal grid so empty
+  `(day, segment)` cells can render placeholders without re-scanning.
 
-Rules:
-- `previous_raw` read from prior `events_stats.json` BEFORE overwrite.
-- `anomaly = "sharp_drop"` when `raw_this_run < 0.7 * previous_raw`.
-- Console block: `=== scraper health ===` lists `[ok|WARN|FAIL]` per module with `raw / prev / valid / dropped / drop reasons`. `[WARN]` lines printed for sharp drops.
-- `validate_events()` writes a separate `=== validation ===` report (totals, future/past, duplicates, invalid datetime, missing tz, missing fields, unknown format, unknown game).
-- **Frontend does NOT read `events_stats.json`.** Free to evolve.
+Because `weekDays` is a getter, it recomputes on every read. This is fine for
+the view layer (Alpine memoises within a render) but means callers should not
+treat it as cheap.
 
-## 7. Frontend (`public/index.html`)
-- Stack: vanilla HTML + Alpine.js v3.14.1 via CDN. **No build step.**
-- Default view: **horizontal**. `localStorage["tcg-view"]` overrides; `vertical` retained.
-- Layouts:
-  - **Horizontal**: single CSS grid, 7 columns × `(1 + activeSegments)` rows. Empty `(day, segment)` cells render dashed gray placeholders. Cards rendered via `x-html` with delegated `@click` on the grid root (works around an Alpine nested-`<template x-for>` quirk).
-  - **Vertical**: per-day stack with inline segment groups.
-- Time segments (Europe/Madrid hour):
-  - Morning < 12
-  - Afternoon 12–16
-  - Evening 16–19
-  - Late ≥ 19
-- Filters: search, game, store, format, segment chips. Card chips clickable → toggle that filter. Active filters highlight chips.
-- Segment headers in horizontal view collapsible globally (chevron). `focusMode` (only one segment active) hides headers and renders a flat list per day.
-- Today highlight: tinted column including empty-cell placeholders.
-- Madrid time awareness:
-  - `readMadridNow()` via `new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Madrid' }))`. Refreshed every 60 s.
-  - Past today-segments and past today-events dim to `opacity .55` (`.85` on hover).
-  - Past events are **muted, never hidden**.
-- Per-game accent: 12 palettes — `getGameClass(event.game)` → `.game-*` class sets `--card-tint` and `--card-accent`. Card border-left + chip pull from these vars. `Premier` recognised as a format value.
-- Other UX: week nav (Prev/Next/Today), Today scroll-to-day in vertical, Back to top button after 400 px scroll.
+### Time segments
 
-## 8. Arte 9 title pipeline — critical
+A fixed array `SEGMENTS` (`public/index.html:1124`):
 
-Title = event identity. Never use marketing/article copy as a title.
+| Key | Hours (Madrid) | Label |
+| --- | --- | --- |
+| `morning` | `[0, 12)` | Morning |
+| `afternoon` | `[12, 16)` | Afternoon |
+| `evening` | `[16, 19)` | Evening |
+| `late` | `[19, 30)` | Late |
 
-### Reject rules — `_is_acceptable_heading`
-- Any `?` or `¿` in the text.
-- Starts with any reject prefix (lowercase): `este sábado/domingo/viernes/lunes/martes/miércoles/jueves`, `hoy jugamos`, `ven a`, `aprende a jugar`, `si quieres`, `para reservar`, `recordad`, `en qué consiste`, `qué premios`, `qué regalos`, `cómo funciona`, `cómo se`, `ya tenemos`, `entradas`, `entrada`, `premios`, `sorteos`, `sorteo`, `calendario`, `jornada`, `formato de`, `acceso`, `normas`, `torneo de mañana`, `por participar`, `por asistir`, `por ganar`, `por inscribirte`, `packs`, `regalo`, `regalos por`.
-- Single-word label (`formato`, `liga`, `torneo`, `commander`, `cedh`, `calendario`, `horario`, `jornada(s)`, `premio(s)`, `sorteo(s)`, `entrada(s)`, `premier`, `modern`, `standard`, `draft`, `casual`).
-- Numeric summary `^\d+\s+(eventos?|jornadas?)`.
-- Trailing `*` or `…`.
-- Article tokens (`premios`, `regalos`, `consiste`, `reservar`, `plazas`, `inscripción/inscripcion`) — UNLESS a strong pattern is also present.
-- Length > 70 chars (relaxed to 110 if a strong pattern is present).
+The Madrid hour is read by slicing characters 11–13 of the ISO string. This
+works because every event's `datetime_start` carries an explicit
+`+02:00`/`+01:00` offset, so the visible hour digits already represent Madrid
+wall-clock. `segmentForHour(h)` and `segmentOf(iso)` perform the bucketing.
 
-### Strong patterns (substring, lowercase)
-`liga`, `formato`, `presentación/presentacion`, `prerelease`, `torneo`, `fnm`, `commander`, `cedh`, `draft`. Plus implicit set names.
+### `segmentFilter` vs `collapsedSegments`
 
-### Title priority
-a) **Heading scan** with rejection rules above; first heading that survives. Mostly-uppercase headings get `_smart_case` (preserves `SWU`, `MTG`, `cEDH`, `RCQ`, `SOG`, `TOR`; lowercases articles `de`, `del`, `y`, `en`, `con`, `la`, `el`, `los`, `las`, `a`, `un`, `una`).
-b) **Synthesised** — `_synthesise_title(game, format, set_name)` where `set_name` comes from image filename (e.g. `UNLEASHEDw.jpg → Unleashed`) or description text. Spanish format labels: `Prerelease → Presentación`, `Sealed → Sellado`, `League → Liga`. Short game forms: `Magic: The Gathering → Magic`, `Star Wars: Unlimited → SWU`, `Yu-Gi-Oh! → Yu-Gi-Oh`, `Weiß Schwarz → Weiss`.
-c) **Cleaned API title** if acceptable.
-d) **Slug** humanised, only when slug is non-numeric.
+These look similar and do different things — both are
+`{ morning, afternoon, evening, late }` boolean maps:
 
-### Post-pass — `_refine_title`
-After heading is selected, split on en-dash/em-dash separator, keep head verbatim, then for each tail segment:
-- Drop `\d+\s+jornadas?` (weak structural).
-- Drop `Calendario` / `Horario`.
-- Reduce `Formato X` → `X`.
-- Drop bare game tokens (`SWU`, `Magic`, `Lorcana`, …) when head has a strong pattern AND `event.game` is set.
-- Otherwise keep the segment.
+- `segmentFilter` — filter chips. When false, the segment is **excluded** from
+  `eventMatches`, `filteredEvents`, and from `activeSegments`. Its row is
+  removed from the horizontal grid entirely.
+- `collapsedSegments` — collapse chevrons in the segment headers. When true,
+  the segment's cards are hidden via `x-show` but the row **stays in the
+  grid** so vertical alignment of the other rows is preserved.
 
-### Examples (must hold)
-- `¿EN QUÉ CONSISTE UNA PRESENTACIÓN DE COLECCIÓN DE RIFTBOUND?` → rejected → synthesised → `Presentación Riftbound Unleashed`.
-- `LIGA DE COMMANDER – 9 JORNADAS` → smart-case → refine → `Liga de Commander`.
-- `LIGA DE SWU – 10 JORNADAS – CALENDARIO – FORMATO PREMIER` → smart-case → refine → `Liga de SWU – Premier`.
-- `LIGA NACIONAL SWU – CALENDARIO – FORMATO PREMIER` → smart-case → refine → `Liga Nacional SWU – Premier`.
-- `Gran Liga Carbonite – SWU` (hypothetical) → refine drops trailing `SWU` → `Gran Liga Carbonite`.
+Do not collapse these two flags into one — they are deliberately independent.
 
-## 9. Format normalisation
-Canonical values must be in `aggregator.ALLOWED_FORMATS`:
-`Store Championship, Prerelease, cEDH, Commander, Standard, Pioneer, Modern, Legacy, Pauper, Sealed, Draft, League, Weekly, Casual, BO3, BO1, Premier, Armory`.
+### Horizontal grid vs vertical list
 
-Mappings (case-insensitive substring):
-- `Formato Premier` / `Premier` → `Premier` *(must precede `Liga`/`League`)*
-- `Armory` → `Armory`
-- `Formato Modern` → `Modern`
-- `Formato Standard` → `Standard`
-- `Presentación` / `Presentaciones` → `Prerelease`
-- `Prerelease` → `Prerelease`
-- `Sellado` / `Sellados` → `Sealed`
-- `cEDH` / `Competitive Elder Dragon Highlander` → `cEDH` *(must precede `Commander`)*
-- `Commander` → `Commander`
-- `Liga` → `League` *(fallback only — Premier and other specifics outrank it)*
+Both are toggled by `viewMode` (persisted in `localStorage` under
+`tcg-view-v2`; default is `horizontal`).
 
-Rule: in `FORMAT_KEYWORDS`, longer/more-specific tokens come first.
+**Horizontal** (`.cal-wrap.view-horizontal` → `.cal-grid-h`):
 
-## 10. Agent rules
+- One CSS grid: 7 columns × `(1 + activeSegments.length)` rows.
+- The first row is the day-header cell row; subsequent rows are segment rows.
+- Cells are placed via inline `style="grid-column: …; grid-row: …;"` so a
+  single flat `<template x-for>` over `cells` produces the whole grid.
+- Empty `(day, segment)` cells render as `.seg-cell.is-empty` — dashed gray
+  placeholders that keep the row aligned across days.
 
-Do
-- Add new stores as independent files under `scrapers/`.
-- Inspect the data source first; document the parsing plan before code.
-- Prefer `requests` + BeautifulSoup. Reach for Playwright only when JS or a cookie challenge requires it.
-- Reuse `aggregator.ALLOWED_GAMES` / `ALLOWED_FORMATS`. Add to allowlists when introducing a genuinely new value.
-- After scraper changes, run `python aggregator.py` and report `raw / valid / dropped` per scraper plus 2-3 example parsed events.
-- Use the persistent merge model — write fresh events with the existing schema; aggregator stamps lifecycle fields.
-- Keep `event_key` stable. Title changes fork keys → if you rename, expect a one-off cleanup pass.
+**Vertical** (`.cal-wrap` default → `.cal-grid`):
 
-Do not
-- Reintroduce `price_eur`.
-- Remove `first_seen_at` / `last_seen_at` / `is_active`.
-- Filter past events at aggregation. Past events stay in `events.json` forever.
-- Add a database, ORM, message queue, or any new dependency unless the task demands it.
-- Add a build step. Frontend stays vanilla HTML + Alpine CDN.
-- Modify the frontend when adding a scraper unless the schema actually changes.
-- Push to `main` or open PRs unless explicitly asked.
-- Call APIs from the frontend. `events.json` is the only data source the page consumes.
+- Per-day stacked layout. Each day has its own `.day-col`, with non-empty
+  `seg-block`s (uses the compact `day.segments` array).
+- Cards in this view use Alpine bindings directly (`@click="openEvent(e)"`,
+  `@click.stop="toggleFilter(...)"`, `x-show="canAddToCalendar(e)"`).
 
-## 11. Next recommended work
-- Add more Madrid stores one at a time. Per store: probe → plan → implement → verify with `aggregator.py`.
-- Calendar export: add a static "Add to Google Calendar" link per event using the `https://calendar.google.com/calendar/render?action=TEMPLATE&...` URL template. Do not use the Google Calendar API.
-- Optional: collapse the duplicate `FORMAT_KEYWORDS` lists into `scrapers/_common.py` only if a third Spanish-language scraper appears.
+### Cell rendering — `cells`, `cellCardsHtml`, the `x-html` workaround
+
+This is the trickiest part of the frontend.
+
+The horizontal grid wants nested iteration: outer iteration over cells, inner
+iteration over each cell's events. The natural Alpine expression for that is a
+`<template x-for>` inside another `<template x-for>`. **This does not work in
+this app.** The inner template stayed unprocessed and never re-fired after
+`events.json` finished loading — see the comments at
+`public/index.html:1418` and around `cellCardsHtml` at line 1548.
+
+The current solution is:
+
+1. **`cells` getter** — flattens to one entry per `(segment, day)` pair, each
+   carrying its `events` array, `isToday`, `isPast`, `isEmpty` flags.
+2. A single `<template x-for="cell in cells">` renders the cell wrapper.
+3. **`cellCardsHtml(cell)`** builds the cards as an HTML string, manually
+   escaping every interpolated value with a local `esc()` helper.
+4. The wrapper renders that string via `x-html="cellCardsHtml(cell)"`.
+
+`x-html` re-evaluates whenever its expression's reactive dependencies change,
+so the cards stay in sync with state. But the cards themselves are no longer
+Alpine-managed — they are inert DOM. Click handling therefore has to be
+delegated.
+
+### Delegated click — `onGridClick`
+
+Because cards rendered via `x-html` cannot carry Alpine `@click` handlers, the
+horizontal grid root has a single `@click="onGridClick($event)"`. The handler
+walks up from the click target:
+
+- `[data-calendar-url]` → opens that URL in a new tab; stops propagation.
+- `[data-filter]` → reads `data-filter` (one of `game` / `store` / `format`)
+  and `data-value`, calls `toggleFilter(field, value)`; stops propagation.
+- `.ev-card[data-url]` → opens `source_url` in a new tab.
+
+Every property used by `cellCardsHtml` to compose those `data-*` attributes
+must also be HTML-escaped via `esc()`.
+
+The vertical view does **not** use this delegation — its cards are real
+Alpine elements with regular `@click.stop` bindings.
+
+---
+
+## 5. Rendering system
+
+### Alpine directives in use
+
+- `x-data="app()"` on `<html>` — the single component scope.
+- `x-init="init()"` — bootstrap.
+- `x-for` — week-day header cells, the flat `cells` list, vertical
+  `weekDays`, vertical per-day `segments`, vertical per-segment `events`,
+  facet option lists, segment filter chips.
+- `x-show` — loading state, view switching, segment chip visibility,
+  facet panels, calendar button (vertical view), Back-to-top button,
+  individual segment headers (`!focusMode`), card list collapse.
+- `x-if` — the two view-mode templates (`horizontal` vs `vertical`) so only
+  one tree exists at a time.
+- `x-html` — `cellCardsHtml(cell)` for horizontal cells.
+- `x-text` — labels, counters, week range, day-of-week, day-of-month, etc.
+- `x-model.debounce.250ms` — search input.
+- `x-transition:enter*` / `x-transition:leave*` — Back-to-top button fade.
+
+### Why `x-html` instead of nested `x-for`
+
+Nested `<template x-for>` over content produced by an outer `x-for` was not
+re-firing after the outer iterable was rebuilt (e.g. when `events.json`
+finished loading). The first render saw an empty inner array and never
+recovered. `x-html` sidesteps the templating system completely.
+
+### Risks of this approach
+
+- **XSS risk on every interpolation.** Anything written into the HTML string
+  must go through `esc()`. Today that means `event.title`, `event.game`,
+  `event.format`, `event.store`, `event.source_url`, the calendar URL, and
+  the formatted time.
+- **Cards are not reactive.** They are re-rendered only when `cellCardsHtml`
+  is re-evaluated, which happens when its reactive dependencies change. The
+  60-second `nowMadrid` tick is what re-renders past-event styling on today;
+  changing how `nowMadrid` flows would freeze the past-styling logic.
+- **All click behaviour is in `onGridClick`.** Adding a new clickable thing
+  inside a horizontal card means adding a `data-*` attribute and a branch in
+  `onGridClick`, not a new `@click` directive.
+
+---
+
+## 6. Styling system
+
+### CSS variables (`:root` tokens)
+
+Defined at the top of the `<style>` block (`public/index.html:12`):
+
+- Surfaces & background: `--bg`, `--surface`, `--surface2`
+- Borders: `--border`, `--border-strong`
+- Accent (purple): `--accent`, `--accent-dim`, `--accent-soft`
+- Today highlight: `--today-bg`, `--today-bdr`
+- Text: `--text`, `--text-muted`
+- Shape: `--radius`, `--shadow-sm`, `--shadow-md`
+- Card defaults (overridden per game): `--card-tint`, `--card-accent`
+
+### Per-game palette
+
+Twelve game classes — `.game-mtg`, `.game-starwars`, `.game-riftbound`,
+`.game-onepiece`, `.game-pokemon`, `.game-lorcana`, `.game-digimon`,
+`.game-yugioh`, `.game-fab`, `.game-finalfantasy`, `.game-weiss`,
+`.game-naruto` — plus the fallback `.game-unknown`. Each sets `--card-tint`
+and `--card-accent`. Card backgrounds, the left-border accent, and the game
+chip all read those variables, so changing palette is a one-line change per
+game.
+
+`getGameClass(game)` (`public/index.html:1622`) maps a canonical game name to
+its class. The map is the source of truth for this list.
+
+### Layout modes
+
+- `.cal-wrap.view-horizontal` → `.cal-grid-h` is the single-grid horizontal
+  view (`grid-template-columns: repeat(7, minmax(0, 1fr))`, dynamic row
+  count via inline `:style`).
+- `.cal-wrap` (no modifier) is the vertical view, a flex/grid stack of
+  `.day-col` per day.
+
+### Responsive behaviour
+
+- `@media (max-width: 900px)` — horizontal grid switches to
+  `minmax(160px, 1fr)` columns and a `min-width: 1140px`, forcing horizontal
+  scroll on narrow screens (it does not collapse to a stacked view; that is
+  what the vertical mode is for).
+- `@media (max-width: 500px)` — site header becomes column layout, filter
+  inputs go full width, the search input narrows to 120px.
+
+### Today highlighting
+
+- `.day-cell.is-today` and `.day-header-cell.is-today` use `--today-bg` and
+  `--today-bdr`.
+- `.seg-cell.is-today.is-empty` overrides the default `.is-empty` background
+  so today's empty placeholders still read as part of today's column.
+- `.seg-cell.is-today.is-past` dims to opacity .55 (background restated to
+  prevent cascade order from stripping the today tint).
+- `.ev-card.is-past` dims past events on today to opacity .55, .85 on hover.
+
+---
+
+## 7. Known constraints / fragility
+
+- **Single-file coupling.** `public/index.html` contains markup, styles,
+  helpers, and the entire `app()` factory. Splitting into separate files
+  would require replacing the inline `<script>` with one or more loaded
+  scripts, taking care to preserve Alpine's load-order behaviour.
+- **Nested `x-for` is broken in this app's pattern.** Do not "refactor"
+  `cellCardsHtml` back into a nested `<template x-for>` without verifying
+  cards actually appear after `events.json` finishes loading. The current
+  workaround is deliberate.
+- **`x-html` cards are not Alpine-reactive at the card level.** Card-level
+  flags like `is-past`, chip-active states, and the `data-*` attributes that
+  drive `onGridClick` are all baked into the string at build time. They only
+  update when `cells` recomputes — which happens because `cellCardsHtml`
+  reads `nowMadrid`, `filters`, and the underlying events.
+- **`onGridClick` depends on `data-*` attribute names.** Renaming `data-url`,
+  `data-filter`, `data-value`, or `data-calendar-url` silently breaks click
+  handling without any error.
+- **Madrid-time correctness is by construction, not by Date math.**
+  `readMadridNow()` builds a `Date` whose internal time matches Madrid
+  wall-clock by round-tripping through `toLocaleString('en-US', { timeZone:
+  'Europe/Madrid' })`. ISO strings are sliced (chars 11–13 for hour, 14–16
+  for minute) rather than parsed. Both rely on `datetime_start` carrying an
+  explicit Madrid offset.
+- **`viewMode` is persisted under a versioned key.** `tcg-view-v2` exists
+  specifically because changing the default once before stranded users on
+  the old persisted choice. If the default changes again, bump the key.
+
+---
+
+## 8. Rules for future changes
+
+These rules are for any agent or contributor planning a change.
+
+### Don't break filtering
+
+`eventMatches`, `filteredEvents`, `availableOptions`, `facetOptionCount`,
+`cleanupFilters`, and the `filters` shape are interlocked. A change to one
+must keep all of them consistent. In particular:
+
+- `eventMatches(e, opts)` is called from three places (filtering display,
+  computing facet options, computing facet counts) with different `opts`
+  combinations (`ignore`, `includeSegment`, `includeWeek`). Don't simplify
+  the signature.
+- `cleanupFilters()` runs after every state change that could narrow the
+  visible set, to drop selected facet values that no longer match anything.
+
+### Don't change the event schema
+
+The frontend reads these fields from each event:
+
+- `store`, `game`, `format`, `title`
+- `datetime_start` (must carry an explicit Madrid offset),
+  `datetime_end` (nullable; not currently displayed)
+- `language` (currently unused by the frontend, but present on every event)
+- `source_url`
+- `scraped_at`, `first_seen_at`, `last_seen_at`, `is_active` (read by
+  `aggregator.py`'s merge logic; the frontend doesn't use them, but the
+  schema must keep them consistent across runs)
+
+`price_eur` was removed and **must not be reintroduced**.
+
+### Don't remove the segment system
+
+`SEGMENTS`, `segmentForHour`, `segmentOf`, `segmentFilter`, `collapsedSegments`,
+`activeSegments`, `segmentTotals`, `cells`, `focusMode`, and the per-day
+`segmentMap` are interlocked. Removing any one of them collapses the
+horizontal grid's column-alignment guarantee, the segment chips, or the focus
+mode.
+
+### Be careful with Alpine reactivity
+
+- This app uses Alpine 3.14.1 (CDN-pinned). Don't assume Alpine 3.x quirks
+  are version-agnostic.
+- `x-html`-rendered content is not Alpine-managed.
+- Nested `<template x-for>` over content cloned by an outer `x-for` does not
+  re-evaluate reliably in this version. Use the `cellCardsHtml` + delegated
+  click pattern.
+
+### Avoid restructuring without full understanding
+
+The single-file frontend looks like it could be tidied — split CSS into a
+file, extract helpers, decompose `app()` — but every part of it was placed
+where it is for a specific reason (load order, no-build-step constraint,
+Alpine quirks). Touch with a clear intent and verify the result in the
+browser before claiming a refactor is safe.
+
+---
+
+## 9. Extension points
+
+### Adding a new store / scraper
+
+1. Add `scrapers/<name>.py` exposing `scrape() -> list[dict]` returning events
+   matching the schema in §8.
+2. `aggregator.py` auto-discovers any `scrapers/*.py` (other than
+   `__init__.py`) — no registration required.
+3. If the store should appear in the Google Calendar `location` field, add an
+   entry to `STORE_ADDRESSES` (`public/index.html:1052`).
+4. Run `python aggregator.py` once and verify the new store appears under
+   `by_store` in `public/events_stats.json`.
+
+### Adding a new game
+
+1. Add the lower-case form to `GAME_CANONICAL` in `aggregator.py` and the
+   canonical form to `ALLOWED_GAMES`.
+2. Add a CSS class `.game-<key>` setting `--card-tint` and `--card-accent`
+   in the per-game palette block of `public/index.html`.
+3. Add an entry to the map inside `getGameClass` (`public/index.html:1622`)
+   mapping the canonical name to the new class.
+
+### Adding a new format
+
+1. Add the canonical form to `ALLOWED_FORMATS` in `aggregator.py`.
+2. Update scraper-side `FORMAT_KEYWORDS` lists so existing scrapers can detect
+   it. Longer / more specific tokens come first.
+3. The frontend renders `event.format` as-is — no allowlist there. New formats
+   just appear in the Format facet automatically.
+
+### Adding a new filter facet
+
+The current facets (game, store, format) follow an identical pattern. A new
+facet means changing all of:
+
+- `filters` (initial state in `app()`)
+- `eventMatches` (matching loop)
+- `valueFor`, `availableOptions`, `facetOptionCount`, `cleanupFilters`
+- A new markup block mirroring the existing Game / Store / Format panels in
+  the `.filters` container, plus a `getter` for its options
+- The two `data-filter` chips inside `cellCardsHtml` (so it shows on cards)
+  if you want it on the per-card chip row
+
+### Safe UI tweaks
+
+- Theme tokens in `:root` and per-game palettes — these only affect
+  appearance, never the data model.
+- Static labels and copy — anywhere `x-text` is binding a literal in markup.
+- Layout breakpoints in `@media` queries.
+- The fixed `SEGMENTS` boundaries (e.g. shifting "evening" to start at 17)
+  are safe to edit — but verify both views and the chip counters still read
+  correctly afterwards.
