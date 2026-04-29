@@ -39,6 +39,8 @@ from zoneinfo import ZoneInfo
 import requests
 from bs4 import BeautifulSoup
 
+from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, extract_format_from_keywords
+
 logger = logging.getLogger(__name__)
 
 STORE = "Jupiter Juegos"
@@ -74,35 +76,6 @@ GAME_KEYWORDS = [
     ("mtg", "Magic"),
 ]
 
-FORMAT_KEYWORDS = [
-    ("store championship", "Store Championship"),
-    ("prerelease", "Prerelease"),
-    ("presentaciones", "Prerelease"),
-    ("presentación", "Prerelease"),
-    ("sellados", "Sealed"),
-    ("sellado", "Sealed"),
-    # cEDH / Premier must precede the broader keywords below.
-    ("competitive elder dragon highlander", "cEDH"),
-    ("cedh", "cEDH"),
-    ("formato premier", "Premier"),
-    ("premier", "Premier"),
-    ("commander", "Commander"),
-    ("standard", "Standard"),
-    ("pioneer", "Pioneer"),
-    ("modern", "Modern"),
-    ("legacy", "Legacy"),
-    ("pauper", "Pauper"),
-    ("sealed", "Sealed"),
-    ("draft", "Draft"),
-    ("league", "League"),
-    ("liga", "League"),
-    ("weekly", "Weekly"),
-    ("casual", "Casual"),
-    ("bo3", "BO3"),
-    ("bo1", "BO1"),
-    ("rcq", "Store Championship"),
-]
-
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -133,11 +106,7 @@ def _extract_game(title: str) -> Optional[str]:
 
 
 def _extract_format(title: str) -> Optional[str]:
-    low = title.lower()
-    for keyword, canonical in FORMAT_KEYWORDS:
-        if keyword in low:
-            return canonical
-    return None
+    return extract_format_from_keywords(title, SHARED_FORMAT_KEYWORDS)
 
 
 def _has_style(tag, fragment: str) -> bool:
