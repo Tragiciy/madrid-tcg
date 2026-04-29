@@ -26,10 +26,10 @@ import requests
 from bs4 import BeautifulSoup
 
 try:
-    from scrapers.shared import GAME_KEYWORDS
+    from scrapers.shared import GAME_KEYWORDS, extract_game_from_keywords
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from scrapers.shared import GAME_KEYWORDS
+    from scrapers.shared import GAME_KEYWORDS, extract_game_from_keywords
 
 logger = logging.getLogger(__name__)
 
@@ -200,14 +200,6 @@ def _extract_format(text: str) -> Optional[str]:
     return None
 
 
-def _extract_game(text: str) -> Optional[str]:
-    lower = (text or "").lower()
-    for keyword, canonical in GAME_KEYWORDS:
-        if keyword in lower:
-            return canonical
-    return None
-
-
 def _smart_case(text: str) -> str:
     upper = {"SWU", "MTG", "FNM", "TCG", "BO1", "BO3",
              "EDH", "CEDH", "RCQ", "FAB"}
@@ -351,7 +343,7 @@ def _parse_event(node, scraped_at: str) -> Optional[dict]:
     detail_text = details.get_text(" ", strip=True)
     combined_text = f"{raw_title} {detail_text}"
 
-    game = _extract_game(combined_text)
+    game = extract_game_from_keywords(combined_text, GAME_KEYWORDS)
     fmt = _extract_format(combined_text)
     title = _clean_title(raw_title, game, fmt)
     if not title:
