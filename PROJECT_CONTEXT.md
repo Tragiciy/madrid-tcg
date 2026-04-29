@@ -13,22 +13,39 @@ The project has two halves that meet at one file:
 Most of this document is about the frontend, because that is where almost all
 of the runtime logic, state, and rendering complexity lives.
 
----
+## 1b. Backend architecture
 
-## 1. File structure
+### Scraper discovery
+`aggregator.py` auto-discovers every `*.py` file in `scrapers/` (except
+`__init__.py`) and calls its `scrape()` function. **No helper or utility
+modules are allowed inside `scrapers/`** — anything without a `scrape()`
+must live outside this directory (currently in `shared/`).
 
-| Path | Purpose |
-| --- | --- |
-| `public/index.html` | The entire frontend: HTML structure, inlined CSS in a `<style>` block, and JavaScript including the Alpine `app()` factory. ~1648 lines. |
-| `public/events.json` | The frontend's only data source. Array of event objects, sorted by `datetime_start`. Loaded once via `fetch('events.json')`. |
-| `public/events_stats.json` | Observability output from `aggregator.py` (per-store counts, anomaly flags). **The frontend never reads this file.** |
-| `aggregator.py` | Discovers `scrapers/*.py`, calls each `scrape()`, validates, normalises (`GAME_CANONICAL`, `ALLOWED_GAMES`, `ALLOWED_FORMATS`), merges with the previous `events.json` using a stable `event_key`, writes both `events.json` and `events_stats.json`. |
-| `scrapers/__init__.py` | Empty marker; makes `scrapers/` a package. |
-| `scrapers/<store>.py` | One module per store. Each exposes `scrape() -> list[dict]`. Currently: `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`, `metropolis_center`, `micelion_games`. |
-| `requirements.txt` | Python deps: `requests`, `beautifulsoup4`, `playwright`. |
-| `.github/workflows/update.yml` | Cron at `0 6 * * *` (daily 06:00 UTC). Runs `python aggregator.py` and commits diffs to `public/events.json` / `public/events_stats.json`. |
-| `.github/workflows/deploy-pages.yml` | GitHub-Pages-style publish workflow that uploads `public/` as a Pages artifact on push to `main`. The active deployment target is **Cloudflare Pages** at `https://tragiciy.github.io/madrid-tcg/`. |
-| `.gitignore` | Excludes `__pycache__/`, virtualenvs, Playwright local browsers, OS junk, and `.claude/`. |
+### Shared keyword utilities
+`shared/` is for reusable backend/scraper utilities only. Files in `shared/` must not expose `scrape()`, must not perform network requests on import, and must not have side effects at import time.
+
+`shared/scraper_keywords.py` provides:
+- `GAME_KEYWORDS` — `(keyword, canonical_name)` tuples, longest-first
+- `FORMAT_KEYWORDS` — `(keyword, canonical_format)` tuples, longest-first
+- `extract_game_from_keywords(text, keywords)` — returns canonical game or None
+- `extract_format_from_keywords(text, keywords)` — returns canonical format or None
+
+Scrapers import these and may extend them with store-specific entries.
+
+### Migration status
+| Scraper | Uses shared GAME_KEYWORDS | Uses shared FORMAT_KEYWORDS |
+| --- | --- | --- |
+| `la_guarida_juegos` | Yes | No (local FORMAT_KEYWORDS) |
+| `jupiter_juegos` | No (local GAME_KEYWORDS) | Yes |
+| others | No | No |
+
+Gradual migration of remaining scrapers is planned.
+
+### Execution
+```
+python -m scrapers.<name>    # run a single scraper
+python aggregator.py          # run full pipeline (all scrapers + merge)
+```
 
 ---
 
@@ -399,6 +416,14 @@ where it is for a specific reason (load order, no-build-step constraint,
 Alpine quirks). Touch with a clear intent and verify the result in the
 browser before claiming a refactor is safe.
 
+### Scrapers directory rule
+
+`scrapers/` must contain **only** modules that expose a `scrape()` function.
+No helper, utility, or shared modules are permitted inside `scrapers/`.
+Anything without `scrape()` belongs in `shared/` or another package.
+This ensures `aggregator.py`'s auto-discovery never picks up non-scraper
+modules.
+
 ---
 
 ## 9. Extension points
@@ -406,12 +431,15 @@ browser before claiming a refactor is safe.
 ### Adding a new store / scraper
 
 1. Add `scrapers/<name>.py` exposing `scrape() -> list[dict]` returning events
-   matching the schema in §8.
+   matching the schema in §8. **Do not add helper modules to `scrapers/`** —
+   shared code belongs in `shared/`.
 2. `aggregator.py` auto-discovers any `scrapers/*.py` (other than
    `__init__.py`) — no registration required.
-3. If the store should appear in the Google Calendar `location` field, add an
+3. Prefer importing `GAME_KEYWORDS` / `FORMAT_KEYWORDS` from
+   `shared.scraper_keywords` and extending locally if needed.
+4. If the store should appear in the Google Calendar `location` field, add an
    entry to `STORE_ADDRESSES` (`public/index.html:1052`).
-4. Run `python aggregator.py` once and verify the new store appears under
+5. Run `python aggregator.py` once and verify the new store appears under
    `by_store` in `public/events_stats.json`.
 
 ### Adding a new game
@@ -426,8 +454,9 @@ browser before claiming a refactor is safe.
 ### Adding a new format
 
 1. Add the canonical form to `ALLOWED_FORMATS` in `aggregator.py`.
-2. Update scraper-side `FORMAT_KEYWORDS` lists so existing scrapers can detect
-   it. Longer / more specific tokens come first.
+2. Add the keyword(s) to `FORMAT_KEYWORDS` in `shared/scraper_keywords.py`
+   (longer / more specific tokens first). Scrapers that import the shared
+   list will pick it up automatically.
 3. The frontend renders `event.format` as-is — no allowlist there. New formats
    just appear in the Format facet automatically.
 
