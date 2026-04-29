@@ -1,5 +1,5 @@
 """
-scrapers/shared.py — shared constants for scraper modules.
+shared/scraper_keywords.py — shared constants for scraper modules.
 
 This module has NO imports from aggregator or any scraper, so it
 cannot create circular dependencies.

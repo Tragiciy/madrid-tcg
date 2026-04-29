@@ -26,10 +26,10 @@ import requests
 from bs4 import BeautifulSoup
 
 try:
-    from scrapers.shared import GAME_KEYWORDS, extract_game_from_keywords
+    from shared.scraper_keywords import GAME_KEYWORDS, extract_game_from_keywords
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from scrapers.shared import GAME_KEYWORDS, extract_game_from_keywords
+    from shared.scraper_keywords import GAME_KEYWORDS, extract_game_from_keywords
 
 logger = logging.getLogger(__name__)
 
