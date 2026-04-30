@@ -28,48 +28,7 @@ DAYS_AHEAD = 90
 # Категории WCS, которые не являются названием игры
 _GENERIC_WCS_TYPES = {"destacados", "featured", "general"}
 
-# Словарь игр для извлечения из title (порядок важен: проверяем сверху вниз)
-GAME_KEYWORDS = [
-    ("presentación riftbound", "Riftbound"),
-    ("presentacion riftbound", "Riftbound"),
-    ("riftbound unleashed", "Riftbound"),
-    ("riftbound", "Riftbound"),
-    ("one piece", "One Piece"),
-    ("yu-gi-oh", "Yu-Gi-Oh"),
-    ("yugioh", "Yu-Gi-Oh"),
-    ("pokemon", "Pokémon"),
-    ("pokémon", "Pokémon"),
-    ("digimon", "Digimon"),
-    ("lorcana", "Lorcana"),
-    ("magic", "Magic"),
-]
-
-# Словарь форматов: ключ — что ищем (без учёта регистра), значение — каноничная форма
-# Порядок важен: более длинные/специфичные фразы — раньше
-FORMAT_KEYWORDS = [
-    ("store championship", "Store Championship"),
-    ("prerelease", "Prerelease"),
-    ("presentaciones", "Prerelease"),
-    ("presentación", "Prerelease"),
-    ("presentacion", "Prerelease"),
-    # cEDH must be checked before "commander" so the more specific
-    # competitive variant wins.
-    ("competitive elder dragon highlander", "cEDH"),
-    ("cedh", "cEDH"),
-    ("commander", "Commander"),
-    ("standard", "Standard"),
-    ("pioneer", "Pioneer"),
-    ("modern", "Modern"),
-    ("legacy", "Legacy"),
-    ("pauper", "Pauper"),
-    ("sealed", "Sealed"),
-    ("draft", "Draft"),
-    ("league", "League"),
-    ("weekly", "Weekly"),
-    ("casual", "Casual"),
-    ("bo3", "BO3"),
-    ("bo1", "BO1"),
-]
+from shared.scraper_keywords import GAME_KEYWORDS, FORMAT_KEYWORDS, extract_game_from_keywords, extract_format_from_keywords
 
 HEADERS = {
     "User-Agent": (
@@ -112,24 +71,11 @@ def _extract_game(wcs_name: Optional[str], title: str) -> Optional[str]:
     if wcs_name and wcs_name.lower() not in _GENERIC_WCS_TYPES:
         return wcs_name
 
-    lower_title = re.sub(r"[-_/]+", " ", title.lower())
-    for keyword, canonical in GAME_KEYWORDS:
-        if keyword in lower_title:
-            return canonical
-
-    return None
+    return extract_game_from_keywords(re.sub(r"[-_/]+", " ", title.lower()), GAME_KEYWORDS)
 
 
 def _extract_format(text: str) -> Optional[str]:
-    """
-    Ищет форматы TCG в тексте (title + excerpt).
-    Проверяет FORMAT_KEYWORDS по порядку — возвращает первое совпадение.
-    """
-    lower = text.lower()
-    for keyword, canonical in FORMAT_KEYWORDS:
-        if keyword in lower:
-            return canonical
-    return None
+    return extract_format_from_keywords(text, FORMAT_KEYWORDS)
 
 
 def _clean_title(raw_title: str, source_url: Optional[str]) -> str:

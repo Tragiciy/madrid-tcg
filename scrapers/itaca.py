@@ -69,55 +69,7 @@ _TITLE_RE = re.compile(
 )
 _TIME_RE = re.compile(r"(\d{1,2}):(\d{2})")
 
-# Title-driven game classification (same shape as other scrapers).
-GAME_KEYWORDS = [
-    ("one piece",   "One Piece"),
-    ("yu-gi-oh",    "Yu-Gi-Oh"),
-    ("yugioh",      "Yu-Gi-Oh"),
-    ("pokemon",     "Pokémon"),
-    ("pokémon",     "Pokémon"),
-    ("digimon",     "Digimon"),
-    ("lorcana",     "Lorcana"),
-    ("riftbound",   "Riftbound"),
-    ("nexus night", "Riftbound"),
-    ("star wars",   "Star Wars: Unlimited"),
-    ("swu",         "Star Wars: Unlimited"),
-    ("flesh and blood", "Flesh and Blood"),
-    ("fab",         "Flesh and Blood"),
-    ("final fantasy", "Final Fantasy TCG"),
-    ("fftcg",       "Final Fantasy TCG"),
-    ("mtg",         "Magic"),
-    ("magic",       "Magic"),
-]
-
-FORMAT_KEYWORDS = [
-    ("store championship", "Store Championship"),
-    ("prerelease", "Prerelease"),
-    ("presentaciones", "Prerelease"),
-    ("presentación", "Prerelease"),
-    ("sellados", "Sealed"),
-    ("sellado", "Sealed"),
-    # cEDH / Premier must precede the broader keywords below.
-    ("competitive elder dragon highlander", "cEDH"),
-    ("cedh", "cEDH"),
-    ("formato premier", "Premier"),
-    ("premier", "Premier"),
-    ("commander", "Commander"),
-    ("standard", "Standard"),
-    ("pioneer", "Pioneer"),
-    ("modern", "Modern"),
-    ("legacy", "Legacy"),
-    ("pauper", "Pauper"),
-    ("sealed", "Sealed"),
-    ("draft", "Draft"),
-    ("league", "League"),
-    ("liga", "League"),
-    ("weekly", "Weekly"),
-    ("casual", "Casual"),
-    ("bo3", "BO3"),
-    ("bo1", "BO1"),
-    ("rcq", "Store Championship"),
-]
+from shared.scraper_keywords import GAME_KEYWORDS as SHARED_GAME_KEYWORDS, FORMAT_KEYWORDS, extract_game_from_keywords, extract_format_from_keywords
 
 HEADERS = {
     "User-Agent": (
@@ -135,19 +87,11 @@ _DEFAULT_GAME = "Magic"
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _extract_game(title: str) -> Optional[str]:
-    low = title.lower()
-    for keyword, canonical in GAME_KEYWORDS:
-        if keyword in low:
-            return canonical
-    return _DEFAULT_GAME
+    return extract_game_from_keywords(title, SHARED_GAME_KEYWORDS) or _DEFAULT_GAME
 
 
 def _extract_format(title: str) -> Optional[str]:
-    low = title.lower()
-    for keyword, canonical in FORMAT_KEYWORDS:
-        if keyword in low:
-            return canonical
-    return None
+    return extract_format_from_keywords(title, FORMAT_KEYWORDS)
 
 
 def _parse_header_month(soup: BeautifulSoup) -> Optional[tuple]:

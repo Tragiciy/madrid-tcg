@@ -26,10 +26,10 @@ import requests
 from bs4 import BeautifulSoup
 
 try:
-    from shared.scraper_keywords import GAME_KEYWORDS, extract_game_from_keywords
+    from shared.scraper_keywords import GAME_KEYWORDS, extract_game_from_keywords, FORMAT_KEYWORDS, extract_format_from_keywords
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from shared.scraper_keywords import GAME_KEYWORDS, extract_game_from_keywords
+    from shared.scraper_keywords import GAME_KEYWORDS, extract_game_from_keywords, FORMAT_KEYWORDS, extract_format_from_keywords
 
 logger = logging.getLogger(__name__)
 
@@ -41,41 +41,7 @@ AJAX_URL = "https://laguaridajuegos.com/wp-admin/admin-ajax.php"
 DAYS_AHEAD = 90
 DEFAULT_CALENDAR_ID = "1678"
 
-FORMAT_KEYWORDS: list[tuple[str, str]] = [
-    ("store championship", "Store Championship"),
-    ("pre-release", "Prerelease"),
-    ("prerelease", "Prerelease"),
-    ("presentaciones", "Prerelease"),
-    ("presentación", "Prerelease"),
-    ("presentacion", "Prerelease"),
-    ("sellados", "Sealed"),
-    ("sellado", "Sealed"),
-    ("competitive elder dragon highlander", "cEDH"),
-    ("cedh", "cEDH"),
-    ("commander", "Commander"),
-    ("armory", "Armory"),
-    ("formato premier", "Premier"),
-    ("premier", "Premier"),
-    ("formato standard", "Standard"),
-    ("standard", "Standard"),
-    ("formato pioneer", "Pioneer"),
-    ("pioneer", "Pioneer"),
-    ("formato modern", "Modern"),
-    ("modern", "Modern"),
-    ("legacy", "Legacy"),
-    ("pauper", "Pauper"),
-    ("sealed", "Sealed"),
-    ("draft", "Draft"),
-    ("weekly", "Weekly"),
-    ("casual", "Casual"),
-    ("bo3", "BO3"),
-    ("bo1", "BO1"),
-    ("rcq", "Store Championship"),
-    # League is intentionally late, and "League of Legends" is removed
-    # before scanning so Riftbound's product subtitle is not a format.
-    ("liga", "League"),
-    ("league", "League"),
-]
+
 
 _DROP_TITLES = {
     "cerrado",
@@ -193,11 +159,7 @@ def _text_for_scan(text: str) -> str:
 
 
 def _extract_format(text: str) -> Optional[str]:
-    lower = _text_for_scan(text).lower()
-    for keyword, canonical in FORMAT_KEYWORDS:
-        if keyword in lower:
-            return canonical
-    return None
+    return extract_format_from_keywords(_text_for_scan(text), FORMAT_KEYWORDS)
 
 
 def _smart_case(text: str) -> str:
