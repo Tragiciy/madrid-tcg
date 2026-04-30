@@ -168,7 +168,9 @@ function app() {
       }
 
       if (this.viewMode === 'vertical') {
-        setTimeout(() => this.scrollToCurrentSegment(), 50);
+        this.$nextTick(() => {
+          requestAnimationFrame(() => this.scrollToCurrentSegment());
+        });
       }
 
       this.$watch('filters.search', () => this.cleanupFilters());
@@ -178,7 +180,9 @@ function app() {
       this.viewMode = mode;
       localStorage.setItem('tcg-view-v2', mode);
       if (mode === 'vertical') {
-        this.$nextTick(() => this.scrollToCurrentSegment());
+        this.$nextTick(() => {
+          requestAnimationFrame(() => this.scrollToCurrentSegment());
+        });
       }
     },
 
@@ -193,8 +197,10 @@ function app() {
         }
       }
       if (!targetSeg) targetSeg = SEGMENTS[SEGMENTS.length - 1];
-      const el = document.getElementById('seg-' + targetSeg.key);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const today = document.getElementById('day-' + now.iso);
+      if (!today) return;
+      const el = today.querySelector(`[data-seg-key="${targetSeg.key}"]`);
+      (el || today).scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     /* ── Scroll to a day column by ISO date ────────────────────────── */
