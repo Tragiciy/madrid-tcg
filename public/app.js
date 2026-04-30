@@ -148,10 +148,18 @@ function app() {
         if (e.key === 'Escape') this.openFacet = null;
       });
 
+      if (!localStorage.getItem('tcg-view-v2') && window.matchMedia('(max-width: 900px)').matches) {
+        this.viewMode = 'vertical';
+      }
+
       // Run once immediately, then refresh the Madrid clock every minute
       // so past-segment / past-event styling progresses without a reload.
       this.nowMadrid = readMadridNow();
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
+
+      if (this.viewMode === 'vertical') {
+        this.$nextTick(() => this.scrollToCurrentSegment());
+      }
 
       try {
         const res = await fetch('events.json');
@@ -169,6 +177,24 @@ function app() {
     setView(mode) {
       this.viewMode = mode;
       localStorage.setItem('tcg-view-v2', mode);
+      if (mode === 'vertical') {
+        this.$nextTick(() => this.scrollToCurrentSegment());
+      }
+    },
+
+    scrollToCurrentSegment() {
+      const now = this.nowMadrid;
+      const currentHour = now.hour;
+      let targetSeg = null;
+      for (const seg of SEGMENTS) {
+        if (currentHour < seg.end) {
+          targetSeg = seg;
+          break;
+        }
+      }
+      if (!targetSeg) targetSeg = SEGMENTS[SEGMENTS.length - 1];
+      const el = document.getElementById('seg-' + targetSeg.key);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     /* ── Scroll to a day column by ISO date ────────────────────────── */

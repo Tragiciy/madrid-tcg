@@ -202,7 +202,7 @@
             </template>
 
             <template x-for="seg in day.segments" :key="seg.key">
-              <div class="seg-block">
+              <div class="seg-block" :id="'seg-' + seg.key">
                 <div class="seg-header" x-show="!focusMode">
                   <span x-text="seg.label"></span>
                   <span class="seg-header-count" x-text="'· ' + seg.count"></span>

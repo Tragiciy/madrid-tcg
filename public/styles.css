@@ -745,3 +745,22 @@ input:focus, select:focus { border-color: var(--accent); }
   .filter-group { width: 100%; }
   .facet-panel { width: 100%; }
 }
+
+/* ── Vertical view on small screens ──────────────────────────── */
+@media (max-width: 500px) {
+  .cal-wrap.view-vertical .day-header {
+    width: 54px;
+    min-width: 54px;
+  }
+  .cal-wrap.view-vertical .tag.store {
+    display: none;
+  }
+  .cal-wrap.view-vertical .tag {
+    font-size: .6rem;
+    padding: .05rem .28rem;
+  }
+  .calendar-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
