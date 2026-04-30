@@ -274,17 +274,29 @@
 <!-- Event Detail Panel -->
 <div class="panel-backdrop"
      x-show="selectedEvent"
-     @click="closePanel()">
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @click.self="closePanel()">
   <div class="panel"
        :class="selectedEvent ? getGameClass(selectedEvent.game) : ''"
        @click.stop
-       x-show="selectedEvent">
+       x-show="selectedEvent"
+       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="opacity-0 translate-y-2"
+       x-transition:enter-end="opacity-100 translate-y-0"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="opacity-100 translate-y-0"
+       x-transition:leave-end="opacity-0 translate-y-2">
     <button class="panel-close" type="button" @click="closePanel()" aria-label="Close">✕</button>
 
     <div class="panel-header">
-      <div class="panel-time" x-text="formatTime(selectedEvent?.datetime_start)"></div>
       <h2 class="panel-title" x-text="selectedEvent?.title"></h2>
       <div class="panel-meta">
+        <span class="panel-time" x-text="formatTime(selectedEvent?.datetime_start)"></span>
         <span class="tag game" x-text="selectedEvent?.game || 'Unknown'"></span>
         <span class="tag fmt" x-text="selectedEvent?.format || 'Unknown'"></span>
         <span class="panel-past-badge" x-show="selectedEvent && isEventPast(selectedEvent)">Past</span>
@@ -302,22 +314,25 @@
       </div>
       <div class="panel-row" x-show="selectedEvent?.source_url">
         <span class="panel-label">Source</span>
-        <a class="panel-link" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-text="selectedEvent?.source_url"></a>
+        <a class="panel-link" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-text="formatDomain(selectedEvent?.source_url)"></a>
       </div>
 
       <div class="panel-actions">
+        <button class="btn btn-primary" @click.stop="openCalendar(selectedEvent)" x-show="canAddToCalendar(selectedEvent)">Add to Calendar</button>
         <a class="btn" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-show="selectedEvent?.source_url">Open Source</a>
-        <button class="btn" @click.stop="openCalendar(selectedEvent)" x-show="canAddToCalendar(selectedEvent)">Add to Calendar</button>
       </div>
     </div>
 
     <div class="panel-store" x-show="selectedEvent?.store && storeMeta(selectedEvent.store)">
-      <h3>Store</h3>
+      <h3>Location</h3>
       <div class="store-name" x-text="selectedEvent?.store"></div>
-      <div class="store-address" x-text="storeMeta(selectedEvent.store)?.address"></div>
+      <div class="store-address">
+        <span class="store-address-indicator">@</span>
+        <span x-text="storeMeta(selectedEvent.store)?.address"></span>
+      </div>
       <div class="store-notes" x-text="storeMeta(selectedEvent.store)?.notes" x-show="storeMeta(selectedEvent.store)?.notes"></div>
       <div class="store-links">
-        <a class="btn"
+        <a class="btn btn-primary"
            :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeMeta(selectedEvent.store)?.address || selectedEvent?.store)"
            target="_blank"
            rel="noopener"

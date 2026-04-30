@@ -538,10 +538,22 @@ function app() {
 
     openPanel(e) {
       this.selectedEvent = e;
+      document.body.classList.add('no-scroll');
     },
 
     closePanel() {
       this.selectedEvent = null;
+      document.body.classList.remove('no-scroll');
+    },
+
+    formatDomain(url) {
+      if (!url || typeof url !== 'string') return '';
+      try {
+        const u = new URL(url);
+        return u.hostname.replace(/^www\./, '');
+      } catch {
+        return url;
+      }
     },
 
     storeMeta(storeName) {
