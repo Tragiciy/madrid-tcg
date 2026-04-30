@@ -7,8 +7,8 @@ The project has two halves that meet at one file:
 
 1. A **Python data pipeline** (`scrapers/` + `aggregator.py`) that produces
    `public/events.json`.
-2. A **single-page Alpine.js frontend** (`public/index.html`) that consumes
-   `public/events.json`.
+2. A **four-file Alpine.js frontend** (`public/index.html`, `public/styles.css`,
+   `public/app.js`, `public/config.js`) that consumes `public/events.json`.
 
 Most of this document is about the frontend, because that is where almost all
 of the runtime logic, state, and rendering complexity lives.
@@ -41,6 +41,27 @@ Scrapers import these and may extend them with store-specific entries.
 
 Gradual migration of remaining scrapers is planned.
 
+### Scraper stats and anomaly detection
+
+`aggregator.py` writes `public/events_stats.json` after every run with a
+per-store breakdown. Each store entry contains:
+
+- `raw_this_run` — events fetched by the scraper this run, before validation drops
+- `previous_raw` — the same counter from the immediately preceding run's stats file
+- `dropped_this_run`, `drop_reasons` — validation drop counts per failure category
+- `anomaly` — `"sharp_drop"` if the raw count fell sharply, or `null`
+
+**Anomaly detection logic** (`aggregator.py:49`, `aggregator.py:482`): the
+previous run's stats file is loaded at startup, before being overwritten. For
+each store, if `raw_this_run < previous_raw × 0.7` (constant
+`SHARP_DROP_THRESHOLD = 0.7`), `anomaly` is set to `"sharp_drop"`. A `[WARN]`
+line is printed to the console during the run (`aggregator.py:523`). The check
+fires on raw count (before validation drops), so a scraper that suddenly
+returns 0 events — due to a site-structure change, for example — triggers the
+flag even if the merged events store still contains historical data from prior
+runs. When there is no previous stats file to compare against, `previous_raw`
+is `null` and no anomaly is flagged.
+
 ### Execution
 ```
 python -m scrapers.<name>    # run a single scraper
@@ -49,25 +70,76 @@ python aggregator.py          # run full pipeline (all scrapers + merge)
 
 ---
 
+## 1c. Deployment
+
+Cloudflare Pages serves `public/` directly as static files. There is no build
+step, no bundler, and no environment variables. A push to `main` triggers an
+automatic redeploy.
+
+`aggregator.py` runs in GitHub Actions on a cron schedule defined in
+`.github/workflows/update.yml` — daily at 06:00 UTC (08:00 Madrid summer,
+07:00 Madrid winter). The workflow runs `python aggregator.py`, then commits
+any changes to `public/events.json` and `public/events_stats.json` back to
+`main`, which in turn triggers Cloudflare Pages. The workflow also supports
+`workflow_dispatch` for manual runs.
+
+---
+
 ## 2. Architecture overview
 
 The frontend is a **single Alpine.js component** scoped to the `<html>`
 element via `x-data="app()"` and initialised by `x-init="init()"`.
 
-Everything — primitive state, the events array, derived getters, formatters,
-event handlers, and the cell-card HTML builder — is a property on the same
-object returned by `app()` (`public/index.html:1159`). There is no separation
-between view logic and state, no component tree, no module boundary:
+The component is spread across four static files — no build step required:
 
-- HTML is in the same file.
-- CSS is in a `<style>` block in the same file.
-- JavaScript helpers and the `app()` factory are in a `<script>` block in the
-  same file.
+- **`public/index.html`** — markup only. Declares the Alpine component scope
+  (`x-data="app()"`, `x-init="init()"`) and all Alpine directives. 276 lines;
+  contains no CSS or JavaScript.
+- **`public/styles.css`** — all styles. `:root` tokens, per-game palette,
+  layout modes, and responsive breakpoints.
+- **`public/app.js`** — the Alpine `app()` factory (`app.js:119`) and every
+  helper. All runtime logic, state, derived getters, formatters, event
+  handlers, and the cell-card HTML builder live here.
+- **`public/config.js`** — static data and extension points. See §2a.
 
-This is intentional — it is what allows the project to ship without a build
-step. It also means any change to the frontend touches a single, large file
-and must respect tight coupling between the markup, the CSS class names, and
-the data model on `app()`.
+Any change to the frontend may touch more than one file and must respect tight
+coupling between the markup (Alpine directives in `index.html`), the CSS class
+names (`styles.css`), and the data model on `app()` (`app.js`).
+
+### Load order
+
+Alpine is loaded via CDN in `<head>` with `defer`:
+
+```html
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+```
+
+`config.js` and `app.js` are plain `<script>` tags at the bottom of `<body>`
+(no `defer`). Execution order:
+
+1. `config.js` runs synchronously — globals land on `window`.
+2. `app.js` runs synchronously — `app()` factory is defined, reads the globals.
+3. Alpine's deferred init fires — evaluates `x-data="app()"`, calls `app()`.
+
+This ordering is load-order sensitive. Reordering the `<script>` tags, or
+adding `defer` or `type="module"` to either file, silently breaks
+initialisation. See the matching constraints in §7.
+
+### 2a. `public/config.js` — extension points
+
+`config.js` exposes three `var` globals (deliberately `var`, not `const`/`let`
+— see §7):
+
+- **`STORE_ADDRESSES`** (`config.js:1`) — maps store display name → address
+  string used as the Google Calendar `location` field.
+- **`SEGMENTS`** (`config.js:10`) — array of 4 time-bucket definitions, each
+  with a `key`, hour range, `label`, and `shortRange`.
+- **`GAME_CLASS_MAP`** (`config.js:17`) — maps canonical game name → CSS class
+  string (e.g. `"Magic: The Gathering"` → `"game-mtg"`).
+
+**Principle:** extension points live in `config.js`, not in `app.js`. When
+adding a new store, game, or adjusting segment boundaries, `config.js` is the
+first file to edit (see §9).
 
 ---
 
@@ -138,7 +210,7 @@ treat it as cheap.
 
 ### Time segments
 
-A fixed array `SEGMENTS` (`public/index.html:1124`):
+A fixed array `SEGMENTS` (`config.js:10`):
 
 | Key | Hours (Madrid) | Label |
 | --- | --- | --- |
@@ -196,7 +268,7 @@ iteration over each cell's events. The natural Alpine expression for that is a
 `<template x-for>` inside another `<template x-for>`. **This does not work in
 this app.** The inner template stayed unprocessed and never re-fired after
 `events.json` finished loading — see the comments at
-`public/index.html:1418` and around `cellCardsHtml` at line 1548.
+`app.js:384` and around `cellCardsHtml` at `app.js:517`.
 
 The current solution is:
 
@@ -277,7 +349,7 @@ recovered. `x-html` sidesteps the templating system completely.
 
 ### CSS variables (`:root` tokens)
 
-Defined at the top of the `<style>` block (`public/index.html:12`):
+Defined at the top of `styles.css` (`styles.css:4`):
 
 - Surfaces & background: `--bg`, `--surface`, `--surface2`
 - Borders: `--border`, `--border-strong`
@@ -297,8 +369,9 @@ and `--card-accent`. Card backgrounds, the left-border accent, and the game
 chip all read those variables, so changing palette is a one-line change per
 game.
 
-`getGameClass(game)` (`public/index.html:1622`) maps a canonical game name to
-its class. The map is the source of truth for this list.
+`getGameClass(game)` (`app.js:581`) maps a canonical game name to its class
+by looking up `GAME_CLASS_MAP` (`config.js:17`). The map is the source of
+truth for this list.
 
 ### Layout modes
 
@@ -331,10 +404,22 @@ its class. The map is the source of truth for this list.
 
 ## 7. Known constraints / fragility
 
-- **Single-file coupling.** `public/index.html` contains markup, styles,
-  helpers, and the entire `app()` factory. Splitting into separate files
-  would require replacing the inline `<script>` with one or more loaded
-  scripts, taking care to preserve Alpine's load-order behaviour.
+- **Script loading order.** `config.js` must execute before `app.js` (which
+  reads `STORE_ADDRESSES`, `SEGMENTS`, and `GAME_CLASS_MAP`), and both must
+  execute before Alpine's deferred init fires `app()`. The current placement
+  — plain `<script>` tags at the bottom of `<body>`, after Alpine's `defer`
+  tag in `<head>` — achieves this. Reordering the `<script>` tags, or adding
+  `defer` or `type="module"` to either file, breaks initialisation silently.
+- **`config.js` uses `var` deliberately.** All three globals are declared with
+  `var` so they are attached to `window` and visible to `app.js`. Changing
+  them to `const` or `let` scopes them to the script block; `app.js` then
+  throws a `ReferenceError` with no obvious pointer back to `config.js`.
+- **No `import` or `require` in any frontend JS file.** `import` is a syntax
+  error in a regular (non-module) `<script>` tag; `require` is undefined in
+  browsers. Even `type="module"` — which browsers support natively, without a
+  bundler — breaks the `var`-global pattern: module scripts have their own
+  scope, so `config.js` globals would no longer be visible to `app.js`. Don't
+  convert without also introducing a bundler (see §8).
 - **Nested `x-for` is broken in this app's pattern.** Do not "refactor"
   `cellCardsHtml` back into a nested `<template x-for>` without verifying
   cards actually appear after `events.json` finishes loading. The current
@@ -410,11 +495,22 @@ mode.
 
 ### Avoid restructuring without full understanding
 
-The single-file frontend looks like it could be tidied — split CSS into a
-file, extract helpers, decompose `app()` — but every part of it was placed
-where it is for a specific reason (load order, no-build-step constraint,
-Alpine quirks). Touch with a clear intent and verify the result in the
-browser before claiming a refactor is safe.
+The four-file split is intentional and each boundary exists for a reason.
+Before moving code, understand why it's where it is.
+
+- **Don't merge `config.js` back into `app.js`** for cleanliness. The
+  data/logic split is the point: `config.js` is the extension surface (add a
+  store, game, or segment by editing one file), while `app.js` is the runtime.
+  Merging them collapses that boundary and makes the §9 instructions incorrect.
+- **Don't convert to ES modules** (`type="module"`) without introducing a
+  bundler. Browsers support ES modules natively, but module scripts have their
+  own scope — `var` declarations in `config.js` would stop being visible to
+  `app.js`, and `x-data="app()"` would fail with `ReferenceError: app is not
+  defined`. The fix would require a bundler, reintroducing build complexity.
+- **Don't fragment `app.js`** into sub-modules (`helpers.js`, `filters.js`,
+  etc.) without a bundler. Alpine resolves `app()` from global scope at
+  `x-init` time. Splitting the factory across files means all pieces must
+  either be concatenated into a single global or bundled — neither is free.
 
 ### Scrapers directory rule
 
@@ -438,7 +534,7 @@ modules.
 3. Prefer importing `GAME_KEYWORDS` / `FORMAT_KEYWORDS` from
    `shared.scraper_keywords` and extending locally if needed.
 4. If the store should appear in the Google Calendar `location` field, add an
-   entry to `STORE_ADDRESSES` (`public/index.html:1052`).
+   entry to `STORE_ADDRESSES` (`config.js:1`).
 5. Run `python aggregator.py` once and verify the new store appears under
    `by_store` in `public/events_stats.json`.
 
@@ -447,9 +543,9 @@ modules.
 1. Add the lower-case form to `GAME_CANONICAL` in `aggregator.py` and the
    canonical form to `ALLOWED_GAMES`.
 2. Add a CSS class `.game-<key>` setting `--card-tint` and `--card-accent`
-   in the per-game palette block of `public/index.html`.
-3. Add an entry to the map inside `getGameClass` (`public/index.html:1622`)
-   mapping the canonical name to the new class.
+   in the per-game palette block of `styles.css`.
+3. Add an entry to `GAME_CLASS_MAP` (`config.js:17`) mapping the canonical
+   name to the new class.
 
 ### Adding a new format
 
