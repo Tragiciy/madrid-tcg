@@ -474,7 +474,7 @@ def scrape() -> list[dict]:
                 API_URL,
                 params={"per_page": PER_PAGE, "page": page},
                 headers=HEADERS,
-                timeout=15,
+                timeout=30,
             )
         except Exception as exc:
             logger.error("%s: request failed (page %d): %s", STORE, page, exc)
