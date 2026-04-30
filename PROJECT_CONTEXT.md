@@ -182,6 +182,9 @@ Key things to note:
 - `cleanupFilters()` prunes selected facet values that are no longer present
   in the current visible set, so e.g. switching weeks doesn't leave a stale
   filter that hides everything.
+- `resetFilters()` clears the search/facet filters and also resets all
+  `segmentFilter` chips to enabled. Segment filters are part of the user-facing
+  filter state, not a separate view preference.
 - The frontend never POSTs anything. The only network call is `fetch('events.json')`.
 
 ---
@@ -259,8 +262,26 @@ Both are toggled by `viewMode` (persisted in `localStorage` under
 
 - Per-day stacked layout. Each day has its own `.day-col`, with non-empty
   `seg-block`s (uses the compact `day.segments` array).
+- Segment blocks carry `data-seg-key` for DOM targeting. Auto-scroll scopes
+  lookup to today's `.day-col` first, then queries that column for the current
+  segment; global segment IDs are not relied upon.
 - Cards in this view use Alpine bindings directly (`@click="openEvent(e)"`,
   `@click.stop="toggleFilter(...)"`, `x-show="canAddToCalendar(e)"`).
+- Entering vertical view auto-scrolls to today's current time segment. The
+  Today button uses the same behavior rather than only scrolling to the day
+  header.
+
+### Vertical auto-scroll
+
+`scrollToCurrentSegment()` computes the current segment from `nowMadrid`, finds
+today's day column by `day-YYYY-MM-DD`, and then queries inside that column for
+`[data-seg-key="<segment>"]`. This scoped lookup prevents duplicate segment
+markers across different days from affecting the target.
+
+The scroll runs only after the vertical DOM exists: `init()`, `setView('vertical')`,
+and `goToday()` schedule it with Alpine's `$nextTick()` plus
+`requestAnimationFrame()`. Do not replace this with a fixed `setTimeout()`; the
+timing depends on Alpine finishing the conditional view render.
 
 ### Cell rendering — `cells`, `cellCardsHtml`, the `x-html` workaround
 
@@ -324,6 +345,8 @@ Alpine elements with regular `@click.stop` bindings.
 - `x-text` — labels, counters, week range, day-of-week, day-of-month, etc.
 - `x-model.debounce.250ms` — search input.
 - `x-transition:enter*` / `x-transition:leave*` — Back-to-top button fade.
+- `data-seg-key` — plain DOM metadata on vertical segment blocks, used by
+  `scrollToCurrentSegment()` after Alpine has rendered the vertical tree.
 
 ### Why `x-html` instead of nested `x-for`
 
@@ -435,6 +458,14 @@ truth for this list.
 - **`onGridClick` depends on `data-*` attribute names.** Renaming `data-url`,
   `data-filter`, `data-value`, or `data-calendar-url` silently breaks click
   handling without any error.
+- **Vertical segment auto-scroll depends on scoped `data-seg-key` lookup.**
+  Segment keys repeat across days, so code must first find today's `day-*`
+  container and then query inside it. Do not use a global `seg-*` ID lookup
+  for vertical scrolling.
+- **Vertical auto-scroll timing is Alpine-lifecycle sensitive.** The target
+  segment exists only after the `x-if="viewMode === 'vertical'"` tree has been
+  created. Use `$nextTick()` plus `requestAnimationFrame()` for init, view
+  switches, and Today navigation; fixed delays are brittle.
 - **Madrid-time correctness is by construction, not by Date math.**
   `readMadridNow()` builds a `Date` whose internal time matches Madrid
   wall-clock by round-tripping through `toLocaleString('en-US', { timeZone:
