@@ -92,6 +92,7 @@ body.no-scroll { overflow: hidden; }
   padding: .35rem .75rem;
   transition: border-color .15s, color .15s, background .15s;
   white-space: nowrap;
+  text-decoration: none;
 }
 .btn:hover   { border-color: var(--accent); color: var(--accent); }
 .btn.current { border-color: var(--accent-dim); color: var(--accent); }
@@ -814,7 +815,6 @@ input:focus, select:focus { border-color: var(--accent); }
 .panel-header { display: flex; flex-direction: column; gap: .5rem; }
 .panel-title  { font-size: 1.35rem; font-weight: 700; line-height: 1.2; color: var(--text); letter-spacing: -.01em; }
 .panel-meta   { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
-.panel-time   { font-size: .75rem; color: var(--text-muted); font-weight: 500; }
 .panel-past-badge {
   font-size: .62rem;
   text-transform: uppercase;
@@ -830,6 +830,8 @@ input:focus, select:focus { border-color: var(--accent); }
 .panel-row    { display: flex; flex-direction: column; gap: .2rem; }
 .panel-label  { font-size: .62rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 600; }
 .panel-value  { font-size: .88rem; color: var(--text); }
+.panel-row .panel-value + .panel-value { margin-top: .15rem; }
+.panel-time-prefix { color: var(--text-muted); }
 .panel-link   { font-size: .85rem; color: var(--accent); word-break: break-all; }
 .panel-link:hover { text-decoration: underline; }
 

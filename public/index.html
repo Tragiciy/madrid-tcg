@@ -273,7 +273,7 @@
 
 <!-- Event Detail Panel -->
 <div class="panel-backdrop"
-     x-show="selectedEvent"
+     x-show="panelOpen"
      x-transition:enter="transition ease-out duration-200"
      x-transition:enter-start="opacity-0"
      x-transition:enter-end="opacity-100"
@@ -284,7 +284,7 @@
   <div class="panel"
        :class="selectedEvent ? getGameClass(selectedEvent.game) : ''"
        @click.stop
-       x-show="selectedEvent"
+       x-show="panelOpen"
        x-transition:enter="transition ease-out duration-200"
        x-transition:enter-start="opacity-0 translate-y-2"
        x-transition:enter-end="opacity-100 translate-y-0"
@@ -296,7 +296,6 @@
     <div class="panel-header">
       <h2 class="panel-title" x-text="selectedEvent?.title"></h2>
       <div class="panel-meta">
-        <span class="panel-time" x-text="formatTime(selectedEvent?.datetime_start)"></span>
         <span class="tag game" x-text="selectedEvent?.game || 'Unknown'"></span>
         <span class="tag fmt" x-text="selectedEvent?.format || 'Unknown'"></span>
         <span class="panel-past-badge" x-show="selectedEvent && isEventPast(selectedEvent)">Past</span>
@@ -305,16 +304,9 @@
 
     <div class="panel-body">
       <div class="panel-row">
-        <span class="panel-label">Date</span>
+        <span class="panel-label">WHEN</span>
         <span class="panel-value" x-text="selectedEvent ? formatDateLong(selectedEvent.datetime_start) : ''"></span>
-      </div>
-      <div class="panel-row" x-show="selectedEvent?.datetime_end">
-        <span class="panel-label">End</span>
-        <span class="panel-value" x-text="formatTime(selectedEvent?.datetime_end)"></span>
-      </div>
-      <div class="panel-row" x-show="selectedEvent?.source_url">
-        <span class="panel-label">Source</span>
-        <a class="panel-link" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-text="formatDomain(selectedEvent?.source_url)"></a>
+        <span class="panel-value" x-html="selectedEvent ? formatTimeRange(selectedEvent) : ''"></span>
       </div>
 
       <div class="panel-actions">
@@ -330,14 +322,12 @@
         <span class="store-address-indicator">@</span>
         <span x-text="storeMeta(selectedEvent.store)?.address"></span>
       </div>
-      <div class="store-notes" x-text="storeMeta(selectedEvent.store)?.notes" x-show="storeMeta(selectedEvent.store)?.notes"></div>
       <div class="store-links">
         <a class="btn btn-primary"
            :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeMeta(selectedEvent.store)?.address || selectedEvent?.store)"
            target="_blank"
            rel="noopener"
            x-show="storeMeta(selectedEvent.store)?.address || selectedEvent?.store">Open in Maps</a>
-        <a class="btn" :href="storeMeta(selectedEvent.store)?.website" target="_blank" rel="noopener" x-show="storeMeta(selectedEvent.store)?.website">Website</a>
       </div>
     </div>
   </div>

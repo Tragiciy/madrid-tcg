@@ -134,6 +134,7 @@ function app() {
     SEGMENTS,
     showBackToTop: false,
     selectedEvent: null,
+    panelOpen: false,
     // Reactive Europe/Madrid clock — refreshed every minute. Used to
     // mark past segments and past events on today.
     nowMadrid: readMadridNow(),
@@ -537,13 +538,27 @@ function app() {
     },
 
     openPanel(e) {
+      if (this._panelCloseTimeout) {
+        clearTimeout(this._panelCloseTimeout);
+        this._panelCloseTimeout = null;
+      }
       this.selectedEvent = e;
+      this.panelOpen = true;
       document.body.classList.add('no-scroll');
     },
 
     closePanel() {
-      this.selectedEvent = null;
+      this.panelOpen = false;
       document.body.classList.remove('no-scroll');
+      if (this._panelCloseTimeout) {
+        clearTimeout(this._panelCloseTimeout);
+      }
+      this._panelCloseTimeout = setTimeout(() => {
+        if (!this.panelOpen) {
+          this.selectedEvent = null;
+        }
+        this._panelCloseTimeout = null;
+      }, 200);
     },
 
     formatDomain(url) {
@@ -562,10 +577,24 @@ function app() {
 
     formatDateLong(iso) {
       if (!iso) return '';
-      return new Date(iso).toLocaleDateString('en-GB', {
-        dateStyle: 'full',
+      const d = new Date(iso);
+      const datePart = d.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
         timeZone: 'Europe/Madrid',
       });
+      const weekday = d.toLocaleDateString('en-GB', {
+        weekday: 'long',
+        timeZone: 'Europe/Madrid',
+      });
+      return datePart + ' · ' + weekday;
+    },
+
+    formatTimeRange(e) {
+      if (!e || !e.datetime_start) return '';
+      const start = this.formatTime(e.datetime_start);
+      if (e.datetime_end) return start + ' – ' + this.formatTime(e.datetime_end);
+      return '<span class="panel-time-prefix">Starts at</span> ' + start;
     },
 
     canAddToCalendar(e) {
