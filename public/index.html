@@ -270,6 +270,64 @@
   @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
   title="Back to top"
 >↑</button>
+
+<!-- Event Detail Panel -->
+<div class="panel-backdrop"
+     x-show="selectedEvent"
+     @click="closePanel()">
+  <div class="panel"
+       :class="selectedEvent ? getGameClass(selectedEvent.game) : ''"
+       @click.stop
+       x-show="selectedEvent">
+    <button class="panel-close" type="button" @click="closePanel()" aria-label="Close">✕</button>
+
+    <div class="panel-header">
+      <div class="panel-time" x-text="formatTime(selectedEvent?.datetime_start)"></div>
+      <h2 class="panel-title" x-text="selectedEvent?.title"></h2>
+      <div class="panel-meta">
+        <span class="tag game" x-text="selectedEvent?.game || 'Unknown'"></span>
+        <span class="tag fmt" x-text="selectedEvent?.format || 'Unknown'"></span>
+        <span class="panel-past-badge" x-show="selectedEvent && isEventPast(selectedEvent)">Past</span>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div class="panel-row">
+        <span class="panel-label">Date</span>
+        <span class="panel-value" x-text="selectedEvent ? formatDateLong(selectedEvent.datetime_start) : ''"></span>
+      </div>
+      <div class="panel-row" x-show="selectedEvent?.datetime_end">
+        <span class="panel-label">End</span>
+        <span class="panel-value" x-text="formatTime(selectedEvent?.datetime_end)"></span>
+      </div>
+      <div class="panel-row" x-show="selectedEvent?.source_url">
+        <span class="panel-label">Source</span>
+        <a class="panel-link" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-text="selectedEvent?.source_url"></a>
+      </div>
+
+      <div class="panel-actions">
+        <a class="btn" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-show="selectedEvent?.source_url">Open Source</a>
+        <button class="btn" @click.stop="openCalendar(selectedEvent)" x-show="canAddToCalendar(selectedEvent)">Add to Calendar</button>
+      </div>
+    </div>
+
+    <div class="panel-store" x-show="selectedEvent?.store && storeMeta(selectedEvent.store)">
+      <h3>Store</h3>
+      <div class="store-name" x-text="selectedEvent?.store"></div>
+      <div class="store-address" x-text="storeMeta(selectedEvent.store)?.address"></div>
+      <div class="store-notes" x-text="storeMeta(selectedEvent.store)?.notes" x-show="storeMeta(selectedEvent.store)?.notes"></div>
+      <div class="store-links">
+        <a class="btn"
+           :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeMeta(selectedEvent.store)?.address || selectedEvent?.store)"
+           target="_blank"
+           rel="noopener"
+           x-show="storeMeta(selectedEvent.store)?.address || selectedEvent?.store">Open in Maps</a>
+        <a class="btn" :href="storeMeta(selectedEvent.store)?.website" target="_blank" rel="noopener" x-show="storeMeta(selectedEvent.store)?.website">Website</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body>

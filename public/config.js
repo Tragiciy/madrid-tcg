@@ -14,6 +14,31 @@ var SEGMENTS = [
   { key: 'late',      label: 'Late',      range: '19:00+',        shortRange: '19+',   start: 19, end: 30 },
 ];
 
+var STORE_META = {
+  'Arte 9': {
+    address: 'Calle de Francisco Silvela, 21, 28028 Madrid',
+    website: 'https://arte9.es',
+    notes: 'Near Diego de León metro (L4, L5, L6)',
+  },
+  'Jupiter Juegos': {
+    address: 'Calle de la Cruz, 10, 28012 Madrid',
+    notes: 'Sol / Gran Vía area',
+  },
+  'La Guarida Juegos': {
+    address: 'Calle de las Peñuelas, 14, Local 1, 28005 Madrid',
+  },
+  'Metropolis Center': {
+    address: 'Calle Andrés Mellado, 22, 28015 Madrid',
+  },
+  'Micelion Games': {
+    address: 'Avenida del Mediterráneo, 8, 28007 Madrid',
+  },
+  'Ítaca': {
+    address: 'Calle del Pez, 20, 28004 Madrid',
+    notes: 'Malasaña',
+  },
+};
+
 var GAME_CLASS_MAP = {
   'Magic: The Gathering': 'game-mtg',
   'Star Wars: Unlimited': 'game-starwars',

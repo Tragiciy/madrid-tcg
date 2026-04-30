@@ -75,7 +75,7 @@ function buildGoogleCalendarUrl(e) {
   const endText = googleCalendarDate(end);
   if (!startText || !endText) return null;
 
-  const location = STORE_ADDRESSES[e.store] || e.store || '';
+  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
   const params = [
     ['action', 'TEMPLATE'],
     ['text', calendarTitle(e)],
@@ -86,6 +86,10 @@ function buildGoogleCalendarUrl(e) {
   ];
   return 'https://calendar.google.com/calendar/render?' +
     params.map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+}
+
+function eventKey(e) {
+  return (e.source_url || '') + (e.datetime_start || '');
 }
 
 function segmentForHour(h) {
@@ -129,6 +133,7 @@ function app() {
     collapsedSegments: { morning: false, afternoon: false, evening: false, late: false },
     SEGMENTS,
     showBackToTop: false,
+    selectedEvent: null,
     // Reactive Europe/Madrid clock — refreshed every minute. Used to
     // mark past segments and past events on today.
     nowMadrid: readMadridNow(),
@@ -145,7 +150,10 @@ function app() {
         this.showBackToTop = window.scrollY > 400;
       }, { passive: true });
       window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') this.openFacet = null;
+        if (e.key === 'Escape') {
+          if (this.selectedEvent) this.closePanel();
+          else if (this.openFacet) this.openFacet = null;
+        }
       });
 
       if (!localStorage.getItem('tcg-view-v2') && window.matchMedia('(max-width: 900px)').matches) {
@@ -525,7 +533,27 @@ function app() {
     },
 
     openEvent(e) {
-      if (e.source_url) window.open(e.source_url, '_blank', 'noopener');
+      this.openPanel(e);
+    },
+
+    openPanel(e) {
+      this.selectedEvent = e;
+    },
+
+    closePanel() {
+      this.selectedEvent = null;
+    },
+
+    storeMeta(storeName) {
+      return STORE_META[storeName] || null;
+    },
+
+    formatDateLong(iso) {
+      if (!iso) return '';
+      return new Date(iso).toLocaleDateString('en-GB', {
+        dateStyle: 'full',
+        timeZone: 'Europe/Madrid',
+      });
     },
 
     canAddToCalendar(e) {
@@ -571,7 +599,7 @@ function app() {
             `</button>`
           : '';
         out.push(
-          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-url="${esc(url)}">` +
+          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-event-key="${esc(eventKey(e))}">` +
             `<div class="ev-time">${esc(time)}</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
             `<div class="ev-footer">` +
@@ -590,7 +618,7 @@ function app() {
 
     /* ── Delegated click on the horizontal grid.
          Chip click → toggle that filter and stop propagation.
-         Card click (anywhere else inside .ev-card) → open source_url. */
+         Card click → open detail panel. */
     onGridClick(ev) {
       const calendarButton = ev.target.closest('[data-calendar-url]');
       if (calendarButton) {
@@ -604,9 +632,11 @@ function app() {
         this.toggleFilter(tag.dataset.filter, tag.dataset.value);
         return;
       }
-      const card = ev.target.closest('.ev-card[data-url]');
-      if (card && card.dataset.url) {
-        window.open(card.dataset.url, '_blank', 'noopener');
+      const card = ev.target.closest('.ev-card');
+      if (card) {
+        const key = card.dataset.eventKey;
+        const event = this.events.find(e => eventKey(e) === key);
+        if (event) this.openPanel(event);
       }
     },
 
