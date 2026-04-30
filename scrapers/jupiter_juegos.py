@@ -39,7 +39,7 @@ from zoneinfo import ZoneInfo
 import requests
 from bs4 import BeautifulSoup
 
-from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, extract_format_from_keywords
+from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, extract_format_from_keywords, GAME_KEYWORDS, extract_game_from_keywords
 
 logger = logging.getLogger(__name__)
 
@@ -57,24 +57,7 @@ _SPANISH_MONTHS = {
     "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
 }
 
-# Title-driven game classification (same shape as the Micelion list).
-GAME_KEYWORDS = [
-    ("one piece", "One Piece"),
-    ("yu-gi-oh", "Yu-Gi-Oh"),
-    ("yugioh", "Yu-Gi-Oh"),
-    ("pokemon", "Pokémon"),
-    ("pokémon", "Pokémon"),
-    ("digimon", "Digimon"),
-    ("lorcana", "Lorcana"),
-    ("riftbound", "Riftbound"),
-    ("nexus night", "Riftbound"),
-    ("star wars", "Star Wars: Unlimited"),
-    ("swu", "Star Wars: Unlimited"),
-    ("flesh and blood", "Flesh and Blood"),
-    ("fab", "Flesh and Blood"),
-    ("magic", "Magic"),
-    ("mtg", "Magic"),
-]
+
 
 HEADERS = {
     "User-Agent": (
@@ -98,11 +81,7 @@ _FONT_12 = "font-size:12px"
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _extract_game(title: str) -> Optional[str]:
-    low = title.lower()
-    for keyword, canonical in GAME_KEYWORDS:
-        if keyword in low:
-            return canonical
-    return None
+    return extract_game_from_keywords(title, GAME_KEYWORDS)
 
 
 def _extract_format(title: str) -> Optional[str]:

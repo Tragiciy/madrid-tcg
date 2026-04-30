@@ -40,39 +40,7 @@ API_URL = "https://arte9.com/wp-json/tribe/events/v1/events"
 PER_PAGE = 50
 MAX_PAGES = 20  # safety cap; current dataset uses ~4
 
-# Format keyword list mirrors the other scrapers so the aggregator's
-# ALLOWED_FORMATS allowlist accepts our values without changes.
-FORMAT_KEYWORDS: list[tuple] = [
-    ("store championship", "Store Championship"),
-    ("prerelease",         "Prerelease"),
-    # Spanish equivalents — Arte 9 categories use these directly.
-    ("presentaciones",     "Prerelease"),
-    ("presentación",       "Prerelease"),
-    ("sellados",           "Sealed"),
-    ("sellado",            "Sealed"),
-    # cEDH must precede commander (substring overlap with "edh").
-    ("competitive elder dragon highlander", "cEDH"),
-    ("cedh",               "cEDH"),
-    ("commander",          "Commander"),
-    # "Premier" is the SWU competitive format. Must precede "liga"/
-    # "league" so a description containing both reads as Premier.
-    ("formato premier",    "Premier"),
-    ("premier",            "Premier"),
-    ("standard",           "Standard"),
-    ("pioneer",            "Pioneer"),
-    ("modern",             "Modern"),
-    ("legacy",             "Legacy"),
-    ("pauper",             "Pauper"),
-    ("sealed",             "Sealed"),
-    ("draft",              "Draft"),
-    ("league",             "League"),
-    ("liga",               "League"),
-    ("weekly",             "Weekly"),
-    ("casual",             "Casual"),
-    ("bo3",                "BO3"),
-    ("bo1",                "BO1"),
-    ("rcq",                "Store Championship"),
-]
+from shared.scraper_keywords import FORMAT_KEYWORDS, extract_format_from_keywords
 
 # ── Title-extraction tunables ──────────────────────────────────────────
 MAX_TITLE_LEN = 70           # default cap
@@ -177,14 +145,7 @@ HEADERS = {
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _extract_format(text: str) -> Optional[str]:
-    """First-match keyword scan, same shape as other scrapers."""
-    if not text:
-        return None
-    lower = text.lower()
-    for keyword, canonical in FORMAT_KEYWORDS:
-        if keyword in lower:
-            return canonical
-    return None
+    return extract_format_from_keywords(text, FORMAT_KEYWORDS)
 
 
 def _split_category(name: str) -> tuple:

@@ -35,11 +35,14 @@ Scrapers import these and may extend them with store-specific entries.
 ### Migration status
 | Scraper | Uses shared GAME_KEYWORDS | Uses shared FORMAT_KEYWORDS |
 | --- | --- | --- |
-| `la_guarida_juegos` | Yes | No (local FORMAT_KEYWORDS) |
-| `jupiter_juegos` | No (local GAME_KEYWORDS) | Yes |
-| others | No | No |
+| `arte9` | — (not used) | Yes |
+| `itaca` | Yes | Yes |
+| `jupiter_juegos` | Yes | Yes |
+| `la_guarida_juegos` | Yes | Yes |
+| `metropolis_center` | — (not used) | Yes |
+| `micelion_games` | Yes | Yes |
 
-Gradual migration of remaining scrapers is planned.
+All scrapers now import both shared dictionaries. Stores with `—` derive game from API category fields, not keyword matching.
 
 ### Scraper stats and anomaly detection
 

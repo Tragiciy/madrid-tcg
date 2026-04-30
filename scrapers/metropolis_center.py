@@ -57,29 +57,7 @@ _BLOCKED_DOMAINS = (
     "cloudflareinsights.com",
 )
 
-# Форматы TCG — те же, что в micelion_games.py
-FORMAT_KEYWORDS: list[tuple] = [
-    ("store championship", "Store Championship"),
-    ("prerelease",         "Prerelease"),
-    # cEDH must be checked before "commander" so the more specific
-    # competitive variant wins.
-    ("competitive elder dragon highlander", "cEDH"),
-    ("cedh",               "cEDH"),
-    ("commander",         "Commander"),
-    ("standard",          "Standard"),
-    ("pioneer",           "Pioneer"),
-    ("modern",            "Modern"),
-    ("legacy",            "Legacy"),
-    ("pauper",            "Pauper"),
-    ("sealed",            "Sealed"),
-    ("draft",             "Draft"),
-    ("league",            "League"),
-    ("weekly",            "Weekly"),
-    ("casual",            "Casual"),
-    ("bo3",               "BO3"),
-    ("bo1",               "BO1"),
-    ("rcq",               "Store Championship"),
-]
+from shared.scraper_keywords import FORMAT_KEYWORDS, extract_format_from_keywords
 
 # Per-event detail fetch timeout (ms). Detail pages are tiny once
 # resources are blocked; 12s is generous.
@@ -89,11 +67,7 @@ DETAIL_FETCH_TIMEOUT = 12_000
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _extract_format(title: str) -> Optional[str]:
-    lower = title.lower()
-    for keyword, canonical in FORMAT_KEYWORDS:
-        if keyword in lower:
-            return canonical
-    return None
+    return extract_format_from_keywords(title, FORMAT_KEYWORDS)
 
 
 def _make_iso(date_str: str, time_str: str) -> Optional[str]:
