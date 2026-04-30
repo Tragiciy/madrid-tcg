@@ -157,10 +157,6 @@ function app() {
       this.nowMadrid = readMadridNow();
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
 
-      if (this.viewMode === 'vertical') {
-        this.$nextTick(() => this.scrollToCurrentSegment());
-      }
-
       try {
         const res = await fetch('events.json');
         this.events = await res.json();
@@ -169,6 +165,10 @@ function app() {
         console.error('Failed to load events.json', err);
       } finally {
         this.loading = false;
+      }
+
+      if (this.viewMode === 'vertical') {
+        setTimeout(() => this.scrollToCurrentSegment(), 50);
       }
 
       this.$watch('filters.search', () => this.cleanupFilters());
