@@ -325,7 +325,16 @@
       </div>
 
       <div class="panel-actions">
-        <button class="btn btn-primary" @click.stop="openCalendar(selectedEvent)" x-show="canAddToCalendar(selectedEvent)">Add to Calendar</button>
+        <div class="calendar-dropdown" x-show="canAddToCalendar(selectedEvent)">
+          <button class="btn btn-primary" type="button" @click.stop="calendarMenuOpen = !calendarMenuOpen">
+            Add to Calendar <span>▾</span>
+          </button>
+          <div class="calendar-dropdown-menu" x-show="calendarMenuOpen">
+            <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'google')">Google Calendar</button>
+            <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'apple')">iCalendar (.ics)</button>
+            <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'outlook')">Outlook</button>
+          </div>
+        </div>
         <a class="btn" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-show="selectedEvent?.source_url">Open Source</a>
       </div>
     </div>

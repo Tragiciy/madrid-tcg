@@ -90,6 +90,105 @@ function buildGoogleCalendarUrl(e) {
     params.map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
 }
 
+function buildOutlookUrl(e, base) {
+  if (!e || !e.datetime_start) return null;
+  const start = new Date(e.datetime_start);
+  if (Number.isNaN(start.getTime())) return null;
+
+  let end;
+  if (e.datetime_end) {
+    end = new Date(e.datetime_end);
+    if (Number.isNaN(end.getTime())) {
+      end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
+    }
+  } else {
+    end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
+  }
+
+  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+
+  const params = [
+    ['subject', calendarTitle(e)],
+    ['startdt', start.toISOString()],
+    ['enddt', end.toISOString()],
+    ['location', location],
+    ['body', calendarDetails(e)],
+  ];
+
+  return base + '?' + params.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+}
+
+
+
+function icsEscape(s) {
+  return String(s || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\n/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+}
+
+function icsUtcDate(d) {
+  if (!(d instanceof Date) || Number.isNaN(d.getTime())) return '';
+  return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+}
+
+function buildIcsContent(e) {
+  if (!e || !e.datetime_start) return '';
+  const start = new Date(e.datetime_start);
+  if (Number.isNaN(start.getTime())) return '';
+
+  let end;
+  if (e.datetime_end) {
+    end = new Date(e.datetime_end);
+    if (Number.isNaN(end.getTime())) {
+      end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
+    }
+  } else {
+    end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
+  }
+
+  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+  const uidBase = eventKey(e).replace(/[^a-zA-Z0-9]/g, '-');
+  const uid = `${uidBase}@madrid-tcg-events`;
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Madrid TCG Events//NONSGML v1.0//EN',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTAMP:${icsUtcDate(new Date())}`,
+    `DTSTART:${icsUtcDate(start)}`,
+    `DTEND:${icsUtcDate(end)}`,
+    `SUMMARY:${icsEscape(calendarTitle(e))}`,
+    `DESCRIPTION:${icsEscape(calendarDetails(e))}`,
+    `LOCATION:${icsEscape(location)}`,
+  ];
+
+  if (e.source_url) {
+    lines.push(`URL:${icsEscape(e.source_url)}`);
+  }
+
+  lines.push('END:VEVENT', 'END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+function downloadIcs(e) {
+  const content = buildIcsContent(e);
+  if (!content) return;
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const filename = (e.title || 'event').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '.ics';
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 function eventKey(e) {
   return (e.source_url || '') + (e.datetime_start || '');
 }
@@ -138,6 +237,7 @@ function app() {
     showBackToTop: false,
     selectedEvent: null,
     panelOpen: false,
+    calendarMenuOpen: false,
     // Reactive Europe/Madrid clock — refreshed every minute. Used to
     // mark past segments and past events on today.
     nowMadrid: readMadridNow(),
@@ -157,8 +257,13 @@ function app() {
       }, { passive: true });
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          if (this.selectedEvent) this.closePanel();
-          else if (this.openFacet) this.openFacet = null;
+          if (this.calendarMenuOpen) {
+            this.calendarMenuOpen = false;
+          } else if (this.selectedEvent) {
+            this.closePanel();
+          } else if (this.openFacet) {
+            this.openFacet = null;
+          }
         }
       });
 
@@ -632,11 +737,13 @@ function app() {
       }
       this.selectedEvent = e;
       this.panelOpen = true;
+      this.calendarMenuOpen = false;
       document.body.classList.add('no-scroll');
     },
 
     closePanel() {
       this.panelOpen = false;
+      this.calendarMenuOpen = false;
       document.body.classList.remove('no-scroll');
       if (this._panelCloseTimeout) {
         clearTimeout(this._panelCloseTimeout);
@@ -692,6 +799,28 @@ function app() {
     openCalendar(e) {
       const url = buildGoogleCalendarUrl(e);
       if (url) window.open(url, '_blank', 'noopener');
+    },
+
+    openCalendarProvider(e, provider) {
+      this.calendarMenuOpen = false;
+      if (!e || !e.datetime_start) return;
+
+      switch (provider) {
+        case 'google': {
+          const url = buildGoogleCalendarUrl(e);
+          if (url) window.open(url, '_blank', 'noopener');
+          break;
+        }
+        case 'apple': {
+          downloadIcs(e);
+          break;
+        }
+        case 'outlook': {
+          const url = buildOutlookUrl(e, 'https://outlook.live.com/calendar/0/deeplink/compose');
+          if (url) window.open(url, '_blank', 'noopener');
+          break;
+        }
+      }
     },
 
     /* ── Card HTML for a horizontal grid cell.
