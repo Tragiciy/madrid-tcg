@@ -484,9 +484,13 @@ truth for this list.
   drive `onGridClick` are all baked into the string at build time. They only
   update when `cells` recomputes — which happens because `cellCardsHtml`
   reads `nowMadrid`, `filters`, and the underlying events.
-- **`onGridClick` depends on `data-*` attribute names.** Renaming `data-url`,
+- **`onGridClick` depends on `data-*` attribute names.** Renaming `data-event-key`,
   `data-filter`, `data-value`, or `data-calendar-url` silently breaks click
   handling without any error.
+- **Do not collapse `panelOpen` and `selectedEvent` into one field.** The close
+  animation requires `selectedEvent` to remain set while `panelOpen` is already
+  `false`; merging them would clear the panel content before the transition
+  finishes.
 - **Vertical segment auto-scroll depends on scoped `data-seg-key` lookup.**
   Segment keys repeat across days, so code must first find today's `day-*`
   container and then query inside it. Do not use a global `seg-*` ID lookup
