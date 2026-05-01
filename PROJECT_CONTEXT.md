@@ -130,14 +130,21 @@ initialisation. See the matching constraints in §7.
 
 ### 2a. `public/config.js` — extension points
 
-`config.js` exposes three `var` globals (deliberately `var`, not `const`/`let`
+`config.js` exposes four `var` globals (deliberately `var`, not `const`/`let`
 — see §7):
 
-- **`STORE_ADDRESSES`** (`config.js:1`) — maps store display name → address
-  string used as the Google Calendar `location` field.
+- **`STORE_ADDRESSES`** (`config.js:1`) — legacy map of store display name →
+  address string. Used as a fallback when `STORE_META` has no entry for a
+  store. New stores should be added to `STORE_META` instead.
+- **`STORE_META`** — primary per-store metadata object. Each
+  key is a store display name; each value is an object with at minimum an
+  `address` field, and optionally `notes`, `website`, etc. Used by the Event
+  Detail Panel to show the store card, and by `buildGoogleCalendarUrl` for the
+  `location` field (`STORE_META[store].address` takes priority over
+  `STORE_ADDRESSES[store]`).
 - **`SEGMENTS`** (`config.js:10`) — array of 4 time-bucket definitions, each
   with a `key`, hour range, `label`, and `shortRange`.
-- **`GAME_CLASS_MAP`** (`config.js:17`) — maps canonical game name → CSS class
+- **`GAME_CLASS_MAP`** (`config.js:42`) — maps canonical game name → CSS class
   string (e.g. `"Magic: The Gathering"` → `"game-mtg"`).
 
 **Principle:** extension points live in `config.js`, not in `app.js`. When
@@ -244,6 +251,25 @@ These look similar and do different things — both are
 
 Do not collapse these two flags into one — they are deliberately independent.
 
+### Event Detail Panel — `panelOpen` and `selectedEvent`
+
+Two separate state fields drive the panel:
+
+- `panelOpen` — boolean that controls `x-show` on the backdrop and inner panel
+  element. Setting it to `false` starts the CSS leave transition; the panel
+  fades out while `selectedEvent` is still populated.
+- `selectedEvent` — holds the event object currently displayed. Cleared by a
+  `setTimeout` in `closePanel()` only *after* the transition has finished
+  (~200 ms), so the panel content doesn't vanish mid-fade.
+
+They are intentionally kept separate. Clearing `selectedEvent` immediately
+when `closePanel()` fires would blank the panel content before the CSS
+opacity/transform transition completes, producing a jarring empty flash.
+
+`openPanel(e)` sets both fields and adds `.no-scroll` to `<body>`.
+`closePanel()` sets `panelOpen = false`, removes `.no-scroll`, and schedules
+the `selectedEvent = null` cleanup.
+
 ### Horizontal grid vs vertical list
 
 Both are toggled by `viewMode` (persisted in `localStorage` under
@@ -267,6 +293,7 @@ Both are toggled by `viewMode` (persisted in `localStorage` under
   segment; global segment IDs are not relied upon.
 - Cards in this view use Alpine bindings directly (`@click="openEvent(e)"`,
   `@click.stop="toggleFilter(...)"`, `x-show="canAddToCalendar(e)"`).
+  `openEvent(e)` calls `openPanel(e)`, opening the Event Detail Panel.
 - Entering vertical view auto-scrolls to today's current time segment. The
   Today button uses the same behavior rather than only scrolling to the day
   header.
@@ -317,7 +344,9 @@ walks up from the click target:
 - `[data-calendar-url]` → opens that URL in a new tab; stops propagation.
 - `[data-filter]` → reads `data-filter` (one of `game` / `store` / `format`)
   and `data-value`, calls `toggleFilter(field, value)`; stops propagation.
-- `.ev-card[data-url]` → opens `source_url` in a new tab.
+- `.ev-card[data-event-key]` → reads the `data-event-key` attribute (built by
+  the `eventKey(e)` helper as `source_url + datetime_start`), looks up the
+  matching event in `this.events` via `find`, and calls `openPanel(event)`.
 
 Every property used by `cellCardsHtml` to compose those `data-*` attributes
 must also be HTML-escaped via `esc()`.
@@ -436,7 +465,7 @@ truth for this list.
   — plain `<script>` tags at the bottom of `<body>`, after Alpine's `defer`
   tag in `<head>` — achieves this. Reordering the `<script>` tags, or adding
   `defer` or `type="module"` to either file, breaks initialisation silently.
-- **`config.js` uses `var` deliberately.** All three globals are declared with
+- **`config.js` uses `var` deliberately.** All four globals are declared with
   `var` so they are attached to `window` and visible to `app.js`. Changing
   them to `const` or `let` scopes them to the script block; `app.js` then
   throws a `ReferenceError` with no obvious pointer back to `config.js`.
