@@ -910,6 +910,44 @@ input:focus, select:focus { border-color: var(--accent); }
 
 .panel-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .35rem; }
 
+.calendar-dropdown { position: relative; }
+
+.calendar-dropdown-menu {
+  position: absolute;
+  top: calc(100% + .25rem);
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, .14);
+  z-index: 20;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  padding: .25rem;
+}
+
+.calendar-dropdown-menu button {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: .82rem;
+  padding: .4rem .5rem;
+  text-align: left;
+  border-radius: 4px;
+  transition: background .12s;
+}
+
+.calendar-dropdown-menu button:hover { background: var(--surface2); }
+
+@media (max-width: 500px) {
+  .calendar-dropdown-menu {
+    top: auto;
+    bottom: calc(100% + .25rem);
+  }
+}
+
 /* Primary CTA */
 .btn-primary {
   background: var(--accent);
