@@ -36,6 +36,8 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     ("nexus night",                         "Riftbound"),
     ("liga star wars",                      "Star Wars: Unlimited"),
     ("riftbound unleashed",                 "Riftbound"),
+    ("unleashed pre rift",                  "Riftbound"),
+    ("pre rift",                            "Riftbound"),
     ("final fantasy",                       "Final Fantasy TCG"),
     ("star wars",                           "Star Wars: Unlimited"),
     ("naruto mythos",                       "Naruto Mythos"),
