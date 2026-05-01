@@ -1,5 +1,7 @@
 /* ── Helpers ───────────────────────────────────────────────────────── */
 
+const PRESETS_STORAGE_KEY = 'tcg-presets-v1';
+
 // Returns YYYY-MM-DD string for a Date object, in local time
 function isoDay(d) {
   const y = d.getFullYear();
@@ -126,6 +128,7 @@ function app() {
     loading:      true,
     weekStart:    weekMonday(new Date()),
     filters:      { search: '', game: [], store: [], format: [] },
+    savedPresets: [],
     segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
     openFacet: null,
     // Independent of segmentFilter: collapsed segments still occupy a
@@ -146,6 +149,8 @@ function app() {
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
+      this.loadPresets();
+
       // Show Back to top after 400px scroll
       window.addEventListener('scroll', () => {
         this.showBackToTop = window.scrollY > 400;
@@ -269,6 +274,89 @@ function app() {
     clearFacet(field) {
       this.filters[field] = [];
       this.cleanupFilters();
+    },
+
+    loadPresets() {
+      try {
+        const raw = localStorage.getItem(PRESETS_STORAGE_KEY);
+        if (!raw) {
+          this.savedPresets = [];
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          this.savedPresets = [];
+          return;
+        }
+        this.savedPresets = parsed
+          .filter(p => p && typeof p === 'object')
+          .map(p => ({
+            id: String(p.id || ''),
+            name: String(p.name || '').trim(),
+            filters: {
+              game: Array.isArray(p.filters && p.filters.game) ? p.filters.game.filter(Boolean) : [],
+              store: Array.isArray(p.filters && p.filters.store) ? p.filters.store.filter(Boolean) : [],
+              format: Array.isArray(p.filters && p.filters.format) ? p.filters.format.filter(Boolean) : [],
+            },
+          }))
+          .filter(p => p.id && p.name);
+      } catch (err) {
+        console.warn('Failed to load saved presets', err);
+        this.savedPresets = [];
+      }
+    },
+
+    persistPresets() {
+      try {
+        localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(this.savedPresets));
+      } catch (err) {
+        console.warn('Failed to save presets', err);
+      }
+    },
+
+    saveCurrentPreset() {
+      const filters = {
+        game: this.selectedValues('game').slice(),
+        store: this.selectedValues('store').slice(),
+        format: this.selectedValues('format').slice(),
+      };
+      if (!filters.game.length && !filters.store.length && !filters.format.length) {
+        window.alert('Choose at least one game, store, or format before saving a preset.');
+        return;
+      }
+
+      const name = window.prompt('Preset name');
+      const trimmedName = name ? name.trim() : '';
+      if (!trimmedName) return;
+
+      const existing = this.savedPresets.find(p => p.name === trimmedName);
+      if (existing) {
+        if (!window.confirm(`Replace preset "${trimmedName}"?`)) return;
+        existing.filters = filters;
+        this.persistPresets();
+        return;
+      }
+
+      this.savedPresets.push({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+        name: trimmedName,
+        filters,
+      });
+      this.persistPresets();
+    },
+
+    applyPreset(preset) {
+      if (!preset || !preset.filters) return;
+      this.filters.game = Array.isArray(preset.filters.game) ? preset.filters.game.slice() : [];
+      this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
+      this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
+      this.openFacet = null;
+      this.cleanupFilters();
+    },
+
+    deletePreset(id) {
+      this.savedPresets = this.savedPresets.filter(p => p.id !== id);
+      this.persistPresets();
     },
 
     facetSummary(field, fallback) {

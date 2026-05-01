@@ -247,6 +247,60 @@ input:focus, select:focus { border-color: var(--accent); }
   padding: .35rem;
 }
 
+.preset-bar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  margin: -.35rem 0 1rem;
+}
+.preset-label {
+  color: var(--text-muted);
+  font-size: .7rem;
+  letter-spacing: .06em;
+  margin-right: .15rem;
+  text-transform: uppercase;
+}
+.preset-chip {
+  align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  display: inline-flex;
+  max-width: 100%;
+  overflow: hidden;
+}
+.preset-apply,
+.preset-remove {
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: .72rem;
+  line-height: 1;
+  transition: background .12s, color .12s;
+}
+.preset-apply {
+  max-width: min(260px, calc(100vw - 5rem));
+  overflow: hidden;
+  padding: .32rem .55rem .32rem .7rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.preset-remove {
+  border-left: 1px solid var(--border);
+  min-width: 28px;
+  padding: .3rem .45rem;
+}
+.preset-chip:hover {
+  border-color: var(--accent-dim);
+}
+.preset-apply:hover,
+.preset-remove:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 /* ── View toggle buttons ──────────────────────────────────────── */
 .view-toggle {
   display: flex;
