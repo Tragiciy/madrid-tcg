@@ -591,6 +591,39 @@ input:focus, select:focus { border-color: var(--accent); }
 }
 .ev-card:active { transform: translateY(0); }
 
+/* Top meta row (time + store) */
+.ev-card-top {
+  display: flex;
+  align-items: baseline;
+  gap: .25rem;
+  margin-bottom: .05rem;
+  min-width: 0;
+}
+.ev-card-top .ev-time { margin-bottom: 0; }
+
+/* Right-aligned, secondary store name */
+.ev-store-top {
+  margin-left: auto;
+  text-align: right;
+  font-size: .7rem;
+  color: var(--text-muted);
+  min-width: 0;
+  cursor: pointer;
+  transition: color .12s;
+}
+.ev-store-top:hover { color: var(--accent); }
+.ev-store-top.active { color: var(--accent); font-weight: 600; }
+
+/* Horizontal density: prevent long store names from consuming too much width */
+.cal-grid-h .ev-card-top { margin-bottom: .1rem; }
+.cal-grid-h .ev-store-top {
+  font-size: .6rem;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ev-time  { font-size: .75rem; color: var(--text-muted); margin-bottom: .05rem; }
 .ev-title { font-size: .82rem; font-weight: 700; line-height: 1.2; margin-bottom: .2rem; color: var(--text); }
 

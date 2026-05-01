@@ -212,7 +212,14 @@
                   <div class="ev-card"
                        :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '' ]"
                        @click="openEvent(e)">
-                    <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
+                    <div class="ev-card-top">
+                      <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
+                      <div class="ev-store-top"
+                           :class="{ active: isSelected('store', e.store) }"
+                           @click.stop="toggleFilter('store', e.store)"
+                           :title="e.store"
+                           x-text="e.store"></div>
+                    </div>
                     <div class="ev-title" x-text="e.title"></div>
                     <div class="ev-footer">
                       <div class="ev-tags">
@@ -220,10 +227,6 @@
                           :class="{ active: isSelected('game', e.game || 'Unknown') }"
                           @click.stop="toggleFilter('game', e.game || 'Unknown')"
                           x-text="e.game || 'Unknown'"></span>
-                        <span class="tag store"
-                          :class="{ active: isSelected('store', e.store) }"
-                          @click.stop="toggleFilter('store', e.store)"
-                          x-text="e.store"></span>
                         <span class="tag fmt"
                           :class="{ active: isSelected('format', e.format || 'Unknown') }"
                           @click.stop="toggleFilter('format', e.format || 'Unknown')"
