@@ -107,6 +107,18 @@
       </div>
     </div>
     <button class="btn" style="align-self:flex-end" @click="resetFilters">✕ Clear</button>
+    <button class="btn" style="align-self:flex-end" @click="saveCurrentPreset">Save preset</button>
+  </div>
+
+  <!-- Saved filter presets -->
+  <div class="preset-bar" x-show="savedPresets.length">
+    <span class="preset-label">Presets</span>
+    <template x-for="preset in savedPresets" :key="preset.id">
+      <span class="preset-chip">
+        <button class="preset-apply" type="button" @click="applyPreset(preset)" x-text="preset.name"></button>
+        <button class="preset-remove" type="button" @click.stop="deletePreset(preset.id)" :aria-label="'Delete preset ' + preset.name">×</button>
+      </span>
+    </template>
   </div>
 
   <!-- Time-segment filter -->
