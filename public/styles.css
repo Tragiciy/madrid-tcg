@@ -32,6 +32,7 @@ body {
   line-height: 1.4;
   min-height: 100vh;
 }
+body.no-scroll { overflow: hidden; }
 
 /* ── Layout ───────────────────────────────────────────────────── */
 .page { max-width: 1400px; margin: 0 auto; padding: 1.25rem 1rem; }
@@ -91,6 +92,7 @@ body {
   padding: .35rem .75rem;
   transition: border-color .15s, color .15s, background .15s;
   white-space: nowrap;
+  text-decoration: none;
 }
 .btn:hover   { border-color: var(--accent); color: var(--accent); }
 .btn.current { border-color: var(--accent-dim); color: var(--accent); }
@@ -763,4 +765,124 @@ input:focus, select:focus { border-color: var(--accent); }
     min-height: 44px;
     min-width: 44px;
   }
+}
+
+/* ── Event Detail Panel ──────────────────────────────────────── */
+.panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, .45);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  transition: background .2s ease;
+}
+
+.panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, .18);
+  max-width: 520px;
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-left: 4px solid var(--card-accent, var(--border-strong));
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.panel-close {
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: .25rem;
+  transition: color .15s;
+}
+.panel-close:hover { color: var(--text); }
+
+.panel-header { display: flex; flex-direction: column; gap: .5rem; }
+.panel-title  { font-size: 1.35rem; font-weight: 700; line-height: 1.2; color: var(--text); letter-spacing: -.01em; }
+.panel-meta   { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
+.panel-past-badge {
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: .1rem .4rem;
+}
+
+.panel-body   { display: flex; flex-direction: column; gap: .7rem; }
+.panel-row    { display: flex; flex-direction: column; gap: .2rem; }
+.panel-label  { font-size: .62rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 600; }
+.panel-value  { font-size: .88rem; color: var(--text); }
+.panel-row .panel-value + .panel-value { margin-top: .15rem; }
+.panel-time-prefix { color: var(--text-muted); }
+.panel-link   { font-size: .85rem; color: var(--accent); word-break: break-all; }
+.panel-link:hover { text-decoration: underline; }
+
+.panel-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .35rem; }
+
+/* Primary CTA */
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  background: #6d28d9;
+  border-color: #6d28d9;
+  color: #fff;
+}
+
+.panel-store {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+.panel-store h3 {
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  margin-bottom: .15rem;
+  font-weight: 600;
+}
+.store-name    { font-weight: 700; font-size: .95rem; color: var(--text); }
+.store-address { font-size: .85rem; color: var(--text); line-height: 1.35; display: flex; gap: .25rem; }
+.store-address-indicator { color: var(--accent); font-weight: 600; }
+.store-notes   { font-size: .78rem; color: var(--text-muted); font-style: italic; line-height: 1.3; }
+.store-links   { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .35rem; }
+
+@media (max-width: 500px) {
+  .panel-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .panel {
+    max-height: 90vh;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+  .panel-title { font-size: 1.2rem; }
 }
