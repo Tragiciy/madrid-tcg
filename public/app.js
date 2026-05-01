@@ -641,12 +641,14 @@ function app() {
           : '';
         out.push(
           `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-event-key="${esc(eventKey(e))}">` +
-            `<div class="ev-time">${esc(time)}</div>` +
+            `<div class="ev-card-top">` +
+              `<div class="ev-time">${esc(time)}</div>` +
+              `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
+            `</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
             `<div class="ev-footer">` +
               `<div class="ev-tags">` +
                 `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
-                `<span class="tag store${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}">${esc(e.store)}</span>` +
                 `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
               `</div>` +
               calendarButton +
