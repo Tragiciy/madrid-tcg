@@ -280,6 +280,11 @@ function app() {
         const res = await fetch('events.json');
         this.events = await res.json();
         this.cleanupFilters();
+        const eventKey = new URLSearchParams(window.location.search).get('event');
+        if (eventKey) {
+          const event = this.events.find(ev => this.eventKey(ev) === eventKey);
+          if (event) this.openPanel(event);
+        }
       } catch (err) {
         console.error('Failed to load events.json', err);
       } finally {
@@ -726,6 +731,89 @@ function app() {
       });
     },
 
+    eventKey(e) {
+      return eventKey(e);
+    },
+
+    eventUrl(e) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('event', this.eventKey(e));
+      return url.toString();
+    },
+
+    syncEventParam(e) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('event', this.eventKey(e));
+      history.replaceState(null, '', url.toString());
+    },
+
+    clearEventParam() {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('event');
+      history.replaceState(null, '', url.toString());
+    },
+
+    copyEventLink(e) {
+      if (!e) return;
+      const text = this.eventUrl(e);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => this.fallbackCopy(text));
+      } else {
+        this.fallbackCopy(text);
+      }
+    },
+
+    fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Failed to copy event link', err);
+      }
+      document.body.removeChild(ta);
+    },
+
+    buildShareText(e) {
+      if (!e) return '';
+      const lines = [
+        e.title,
+        e.game || 'Unknown game',
+        e.format || 'Unknown format',
+      ];
+      if (e.datetime_start) {
+        const date = this.formatDateLong(e.datetime_start);
+        const time = this.formatTime(e.datetime_start);
+        lines.push(`${date} at ${time}`);
+      }
+      lines.push(e.store || 'Unknown store');
+      const address = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store];
+      if (address) lines.push(address);
+      if (e.source_url) lines.push(e.source_url);
+      return lines.join('\n');
+    },
+
+    shareEvent(e) {
+      if (!e) return;
+      const url = this.eventUrl(e);
+      const text = this.buildShareText(e);
+      if (navigator.share) {
+        navigator.share({
+          title: e.title || 'Event',
+          text: text,
+          url: url,
+        }).catch(() => {
+          this.copyEventLink(e);
+        });
+      } else {
+        this.copyEventLink(e);
+      }
+    },
+
     openEvent(e) {
       this.openPanel(e);
     },
@@ -739,12 +827,14 @@ function app() {
       this.panelOpen = true;
       this.calendarMenuOpen = false;
       document.body.classList.add('no-scroll');
+      this.syncEventParam(e);
     },
 
     closePanel() {
       this.panelOpen = false;
       this.calendarMenuOpen = false;
       document.body.classList.remove('no-scroll');
+      this.clearEventParam();
       if (this._panelCloseTimeout) {
         clearTimeout(this._panelCloseTimeout);
       }
