@@ -311,8 +311,18 @@
     <div class="panel-header">
       <h2 class="panel-title" x-text="selectedEvent?.title"></h2>
       <div class="panel-meta">
-        <span class="tag game" x-text="selectedEvent?.game || 'Unknown'"></span>
-        <span class="tag fmt" x-text="selectedEvent?.format || 'Unknown'"></span>
+        <span class="tag game"
+              :class="{ active: isSelected('game', selectedEvent?.game) }"
+              @click.stop="filterFromPanel('game', selectedEvent?.game)"
+              x-text="selectedEvent?.game || 'Unknown'"></span>
+        <span class="tag fmt"
+              :class="{ active: isSelected('format', selectedEvent?.format) }"
+              @click.stop="filterFromPanel('format', selectedEvent?.format)"
+              x-text="selectedEvent?.format || 'Unknown'"></span>
+        <button class="panel-store-filter" type="button"
+                x-show="selectedEvent?.store"
+                @click.stop="filterFromPanel('store', selectedEvent?.store)"
+                x-text="selectedEvent?.store"></button>
         <span class="panel-past-badge" x-show="selectedEvent && isEventPast(selectedEvent)">Past</span>
       </div>
     </div>

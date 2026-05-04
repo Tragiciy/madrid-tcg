@@ -574,6 +574,14 @@ function app() {
 
     /* ── Toggle a filter chip (game/store/format) ───────────────────── */
     // If selected, remove it; otherwise add it to the facet group.
+    filterFromPanel(field, value) {
+      if (!value) return;
+      this.closePanel();
+      setTimeout(() => {
+        this.toggleFilter(field, value);
+      }, 220);
+    },
+
     toggleFilter(field, value) {
       if (!value) return;
       const values = this.selectedValues(field).slice();
