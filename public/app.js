@@ -193,6 +193,27 @@ function eventKey(e) {
   return (e.source_url || '') + (e.datetime_start || '');
 }
 
+function encodeEventParam(value) {
+  if (!value) return '';
+  const bytes = new TextEncoder().encode(value);
+  const base64 = btoa(String.fromCharCode(...bytes));
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function decodeEventParam(value) {
+  if (!value) return null;
+  try {
+    const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
+    const padding = (4 - (base64.length % 4)) % 4;
+    const padded = base64 + '='.repeat(padding);
+    const binary = atob(padded);
+    const bytes = Uint8Array.from([...binary].map(c => c.charCodeAt(0)));
+    return new TextDecoder().decode(bytes);
+  } catch {
+    return null;
+  }
+}
+
 function segmentForHour(h) {
   if (h < 12) return 'morning';
   if (h < 16) return 'afternoon';
@@ -275,24 +296,24 @@ function app() {
       // so past-segment / past-event styling progresses without a reload.
       this.nowMadrid = readMadridNow();
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
-
-try {
-  const res = await fetch('events.json');
-  this.events = await res.json();
-
-  this.applyFiltersFromUrl();
-  this.cleanupFilters({ syncUrl: false });
-
-  const eventKey = new URLSearchParams(window.location.search).get('event');
-  if (eventKey) {
-    const event = this.events.find(ev => this.eventKey(ev) === eventKey);
-    if (event) this.openPanel(event);
-  }
-} catch (err) {
-  console.error('Failed to load events.json', err);
-} finally {
-  this.loading = false;
-}
+      
+      try {
+        const res = await fetch('events.json');
+        this.events = await res.json();
+        this.applyFiltersFromUrl();
+        this.cleanupFilters({ syncUrl: false });
+        const rawEventParam = new URLSearchParams(window.location.search).get('event');
+        if (rawEventParam) {
+          const decoded = decodeEventParam(rawEventParam);
+          const eventKey = decoded !== null ? decoded : rawEventParam;
+          const event = this.events.find(ev => this.eventKey(ev) === eventKey);
+          if (event) this.openPanel(event);
+        }
+      } catch (err) {
+        console.error('Failed to load events.json', err);
+      } finally {
+        this.loading = false;
+      }
 
       if (this.viewMode === 'vertical') {
         this.$nextTick(() => {
@@ -955,14 +976,16 @@ try {
     },
 
     eventUrl(e) {
+      if (!e) return '';
       const url = new URL(window.location.href);
-      url.searchParams.set('event', this.eventKey(e));
+      url.searchParams.set('event', encodeEventParam(this.eventKey(e)));
       return url.toString();
     },
 
     syncEventParam(e) {
+      if (!e) return;
       const url = new URL(window.location.href);
-      url.searchParams.set('event', this.eventKey(e));
+      url.searchParams.set('event', encodeEventParam(this.eventKey(e)));
       history.replaceState(null, '', url.toString());
     },
 
@@ -1019,11 +1042,9 @@ try {
     shareEvent(e) {
       if (!e) return;
       const url = this.eventUrl(e);
-      const text = this.buildShareText(e);
       if (navigator.share) {
         navigator.share({
           title: e.title || 'Event',
-          text: text,
           url: url,
         }).catch(() => {
           this.copyEventLink(e);
