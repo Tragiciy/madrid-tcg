@@ -335,24 +335,25 @@
             <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'outlook')">Outlook</button>
           </div>
         </div>
-        <a class="btn" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-show="selectedEvent?.source_url">Open Source</a>
-        <button class="btn" type="button" @click="shareEvent(selectedEvent)">Share</button>
+        <a class="btn" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-show="selectedEvent?.source_url" @click.stop>Open Source</a>
+        <button class="btn" type="button" @click.stop="shareEvent(selectedEvent)">Share</button>
       </div>
     </div>
 
-    <div class="panel-store" x-show="selectedEvent?.store && storeMeta(selectedEvent.store)">
+    <div class="panel-store" x-show="selectedEvent?.store && storeMeta(selectedEvent?.store)">
       <h3>Location</h3>
       <div class="store-name" x-text="selectedEvent?.store"></div>
       <div class="store-address">
         <span class="store-address-indicator">@</span>
-        <span x-text="storeMeta(selectedEvent.store)?.address"></span>
+        <span x-text="storeMeta(selectedEvent?.store)?.address"></span>
       </div>
       <div class="store-links">
         <a class="btn btn-primary"
-           :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeMeta(selectedEvent.store)?.address || selectedEvent?.store)"
+           :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeMeta(selectedEvent?.store)?.address || selectedEvent?.store)"
            target="_blank"
            rel="noopener"
-           x-show="storeMeta(selectedEvent.store)?.address || selectedEvent?.store">Open in Maps</a>
+           @click.stop
+           x-show="storeMeta(selectedEvent?.store)?.address || selectedEvent?.store">Open in Maps</a>
       </div>
     </div>
   </div>
