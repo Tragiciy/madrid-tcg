@@ -1,0 +1,713 @@
+[
+  {
+    "name": "Asedio Gaming",
+    "website": "https://asediogaming.com/",
+    "address": "Calle Soria 5, Bajo Izquierda, Las Rozas, M, 28231, Spain",
+    "external_id": "13138",
+    "event_pages": [
+      "https://asediogaming.com/pages/eventos"
+    ],
+    "best_event_page": "https://asediogaming.com/pages/eventos",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "event_page_game:Flesh and Blood",
+      "platform:shopify",
+      "platform:instagram"
+    ],
+    "game_detected": "Flesh and Blood",
+    "format_detected": null,
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Collectorage",
+    "website": "https://collectorage.com/",
+    "address": "calle Hernani 19. 28020. Madrid, Madrid, Madrid, 28020, Spain",
+    "external_id": "21592",
+    "event_pages": [
+      "https://collectorage.com/calendario"
+    ],
+    "best_event_page": "https://collectorage.com/calendario",
+    "signals": [
+      "homepage_event_keyword:calendario",
+      "homepage_event_keyword:liga",
+      "event_page_game:Star Wars: Unlimited",
+      "event_page_format:League",
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Star Wars: Unlimited",
+    "format_detected": "League",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Generacion X - Elfo",
+    "website": "https://genexcomics.com/",
+    "address": "Elfo 98, Madrid, Madrid, 28027, Spain",
+    "external_id": "11109",
+    "event_pages": [
+      "https://genexcomics.com/eventos/"
+    ],
+    "best_event_page": "https://genexcomics.com/eventos/",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:calendario",
+      "event_page_game:Magic: The Gathering",
+      "event_page_format:Prerelease",
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Magic: The Gathering",
+    "format_detected": "Prerelease",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Gladius Games",
+    "website": "https://gladiusgames.net/",
+    "address": "Calle Cánovas del Castillo, 5 , Local 6, Alcalá de Henares, Madrid, 28807, Spain",
+    "external_id": "18454",
+    "event_pages": [
+      "https://gladiusgames.net/content/5-calendario-de-eventos",
+      "https://gladiusgames.net/es/150-eventos",
+      "https://gladiusgames.net/es/content/5-calendario-de-eventos",
+      "https://gladiusgames.net/es/eventos/6473-inicio-campana-dnd-5e-16052026.html"
+    ],
+    "best_event_page": "https://gladiusgames.net/content/5-calendario-de-eventos",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:torneo",
+      "homepage_event_keyword:torneos",
+      "homepage_event_keyword:calendario",
+      "event_page_game:Magic: The Gathering",
+      "event_page_format:Commander",
+      "platform:instagram"
+    ],
+    "game_detected": "Magic: The Gathering",
+    "format_detected": "Commander",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 4 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Goblintrader Central",
+    "website": "https://www.goblintrader.es/gb/",
+    "address": "C. de Almanzor, 10,, Fuenlabrada, Madrid, 28944, Spain",
+    "external_id": "18437",
+    "event_pages": [
+      "https://www.goblintrader.es/gb/eventos"
+    ],
+    "best_event_page": "https://www.goblintrader.es/gb/eventos",
+    "signals": [
+      "event_page_game:Star Wars: Unlimited",
+      "event_page_format:Commander",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Star Wars: Unlimited",
+    "format_detected": "Commander",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Goblintrader Madrid-Norte",
+    "website": "https://www.goblintrader.es",
+    "address": "C. del Marqués de Lema 7, local 3, Madrid, MD, 28003, Spain",
+    "external_id": "7224",
+    "event_pages": [
+      "https://www.goblintrader.es/es/eventos"
+    ],
+    "best_event_page": "https://www.goblintrader.es/es/eventos",
+    "signals": [
+      "event_page_game:Star Wars: Unlimited",
+      "event_page_format:Commander",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Star Wars: Unlimited",
+    "format_detected": "Commander",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Kamikaze Freak Shop",
+    "website": "https://kamikazefreakshop.es/",
+    "address": "Calle Ponferrada 11, Madrid, M, 28029, Spain",
+    "external_id": "8755",
+    "event_pages": [
+      "https://kamikazefreakshop.es/index.php/eventos/"
+    ],
+    "best_event_page": "https://kamikazefreakshop.es/index.php/eventos/",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "event_page_game:Magic: The Gathering",
+      "event_page_format:Prerelease",
+      "platform:wordpress",
+      "platform:instagram"
+    ],
+    "game_detected": "Magic: The Gathering",
+    "format_detected": "Prerelease",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "MADAKIBA",
+    "website": "https://madakiba.com/",
+    "address": "AVENIDA DEL MAR MEDITERRANEO Nº 156 LOCAL 7., Valdemoro, M, 28342, Spain",
+    "external_id": "9397",
+    "event_pages": [
+      "https://madakiba.com/es/c/eventos",
+      "https://madakiba.com/es/p/calendario-abril-2026",
+      "https://madakiba.com/es/p/presentacion-pokemon-tcg-mega-evolution-c-espanol",
+      "https://madakiba.com/es/p/presentacion-pokemon-tcg-mega-evolution-caos-creciente-ingles",
+      "https://madakiba.com/es/p/riftbound-prerelease-unleashed-sabado-0305-a-las-10h-1",
+      "https://madakiba.com/es/p/torneo-especial-one-piece-card-game"
+    ],
+    "best_event_page": "https://madakiba.com/es/c/eventos",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:calendario",
+      "homepage_event_keyword:actividades",
+      "homepage_event_keyword:prerelease",
+      "homepage_event_keyword:presentacion",
+      "event_page_game:Star Wars: Unlimited",
+      "event_page_format:Prerelease",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Star Wars: Unlimited",
+    "format_detected": "Prerelease",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 6 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Metamorfo",
+    "website": "https://metamorfo.es/",
+    "address": "Calle ilustración 3, Getafe, M, 28902, Spain",
+    "external_id": "13409",
+    "event_pages": [
+      "https://metamorfo.es/calendario",
+      "https://metamorfo.es/eventos",
+      "https://metamorfo.es/eventos/championship-winterspell/",
+      "https://metamorfo.es/eventos/liga-lorcana-shimmering-skies-2/",
+      "https://metamorfo.es/eventos/liga-lorcana-shimmering-skies-3/",
+      "https://metamorfo.es/eventos/skirmish-spiritforged/",
+      "https://metamorfo.es/eventos/torneo-mazo-construido-azurite-sea/"
+    ],
+    "best_event_page": "https://metamorfo.es/calendario",
+    "signals": [
+      "homepage_event_keyword:torneo",
+      "homepage_event_keyword:torneos",
+      "homepage_event_keyword:calendario",
+      "homepage_event_keyword:liga",
+      "event_page_game:Yu-Gi-Oh!",
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Yu-Gi-Oh!",
+    "format_detected": null,
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 7 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Mundicomics",
+    "website": "https://www.mundicomics.com/",
+    "address": "C/Ramon y Cajal 3 Local 1, Torrejón de Ardoz, M, 28850, Spain",
+    "external_id": "14068",
+    "event_pages": [
+      "https://www.mundicomics.com/torneos-tcg"
+    ],
+    "best_event_page": "https://www.mundicomics.com/torneos-tcg",
+    "signals": [
+      "homepage_event_keyword:torneos",
+      "homepage_event_keyword:calendario",
+      "homepage_event_keyword:liga",
+      "event_page_game:Magic: The Gathering",
+      "event_page_format:Store Championship",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Magic: The Gathering",
+    "format_detected": "Store Championship",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Padis",
+    "website": "https://www.padis-store.com/",
+    "address": "36 C. de Blasco de Garay, Madrid, MD, 28015, Spain",
+    "external_id": "16281",
+    "event_pages": [
+      "https://www.padis-store.com/284-inscripciones-torneos",
+      "https://www.padis-store.com/320-calendario-de-adviento"
+    ],
+    "best_event_page": "https://www.padis-store.com/284-inscripciones-torneos",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:torneos",
+      "homepage_event_keyword:calendario",
+      "event_page_game:Flesh and Blood",
+      "event_page_format:Prerelease",
+      "platform:instagram",
+      "platform:linktree",
+      "platform:google_calendar"
+    ],
+    "game_detected": "Flesh and Blood",
+    "format_detected": "Prerelease",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 2 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Panda Games",
+    "website": "https://pandagames.es/",
+    "address": "Calle Oslo 53 CC. X- Madrid. Planta 1 L81, Alcorcón, Madrid, 28922, Spain",
+    "external_id": "20210",
+    "event_pages": [
+      "https://pandagames.es/juegos/eventos/"
+    ],
+    "best_event_page": "https://pandagames.es/juegos/eventos/",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:torneos",
+      "homepage_event_keyword:calendario",
+      "event_page_game:Magic: The Gathering",
+      "event_page_format:Prerelease",
+      "platform:wordpress",
+      "platform:instagram"
+    ],
+    "game_detected": "Magic: The Gathering",
+    "format_detected": "Prerelease",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "The Big Bang Games",
+    "website": "https://www.thebigbanggames.com",
+    "address": "1 C. Entre Arroyos, Madrid, MD, 28030, Spain",
+    "external_id": "17728",
+    "event_pages": [
+      "http://www.thebigbanggames.com/eventos",
+      "https://www.thebigbanggames.com/eventos/"
+    ],
+    "best_event_page": "http://www.thebigbanggames.com/eventos",
+    "signals": [
+      "homepage_event_keyword:event",
+      "homepage_event_keyword:eventos",
+      "event_page_game:Star Wars: Unlimited",
+      "event_page_format:Commander",
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Star Wars: Unlimited",
+    "format_detected": "Commander",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 2 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "TopDeck",
+    "website": "https://topdeck.es",
+    "address": "Calle del Cardenal Silíceo, 17, Chamartín, Madrid, Madrid, 28002, Spain",
+    "external_id": "17593",
+    "event_pages": [
+      "https://topdeck.es/calendario-de-torneos/"
+    ],
+    "best_event_page": "https://topdeck.es/calendario-de-torneos/",
+    "signals": [
+      "homepage_event_keyword:torneos",
+      "homepage_event_keyword:calendario",
+      "homepage_event_keyword:presentación",
+      "event_page_game:One Piece",
+      "platform:wordpress",
+      "platform:instagram"
+    ],
+    "game_detected": "One Piece",
+    "format_detected": null,
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Alcala Comics",
+    "website": "https://www.alcalacomics.com/",
+    "address": "Plaza España 3 - Local 9, Alcala de Henares, M, 28805, Spain",
+    "external_id": "11845",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:torneos",
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook",
+      "platform:discord"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Crisis Alcorcon Juegos",
+    "website": "https://www.juegoscrisis.com/",
+    "address": "C/Princesa Doña Sofía, Nº 3. Local 2., Alcorcon, M, 28924, Spain",
+    "external_id": "8800",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "platform:wordpress",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Generacion X - Carranza",
+    "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
+    "address": "c/ Carranza 25, Madrid, M, 28004, Spain",
+    "external_id": "12545",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:event",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Generacion X - Coslada",
+    "website": "http://www.generacionx.es/",
+    "address": "Avenida de la Cañada 51 , Coslada, M, 28823  , Spain",
+    "external_id": "11220",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:event",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "LUDOTECA MALDITA",
+    "website": "https://www.ludotecamaldita.com",
+    "address": "Calle Vicente Espinel 4 local derecha, Madrid, Madrid, 28017, Spain",
+    "external_id": "21613",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:torneos",
+      "platform:wordpress",
+      "platform:instagram"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Ludus Belli",
+    "website": "https://www.ludusbelli.com/",
+    "address": "Calle Zaragoza 14, bajos local 2, Móstoles, Madrid, 28934, Spain",
+    "external_id": "15952",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:torneos",
+      "homepage_event_keyword:actividades",
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook",
+      "platform:wizards_companion"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Rebellion",
+    "website": "https://www.rebellion.es/tiendarebel/index.php",
+    "address": "Av. Portugal 21, posterior, Mostoles, M, 28931, Spain",
+    "external_id": "9812",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:event",
+      "homepage_event_keyword:prerelease",
+      "homepage_event_keyword:liga",
+      "platform:instagram",
+      "platform:facebook",
+      "platform:discord"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Wargen Wargames",
+    "website": "https://wargenwargames.com",
+    "address": "2B Av. de Las Águilas, Madrid, MD, 28044, Spain",
+    "external_id": "15373",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:liga",
+      "platform:instagram",
+      "platform:google_calendar"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Galaxy-comics",
+    "website": "https://m.facebook.com/p/Galaxy-Comics-100063759844587/",
+    "address": "C/ Suecia, 4, Madrid, Madrid, 28022, Spain",
+    "external_id": "11226",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Generacion X - Las musas",
+    "website": "https://www.instagram.com/genxlasmusas/",
+    "address": "Av. Canillejas a Vicalvaro nº 113, Madrid, Madrid, 28022, Spain",
+    "external_id": "11182",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Generación X Goya",
+    "website": "https://www.instagram.com/genxgoya/?hl=it",
+    "address": "Calle de las Mártires Concepcionistas 5, Madrid, M, 28006, Spain",
+    "external_id": "14184",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Goblin Trader - Madrid Sur",
+    "website": "https://www.instagram.com/gtsmadridsur/?hl=en",
+    "address": "16 C. de Enrique Fuentes, Madrid, MD, 28026, Spain",
+    "external_id": "18010",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Hobby Shop Wargames S.L",
+    "website": "https://www.instagram.com/hobbyshopwargames/",
+    "address": "18 C. de Talamanca, Alcalá de Henares, MD, 28807, Spain",
+    "external_id": "19290",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Medusa Cómics",
+    "website": "https://www.facebook.com/comicsmedusa/",
+    "address": "Ronda de la Pescadería, 21, Alcalá de Henares, Madrid, 28801, Spain",
+    "external_id": "18456",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Te Juego Mucho",
+    "website": "https://www.instagram.com/tejuegomucho/",
+    "address": "1 C. Antonio Muñoz Molina, Rivas-Vaciamadrid, MD, 28521, Spain",
+    "external_id": "17599",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Velkarion",
+    "website": "https://www.instagram.com/velkariontcg/",
+    "address": "Calle las vegas 18, alcorcon, Madrid, 28921, Spain",
+    "external_id": "18616",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Factory Cards",
+    "website": "https://www.factorycardstcg.com",
+    "address": "61 Av. de Canillejas a Vicálvaro, Madrid, Madrid, 28022, Spain",
+    "external_id": "20295",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:shopify",
+      "platform:instagram"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
+    "name": "ISEKAI",
+    "website": "https://isekai-alcorcon.es/es",
+    "address": "4 Av. Torres Bellas, Alcorcón, MD, 28923, Spain",
+    "external_id": "15520",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:instagram"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
+    "name": "Karak 7 Picos",
+    "website": "https://karak7picos.com",
+    "address": "17 C. de la Iglesia, Moralzarzal, MD, 28411, Spain",
+    "external_id": "17218",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:wordpress"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
+    "name": "Kingdom Wargames",
+    "website": "https://www.kingdomwargames.com/",
+    "address": "C. Arroyo de la ELipa, Madrid, M, 28017, Spain",
+    "external_id": "14264",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
+    "name": "La Jugación",
+    "website": "https://lajugacion.es/",
+    "address": "Calle Río Duero, 46, Leganés, Madrid, 28913, Spain",
+    "external_id": "18286",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:wordpress"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  }
+]
