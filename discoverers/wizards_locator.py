@@ -1,50 +1,121 @@
 """
 discoverers/wizards_locator.py — Wizards Store Locator discovery.
 
-Status: PLACEHOLDER / RUNNABLE SKELETON
-The live Wizards Store Locator endpoint is not publicly documented as a
-simple JSON API. To avoid brittle scraping or browser automation at this
-stage, this module returns an empty list with a clear TODO for future
-implementation.
-
-TODO: Replace placeholder with live fetch once a stable public endpoint is
-identified (e.g., a documented locator API or simple POST/GET endpoint).
+Fetches MTG stores near Madrid from the Wizards public GraphQL endpoint
+using plain requests. Returns [] on any network or parsing error so the
+pipeline stays robust.
 """
 
-from typing import Optional
+import requests
+
+_GRAPHQL_URL = "https://api.tabletop.wizards.com/silverbeak-griffin-service/graphql"
+
+_QUERY = """
+query getStoresByLocation(
+    $latitude: Float!
+    $longitude: Float!
+    $maxMeters: Int!
+    $pageSize: Int
+    $page: Int
+    $isPremium: Boolean
+) {
+    storesByLocation(
+        input: {
+            latitude: $latitude
+            longitude: $longitude
+            maxMeters: $maxMeters
+            pageSize: $pageSize
+            page: $page
+            isPremium: $isPremium
+        }
+    ) {
+        stores {
+            id
+            name
+            postalAddress
+            website
+        }
+        pageInfo {
+            page
+            pageSize
+            totalResults
+        }
+    }
+}
+"""
+
+# Madrid city centre (Puerta del Sol)
+_MADRID_LAT = 40.4168
+_MADRID_LON = -3.7038
+_SEARCH_RADIUS_METERS = 50_000  # ~50 km covers greater Madrid
+_PAGE_SIZE = 100
 
 
 def discover() -> list[dict]:
     """
     Discover potential Madrid TCG stores from the Wizards locator.
 
-    Each returned dict must include:
+    Each returned dict includes:
       - name (str)
       - address (str)
       - source (str): "wizards_locator"
-      - games (list[str]): e.g., ["MTG"]
+      - games (list[str]): ["MTG"]
       - website (str | None)
+      - external_id (str | None): Wizards store id
     """
-    # Placeholder: return empty so the pipeline is runnable from day one.
-    # When implementing live fetching:
-    #   1. Call the Wizards locator endpoint with Madrid/ES filters.
-    #   2. Parse the response (JSON or HTML).
-    #   3. Map each result to the schema above.
-    #   4. Wrap network calls in try/except and return [] on failure.
-    return []
-
-
-def _fetch_wizards_locator() -> Optional[list[dict]]:
-    """
-    Future helper for live fetching.
-
-    Likely steps:
-        import requests
-        url = "https://locator.wizards.com/api/data/store/search"
-        payload = {"city": "Madrid", "country": "ES", ...}
-        resp = requests.post(url, json=payload, timeout=30)
+    try:
+        resp = requests.post(
+            _GRAPHQL_URL,
+            json={
+                "query": _QUERY,
+                "variables": {
+                    "latitude": _MADRID_LAT,
+                    "longitude": _MADRID_LON,
+                    "maxMeters": _SEARCH_RADIUS_METERS,
+                    "pageSize": _PAGE_SIZE,
+                    "page": 0,
+                    "isPremium": None,
+                },
+            },
+            headers={"Content-Type": "application/json"},
+            timeout=30,
+        )
         resp.raise_for_status()
         data = resp.json()
-        ...
-    """
-    return None
+    except Exception:
+        # Network or HTTP error — fail silently so the pipeline stays robust.
+        return []
+
+    stores = (
+        data.get("data", {})
+        .get("storesByLocation", {})
+        .get("stores", [])
+    )
+    if not isinstance(stores, list):
+        return []
+
+    results: list[dict] = []
+    for s in stores:
+        if not isinstance(s, dict):
+            continue
+        name = s.get("name")
+        address = s.get("postalAddress")
+        if not name or not address:
+            continue
+        website = s.get("website")
+        # Filter out useless placeholder URLs
+        if website and "locator.wizards.com" in website.lower():
+            website = None
+        external_id = s.get("id")
+        results.append(
+            {
+                "name": name,
+                "address": address,
+                "source": "wizards_locator",
+                "games": ["MTG"],
+                "website": website,
+                "external_id": external_id,
+            }
+        )
+
+    return results

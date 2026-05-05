@@ -78,6 +78,7 @@ def main() -> None:
                     "source": cand.get("source", module_name.replace("discoverers.", "")),
                     "games": cand.get("games", []),
                     "website": cand.get("website"),
+                    "external_id": cand.get("external_id"),
                     "matched_existing_store": match_result.get("matched_existing_store"),
                     "confidence": match_result.get("confidence", 0.0),
                     "status": match_result.get("status", "candidate_new_store"),

@@ -1,1 +1,691 @@
-[]
+[
+  {
+    "name": "Arte 9",
+    "address": "Francisco Silvela, 21, Madrid, M, 28028, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://arte9.com/",
+    "external_id": "7817",
+    "matched_existing_store": "Arte 9",
+    "confidence": 0.9,
+    "status": "matched_existing_store"
+  },
+  {
+    "name": "Itaca",
+    "address": "Calle Blasco de Garay, 15 - Local 1, Madrid, M, 28015, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.itaca.gg",
+    "external_id": "8422",
+    "matched_existing_store": "Ítaca",
+    "confidence": 0.9,
+    "status": "matched_existing_store"
+  },
+  {
+    "name": "La Guarida Juegos",
+    "address": "C \\ Peñuelas 14, Madrid, M, 28005, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/la.guarida.juegos",
+    "external_id": "11228",
+    "matched_existing_store": "La Guarida Juegos",
+    "confidence": 0.9,
+    "status": "matched_existing_store"
+  },
+  {
+    "name": "Metropolis Center",
+    "address": "Calle Andrés Mellado 22, Madrid, M, 28015, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://metropolis-center.com",
+    "external_id": "11202",
+    "matched_existing_store": "Metropolis Center",
+    "confidence": 0.9,
+    "status": "matched_existing_store"
+  },
+  {
+    "name": "Micelion Games",
+    "address": "8 Av. del Mediterráneo, Madrid, MD, 28007, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://miceliongames.com",
+    "external_id": "17437",
+    "matched_existing_store": "Micelion Games",
+    "confidence": 0.9,
+    "status": "matched_existing_store"
+  },
+  {
+    "name": "Alcala Comics",
+    "address": "Plaza España 3 - Local 9, Alcala de Henares, M, 28805, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.alcalacomics.com/",
+    "external_id": "11845",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Aquijabara Store",
+    "address": "73 Av. de Portugal, Mostoles, Madrid, MD, 28934, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": null,
+    "external_id": "19306",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Asedio Gaming",
+    "address": "Calle Soria 5, Bajo Izquierda, Las Rozas, M, 28231, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://asediogaming.com/",
+    "external_id": "13138",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Collectorage",
+    "address": "calle Hernani 19. 28020. Madrid, Madrid, Madrid, 28020, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://collectorage.com/",
+    "external_id": "21592",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Crisis Alcorcon Juegos",
+    "address": "C/Princesa Doña Sofía, Nº 3. Local 2., Alcorcon, M, 28924, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.juegoscrisis.com/",
+    "external_id": "8800",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "EL TURNO EXTRA",
+    "address": "166 C. del Capitán Angosto Gómez Castrillón, Aranjuez, Madrid, 28300, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://wpn.wizards.com/",
+    "external_id": "20135",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Factory Cards",
+    "address": "61 Av. de Canillejas a Vicálvaro, Madrid, Madrid, 28022, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.factorycardstcg.com",
+    "external_id": "20295",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Galaxy-comics",
+    "address": "C/ Suecia, 4, Madrid, Madrid, 28022, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://m.facebook.com/p/Galaxy-Comics-100063759844587/",
+    "external_id": "11226",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Generacion X - Carranza",
+    "address": "c/ Carranza 25, Madrid, M, 28004, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
+    "external_id": "12545",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Generacion X - Coslada",
+    "address": "Avenida de la Cañada 51 , Coslada, M, 28823  , Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "http://www.generacionx.es/",
+    "external_id": "11220",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Generacion X - Elfo",
+    "address": "Elfo 98, Madrid, Madrid, 28027, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://genexcomics.com/",
+    "external_id": "11109",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Generacion X - Las musas",
+    "address": "Av. Canillejas a Vicalvaro nº 113, Madrid, Madrid, 28022, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/genxlasmusas/",
+    "external_id": "11182",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Generación X Goya",
+    "address": "Calle de las Mártires Concepcionistas 5, Madrid, M, 28006, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/genxgoya/?hl=it",
+    "external_id": "14184",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Genex Comics",
+    "address": "C/ Santa Casilda, nº 3, Madrid, Madrid, 28005, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "http://wpn.wizards.com",
+    "external_id": "11268",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Gladius Games",
+    "address": "Calle Cánovas del Castillo, 5 , Local 6, Alcalá de Henares, Madrid, 28807, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://gladiusgames.net/",
+    "external_id": "18454",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Goblin Trader - Madrid Sur",
+    "address": "16 C. de Enrique Fuentes, Madrid, MD, 28026, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/gtsmadridsur/?hl=en",
+    "external_id": "18010",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Goblintrader Central",
+    "address": "C. de Almanzor, 10,, Fuenlabrada, Madrid, 28944, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.goblintrader.es/gb/",
+    "external_id": "18437",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Goblintrader Madrid-Norte",
+    "address": "C. del Marqués de Lema 7, local 3, Madrid, MD, 28003, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.goblintrader.es",
+    "external_id": "7224",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Hobby Shop Wargames S.L",
+    "address": "18 C. de Talamanca, Alcalá de Henares, MD, 28807, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/hobbyshopwargames/",
+    "external_id": "19290",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "ISEKAI",
+    "address": "4 Av. Torres Bellas, Alcorcón, MD, 28923, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://isekai-alcorcon.es/es",
+    "external_id": "15520",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Júpiter Madrid Norte",
+    "address": "Calle Marques de la Valdavia 95, Local 2, Alcobendas, C, 28100, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://magic.wizards.com/",
+    "external_id": "6154",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Kamikaze Freak Shop",
+    "address": "Calle Ponferrada 11, Madrid, M, 28029, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://kamikazefreakshop.es/",
+    "external_id": "8755",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Karak 7 Picos",
+    "address": "17 C. de la Iglesia, Moralzarzal, MD, 28411, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://karak7picos.com",
+    "external_id": "17218",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Kingdom Wargames",
+    "address": "C. Arroyo de la ELipa, Madrid, M, 28017, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.kingdomwargames.com/",
+    "external_id": "14264",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "LUDOTECA MALDITA",
+    "address": "Calle Vicente Espinel 4 local derecha, Madrid, Madrid, 28017, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.ludotecamaldita.com",
+    "external_id": "21613",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "La Jugación",
+    "address": "Calle Río Duero, 46, Leganés, Madrid, 28913, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://lajugacion.es/",
+    "external_id": "18286",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Ludus Belli",
+    "address": "Calle Zaragoza 14, bajos local 2, Móstoles, Madrid, 28934, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.ludusbelli.com/",
+    "external_id": "15952",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "MADAKIBA",
+    "address": "AVENIDA DEL MAR MEDITERRANEO Nº 156 LOCAL 7., Valdemoro, M, 28342, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://madakiba.com/",
+    "external_id": "9397",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Medusa Cómics",
+    "address": "Ronda de la Pescadería, 21, Alcalá de Henares, Madrid, 28801, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.facebook.com/comicsmedusa/",
+    "external_id": "18456",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Metamorfo",
+    "address": "Calle ilustración 3, Getafe, M, 28902, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://metamorfo.es/",
+    "external_id": "13409",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Mundicomics",
+    "address": "C/Ramon y Cajal 3 Local 1, Torrejón de Ardoz, M, 28850, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.mundicomics.com/",
+    "external_id": "14068",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Padis",
+    "address": "36 C. de Blasco de Garay, Madrid, MD, 28015, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.padis-store.com/",
+    "external_id": "16281",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Panda Games",
+    "address": "Calle Oslo 53 CC. X- Madrid. Planta 1 L81, Alcorcón, Madrid, 28922, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://pandagames.es/",
+    "external_id": "20210",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Rebellion",
+    "address": "Av. Portugal 21, posterior, Mostoles, M, 28931, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.rebellion.es/tiendarebel/index.php",
+    "external_id": "9812",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Te Juego Mucho",
+    "address": "1 C. Antonio Muñoz Molina, Rivas-Vaciamadrid, MD, 28521, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/tejuegomucho/",
+    "external_id": "17599",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Tempest - Store",
+    "address": "C/ Timoteo Domingo, 17, Madrid, M, 28017, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": null,
+    "external_id": "6616",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "The Big Bang Games",
+    "address": "1 C. Entre Arroyos, Madrid, MD, 28030, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.thebigbanggames.com",
+    "external_id": "17728",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "TopDeck",
+    "address": "Calle del Cardenal Silíceo, 17, Chamartín, Madrid, Madrid, 28002, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://topdeck.es",
+    "external_id": "17593",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Velkarion",
+    "address": "Calle las vegas 18, alcorcon, Madrid, 28921, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/velkariontcg/",
+    "external_id": "18616",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Wargen Wargames",
+    "address": "2B Av. de Las Águilas, Madrid, MD, 28044, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://wargenwargames.com",
+    "external_id": "15373",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store"
+  },
+  {
+    "name": "Dracarys Juegos",
+    "address": "13 C. de la Imaginación, Alcobendas, MD, 28100, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "http://wpn.wizards.com",
+    "external_id": "14898",
+    "matched_existing_store": "La Guarida Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  },
+  {
+    "name": "Júpiter Central",
+    "address": "C / Manuel Silvela, 8 , Madrid, M, 28010, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.jupiterjuegos.com/pagina/jupiter-madrid",
+    "external_id": "8420",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  },
+  {
+    "name": "Júpiter Juegos Alcorcón",
+    "address": "10 C. Parque Bujaruelo, Alcorcón, MD, 28924, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "15540",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  },
+  {
+    "name": "La Guarida del vigilante",
+    "address": "29 C. de Sánchez Barcáiztegui, Madrid, MD, 28007, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://laguaridadelvigilante.com/",
+    "external_id": "17038",
+    "matched_existing_store": "La Guarida Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  },
+  {
+    "name": "Libertalia Juegos",
+    "address": "Calle Badajoz, 32, Móstoles, M, 28931, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.instagram.com/libertaliajuegos/",
+    "external_id": "14361",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  },
+  {
+    "name": "Ohana Games",
+    "address": "Avenida del Mediterraneo, 38, Madrid, M, 28007, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://www.ohanagamesmadrid.com/",
+    "external_id": "12959",
+    "matched_existing_store": "Micelion Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  },
+  {
+    "name": "Portal Juegos",
+    "address": "24 Av. de Honorio Lozano, Collado Villalba, MD, 28400, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": "https://portaljuegos.es/index.php",
+    "external_id": "15914",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  },
+  {
+    "name": "Titan Games",
+    "address": "Av. Buenos Aires 25, Local Posterior, Getafe, M, 28907, Spain",
+    "source": "wizards_locator",
+    "games": [
+      "MTG"
+    ],
+    "website": null,
+    "external_id": "11651",
+    "matched_existing_store": "Micelion Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate"
+  }
+]
