@@ -10,19 +10,27 @@ The project has two halves that meet at one file:
 2. A **four-file Alpine.js frontend** (`public/index.html`, `public/styles.css`,
    `public/app.js`, `public/config.js`) that consumes `public/events.json`.
 
-Most of this document is about the frontend, because that is where almost all
-of the runtime logic, state, and rendering complexity lives.
+---
 
-## 1b. Backend architecture
+## 1. Backend pipeline
 
-### Scraper discovery
+### 1a. Scraper discovery
+
 `aggregator.py` auto-discovers every `*.py` file in `scrapers/` (except
 `__init__.py`) and calls its `scrape()` function. **No helper or utility
 modules are allowed inside `scrapers/`** — anything without a `scrape()`
-must live outside this directory (currently in `shared/`).
+must live outside this directory (currently in `shared/`). Do not modify
+`aggregator.py` merely to register a new scraper; place the scraper file in
+`scrapers/` and it is picked up automatically.
 
-### Shared keyword utilities
-`shared/` is for reusable backend/scraper utilities only. Files in `shared/` must not expose `scrape()`, must not perform network requests on import, and must not have side effects at import time.
+Current scrapers: `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
+`metropolis_center`, `micelion_games`.
+
+### 1b. Shared utilities
+
+`shared/` is for reusable backend/scraper utilities only. Files in `shared/`
+must not expose `scrape()`, must not perform network requests on import, and
+must not have side effects at import time.
 
 `shared/scraper_keywords.py` provides:
 - `GAME_KEYWORDS` — `(keyword, canonical_name)` tuples, longest-first
@@ -32,7 +40,12 @@ must live outside this directory (currently in `shared/`).
 
 Scrapers import these and may extend them with store-specific entries.
 
-### Migration status
+`shared/store_matching.py` provides store-name and address normalization plus
+fuzzy matching. Used by discovery tooling (`discover_stores.py`,
+`audit_store_event_pages.py`), not by scrapers.
+
+#### Shared keyword migration status
+
 | Scraper | Uses shared GAME_KEYWORDS | Uses shared FORMAT_KEYWORDS |
 | --- | --- | --- |
 | `arte9` | — (not used) | Yes |
@@ -42,9 +55,9 @@ Scrapers import these and may extend them with store-specific entries.
 | `metropolis_center` | — (not used) | Yes |
 | `micelion_games` | Yes | Yes |
 
-All scrapers now import both shared dictionaries. Stores with `—` derive game from API category fields, not keyword matching.
+Stores with `—` derive game from API category fields, not keyword matching.
 
-### Scraper stats and anomaly detection
+### 1c. Scraper stats and anomaly detection
 
 `aggregator.py` writes `public/events_stats.json` after every run with a
 per-store breakdown. Each store entry contains:
@@ -54,28 +67,73 @@ per-store breakdown. Each store entry contains:
 - `dropped_this_run`, `drop_reasons` — validation drop counts per failure category
 - `anomaly` — `"sharp_drop"` if the raw count fell sharply, or `null`
 
-**Anomaly detection logic** (`aggregator.py:49`, `aggregator.py:482`): the
+**Anomaly detection logic** (`aggregator.py:49`, `aggregator.py:484`): the
 previous run's stats file is loaded at startup, before being overwritten. For
 each store, if `raw_this_run < previous_raw × 0.7` (constant
 `SHARP_DROP_THRESHOLD = 0.7`), `anomaly` is set to `"sharp_drop"`. A `[WARN]`
-line is printed to the console during the run (`aggregator.py:523`). The check
+line is printed to the console during the run (`aggregator.py:533`). The check
 fires on raw count (before validation drops), so a scraper that suddenly
 returns 0 events — due to a site-structure change, for example — triggers the
 flag even if the merged events store still contains historical data from prior
 runs. When there is no previous stats file to compare against, `previous_raw`
 is `null` and no anomaly is flagged.
 
-### Execution
-```
-python -m scrapers.<name>    # run a single scraper
-python aggregator.py          # run full pipeline (all scrapers + merge)
+### 1d. Event identity and merge
+
+Events are merged across daily runs using a stable key:
+
+- `{store}|id:{source_event_id}` — if the scraper provides a stable ID
+- `{store}|{title}|{datetime_start}|{location}` — fallback
+
+`merge_events()` upserts fresh events onto the persisted list. Existing events
+not seen this run are kept with `is_active=False` (never deleted). Every event
+carries lifecycle fields: `first_seen_at`, `last_seen_at`, `is_active`.
+
+### 1e. Execution
+
+```bash
+python -m scrapers.<name>    # run a single scraper in isolation
+python aggregator.py          # full pipeline (all scrapers + merge + stats)
 ```
 
 ---
 
-## 1c. Deployment
+## 1f. Store expansion workflow (audit → targets → scrapers)
 
-Cloudflare Pages serves `public/` directly as static files. There is no build
+The pipeline for finding and onboarding new stores follows these steps:
+
+1. **Store discovery** — `discover_stores.py` (and helpers in `discoverers/`)
+   finds candidate stores from the Wizards locator and other sources, writing
+   `candidate_stores.json`.
+
+2. **Event-page audit** — `audit_store_event_pages.py` reads
+   `candidate_stores.json`, fetches each candidate's website, detects event
+   pages and calendar presence, and writes `store_event_audit.json`. It uses
+   `shared.scraper_keywords` for game/format signal detection.
+
+3. **Target selection** — `build_scraper_targets.py` reads
+   `store_event_audit.json` and classifies stores into four buckets, writing
+   `scraper_targets.json`:
+   - `scrape_now` — validated event page with clear game content; build a
+     scraper immediately.
+   - `possible` — event intent detected but no clean event page found; needs
+     manual investigation.
+   - `manual_review` — social-only presence (Instagram/Facebook); not a
+     straightforward scraper target.
+   - `not_ready` — reachable website but no event signals detected.
+
+4. **Scraper development** — for each store in `scrape_now`, create
+   `scrapers/<name>.py` and add the store to `STORE_META` in `config.js`.
+
+`scraper_targets.json` lives at the repo root and is the canonical queue of
+stores awaiting scraper development. It is updated by re-running steps 2–3
+after sites change. **Do not hand-edit it.**
+
+---
+
+## 1g. Deployment
+
+GitHub Pages serves `public/` directly as static files. There is no build
 step, no bundler, and no environment variables. A push to `main` triggers an
 automatic redeploy.
 
@@ -83,12 +141,12 @@ automatic redeploy.
 `.github/workflows/update.yml` — daily at 06:00 UTC (08:00 Madrid summer,
 07:00 Madrid winter). The workflow runs `python aggregator.py`, then commits
 any changes to `public/events.json` and `public/events_stats.json` back to
-`main`, which in turn triggers Cloudflare Pages. The workflow also supports
+`main`, which in turn triggers a Pages redeploy. The workflow also supports
 `workflow_dispatch` for manual runs.
 
 ---
 
-## 2. Architecture overview
+## 2. Frontend architecture
 
 The frontend is a **single Alpine.js component** scoped to the `<html>`
 element via `x-data="app()"` and initialised by `x-init="init()"`.
@@ -96,11 +154,11 @@ element via `x-data="app()"` and initialised by `x-init="init()"`.
 The component is spread across four static files — no build step required:
 
 - **`public/index.html`** — markup only. Declares the Alpine component scope
-  (`x-data="app()"`, `x-init="init()"`) and all Alpine directives. 276 lines;
-  contains no CSS or JavaScript.
+  (`x-data="app()"`, `x-init="init()"`) and all Alpine directives. Contains
+  no CSS or JavaScript.
 - **`public/styles.css`** — all styles. `:root` tokens, per-game palette,
   layout modes, and responsive breakpoints.
-- **`public/app.js`** — the Alpine `app()` factory (`app.js:119`) and every
+- **`public/app.js`** — the Alpine `app()` factory (`app.js:245`) and every
   helper. All runtime logic, state, derived getters, formatters, event
   handlers, and the cell-card HTML builder live here.
 - **`public/config.js`** — static data and extension points. See §2a.
@@ -126,22 +184,21 @@ Alpine is loaded via CDN in `<head>` with `defer`:
 
 This ordering is load-order sensitive. Reordering the `<script>` tags, or
 adding `defer` or `type="module"` to either file, silently breaks
-initialisation. See the matching constraints in §7.
+initialisation. See §7.
 
 ### 2a. `public/config.js` — extension points
 
 `config.js` exposes four `var` globals (deliberately `var`, not `const`/`let`
 — see §7):
 
-- **`STORE_ADDRESSES`** (`config.js:1`) — legacy map of store display name →
-  address string. Used as a fallback when `STORE_META` has no entry for a
-  store. New stores should be added to `STORE_META` instead.
-- **`STORE_META`** — primary per-store metadata object. Each
-  key is a store display name; each value is an object with at minimum an
-  `address` field, and optionally `notes`, `website`, etc. Used by the Event
-  Detail Panel to show the store card, and by `buildGoogleCalendarUrl` for the
-  `location` field (`STORE_META[store].address` takes priority over
-  `STORE_ADDRESSES[store]`).
+- **`STORE_META`** — primary per-store metadata object. Each key is a store
+  display name; each value is an object with at minimum an `address` field,
+  and optionally `notes`, `website`, etc. Used by the Event Detail Panel to
+  show the store card and address, and by calendar URL builders for the
+  `location` field. **Every new scraper store must have an entry here.**
+- **`STORE_ADDRESSES`** (`config.js:1`) — legacy fallback map of store display
+  name → address string. Used only when `STORE_META` has no entry for a store.
+  Do not add new stores here; use `STORE_META` instead.
 - **`SEGMENTS`** (`config.js:10`) — array of 4 time-bucket definitions, each
   with a `key`, hour range, `label`, and `shortRange`.
 - **`GAME_CLASS_MAP`** (`config.js:42`) — maps canonical game name → CSS class
@@ -160,6 +217,9 @@ fetch('events.json')
         │
         ▼
    this.events  ◀────────────────────────────────────────┐
+        │                                                 │
+        │  URL params applied first (game, store, format) │
+        │  (override any persisted state)                 │
         │                                                 │
         │  filters.search                                 │
         │  filters.game[]   filters.store[]               │
@@ -182,24 +242,50 @@ fetch('events.json')
 Key things to note:
 
 - `init()` is the only side-effect-on-load function. It registers a scroll
-  listener (for Back-to-top), an Escape-key listener (closes facet panels),
+  listener (for Back-to-top), an Escape-key listener (closes panels/facets),
   starts a 60-second `setInterval` that refreshes `nowMadrid`, fetches
-  `events.json`, then runs `cleanupFilters()` and a `$watch` on
-  `filters.search`.
+  `events.json`, then calls `applyFiltersFromUrl()`, `cleanupFilters()`, and a
+  `$watch` on `filters.search`.
+- **URL params take precedence over localStorage.** `applyFiltersFromUrl()` is
+  called immediately after events load and overwrites filter state from URL
+  params (`game`, `store`, `format`, `event`). localStorage is only consulted
+  for `viewMode` and saved presets — never for filter state.
 - `cleanupFilters()` prunes selected facet values that are no longer present
-  in the current visible set, so e.g. switching weeks doesn't leave a stale
-  filter that hides everything.
+  in the current visible set (events matching all other active filters in the
+  current week). It runs after week navigation, filter changes, and on init.
 - `resetFilters()` clears the search/facet filters and also resets all
   `segmentFilter` chips to enabled. Segment filters are part of the user-facing
   filter state, not a separate view preference.
 - The frontend never POSTs anything. The only network call is `fetch('events.json')`.
 
+### localStorage usage
+
+| Key | Type | Purpose |
+| --- | --- | --- |
+| `tcg-view-v2` | `'horizontal'` \| `'vertical'` | Persisted view mode |
+| `tcg-presets-v1` | JSON array | Saved filter presets |
+
+localStorage is for user personalization only. Filter state (game/store/format
+selections) is never written to localStorage. URL params are the mechanism for
+sharing or bookmarking filter state.
+
+### URL parameter behavior
+
+| Param | Type | Applied by |
+| --- | --- | --- |
+| `game` | comma-separated values | `applyFiltersFromUrl()` on load |
+| `store` | comma-separated values | `applyFiltersFromUrl()` on load |
+| `format` | comma-separated values | `applyFiltersFromUrl()` on load |
+| `event` | base64url-encoded event key | Checked on load; opens panel |
+
+URL params are validated against the actual event data — invalid values are
+silently dropped. `syncFiltersToUrl()` writes current filter state to the URL
+via `history.replaceState` when filters change; this makes filter combinations
+bookmarkable and shareable.
+
 ---
 
 ## 4. Core concepts
-
-These are the load-bearing pieces of frontend logic. Read them carefully
-before changing anything.
 
 ### `weekDays` (getter at the heart of rendering)
 
@@ -220,6 +306,10 @@ A 7-element array, one per day of the current week starting at `weekStart`
 Because `weekDays` is a getter, it recomputes on every read. This is fine for
 the view layer (Alpine memoises within a render) but means callers should not
 treat it as cheap.
+
+`filteredEvents` does NOT apply the week filter — it returns events from any
+week that match the current facet/search/segment selections. `weekDays` then
+groups by day and picks only events falling in the current 7-day window.
 
 ### Time segments
 
@@ -269,6 +359,9 @@ opacity/transform transition completes, producing a jarring empty flash.
 `openPanel(e)` sets both fields and adds `.no-scroll` to `<body>`.
 `closePanel()` sets `panelOpen = false`, removes `.no-scroll`, and schedules
 the `selectedEvent = null` cleanup.
+
+A panel open state is also reflected in the URL via `?event=<base64url key>`,
+enabling deep-linking to a specific event.
 
 ### Horizontal grid vs vertical list
 
@@ -364,16 +457,17 @@ Alpine elements with regular `@click.stop` bindings.
 - `x-init="init()"` — bootstrap.
 - `x-for` — week-day header cells, the flat `cells` list, vertical
   `weekDays`, vertical per-day `segments`, vertical per-segment `events`,
-  facet option lists, segment filter chips.
+  facet option lists, segment filter chips, saved preset chips.
 - `x-show` — loading state, view switching, segment chip visibility,
   facet panels, calendar button (vertical view), Back-to-top button,
-  individual segment headers (`!focusMode`), card list collapse.
+  individual segment headers (`!focusMode`), card list collapse, preset bar.
 - `x-if` — the two view-mode templates (`horizontal` vs `vertical`) so only
   one tree exists at a time.
 - `x-html` — `cellCardsHtml(cell)` for horizontal cells.
 - `x-text` — labels, counters, week range, day-of-week, day-of-month, etc.
 - `x-model.debounce.250ms` — search input.
-- `x-transition:enter*` / `x-transition:leave*` — Back-to-top button fade.
+- `x-transition:enter*` / `x-transition:leave*` — Back-to-top button fade,
+  Event Detail Panel enter/leave.
 - `data-seg-key` — plain DOM metadata on vertical segment blocks, used by
   `scrollToCurrentSegment()` after Alpine has rendered the vertical tree.
 
@@ -425,7 +519,7 @@ chip all read those variables, so changing palette is a one-line change per
 game.
 
 `getGameClass(game)` (`app.js:581`) maps a canonical game name to its class
-by looking up `GAME_CLASS_MAP` (`config.js:17`). The map is the source of
+by looking up `GAME_CLASS_MAP` (`config.js:42`). The map is the source of
 truth for this list.
 
 ### Layout modes
@@ -441,7 +535,8 @@ truth for this list.
 - `@media (max-width: 900px)` — horizontal grid switches to
   `minmax(160px, 1fr)` columns and a `min-width: 1140px`, forcing horizontal
   scroll on narrow screens (it does not collapse to a stacked view; that is
-  what the vertical mode is for).
+  what the vertical mode is for). On first visit with no saved viewMode, narrow
+  screens default to `vertical` mode automatically.
 - `@media (max-width: 500px)` — site header becomes column layout, filter
   inputs go full width, the search input narrows to 120px.
 
@@ -508,12 +603,14 @@ truth for this list.
 - **`viewMode` is persisted under a versioned key.** `tcg-view-v2` exists
   specifically because changing the default once before stranded users on
   the old persisted choice. If the default changes again, bump the key.
+- **URL params override localStorage on every load.** `applyFiltersFromUrl()`
+  is called after `events.json` loads and after the view mode is read from
+  localStorage. Any URL param for `game`, `store`, `format`, or `event` will
+  win over anything the user had previously selected.
 
 ---
 
 ## 8. Rules for future changes
-
-These rules are for any agent or contributor planning a change.
 
 ### Don't break filtering
 
@@ -526,7 +623,9 @@ must keep all of them consistent. In particular:
   combinations (`ignore`, `includeSegment`, `includeWeek`). Don't simplify
   the signature.
 - `cleanupFilters()` runs after every state change that could narrow the
-  visible set, to drop selected facet values that no longer match anything.
+  visible set, to drop selected facet values that no longer match anything in
+  the current week. On week navigation this can remove selections that have
+  no events in the new week.
 
 ### Don't change the event schema
 
@@ -585,7 +684,14 @@ Before moving code, understand why it's where it is.
 No helper, utility, or shared modules are permitted inside `scrapers/`.
 Anything without `scrape()` belongs in `shared/` or another package.
 This ensures `aggregator.py`'s auto-discovery never picks up non-scraper
-modules.
+modules. Do not modify `aggregator.py` to register new scrapers.
+
+### STORE_META is required for every scraper store
+
+Any store name that appears in `public/events.json` but is absent from
+`STORE_META` in `public/config.js` will render without an address or Maps
+link in the Event Detail Panel. Add the entry to `STORE_META` — not to the
+legacy `STORE_ADDRESSES` — before or at the same time as shipping the scraper.
 
 ---
 
@@ -597,13 +703,23 @@ modules.
    matching the schema in §8. **Do not add helper modules to `scrapers/`** —
    shared code belongs in `shared/`.
 2. `aggregator.py` auto-discovers any `scrapers/*.py` (other than
-   `__init__.py`) — no registration required.
+   `__init__.py`) — no registration required and no changes to `aggregator.py`.
 3. Prefer importing `GAME_KEYWORDS` / `FORMAT_KEYWORDS` from
    `shared.scraper_keywords` and extending locally if needed.
-4. If the store should appear in the Google Calendar `location` field, add an
-   entry to `STORE_ADDRESSES` (`config.js:1`).
+4. Add an entry to `STORE_META` in `public/config.js` with at least an
+   `address` field. This populates the store card in the Event Detail Panel
+   and the `location` field in calendar links.
 5. Run `python aggregator.py` once and verify the new store appears under
    `by_store` in `public/events_stats.json`.
+
+### Using the audit workflow to find candidate stores
+
+1. Ensure `candidate_stores.json` is up to date (re-run `discover_stores.py`
+   if it is stale).
+2. Run `python audit_store_event_pages.py` → writes `store_event_audit.json`.
+3. Run `python build_scraper_targets.py` → writes `scraper_targets.json`.
+4. Review `scraper_targets.json` `"scrape_now"` entries — these are validated
+   stores with known event pages. Build scrapers for them in priority order.
 
 ### Adding a new game
 
@@ -611,8 +727,10 @@ modules.
    canonical form to `ALLOWED_GAMES`.
 2. Add a CSS class `.game-<key>` setting `--card-tint` and `--card-accent`
    in the per-game palette block of `styles.css`.
-3. Add an entry to `GAME_CLASS_MAP` (`config.js:17`) mapping the canonical
+3. Add an entry to `GAME_CLASS_MAP` (`config.js:42`) mapping the canonical
    name to the new class.
+4. Add keyword tuples to `GAME_KEYWORDS` in `shared/scraper_keywords.py`
+   (longer / more specific tokens first) so scrapers pick it up automatically.
 
 ### Adding a new format
 
@@ -645,3 +763,25 @@ facet means changing all of:
 - The fixed `SEGMENTS` boundaries (e.g. shifting "evening" to start at 17)
   are safe to edit — but verify both views and the chip counters still read
   correctly afterwards.
+
+### Update checklist for common tasks
+
+**Adding a store:**
+- [ ] `scrapers/<name>.py` with `scrape()` returning valid events
+- [ ] Entry in `STORE_META` in `public/config.js` with `address`
+- [ ] Run `python aggregator.py` and verify in `events_stats.json`
+
+**Adding a game:**
+- [ ] Entry in `GAME_CANONICAL` + `ALLOWED_GAMES` in `aggregator.py`
+- [ ] CSS class `.game-<key>` in `styles.css`
+- [ ] Entry in `GAME_CLASS_MAP` in `config.js`
+- [ ] Keyword tuples in `GAME_KEYWORDS` in `shared/scraper_keywords.py`
+
+**Adding a format:**
+- [ ] Entry in `ALLOWED_FORMATS` in `aggregator.py`
+- [ ] Keyword tuples in `FORMAT_KEYWORDS` in `shared/scraper_keywords.py`
+
+**Adding URL-based personalization (new param):**
+- [ ] Read in `applyFiltersFromUrl()` in `app.js`
+- [ ] Write in `syncFiltersToUrl()` in `app.js`
+- [ ] Document precedence: URL params always override localStorage
