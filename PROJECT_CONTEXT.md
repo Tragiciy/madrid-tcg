@@ -23,8 +23,9 @@ must live outside this directory (currently in `shared/`). Do not modify
 `aggregator.py` merely to register a new scraper; place the scraper file in
 `scrapers/` and it is picked up automatically.
 
-Current scrapers: `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
-`metropolis_center`, `micelion_games`.
+Current scrapers (9): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
+`metropolis_center`, `micelion_games`, `asedio_gaming`, `generacion_x_elfo`,
+`goblintrader_madrid_norte`.
 
 ### 1b. Shared utilities
 
@@ -54,6 +55,9 @@ fuzzy matching. Used by discovery tooling (`discover_stores.py`,
 | `la_guarida_juegos` | Yes | Yes |
 | `metropolis_center` | — (not used) | Yes |
 | `micelion_games` | Yes | Yes |
+| `asedio_gaming` | Yes | Yes |
+| `generacion_x_elfo` | Yes | Yes |
+| `goblintrader_madrid_norte` | Yes | Yes |
 
 Stores with `—` derive game from API category fields, not keyword matching.
 
@@ -250,9 +254,11 @@ Key things to note:
   called immediately after events load and overwrites filter state from URL
   params (`game`, `store`, `format`, `event`). localStorage is only consulted
   for `viewMode` and saved presets — never for filter state.
-- `cleanupFilters()` prunes selected facet values that are no longer present
-  in the current visible set (events matching all other active filters in the
-  current week). It runs after week navigation, filter changes, and on init.
+- `cleanupFilters()` prunes selected facet values that no longer exist in the
+  dataset. For `game` and `format` it uses `availableOptions()` (week-scoped);
+  for `store` it uses `allStores` (full dataset, week-independent). This means
+  a selected store is **never** removed by week navigation — it is only pruned
+  if the store name disappears from `events.json` entirely.
 - `resetFilters()` clears the search/facet filters and also resets all
   `segmentFilter` chips to enabled. Segment filters are part of the user-facing
   filter state, not a separate view preference.
@@ -614,18 +620,23 @@ truth for this list.
 
 ### Don't break filtering
 
-`eventMatches`, `filteredEvents`, `availableOptions`, `facetOptionCount`,
-`cleanupFilters`, and the `filters` shape are interlocked. A change to one
-must keep all of them consistent. In particular:
+`eventMatches`, `filteredEvents`, `availableOptions`, `allStores`,
+`facetOptionCount`, `cleanupFilters`, and the `filters` shape are interlocked.
+A change to one must keep all of them consistent. In particular:
 
 - `eventMatches(e, opts)` is called from three places (filtering display,
   computing facet options, computing facet counts) with different `opts`
   combinations (`ignore`, `includeSegment`, `includeWeek`). Don't simplify
   the signature.
-- `cleanupFilters()` runs after every state change that could narrow the
-  visible set, to drop selected facet values that no longer match anything in
-  the current week. On week navigation this can remove selections that have
-  no events in the new week.
+- **`storeOptions` uses `allStores`, not `availableOptions('store')`.** This
+  is intentional — the store list must show every store in the dataset
+  regardless of the current week. Do not revert this to `availableOptions`.
+- **`cleanupFilters()` treats `store` differently from `game` / `format`.**
+  For `store` it uses `allStores` as the allowed set; for the other fields it
+  uses `availableOptions()` (week-scoped). This ensures a selected store is
+  never silently dropped when the user navigates to a week with no events for
+  that store. `facetOptionCount('store', ...)` still returns the week-scoped
+  count (zero is allowed and expected for stores with no current-week events).
 
 ### Don't change the event schema
 
@@ -743,16 +754,22 @@ legacy `STORE_ADDRESSES` — before or at the same time as shipping the scraper.
 
 ### Adding a new filter facet
 
-The current facets (game, store, format) follow an identical pattern. A new
-facet means changing all of:
+The current facets (game, store, format) follow a similar but not identical
+pattern — `store` has special handling (see `allStores` / `cleanupFilters`
+above). A new facet that should behave like `game` / `format` (week-scoped
+options, pruned on navigation) means changing all of:
 
 - `filters` (initial state in `app()`)
 - `eventMatches` (matching loop)
 - `valueFor`, `availableOptions`, `facetOptionCount`, `cleanupFilters`
-- A new markup block mirroring the existing Game / Store / Format panels in
-  the `.filters` container, plus a `getter` for its options
+- A new markup block mirroring the existing Game / Format panels in the
+  `.filters` container, plus a getter for its options
 - The two `data-filter` chips inside `cellCardsHtml` (so it shows on cards)
   if you want it on the per-card chip row
+
+If the new facet should behave like `store` (always show all values, never
+pruned on week change), add a dedicated `all<Facet>` getter and a special-case
+branch in `cleanupFilters` — do not repurpose `allStores`.
 
 ### Safe UI tweaks
 
