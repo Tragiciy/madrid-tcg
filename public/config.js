@@ -1,5 +1,8 @@
 var STORE_ADDRESSES = {
   'Arte 9': 'Calle de Francisco Silvela, 21, 28028 Madrid',
+  'Asedio Gaming': 'Calle Soria 5, Bajo Izquierda, Las Rozas, 28231',
+  'Generacion X - Elfo': 'Elfo 98, 28027 Madrid',
+  'Goblintrader Madrid-Norte': 'C. del Marqués de Lema 7, local 3, 28003 Madrid',
   'Jupiter Juegos': 'Jupiter Madrid',
   'La Guarida Juegos': 'Calle de las Peñuelas, 14, Local 1, 28005 Madrid',
   'Metropolis Center': 'Calle Andrés Mellado, 22, 28015 Madrid',
@@ -19,6 +22,18 @@ var STORE_META = {
     address: 'Calle de Francisco Silvela, 21, 28028 Madrid',
     website: 'https://arte9.es',
     notes: 'Near Diego de León metro (L4, L5, L6)',
+  },
+  'Asedio Gaming': {
+    address: 'Calle Soria 5, Bajo Izquierda, Las Rozas, 28231',
+    website: 'https://asediogaming.com/',
+  },
+  'Generacion X - Elfo': {
+    address: 'Elfo 98, 28027 Madrid',
+    website: 'https://genexcomics.com/',
+  },
+  'Goblintrader Madrid-Norte': {
+    address: 'C. del Marqués de Lema 7, local 3, 28003 Madrid',
+    website: 'https://www.goblintrader.es',
   },
   'Jupiter Juegos': {
     address: 'Calle de la Cruz, 10, 28012 Madrid',

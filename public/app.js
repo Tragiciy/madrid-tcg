@@ -376,11 +376,19 @@ function app() {
     },
 
     /* ── Faceted filter options ─────────────────────────────────────── */
+    get allStores() {
+      const values = new Set();
+      for (const e of this.events) {
+        const value = this.valueFor('store', e);
+        if (value) values.add(value);
+      }
+      return [...values].sort();
+    },
     get gameOptions() {
       return this.availableOptions('game');
     },
     get storeOptions() {
-      return this.availableOptions('store');
+      return this.allStores;
     },
     get formatOptions() {
       return this.availableOptions('format');
@@ -563,7 +571,9 @@ function app() {
 
     cleanupFilters({ syncUrl = false } = {}) {
       for (const field of ['game', 'store', 'format']) {
-        const allowed = new Set(this.availableOptions(field));
+        const allowed = field === 'store'
+          ? new Set(this.allStores)
+          : new Set(this.availableOptions(field));
         const next = this.selectedValues(field).filter(v => allowed.has(v));
         if (next.length !== this.selectedValues(field).length) {
           this.filters[field] = next;
