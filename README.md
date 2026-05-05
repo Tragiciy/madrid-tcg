@@ -16,7 +16,9 @@ one click.
 
 - **Two week views** — horizontal grid (default) and vertical per-day list.
 - **Faceted filters** — search by title, multi-select game / store / format.
-  Filters are bookmarkable via URL parameters.
+  Filters are bookmarkable via URL parameters. The store list always shows
+  every store in the dataset — stores with no events in the current week
+  remain visible and selectable (counts reflect the current week only).
 - **Filter presets** — save and restore named filter combinations.
 - **Time-segment chips** — Morning (<12), Afternoon (12–16), Evening (16–19),
   Late (19+); chips can be toggled to hide a segment, and segment headers in

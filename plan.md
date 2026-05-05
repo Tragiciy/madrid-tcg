@@ -10,20 +10,24 @@ Core user question: **"What can I play this week in my city?"**
 ## Current State (as of 2026-05-05)
 
 ### Data coverage
-- **6 scrapers** — Arte 9, Ítaca, Jupiter Juegos, Micelion Games,
-  La Guarida Juegos, Metropolis Center
-- **1,099 events** in `events.json` (841 active)
+- **9 scrapers** — Arte 9, Ítaca, Jupiter Juegos, Micelion Games,
+  La Guarida Juegos, Metropolis Center, Asedio Gaming,
+  Generacion X - Elfo, Goblintrader Madrid-Norte
+- **1,127 events** in `events.json` (869 active)
 - **13 games** — Magic, Pokémon, One Piece, Digimon, Lorcana, Star Wars:
   Unlimited, Yu-Gi-Oh!, Flesh and Blood, Weiß Schwarz, Riftbound,
   Final Fantasy TCG, Naruto Mythos, plus Unknown
-- **14 `scrape_now` targets** queued in `scraper_targets.json` (validated,
-  awaiting scrapers)
+- **11 `scrape_now` targets** remaining in `scraper_targets.json`
 
 ### Frontend
 - Alpine.js SPA split across 4 files: `index.html`, `styles.css`,
   `app.js`, `config.js`
 - Horizontal grid + vertical list views; `viewMode` persisted
 - Faceted filters: game, store, format; filter state bookmarkable via URL
+  - Store filter lists all stores from the full dataset regardless of
+    current week; selecting a store with zero events this week is allowed
+  - Selected store is never dropped by week navigation
+  - Game / format filters remain week-scoped
 - Saved filter presets via `localStorage` (`tcg-presets-v1`)
 - Event Detail Panel: title, game, format, store address, Google Maps link
 - Calendar export: Google Calendar, iCalendar (.ics), Outlook
@@ -63,6 +67,8 @@ Core user question: **"What can I play this week in my city?"**
 | ✅ | Responsive auto-view | First visit on narrow screen defaults to vertical; saved thereafter |
 | ✅ | Past-event dimming | Past segments and past events on today dimmed but not hidden |
 | ✅ | Focus mode | Single active segment collapses headers → flat per-day card list |
+| ✅ | Store filter always-visible | `allStores` getter; store never dropped by `cleanupFilters` on week change |
+| ✅ | 3 new scrapers + STORE_META | Asedio Gaming, Generacion X - Elfo, Goblintrader Madrid-Norte |
 
 ---
 
@@ -75,11 +81,12 @@ frontend. Both can run in parallel.
 
 ### Track A — Scraper expansion + pipeline automation
 
-#### A1. Build scrapers for the 14 `scrape_now` targets
+#### A1. Build scrapers for remaining `scrape_now` targets
 
-Group by platform — same-platform stores share a helper in `shared/`.
+3 scrapers shipped (Asedio Gaming, Generacion X - Elfo, Goblintrader
+Madrid-Norte). 11 targets remain. Group by platform.
 
-**Group 1 — WordPress (7 stores, build first)**
+**Group 1 — WordPress (6 stores remaining)**
 
 Most use The Events Calendar or Modern Events Calendar plugin with a
 predictable REST endpoint (`/wp-json/tribe/events/v1/events`) or consistent
@@ -88,7 +95,7 @@ HTML structure.
 | Store | Event page | Primary game |
 |---|---|---|
 | Collectorage | /calendario | Star Wars: Unlimited |
-| Generacion X - Elfo | /eventos/ | Magic: The Gathering |
+| ~~Generacion X - Elfo~~ | ~~shipped~~ | ~~Magic: The Gathering~~ |
 | Kamikaze Freak Shop | /eventos/ | Magic: The Gathering |
 | Metamorfo | /calendario | Yu-Gi-Oh! |
 | Panda Games | /juegos/eventos/ | Magic: The Gathering |
@@ -110,21 +117,18 @@ Steps:
 
 3. Add each store to `STORE_META` in `public/config.js` with a valid `address`.
 
-**Group 2 — Shopify (1 store)**
+**Group 2 — Shopify (✅ shipped)**
 
 | Store | Event page | Primary game |
 |---|---|---|
-| Asedio Gaming | /pages/eventos | Flesh and Blood |
+| ~~Asedio Gaming~~ | ~~shipped~~ | ~~Flesh and Blood~~ |
 
-Inspect for `application/ld+json` `Event` schema first; fall back to HTML.
-Write as `scrapers/asedio_gaming.py` — standalone, no shared helper.
-
-**Group 3 — Unknown platform (6 stores, investigate in order)**
+**Group 3 — Unknown platform (5 stores remaining)**
 
 | Store | Event page | Notes |
 |---|---|---|
 | Goblintrader Central | /gb/eventos | Likely PrestaShop |
-| Goblintrader Madrid-Norte | /es/eventos | Same codebase as Central |
+| ~~Goblintrader Madrid-Norte~~ | ~~shipped~~ | ~~same codebase as Central~~ |
 | Gladius Games | /content/5-calendario-de-eventos | PrestaShop or custom |
 | MADAKIBA | /es/c/eventos | Unknown; fetch + inspect |
 | Mundicomics | /torneos-tcg | Unknown; fetch + inspect |
