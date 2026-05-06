@@ -606,6 +606,7 @@ def main() -> None:
         store_name = (
             (valid[0].get("store") if valid else None)
             or (events[0].get("store") if events else None)
+            or getattr(importlib.import_module(module_name), "STORE", None)
             or module_name
         )
 
