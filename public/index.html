@@ -126,8 +126,12 @@
   <div class="preset-bar" x-show="savedPresets.length">
     <span class="preset-label">Presets</span>
     <template x-for="preset in savedPresets" :key="preset.id">
-      <span class="preset-chip">
+      <span class="preset-chip" :class="{ 'is-default': defaultPresetId === preset.id }">
         <button class="preset-apply" type="button" @click="applyPreset(preset)" x-text="preset.name"></button>
+        <button class="preset-default" type="button" @click.stop="setDefaultPreset(preset.id)" :aria-label="defaultPresetId === preset.id ? 'Used automatically on startup' : 'Set as default preset'" :title="defaultPresetId === preset.id ? 'Used automatically on startup' : 'Set as default preset'">
+          <span x-show="defaultPresetId === preset.id">★ Default</span>
+          <span x-show="defaultPresetId !== preset.id">☆</span>
+        </button>
         <button class="preset-remove" type="button" @click.stop="deletePreset(preset.id)" :aria-label="'Delete preset ' + preset.name">×</button>
       </span>
     </template>

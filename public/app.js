@@ -1,6 +1,7 @@
 /* ── Helpers ───────────────────────────────────────────────────────── */
 
 const PRESETS_STORAGE_KEY = 'tcg-presets-v1';
+const DEFAULT_PRESET_STORAGE_KEY = 'tcg-default-preset-v1';
 
 // Returns YYYY-MM-DD string for a Date object, in local time
 function isoDay(d) {
@@ -250,6 +251,7 @@ function app() {
     filters:      { search: '', game: [], store: [], format: [] },
     filterSearch: { game: '', store: '', format: '' },
     savedPresets: [],
+    defaultPresetId: null,
     segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
     openFacet: null,
     // Independent of segmentFilter: collapsed segments still occupy a
@@ -272,6 +274,7 @@ function app() {
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
       this.loadPresets();
+      this.loadDefaultPreset();
 
       // Show Back to top after 400px scroll
       window.addEventListener('scroll', () => {
@@ -301,7 +304,13 @@ function app() {
       try {
         const res = await fetch('events.json');
         this.events = await res.json();
-        this.applyFiltersFromUrl();
+        const params = new URLSearchParams(window.location.search);
+        const hasUrlFilters = ['game', 'store', 'format'].some(f => params.get(f));
+        if (hasUrlFilters) {
+          this.applyFiltersFromUrl();
+        } else {
+          this.applyDefaultPreset();
+        }
         this.cleanupFilters({ syncUrl: false });
         const rawEventParam = new URLSearchParams(window.location.search).get('event');
         if (rawEventParam) {
@@ -500,6 +509,62 @@ function app() {
     deletePreset(id) {
       this.savedPresets = this.savedPresets.filter(p => p.id !== id);
       this.persistPresets();
+      if (this.defaultPresetId === id) {
+        this.defaultPresetId = null;
+        this.persistDefaultPreset();
+      }
+    },
+
+    loadDefaultPreset() {
+      try {
+        const raw = localStorage.getItem(DEFAULT_PRESET_STORAGE_KEY);
+        if (!raw) {
+          this.defaultPresetId = null;
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        this.defaultPresetId = (parsed && parsed.id) ? String(parsed.id) : null;
+      } catch (err) {
+        console.warn('Failed to load default preset', err);
+        this.defaultPresetId = null;
+      }
+    },
+
+    persistDefaultPreset() {
+      try {
+        if (this.defaultPresetId) {
+          localStorage.setItem(DEFAULT_PRESET_STORAGE_KEY, JSON.stringify({ id: this.defaultPresetId }));
+        } else {
+          localStorage.removeItem(DEFAULT_PRESET_STORAGE_KEY);
+        }
+      } catch (err) {
+        console.warn('Failed to persist default preset', err);
+      }
+    },
+
+    setDefaultPreset(id) {
+      if (this.defaultPresetId === id) {
+        this.defaultPresetId = null;
+      } else {
+        this.defaultPresetId = id;
+      }
+      this.persistDefaultPreset();
+    },
+
+    applyDefaultPreset() {
+      if (!this.defaultPresetId) return;
+      const preset = this.savedPresets.find(p => p.id === this.defaultPresetId);
+      if (!preset) {
+        this.defaultPresetId = null;
+        this.persistDefaultPreset();
+        return;
+      }
+      if (!preset.filters) return;
+      this.filters.game = Array.isArray(preset.filters.game) ? preset.filters.game.slice() : [];
+      this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
+      this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
+      this.openFacet = null;
+      // Intentionally do NOT sync URL on default preset application.
     },
 
     facetSummary(field, fallback) {
