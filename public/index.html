@@ -48,17 +48,21 @@
           <span class="facet-caret">▾</span>
         </button>
         <div class="facet-panel" x-show="openFacet === 'game'">
+          <div class="facet-search-wrap">
+            <input type="text" class="facet-search" placeholder="Search games…" x-model="filterSearch.game" />
+            <button type="button" class="facet-search-clear" x-show="filterSearch.game" @click.stop="filterSearch.game = ''">×</button>
+          </div>
           <div class="facet-actions" x-show="filters.game.length">
             <button class="facet-clear" type="button" @click="clearFacet('game')">All</button>
           </div>
-          <template x-for="g in gameOptions" :key="g">
+          <template x-for="g in filteredFacetOptions('game')" :key="g">
             <label class="facet-option">
               <input type="checkbox" :checked="isSelected('game', g)" @change="toggleFilter('game', g)">
               <span class="facet-option-label" x-text="g"></span>
               <span class="facet-option-count" x-text="facetOptionCount('game', g)"></span>
             </label>
           </template>
-          <div class="facet-empty" x-show="gameOptions.length === 0">No games</div>
+          <div class="facet-empty" x-show="filteredFacetOptions('game').length === 0">No matches</div>
         </div>
       </div>
     </div>
@@ -70,17 +74,21 @@
           <span class="facet-caret">▾</span>
         </button>
         <div class="facet-panel" x-show="openFacet === 'store'">
+          <div class="facet-search-wrap">
+            <input type="text" class="facet-search" placeholder="Search stores…" x-model="filterSearch.store" />
+            <button type="button" class="facet-search-clear" x-show="filterSearch.store" @click.stop="filterSearch.store = ''">×</button>
+          </div>
           <div class="facet-actions" x-show="filters.store.length">
             <button class="facet-clear" type="button" @click="clearFacet('store')">All</button>
           </div>
-          <template x-for="s in storeOptions" :key="s">
+          <template x-for="s in filteredFacetOptions('store')" :key="s">
             <label class="facet-option">
               <input type="checkbox" :checked="isSelected('store', s)" @change="toggleFilter('store', s)">
               <span class="facet-option-label" x-text="s"></span>
               <span class="facet-option-count" x-text="facetOptionCount('store', s)"></span>
             </label>
           </template>
-          <div class="facet-empty" x-show="storeOptions.length === 0">No stores</div>
+          <div class="facet-empty" x-show="filteredFacetOptions('store').length === 0">No matches</div>
         </div>
       </div>
     </div>
@@ -92,17 +100,21 @@
           <span class="facet-caret">▾</span>
         </button>
         <div class="facet-panel" x-show="openFacet === 'format'">
+          <div class="facet-search-wrap">
+            <input type="text" class="facet-search" placeholder="Search formats…" x-model="filterSearch.format" />
+            <button type="button" class="facet-search-clear" x-show="filterSearch.format" @click.stop="filterSearch.format = ''">×</button>
+          </div>
           <div class="facet-actions" x-show="filters.format.length">
             <button class="facet-clear" type="button" @click="clearFacet('format')">All</button>
           </div>
-          <template x-for="f in formatOptions" :key="f">
+          <template x-for="f in filteredFacetOptions('format')" :key="f">
             <label class="facet-option">
               <input type="checkbox" :checked="isSelected('format', f)" @change="toggleFilter('format', f)">
               <span class="facet-option-label" x-text="f"></span>
               <span class="facet-option-count" x-text="facetOptionCount('format', f)"></span>
             </label>
           </template>
-          <div class="facet-empty" x-show="formatOptions.length === 0">No formats</div>
+          <div class="facet-empty" x-show="filteredFacetOptions('format').length === 0">No matches</div>
         </div>
       </div>
     </div>
