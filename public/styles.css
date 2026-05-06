@@ -299,6 +299,7 @@ input:focus, select:focus { border-color: var(--accent); }
   overflow: hidden;
 }
 .preset-apply,
+.preset-default,
 .preset-remove {
   background: transparent;
   border: 0;
@@ -315,15 +316,26 @@ input:focus, select:focus { border-color: var(--accent); }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.preset-default {
+  border-left: 1px solid var(--border);
+  min-width: 28px;
+  padding: .3rem .5rem;
+  font-size: .72rem;
+}
 .preset-remove {
   border-left: 1px solid var(--border);
   min-width: 28px;
   padding: .3rem .45rem;
 }
+.preset-chip.is-default {
+  border-color: var(--accent-dim);
+  box-shadow: inset 0 0 0 1px var(--accent-soft);
+}
 .preset-chip:hover {
   border-color: var(--accent-dim);
 }
 .preset-apply:hover,
+.preset-default:hover,
 .preset-remove:hover {
   background: var(--accent-soft);
   color: var(--accent);
