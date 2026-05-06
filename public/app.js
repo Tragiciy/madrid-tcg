@@ -248,6 +248,7 @@ function app() {
     loading:      true,
     weekStart:    weekMonday(new Date()),
     filters:      { search: '', game: [], store: [], format: [] },
+    filterSearch: { game: '', store: '', format: '' },
     savedPresets: [],
     segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
     openFacet: null,
@@ -521,6 +522,13 @@ function app() {
         }
       }
       return [...values].sort();
+    },
+
+    filteredFacetOptions(field) {
+      const options = field === 'store' ? this.storeOptions : this.availableOptions(field);
+      const query = String(this.filterSearch[field] || '').toLowerCase().trim();
+      if (!query) return options;
+      return options.filter(opt => String(opt).toLowerCase().includes(query));
     },
 
     facetOptionCount(field, value) {
