@@ -57,11 +57,7 @@ API_URL = "https://genexcomics.com/wp-json/wp/v2/evento"
 PER_PAGE = 100
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Accept": "application/json",
     "Referer": "https://genexcomics.com/eventos/",
 }
@@ -152,7 +148,7 @@ def scrape() -> list[dict]:
             API_URL,
             params={"per_page": PER_PAGE},
             headers=HEADERS,
-            timeout=30,
+            timeout=10,
         )
         resp.raise_for_status()
     except Exception as exc:

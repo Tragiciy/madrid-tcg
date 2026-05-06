@@ -20,6 +20,7 @@ AJAX не нужен.
 
 import logging
 import re
+import time
 from datetime import datetime, date
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -246,6 +247,7 @@ def scrape() -> list[dict]:
                             url = parsed["source_url"]
                             if url not in detail_cache:
                                 detail_cache[url] = _fetch_format_from_detail(page, url)
+                                time.sleep(0.3)
                             parsed["format"] = detail_cache[url]
                         events.append(parsed)
                     except Exception as exc:

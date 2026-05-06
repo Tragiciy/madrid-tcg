@@ -24,6 +24,7 @@ import html as _html
 import json
 import logging
 import re
+import time
 from datetime import datetime
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -132,11 +133,7 @@ _FORMATO_RE = re.compile(
 )
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Accept": "application/json",
     "Referer": "https://arte9.com/torneos/",
 }
@@ -474,7 +471,7 @@ def scrape() -> list[dict]:
                 API_URL,
                 params={"per_page": PER_PAGE, "page": page},
                 headers=HEADERS,
-                timeout=30,
+                timeout=20,
             )
         except Exception as exc:
             logger.error("%s: request failed (page %d): %s", STORE, page, exc)
@@ -506,6 +503,7 @@ def scrape() -> list[dict]:
             break
         if len(items) < PER_PAGE:
             break
+        time.sleep(0.3)
         page += 1
 
     # Dedup by (title, datetime_start, store).
