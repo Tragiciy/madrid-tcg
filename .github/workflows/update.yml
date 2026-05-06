@@ -47,4 +47,6 @@ jobs:
 
           git add public/events.json public/events_stats.json
           git commit -m "chore: update events.json ($(date -u +'%Y-%m-%d %H:%M UTC'))"
+          git fetch origin main
+          git rebase origin/main
           git push
