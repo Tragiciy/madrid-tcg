@@ -52,6 +52,22 @@ var STORE_META = {
     address: 'Calle del Pez, 20, 28004 Madrid',
     notes: 'Malasaña',
   },
+  'Kamikaze Freak Shop': {
+    address: 'Calle Ponferrada, entre el 11 y el 15, 28039 Madrid',
+    website: 'https://kamikazefreakshop.es/',
+  },
+  'Metamorfo': {
+    address: 'Calle Ilustración 3, 28902 Getafe',
+    website: 'https://metamorfo.es/',
+  },
+  'Panda Games': {
+    address: 'Paseo de la Castellana 194, 28046 Madrid',
+    website: 'https://pandagames.es/',
+  },
+  'The Big Bang Games': {
+    address: 'C/ Entre Arroyos 1, Local 6, 28030 Madrid',
+    website: 'https://www.thebigbanggames.com/',
+  },
 };
 
 var GAME_CLASS_MAP = {
