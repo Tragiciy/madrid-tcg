@@ -2,6 +2,7 @@
 
 const PRESETS_STORAGE_KEY = 'tcg-presets-v1';
 const DEFAULT_PRESET_STORAGE_KEY = 'tcg-default-preset-v1';
+const ONBOARDING_STORAGE_KEY = 'tcg-onboarding-v1';
 
 // Returns YYYY-MM-DD string for a Date object, in local time
 function isoDay(d) {
@@ -252,6 +253,9 @@ function app() {
     filterSearch: { game: '', store: '', format: '' },
     savedPresets: [],
     defaultPresetId: null,
+    onboardingOpen: false,
+    onboardingCompleted: false,
+    onboarding: { game: [], store: [] },
     segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
     openFacet: null,
     // Independent of segmentFilter: collapsed segments still occupy a
@@ -275,6 +279,7 @@ function app() {
     async init() {
       this.loadPresets();
       this.loadDefaultPreset();
+      this.loadOnboardingState();
 
       // Show Back to top after 400px scroll
       window.addEventListener('scroll', () => {
@@ -312,6 +317,9 @@ function app() {
           this.applyDefaultPreset();
         }
         this.cleanupFilters({ syncUrl: false });
+        if (this.shouldShowOnboarding(hasUrlFilters)) {
+          this.openOnboarding();
+        }
         const rawEventParam = new URLSearchParams(window.location.search).get('event');
         if (rawEventParam) {
           const decoded = decodeEventParam(rawEventParam);
@@ -540,6 +548,107 @@ function app() {
       } catch (err) {
         console.warn('Failed to persist default preset', err);
       }
+    },
+
+    /* ── Onboarding ────────────────────────────────────────────────── */
+    loadOnboardingState() {
+      try {
+        const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY);
+        if (!raw) {
+          this.onboardingCompleted = false;
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        this.onboardingCompleted = parsed && parsed.completed === true;
+      } catch (err) {
+        console.warn('Failed to load onboarding state', err);
+        this.onboardingCompleted = false;
+      }
+    },
+
+    persistOnboardingComplete() {
+      try {
+        localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify({ completed: true }));
+        this.onboardingCompleted = true;
+      } catch (err) {
+        console.warn('Failed to persist onboarding state', err);
+      }
+    },
+
+    shouldShowOnboarding(hasUrlFilters) {
+      if (hasUrlFilters) return false;
+      if (this.onboardingCompleted) return false;
+      if (this.savedPresets.length > 0) return false;
+      if (this.defaultPresetId) return false;
+      return true;
+    },
+
+    openOnboarding() {
+      this.onboardingOpen = true;
+      this.onboarding = { game: [], store: [] };
+    },
+
+    skipOnboarding() {
+      this.onboardingOpen = false;
+      this.persistOnboardingComplete();
+    },
+
+    completeOnboarding() {
+      const hasSelections = this.onboarding.game.length > 0 || this.onboarding.store.length > 0;
+      if (!hasSelections) {
+        this.skipOnboarding();
+        return;
+      }
+
+      this.filters.game = this.onboarding.game.slice();
+      this.filters.store = this.onboarding.store.slice();
+      this.filters.format = [];
+      this.openFacet = null;
+      this.cleanupFilters({ syncUrl: false });
+
+      const presetName = this.generateDefaultPresetName();
+      const preset = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+        name: presetName,
+        filters: {
+          game: this.onboarding.game.slice(),
+          store: this.onboarding.store.slice(),
+          format: [],
+        },
+      };
+      this.savedPresets.push(preset);
+      this.persistPresets();
+
+      this.defaultPresetId = preset.id;
+      this.persistDefaultPreset();
+
+      this.persistOnboardingComplete();
+      this.onboardingOpen = false;
+    },
+
+    toggleOnboardingValue(field, value) {
+      const arr = this.onboarding[field];
+      const idx = arr.indexOf(value);
+      if (idx >= 0) {
+        arr.splice(idx, 1);
+      } else {
+        arr.push(value);
+      }
+    },
+
+    generateDefaultPresetName() {
+      const existingNames = new Set(this.savedPresets.map(p => p.name));
+      let name = 'My default';
+      if (!existingNames.has(name)) return name;
+      let counter = 2;
+      while (existingNames.has(`${name} ${counter}`)) {
+        counter++;
+      }
+      return `${name} ${counter}`;
+    },
+
+    get onboardingGameOptions() {
+      return this.gameOptions.filter(g => g !== 'Unknown');
     },
 
     setDefaultPreset(id) {
