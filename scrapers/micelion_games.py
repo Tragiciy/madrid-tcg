@@ -31,11 +31,7 @@ _GENERIC_WCS_TYPES = {"destacados", "featured", "general"}
 from shared.scraper_keywords import GAME_KEYWORDS, FORMAT_KEYWORDS, extract_game_from_keywords, extract_format_from_keywords
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Referer": "https://miceliongames.com/calendario-de-torneos/",
 }
 
@@ -151,18 +147,22 @@ def scrape() -> list[dict]:
     end = start + timedelta(days=DAYS_AHEAD)
     scraped_at = now.isoformat()
 
-    response = requests.post(
-        AJAX_URL,
-        data={
-            "action": "wcs_get_events_json",
-            "start": start.isoformat(),
-            "end": end.isoformat(),
-        },
-        headers=HEADERS,
-        timeout=15,
-    )
-    response.raise_for_status()
-    raw_events: list[dict] = response.json()
+    try:
+        response = requests.post(
+            AJAX_URL,
+            data={
+                "action": "wcs_get_events_json",
+                "start": start.isoformat(),
+                "end": end.isoformat(),
+            },
+            headers=HEADERS,
+            timeout=10,
+        )
+        response.raise_for_status()
+        raw_events: list[dict] = response.json()
+    except Exception as exc:
+        logger.error("%s: listing fetch failed: %s", STORE, exc)
+        return []
 
     events = []
     for raw in raw_events:

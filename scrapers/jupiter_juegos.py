@@ -32,6 +32,7 @@ scrapers; aggregator stamps lifecycle fields.
 import json
 import logging
 import re
+import time
 from datetime import date, datetime, timedelta
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -60,11 +61,7 @@ _SPANISH_MONTHS = {
 
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Referer": BASE_URL,
 }
 
@@ -202,7 +199,7 @@ def _fetch_month(year: int, month: int) -> Optional[BeautifulSoup]:
             BASE_URL,
             params={"tienda": TIENDA_PARAM, "fecha": fecha},
             headers=HEADERS,
-            timeout=15,
+            timeout=10,
         )
     except Exception as exc:
         logger.error("%s: request failed for %s: %s", STORE, fecha, exc)
@@ -263,6 +260,7 @@ def scrape() -> list:
         evs = _events_for_month(soup, year, month, scraped_at)
         logger.info("%s: %04d-%02d → %d events", STORE, year, month, len(evs))
         all_events.extend(evs)
+        time.sleep(0.3)
 
     # Deduplicate by (title, datetime_start, store) — adjacent month
     # fetches can repeat events on the boundary days.

@@ -95,14 +95,10 @@ def _fetch_tribe_rest(base_url: str, days_ahead: int) -> list[dict]:
     """Try Tribe REST API. Return events or raise on failure."""
     url = _tribe_api_url(base_url, days_ahead)
     headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/124.0.0.0 Safari/537.36"
-        ),
+        "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
         "Accept": "application/json",
     }
-    resp = requests.get(url, headers=headers, timeout=30)
+    resp = requests.get(url, headers=headers, timeout=10)
     resp.raise_for_status()
     data = resp.json()
     if not isinstance(data, dict):
@@ -280,14 +276,10 @@ def _extract_mec_html_events(soup: BeautifulSoup) -> list[dict]:
 def _fetch_html_fallback(base_url: str) -> list[dict]:
     """Fetch base_url HTML and parse for Tribe/MEC event structures."""
     headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/124.0.0.0 Safari/537.36"
-        ),
+        "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
         "Accept": "text/html,application/xhtml+xml",
     }
-    resp = requests.get(base_url, headers=headers, timeout=30)
+    resp = requests.get(base_url, headers=headers, timeout=10)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 

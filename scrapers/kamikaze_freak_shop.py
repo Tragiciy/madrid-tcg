@@ -38,11 +38,7 @@ EVENTS_URL = "https://kamikazefreakshop.es/index.php/eventos/"
 DEFAULT_GAME = "Magic: The Gathering"
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Accept": "text/html,application/xhtml+xml",
 }
 
@@ -114,11 +110,11 @@ def scrape() -> list[dict]:
 
     # Verify the page is reachable and still contains our anchor text.
     try:
-        resp = requests.get(EVENTS_URL, headers=HEADERS, timeout=20)
+        resp = requests.get(EVENTS_URL, headers=HEADERS, timeout=10)
         resp.raise_for_status()
     except Exception as exc:
-        logger.error("%s: event page unreachable: %s", STORE, exc)
-        raise RuntimeError(f"{STORE}: event page unreachable") from exc
+        logger.error("%s: listing fetch failed: %s", STORE, exc)
+        return []
 
     page_text = BeautifulSoup(resp.text, "html.parser").get_text(" ", strip=True)
     for anchor in _REQUIRED_ANCHORS:

@@ -62,11 +62,7 @@ FALLBACK_HOUR = 12
 FALLBACK_MINUTE = 0
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Accept": "text/html,application/xhtml+xml",
     "Referer": "https://www.goblintrader.es/gb/eventos",
 }
@@ -165,7 +161,7 @@ def scrape() -> list[dict]:
     events: list[dict] = []
 
     try:
-        resp = requests.get(PAGE_URL, headers=HEADERS, timeout=15)
+        resp = requests.get(PAGE_URL, headers=HEADERS, timeout=10)
         resp.raise_for_status()
     except Exception as exc:
         logger.error("%s: request failed: %s", STORE, exc)

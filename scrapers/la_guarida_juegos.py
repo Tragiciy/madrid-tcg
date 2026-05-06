@@ -17,6 +17,7 @@ import json
 import logging
 import re
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -89,11 +90,7 @@ _KNOWN_SETS = (
 )
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Accept": "text/html,application/xhtml+xml,application/json",
     "Referer": PAGE_URL,
 }
@@ -132,7 +129,7 @@ def _fetch_month(session: requests.Session, calendar_id: str,
             "id": calendar_id,
         },
         headers=HEADERS,
-        timeout=15,
+        timeout=10,
     )
     resp.raise_for_status()
     data = resp.json()
@@ -366,8 +363,12 @@ def scrape() -> list[dict]:
     months = _month_starts(now, end)
 
     session = requests.Session()
-    page_resp = session.get(PAGE_URL, headers=HEADERS, timeout=15)
-    page_resp.raise_for_status()
+    try:
+        page_resp = session.get(PAGE_URL, headers=HEADERS, timeout=10)
+        page_resp.raise_for_status()
+    except Exception as exc:
+        logger.error("%s: listing fetch failed: %s", STORE, exc)
+        return []
     calendar_id = _discover_calendar_id(page_resp.text)
 
     events: list[dict] = []
@@ -380,6 +381,7 @@ def scrape() -> list[dict]:
         parsed = _parse_events(html, scraped_at)
         logger.info("%s: %04d-%02d → %d events", STORE, year, month, len(parsed))
         events.extend(parsed)
+        time.sleep(0.3)
 
     seen: dict[tuple[str, str, str], dict] = {}
     for event in events:

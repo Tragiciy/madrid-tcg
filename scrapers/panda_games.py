@@ -18,6 +18,7 @@ import json
 import logging
 import re
 import sys
+import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional
@@ -51,11 +52,7 @@ LISTING_URL = "https://pandagames.es/juegos/eventos/"
 DEFAULT_GAME = "Magic: The Gathering"
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
+    "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
     "Accept": "text/html,application/xhtml+xml",
 }
 
@@ -124,7 +121,7 @@ def _parse_time(text: str) -> Optional[tuple[int, int]]:
 def _fetch_event_detail(url: str) -> Optional[tuple[date, tuple[int, int], str]]:
     """Fetch product page and return (event_date, (hour, minute), desc_text) or None."""
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
+        resp = requests.get(url, headers=HEADERS, timeout=10)
         resp.raise_for_status()
         soup = BeautifulSoup(resp.text, "html.parser")
         page_text = soup.get_text(" ", strip=True)
@@ -175,11 +172,11 @@ def scrape() -> list[dict]:
     cutoff = today + timedelta(days=90)
 
     try:
-        resp = requests.get(LISTING_URL, headers=HEADERS, timeout=20)
+        resp = requests.get(LISTING_URL, headers=HEADERS, timeout=10)
         resp.raise_for_status()
     except Exception as exc:
-        logger.error("%s: listing page failed: %s", STORE, exc)
-        raise RuntimeError(f"{STORE}: could not fetch event listing") from exc
+        logger.error("%s: listing fetch failed: %s", STORE, exc)
+        return []
 
     soup = BeautifulSoup(resp.text, "html.parser")
     products = soup.select("ul.products li.product")
@@ -187,6 +184,7 @@ def scrape() -> list[dict]:
         products = soup.select("li.product.type-product")
 
     product_links: list[tuple[str, str]] = []
+    seen_urls: set[str] = set()
     for prod in products:
         link = prod.select_one("a.woocommerce-LoopProduct-link") or prod.select_one("a")
         if not link:
@@ -200,11 +198,15 @@ def scrape() -> list[dict]:
             title = link.get_text(" ", strip=True)
         if not title or not href:
             continue
+        if href in seen_urls:
+            continue
+        seen_urls.add(href)
         product_links.append((title, href))
 
     events: list[dict] = []
     for title, url in product_links:
         detail = _fetch_event_detail(url)
+        time.sleep(0.3)
         if not detail:
             continue
         event_date, (hour, minute), page_text = detail
