@@ -660,7 +660,10 @@ function app() {
       for (const field of ['game', 'store', 'format']) {
         if (ignore === field) continue;
         const selected = this.selectedValues(field);
-        if (selected.length && !selected.includes(this.valueFor(field, e))) return false;
+        const value = this.valueFor(field, e);
+        // Default-hide Unknown game events unless the user explicitly selected them.
+        if (field === 'game' && value === 'Unknown' && !selected.includes('Unknown')) return false;
+        if (selected.length && !selected.includes(value)) return false;
       }
       return true;
     },
