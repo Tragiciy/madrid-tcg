@@ -299,6 +299,7 @@ input:focus, select:focus { border-color: var(--accent); }
   overflow: hidden;
 }
 .preset-apply,
+.preset-edit,
 .preset-default,
 .preset-remove {
   background: transparent;
@@ -312,20 +313,20 @@ input:focus, select:focus { border-color: var(--accent); }
 .preset-apply {
   max-width: min(260px, calc(100vw - 5rem));
   overflow: hidden;
-  padding: .32rem .55rem .32rem .7rem;
+  padding: .32rem .45rem .32rem .6rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .preset-default {
   border-left: 1px solid var(--border);
-  min-width: 28px;
-  padding: .3rem .5rem;
+  min-width: 24px;
+  padding: 0 .4rem;
   font-size: .72rem;
 }
 .preset-remove {
   border-left: 1px solid var(--border);
-  min-width: 28px;
-  padding: .3rem .45rem;
+  min-width: 24px;
+  padding: 0 .35rem;
 }
 .preset-chip.is-default {
   border-color: var(--accent-dim);
@@ -335,10 +336,27 @@ input:focus, select:focus { border-color: var(--accent); }
   border-color: var(--accent-dim);
 }
 .preset-apply:hover,
+.preset-edit:hover,
 .preset-default:hover,
 .preset-remove:hover {
   background: var(--accent-soft);
   color: var(--accent);
+}
+.preset-edit {
+  align-items: center;
+  border-left: 1px solid var(--border);
+  display: inline-flex;
+  font-size: .72rem;
+  justify-content: center;
+  line-height: 1;
+  min-width: 24px;
+  padding: 0;
+  width: 24px;
+}
+.preset-edit svg {
+  display: block;
+  height: 12px;
+  width: 12px;
 }
 
 /* ── Default preset banner ──────────────────────────────────── */
@@ -353,6 +371,48 @@ input:focus, select:focus { border-color: var(--accent); }
   gap: .4rem;
   margin: -.35rem 0 1rem;
   padding: .4rem .7rem;
+}
+
+/* ── Edit preset banner ─────────────────────────────────────── */
+.edit-preset-banner {
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: .75rem;
+  gap: .4rem;
+  margin: -.35rem 0 1rem;
+  padding: .4rem .7rem;
+}
+.edit-preset-banner .edit-preset-label {
+  color: var(--accent);
+  font-weight: 600;
+}
+.edit-preset-banner .edit-preset-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: .75rem;
+  min-width: 120px;
+  outline: none;
+  padding: .25rem .5rem;
+  transition: border-color .15s;
+  width: auto;
+}
+.edit-preset-banner .edit-preset-input:focus {
+  border-color: var(--accent);
+}
+.edit-preset-banner .edit-preset-hint {
+  color: var(--text-muted);
+  font-size: .7rem;
+}
+.edit-preset-banner .btn-small {
+  font-size: .7rem;
+  padding: .25rem .55rem;
 }
 
 /* ── View toggle buttons ──────────────────────────────────────── */
