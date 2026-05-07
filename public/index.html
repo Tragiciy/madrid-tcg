@@ -128,6 +128,12 @@
     <template x-for="preset in savedPresets" :key="preset.id">
       <span class="preset-chip" :class="{ 'is-default': defaultPresetId === preset.id }">
         <button class="preset-apply" type="button" @click="applyPreset(preset)" x-text="preset.name"></button>
+        <button class="preset-edit" type="button" @click.stop="startEditPreset(preset)" :aria-label="'Edit preset ' + preset.name" title="Edit preset">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+        </button>
         <button class="preset-default" type="button" @click.stop="setDefaultPreset(preset.id)" :aria-label="defaultPresetId === preset.id ? 'Used automatically on startup' : 'Set as default preset'" :title="defaultPresetId === preset.id ? 'Used automatically on startup' : 'Set as default preset'">
           <span x-show="defaultPresetId === preset.id">★ Default</span>
           <span x-show="defaultPresetId !== preset.id">☆</span>
@@ -140,6 +146,18 @@
   <!-- Default preset active banner -->
   <div class="default-preset-banner" x-show="defaultPresetActive">
     <span>★ Showing your default feed — tap a chip to focus</span>
+  </div>
+
+  <!-- Editing preset banner -->
+  <div class="edit-preset-banner" x-show="editingPresetId !== null">
+    <span class="edit-preset-label">✏ Editing preset:</span>
+    <input type="text" class="edit-preset-input"
+      x-model="editingPresetName"
+      @keydown.enter.prevent="saveEditedPreset()"
+      @keydown.escape.prevent="cancelEditPreset()" />
+    <span class="edit-preset-hint">Change filters, then:</span>
+    <button class="btn btn-small" @click="saveEditedPreset()">Save</button>
+    <button class="btn btn-small" @click="cancelEditPreset()">Cancel</button>
   </div>
 
   <!-- Time-segment filter -->

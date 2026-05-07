@@ -254,6 +254,9 @@ function app() {
     savedPresets: [],
     defaultPresetId: null,
     defaultPresetActive: false,
+    editingPresetId: null,
+    editingPresetSnapshot: null,
+    editingPresetName: '',
     onboardingOpen: false,
     onboardingCompleted: false,
     onboarding: { game: [], store: [] },
@@ -288,7 +291,9 @@ function app() {
       }, { passive: true });
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          if (this.calendarMenuOpen) {
+          if (this.editingPresetId) {
+            this.cancelEditPreset();
+          } else if (this.calendarMenuOpen) {
             this.calendarMenuOpen = false;
           } else if (this.selectedEvent) {
             this.closePanel();
@@ -504,6 +509,65 @@ function app() {
         filters,
       });
       this.persistPresets();
+    },
+
+    startEditPreset(preset) {
+      if (this.editingPresetId) return;
+      if (!preset || !preset.id) return;
+
+      this.editingPresetSnapshot = {
+        filters: {
+          search: this.filters.search,
+          game: this.filters.game.slice(),
+          store: this.filters.store.slice(),
+          format: this.filters.format.slice(),
+        },
+        defaultPresetActive: this.defaultPresetActive,
+      };
+
+      this.editingPresetId = preset.id;
+      this.editingPresetName = preset.name;
+
+      this.filters.game = Array.isArray(preset.filters.game) ? preset.filters.game.slice() : [];
+      this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
+      this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
+      this.defaultPresetActive = false;
+      this.openFacet = null;
+      this.cleanupFilters({ syncUrl: true });
+    },
+
+    saveEditedPreset() {
+      const preset = this.savedPresets.find(p => p.id === this.editingPresetId);
+      if (!preset) {
+        this.cancelEditPreset();
+        return;
+      }
+
+      const trimmedName = String(this.editingPresetName || '').trim();
+      if (!trimmedName) return;
+
+      preset.name = trimmedName;
+      preset.filters = {
+        game: this.selectedValues('game').slice(),
+        store: this.selectedValues('store').slice(),
+        format: this.selectedValues('format').slice(),
+      };
+
+      this.persistPresets();
+      this.editingPresetId = null;
+      this.editingPresetSnapshot = null;
+      this.editingPresetName = '';
+    },
+
+    cancelEditPreset() {
+      if (this.editingPresetSnapshot) {
+        this.filters = this.editingPresetSnapshot.filters;
+        this.defaultPresetActive = this.editingPresetSnapshot.defaultPresetActive;
+      }
+      this.editingPresetId = null;
+      this.editingPresetSnapshot = null;
+      this.editingPresetName = '';
+      this.cleanupFilters({ syncUrl: true });
     },
 
     applyPreset(preset) {
