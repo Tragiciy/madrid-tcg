@@ -341,6 +341,20 @@ input:focus, select:focus { border-color: var(--accent); }
   color: var(--accent);
 }
 
+/* ── Default preset banner ──────────────────────────────────── */
+.default-preset-banner {
+  align-items: center;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-dim);
+  border-radius: 8px;
+  color: var(--accent);
+  display: flex;
+  font-size: .75rem;
+  gap: .4rem;
+  margin: -.35rem 0 1rem;
+  padding: .4rem .7rem;
+}
+
 /* ── View toggle buttons ──────────────────────────────────────── */
 .view-toggle {
   display: flex;

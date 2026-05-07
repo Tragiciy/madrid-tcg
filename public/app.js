@@ -253,6 +253,7 @@ function app() {
     filterSearch: { game: '', store: '', format: '' },
     savedPresets: [],
     defaultPresetId: null,
+    defaultPresetActive: false,
     onboardingOpen: false,
     onboardingCompleted: false,
     onboarding: { game: [], store: [] },
@@ -511,6 +512,7 @@ function app() {
       this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
       this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
       this.openFacet = null;
+      this.defaultPresetActive = (preset.id === this.defaultPresetId);
       this.cleanupFilters({ syncUrl: true });
     },
 
@@ -621,6 +623,7 @@ function app() {
 
       this.defaultPresetId = preset.id;
       this.persistDefaultPreset();
+      this.defaultPresetActive = true;
 
       this.persistOnboardingComplete();
       this.onboardingOpen = false;
@@ -673,6 +676,7 @@ function app() {
       this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
       this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
       this.openFacet = null;
+      this.defaultPresetActive = true;
       // Intentionally do NOT sync URL on default preset application.
     },
 
@@ -776,6 +780,12 @@ function app() {
 
     toggleFilter(field, value) {
       if (!value) return;
+      if (this.defaultPresetActive) {
+        this.filters[field] = [value];
+        this.defaultPresetActive = false;
+        this.cleanupFilters({ syncUrl: true });
+        return;
+      }
       const values = this.selectedValues(field).slice();
       const idx = values.indexOf(value);
       if (idx >= 0) values.splice(idx, 1);
@@ -1341,6 +1351,7 @@ function app() {
     resetFilters() {
       this.filters = { search: '', game: [], store: [], format: [] };
       this.openFacet = null;
+      this.defaultPresetActive = false;
       this.cleanupFilters({ syncUrl: true });
     },
   };
