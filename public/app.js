@@ -906,6 +906,7 @@ function app() {
     },
 
     eventMatches(e, opts = {}) {
+      if (e.is_active === false) return false;
       const ignore = opts.ignore || null;
       const includeSegment = opts.includeSegment !== false;
       const includeWeek = opts.includeWeek === true;
