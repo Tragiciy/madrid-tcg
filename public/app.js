@@ -267,6 +267,7 @@ function app() {
     collapsedSegments: { morning: false, afternoon: false, evening: false, late: false },
     SEGMENTS,
     showBackToTop: false,
+    filterHistory: [],       // stack of { filters, segmentFilter } snapshots; max 5
     selectedEvent: null,
     panelOpen: false,
     calendarMenuOpen: false,
@@ -438,6 +439,7 @@ function app() {
     },
 
     clearFacet(field) {
+      this._snapshotFilters();
       this.filters[field] = [];
       this.cleanupFilters({ syncUrl: true });
     },
@@ -572,6 +574,7 @@ function app() {
 
     applyPreset(preset) {
       if (!preset || !preset.filters) return;
+      this._snapshotFilters();
       this.filters.game = Array.isArray(preset.filters.game) ? preset.filters.game.slice() : [];
       this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
       this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
@@ -842,8 +845,35 @@ function app() {
       }, 220);
     },
 
+    /* ── Filter undo history ─────────────────────────────────────── */
+    _snapshotFilters() {
+      this.filterHistory.push({
+        filters: {
+          search: this.filters.search,
+          game: this.filters.game.slice(),
+          store: this.filters.store.slice(),
+          format: this.filters.format.slice(),
+        },
+        segmentFilter: { ...this.segmentFilter },
+      });
+      if (this.filterHistory.length > 5) this.filterHistory.shift();
+    },
+
+    undoFilterAction() {
+      const snapshot = this.filterHistory.pop();
+      if (!snapshot) return;
+      this.filters.search = snapshot.filters.search;
+      this.filters.game = snapshot.filters.game;
+      this.filters.store = snapshot.filters.store;
+      this.filters.format = snapshot.filters.format;
+      this.segmentFilter = { ...snapshot.segmentFilter };
+      this.defaultPresetActive = false;
+      this.cleanupFilters({ syncUrl: true });
+    },
+
     toggleFilter(field, value) {
       if (!value) return;
+      this._snapshotFilters();
       if (this.defaultPresetActive) {
         this.filters[field] = [value];
         this.defaultPresetActive = false;
@@ -860,6 +890,7 @@ function app() {
 
     /* ── Toggle a time-segment chip ─────────────────────────────────── */
     toggleSegment(key) {
+      this._snapshotFilters();
       this.segmentFilter[key] = !this.segmentFilter[key];
       this.cleanupFilters();
     },
@@ -1414,6 +1445,7 @@ function app() {
     },
 
     resetFilters() {
+      this.filterHistory = [];
       this.filters = { search: '', game: [], store: [], format: [] };
       this.openFacet = null;
       this.defaultPresetActive = false;
