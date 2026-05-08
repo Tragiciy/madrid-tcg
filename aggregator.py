@@ -10,12 +10,14 @@ events.json holds the **full historical record**. Each daily run:
   3. Merges fresh events onto the existing index by a stable key.
      - Existing event seen again: fields refreshed, first_seen_at kept.
      - New event: inserted with first_seen_at = last_seen_at = now.
-     - Existing event NOT seen this run: kept on disk, is_active=False.
+     - Existing event NOT seen this run: marked is_active=False and hidden
+       from the frontend. If a future event is absent for 3 consecutive runs
+       it is hard-deleted (likely cancelled). Past events are kept as history.
+     - Reschedule detection: if a fresh event matches an existing record by
+       store+title+location (but different datetime), the record is re-keyed
+       and first_seen_at is preserved.
   4. Writes the merged list (sorted by datetime_start).
   5. Prints a lightweight validation report (counts only, no extra IO).
-
-Past events are **never deleted** here. The frontend decides what to
-show via its weekly view (current week is "future enough" by default).
 
 Run:
     python aggregator.py
@@ -234,30 +236,82 @@ def event_key(event: dict) -> str:
 
 def merge_events(existing: list[dict], fresh: list[dict], now_iso: str) -> list[dict]:
     """
-    Upsert fresh events onto existing, never dropping anything.
+    Upsert fresh events onto existing with reschedule detection and deferred cleanup.
 
     Lifecycle fields written:
-      - first_seen_at: preserved from prior record (or now if new)
-      - last_seen_at:  always now
-      - is_active:     True for events present in this run, False otherwise
+      - first_seen_at:  preserved from prior record (or now if new)
+      - last_seen_at:   always now for active events
+      - is_active:      True if seen this run, False otherwise
+      - missing_runs:   incremented each run a future event is absent;
+                        removed when the event reappears
+
+    Reschedule detection:
+      If a fresh event has no exact key match but shares store+title+location
+      with exactly one existing future event, it is treated as a reschedule:
+      the old record is re-keyed under the new datetime and first_seen_at is
+      preserved.
+
+    Deferred cleanup:
+      Future events missing for MISSING_RUNS_BEFORE_DELETE consecutive runs
+      are hard-deleted. Past events are kept indefinitely as history.
     """
+    MISSING_RUNS_BEFORE_DELETE = 3
+
+    now_dt = datetime.fromisoformat(now_iso)
     by_key: dict = {event_key(e): e for e in existing}
+
+    # Secondary index for reschedule detection: store|title|location → [primary_key, ...]
+    fuzzy_index: dict[str, list[str]] = {}
+    for k, e in by_key.items():
+        fk = "|".join([e.get("store") or "", e.get("title") or "", e.get("location") or ""])
+        fuzzy_index.setdefault(fk, []).append(k)
+
     fresh_keys: set = set()
 
     for fe in fresh:
         k = event_key(fe)
-        fresh_keys.add(k)
         prev = by_key.get(k)
+
+        # Reschedule: no exact match, but exactly one candidate by store|title|location
+        if prev is None:
+            fk = "|".join([fe.get("store") or "", fe.get("title") or "", fe.get("location") or ""])
+            candidates = [c for c in fuzzy_index.get(fk, []) if c not in fresh_keys]
+            if len(candidates) == 1:
+                old_key = candidates[0]
+                prev = by_key.pop(old_key)
+                fuzzy_index[fk] = []  # consumed — prevent double-matching
+
+        fresh_keys.add(k)
         # Preserve first_seen_at from a prior record; otherwise stamp now.
         fe["first_seen_at"] = (prev.get("first_seen_at") if prev else None) or now_iso
         fe["last_seen_at"] = now_iso
         fe["is_active"] = True
+        fe.pop("missing_runs", None)  # reset counter on reappearance
         by_key[k] = fe
 
-    # Events on disk that didn't show up this run stay, but are flagged.
-    for k, e in by_key.items():
-        if k not in fresh_keys:
+    # Events not seen this run: mark inactive; deferred-delete future ones.
+    for k in list(by_key.keys()):
+        if k in fresh_keys:
+            continue
+        e = by_key[k]
+        dt_str = e.get("datetime_start") or ""
+        try:
+            evt_dt = datetime.fromisoformat(dt_str)
+        except (ValueError, TypeError):
+            del by_key[k]
+            continue
+
+        if evt_dt <= now_dt:
+            # Past event — keep as history, just mark inactive.
             e["is_active"] = False
+        else:
+            # Future event — count consecutive missing runs.
+            misses = e.get("missing_runs", 0) + 1
+            if misses >= MISSING_RUNS_BEFORE_DELETE:
+                del by_key[k]   # confirmed cancelled — remove permanently
+            else:
+                e["missing_runs"] = misses
+                e["is_active"] = False  # hidden from UI immediately (frontend filters this)
 
     return list(by_key.values())
 
