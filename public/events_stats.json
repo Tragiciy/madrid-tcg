@@ -1,6 +1,6 @@
 {
-  "total_events": 1215,
-  "active_events": 657,
+  "total_events": 1229,
+  "active_events": 651,
   "total_scrapers": 13,
   "successful_scrapers": 13,
   "failed_scrapers_count": 0,
@@ -9,32 +9,6 @@
       "total": 295,
       "active": 0,
       "raw_this_run": 0,
-      "previous_raw": 258,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "anomaly": "sharp_drop"
-    },
-    "Ítaca": {
-      "total": 246,
-      "active": 136,
-      "raw_this_run": 136,
-      "previous_raw": 140,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "anomaly": null
-    },
-    "Jupiter Juegos": {
-      "total": 222,
-      "active": 185,
-      "raw_this_run": 185,
       "previous_raw": 0,
       "dropped_this_run": 0,
       "drop_reasons": {
@@ -44,11 +18,37 @@
       "scraper_failed": false,
       "anomaly": null
     },
+    "Ítaca": {
+      "total": 246,
+      "active": 133,
+      "raw_this_run": 133,
+      "previous_raw": 136,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "anomaly": null
+    },
+    "Jupiter Juegos": {
+      "total": 234,
+      "active": 187,
+      "raw_this_run": 187,
+      "previous_raw": 185,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "anomaly": null
+    },
     "Micelion Games": {
-      "total": 205,
-      "active": 142,
-      "raw_this_run": 142,
-      "previous_raw": 143,
+      "total": 207,
+      "active": 141,
+      "raw_this_run": 141,
+      "previous_raw": 142,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -59,8 +59,8 @@
     },
     "La Guarida Juegos": {
       "total": 90,
-      "active": 65,
-      "raw_this_run": 65,
+      "active": 64,
+      "raw_this_run": 64,
       "previous_raw": 65,
       "dropped_this_run": 0,
       "drop_reasons": {
@@ -72,9 +72,9 @@
     },
     "Metropolis Center": {
       "total": 78,
-      "active": 51,
-      "raw_this_run": 51,
-      "previous_raw": 0,
+      "active": 49,
+      "raw_this_run": 49,
+      "previous_raw": 51,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -98,9 +98,9 @@
     },
     "The Big Bang Games": {
       "total": 22,
-      "active": 21,
-      "raw_this_run": 21,
-      "previous_raw": 0,
+      "active": 20,
+      "raw_this_run": 20,
+      "previous_raw": 21,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -139,7 +139,7 @@
       "total": 5,
       "active": 5,
       "raw_this_run": 5,
-      "previous_raw": 4,
+      "previous_raw": 5,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -166,11 +166,11 @@
     "Magic: The Gathering": 515,
     "Riftbound": 227,
     "Unknown": 147,
-    "Lorcana": 89,
-    "One Piece": 79,
+    "Lorcana": 101,
+    "One Piece": 80,
     "Star Wars: Unlimited": 32,
     "Flesh and Blood": 32,
-    "Digimon": 26,
+    "Digimon": 27,
     "Pokémon": 25,
     "Final Fantasy TCG": 14,
     "Weiß Schwarz": 11,
@@ -188,8 +188,8 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 258,
-      "anomaly": "sharp_drop"
+      "previous_raw": 0,
+      "anomaly": null
     },
     "scrapers.asedio_gaming": {
       "store": "Asedio Gaming",
@@ -232,28 +232,28 @@
     },
     "scrapers.itaca": {
       "store": "Ítaca",
-      "raw": 136,
-      "valid": 136,
+      "raw": 133,
+      "valid": 133,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 140,
+      "previous_raw": 136,
       "anomaly": null
     },
     "scrapers.jupiter_juegos": {
       "store": "Jupiter Juegos",
-      "raw": 185,
-      "valid": 185,
+      "raw": 187,
+      "valid": 187,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 0,
+      "previous_raw": 185,
       "anomaly": null
     },
     "scrapers.kamikaze_freak_shop": {
@@ -271,8 +271,8 @@
     },
     "scrapers.la_guarida_juegos": {
       "store": "La Guarida Juegos",
-      "raw": 65,
-      "valid": 65,
+      "raw": 64,
+      "valid": 64,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -297,28 +297,28 @@
     },
     "scrapers.metropolis_center": {
       "store": "Metropolis Center",
-      "raw": 51,
-      "valid": 51,
+      "raw": 49,
+      "valid": 49,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 0,
+      "previous_raw": 51,
       "anomaly": null
     },
     "scrapers.micelion_games": {
       "store": "Micelion Games",
-      "raw": 142,
-      "valid": 142,
+      "raw": 141,
+      "valid": 141,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 143,
+      "previous_raw": 142,
       "anomaly": null
     },
     "scrapers.panda_games": {
@@ -331,23 +331,23 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 4,
+      "previous_raw": 5,
       "anomaly": null
     },
     "scrapers.the_big_bang_games": {
       "store": "The Big Bang Games",
-      "raw": 21,
-      "valid": 21,
+      "raw": 20,
+      "valid": 20,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 0,
+      "previous_raw": 21,
       "anomaly": null
     }
   },
   "failed_scrapers": [],
-  "generated_at": "2026-05-08T09:48:44.882002+02:00"
+  "generated_at": "2026-05-09T10:02:49.622331+02:00"
 }
