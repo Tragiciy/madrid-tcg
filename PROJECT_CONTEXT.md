@@ -23,9 +23,10 @@ must live outside this directory (currently in `shared/`). Do not modify
 `aggregator.py` merely to register a new scraper; place the scraper file in
 `scrapers/` and it is picked up automatically.
 
-Current scrapers (9): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
+Current scrapers (13): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
 `metropolis_center`, `micelion_games`, `asedio_gaming`, `generacion_x_elfo`,
-`goblintrader_madrid_norte`.
+`goblintrader_madrid_norte`, `kamikaze_freak_shop`, `the_big_bang_games`,
+`panda_games`, `metamorfo`.
 
 ### 1b. Shared utilities
 
@@ -58,8 +59,16 @@ fuzzy matching. Used by discovery tooling (`discover_stores.py`,
 | `asedio_gaming` | Yes | Yes |
 | `generacion_x_elfo` | Yes | Yes |
 | `goblintrader_madrid_norte` | Yes | Yes |
+| `kamikaze_freak_shop` | Yes | Yes |
+| `the_big_bang_games` | Yes | Yes |
+| `panda_games` | Yes | Yes |
+| `metamorfo` | Yes | Yes |
 
 Stores with `—` derive game from API category fields, not keyword matching.
+
+The four WordPress-based scrapers (`kamikaze_freak_shop`, `the_big_bang_games`,
+`panda_games`, `metamorfo`) share a helper at `shared/wordpress_events.py` that
+fetches events from The Events Calendar / Modern Events Calendar plugins.
 
 ### 1c. Scraper stats and anomaly detection
 
@@ -89,9 +98,11 @@ Events are merged across daily runs using a stable key:
 - `{store}|id:{source_event_id}` — if the scraper provides a stable ID
 - `{store}|{title}|{datetime_start}|{location}` — fallback
 
-`merge_events()` upserts fresh events onto the persisted list. Existing events
-not seen this run are kept with `is_active=False` (never deleted). Every event
-carries lifecycle fields: `first_seen_at`, `last_seen_at`, `is_active`.
+`merge_events()` upserts fresh events onto the persisted list. Past events not
+seen this run are kept with `is_active=False` (preserved as history). **Future
+events** absent for `MISSING_RUNS_BEFORE_DELETE = 3` consecutive runs are
+hard-deleted (treated as cancelled). Every event carries lifecycle fields:
+`first_seen_at`, `last_seen_at`, `is_active`.
 
 ### 1e. Execution
 
@@ -137,16 +148,16 @@ after sites change. **Do not hand-edit it.**
 
 ## 1g. Deployment
 
-GitHub Pages serves `public/` directly as static files. There is no build
-step, no bundler, and no environment variables. A push to `main` triggers an
-automatic redeploy.
+Cloudflare Pages serves `public/` directly as static files at
+<https://madrid-tcg.pages.dev/>. There is no build step, no bundler, and no
+environment variables. A push to `main` triggers an automatic redeploy.
 
 `aggregator.py` runs in GitHub Actions on a cron schedule defined in
 `.github/workflows/update.yml` — daily at 06:00 UTC (08:00 Madrid summer,
 07:00 Madrid winter). The workflow runs `python aggregator.py`, then commits
 any changes to `public/events.json` and `public/events_stats.json` back to
-`main`, which in turn triggers a Pages redeploy. The workflow also supports
-`workflow_dispatch` for manual runs.
+`main`, which in turn triggers a Cloudflare Pages redeploy. The workflow also
+supports `workflow_dispatch` for manual runs.
 
 ---
 
@@ -245,11 +256,14 @@ fetch('events.json')
 
 Key things to note:
 
-- `init()` is the only side-effect-on-load function. It registers a scroll
-  listener (for Back-to-top), an Escape-key listener (closes panels/facets),
-  starts a 60-second `setInterval` that refreshes `nowMadrid`, fetches
-  `events.json`, then calls `applyFiltersFromUrl()`, `cleanupFilters()`, and a
-  `$watch` on `filters.search`.
+- `init()` is the only side-effect-on-load function. It loads presets,
+  default-preset ID, and onboarding state from localStorage; registers a scroll
+  listener (for Back-to-top), an Escape-key listener (closes panels/facets);
+  starts a 60-second `setInterval` that refreshes `nowMadrid`; fetches
+  `events.json`; then either applies filters from URL params or applies the
+  default preset (if one is set); calls `cleanupFilters()`; and registers a
+  `$watch` on `filters.search`. If no default preset and no URL params are
+  present on a fresh visit, the first-run onboarding modal opens.
 - **URL params take precedence over localStorage.** `applyFiltersFromUrl()` is
   called immediately after events load and overwrites filter state from URL
   params (`game`, `store`, `format`, `event`). localStorage is only consulted
@@ -270,6 +284,8 @@ Key things to note:
 | --- | --- | --- |
 | `tcg-view-v2` | `'horizontal'` \| `'vertical'` | Persisted view mode |
 | `tcg-presets-v1` | JSON array | Saved filter presets |
+| `tcg-default-preset-v1` | JSON `{id}` | ID of the preset auto-applied on fresh visits |
+| `tcg-onboarding-v1` | JSON `{completed}` | Whether first-run onboarding has been completed |
 
 localStorage is for user personalization only. Filter state (game/store/format
 selections) is never written to localStorage. URL params are the mechanism for
@@ -288,6 +304,30 @@ URL params are validated against the actual event data — invalid values are
 silently dropped. `syncFiltersToUrl()` writes current filter state to the URL
 via `history.replaceState` when filters change; this makes filter combinations
 bookmarkable and shareable.
+
+### Filter undo history
+
+`filterHistory` is a stack (max 5 entries) of `{filters, segmentFilter}`
+snapshots, pushed on every `toggleFilter()` call. `undoFilterAction()` pops the
+most recent snapshot and restores it, then re-syncs to URL. The snapshot stack
+is cleared on `resetFilters()` and on preset application.
+
+### Per-facet search
+
+`filterSearch` is a `{game, store, format}` map of search strings, used to
+narrow long facet option lists in their dropdowns. It is purely a UI aid and
+does not affect `eventMatches` — only which options are visible in the facet
+panels.
+
+### Default preset and first-run onboarding
+
+`defaultPresetId` (loaded from `tcg-default-preset-v1`) marks one saved preset
+as default. On fresh visits with no URL filter params, `applyDefaultPreset()`
+applies its filters automatically and sets `defaultPresetActive = true`, which
+enables the "smart-tap" focus mode for chip interactions. The onboarding modal
+(`onboardingOpen`) is shown on the very first visit when no default preset and
+no URL params exist, collecting initial game/store selections; completion is
+recorded under `tcg-onboarding-v1`.
 
 ---
 
