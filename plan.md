@@ -7,17 +7,18 @@ Core user question: **"What can I play this week in my city?"**
 
 ---
 
-## Current State (as of 2026-05-05)
+## Current State (as of 2026-05-09)
 
 ### Data coverage
-- **9 scrapers** — Arte 9, Ítaca, Jupiter Juegos, Micelion Games,
+- **13 scrapers** — Arte 9, Ítaca, Jupiter Juegos, Micelion Games,
   La Guarida Juegos, Metropolis Center, Asedio Gaming,
-  Generacion X - Elfo, Goblintrader Madrid-Norte
-- **1,127 events** in `events.json` (869 active)
+  Generacion X - Elfo, Goblintrader Madrid-Norte, Kamikaze Freak Shop,
+  The Big Bang Games, Panda Games, Metamorfo
+- **1,203 events** in `events.json` (662 active)
 - **13 games** — Magic, Pokémon, One Piece, Digimon, Lorcana, Star Wars:
   Unlimited, Yu-Gi-Oh!, Flesh and Blood, Weiß Schwarz, Riftbound,
   Final Fantasy TCG, Naruto Mythos, plus Unknown
-- **11 `scrape_now` targets** remaining in `scraper_targets.json`
+- **7 `scrape_now` targets** remaining in `scraper_targets.json`
 
 ### Frontend
 - Alpine.js SPA split across 4 files: `index.html`, `styles.css`,
@@ -69,6 +70,15 @@ Core user question: **"What can I play this week in my city?"**
 | ✅ | Focus mode | Single active segment collapses headers → flat per-day card list |
 | ✅ | Store filter always-visible | `allStores` getter; store never dropped by `cleanupFilters` on week change |
 | ✅ | 3 new scrapers + STORE_META | Asedio Gaming, Generacion X - Elfo, Goblintrader Madrid-Norte |
+| ✅ | WordPress scraper batch (4 stores) | `shared/wordpress_events.py` + Kamikaze Freak Shop, The Big Bang Games, Panda Games, Metamorfo |
+| ✅ | Filter search in dropdowns | `filterSearch` per facet narrows long option lists |
+| ✅ | Hide unknown games by default | Unknown-game events filtered out unless user explicitly selects "Unknown" |
+| ✅ | Default filter preset | Mark a preset as default; auto-applied on fresh visits; `tcg-default-preset-v1` |
+| ✅ | First-run onboarding | Modal on first visit (no default, no URL params) to pick initial game/store; `tcg-onboarding-v1` |
+| ✅ | Smart-tap / focus mode on auto-apply | Chip behavior tweaks when default preset is auto-applied |
+| ✅ | Improved preset management UX | Save / edit / delete preset flow polished |
+| ✅ | Cancelled-event cleanup | `aggregator.py` hard-deletes future events missing for 3 consecutive runs (`MISSING_RUNS_BEFORE_DELETE = 3`) |
+| ✅ | Undo filter button | `filterHistory` stack (max 5); `undoFilterAction()` reverses the most recent filter change |
 
 ---
 
@@ -83,39 +93,27 @@ frontend. Both can run in parallel.
 
 #### A1. Build scrapers for remaining `scrape_now` targets
 
-3 scrapers shipped (Asedio Gaming, Generacion X - Elfo, Goblintrader
-Madrid-Norte). 11 targets remain. Group by platform.
+7 scrapers shipped so far (Asedio Gaming, Generacion X - Elfo, Goblintrader
+Madrid-Norte, plus the WordPress batch: Kamikaze Freak Shop, The Big Bang
+Games, Panda Games, Metamorfo). 7 targets remain. Group by platform.
 
-**Group 1 — WordPress (6 stores remaining)**
+**Group 1 — WordPress (2 stores remaining)**
 
-Most use The Events Calendar or Modern Events Calendar plugin with a
-predictable REST endpoint (`/wp-json/tribe/events/v1/events`) or consistent
-HTML structure.
+Both use The Events Calendar or Modern Events Calendar plugin. The shared
+helper `shared/wordpress_events.py` is already in place — each new scraper is
+a thin file that calls it and maps to the event schema.
 
 | Store | Event page | Primary game |
 |---|---|---|
 | Collectorage | /calendario | Star Wars: Unlimited |
-| ~~Generacion X - Elfo~~ | ~~shipped~~ | ~~Magic: The Gathering~~ |
-| Kamikaze Freak Shop | /eventos/ | Magic: The Gathering |
-| Metamorfo | /calendario | Yu-Gi-Oh! |
-| Panda Games | /juegos/eventos/ | Magic: The Gathering |
-| The Big Bang Games | /eventos | Star Wars: Unlimited |
 | TopDeck | /calendario-de-torneos/ | One Piece |
 
-Steps:
+Steps for each new store:
 
-1. **`shared/wordpress_events.py`** — no `scrape()`, no network on import:
-   - `fetch_wp_events(base_url, days_ahead=90) -> list[dict]`
-   - Try Tribe REST endpoint first; fall back to HTML parsing of common
-     plugin class patterns (`.tribe-event`, `.mec-event-title`).
-   - Returns raw dicts: `title`, `start_iso`, `end_iso`, `url`, `description`.
-   - Raises `ScraperFetchError` on total failure.
-
-2. One thin file per store in `scrapers/`, e.g. `scrapers/collectorage.py` —
-   calls the shared helper, maps to event schema, uses keyword extraction,
-   falls back to `DEFAULT_GAME`.
-
-3. Add each store to `STORE_META` in `public/config.js` with a valid `address`.
+1. Create `scrapers/<name>.py` calling `fetch_wp_events()` from
+   `shared/wordpress_events.py`, mapping output to the event schema, using
+   shared keyword extraction, falling back to `DEFAULT_GAME`.
+2. Add the store to `STORE_META` in `public/config.js` with a valid `address`.
 
 **Group 2 — Shopify (✅ shipped)**
 
@@ -390,8 +388,8 @@ offline fallback when the network is unavailable.
 **Effort:** Small–Medium (1–2 days). **Impact:** Medium — significantly
 improves the mobile experience for repeat users.
 
-**Constraints:** SW must be served from the same origin. Cloudflare Pages /
-GitHub Pages both support this. The `events.json` cache strategy means users
+**Constraints:** SW must be served from the same origin — Cloudflare Pages
+supports this out of the box. The `events.json` cache strategy means users
 see slightly stale data at worst — acceptable for this use case.
 
 ### P3 — `events.json` payload management
@@ -500,7 +498,7 @@ Tables: `stores`, `events`, `scraper_runs`, `anomalies`, `candidate_stores`.
 
 | Horizon | Track | Work |
 |---|---|---|
-| **Now** | A | Build WordPress scraper batch (7 stores + shared helper) |
+| **Now** | A | Finish WordPress batch — Collectorage + TopDeck (2 remaining) |
 | **Now** | B | B1 → B2/B3 → B4 → B5/B6 (favorites, end-to-end) |
 | **Next 2–4 weeks** | A | Unknown-platform scrapers (6 stores); discovery automation |
 | **Next 2–4 weeks** | — | P1 health dashboard; P2 PWA |

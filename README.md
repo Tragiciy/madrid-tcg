@@ -3,7 +3,7 @@
 A static, single-page calendar of trading card game (TCG) tournaments and game
 nights at Madrid's specialty stores.
 
-Live site: <https://tragiciy.github.io/madrid-tcg/>
+Live site: <https://madrid-tcg.pages.dev/>
 
 ## What it does
 
@@ -19,7 +19,10 @@ one click.
   Filters are bookmarkable via URL parameters. The store list always shows
   every store in the dataset — stores with no events in the current week
   remain visible and selectable (counts reflect the current week only).
-- **Filter presets** — save and restore named filter combinations.
+- **Filter presets** — save and restore named filter combinations. Mark one as default to have it applied automatically on fresh visits.
+- **First-run onboarding** — wizard on the first visit that sets initial game/store filters.
+- **Search within filter dropdowns** — each facet (game, store, format) has a search input to narrow long lists.
+- **Undo last filter action** — button that reverses the most recent filter change (up to 5 steps back).
 - **Time-segment chips** — Morning (<12), Afternoon (12–16), Evening (16–19),
   Late (19+); chips can be toggled to hide a segment, and segment headers in
   the horizontal grid can be collapsed to compact a busy week.
@@ -51,7 +54,7 @@ one click.
 - **Python pipeline** — `aggregator.py` plus per-store scrapers under
   `scrapers/` regenerate `public/events.json` on a daily GitHub Actions cron
   (`.github/workflows/update.yml`).
-- **Hosting** — GitHub Pages, serving the `public/` directory as static assets.
+- **Hosting** — Cloudflare Pages, serving the `public/` directory as static assets.
 
 ## How it works (high level)
 
@@ -124,13 +127,14 @@ full audit → `scraper_targets.json` → scraper expansion workflow.
 
 ## Deploy
 
-The site is hosted on **GitHub Pages**, serving `public/` as static assets
+The site is hosted on **Cloudflare Pages**, serving `public/` as static assets
 with no build step.
 
 Data updates flow through GitHub Actions: the
 [`update.yml`](.github/workflows/update.yml) workflow runs daily at 06:00 UTC,
 re-runs every scraper, and commits a refreshed `public/events.json` (and
-`public/events_stats.json`) to `main`, which triggers a Pages redeploy.
+`public/events_stats.json`) to `main`, which triggers a Cloudflare Pages
+redeploy.
 
 ## Constraints
 
