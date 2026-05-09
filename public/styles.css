@@ -925,6 +925,28 @@ input:focus, select:focus { border-color: var(--accent); }
 }
 .back-to-top:hover { background: #6d28d9; transform: translateY(-2px); }
 
+/* ── Undo filter ──────────────────────────────────────────────── */
+.undo-filter {
+  position: fixed;
+  bottom: calc(1.5rem + 42px + 0.5rem); /* above .back-to-top */
+  right: 1.5rem;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 .6rem;
+  border-radius: 22px;
+  border: none;
+  background: #475569;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(71,85,105,.30);
+  transition: background .15s, transform .15s;
+  z-index: 200;
+  white-space: nowrap;
+}
+.undo-filter:hover { background: #334155; transform: translateY(-2px); }
+
 /* ── Onboarding Modal ─────────────────────────────────────────── */
 .onboarding-backdrop {
   position: fixed;
