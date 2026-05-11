@@ -1227,6 +1227,17 @@ input:focus, select:focus { border-color: var(--accent); }
 
 /* ── Favorites ──────────────────────────────────────────────────── */
 
+/* Favorited card — gold ring + warm glow so it stands out in the grid */
+.ev-card.is-favorite {
+  border-color: #e8a000;
+  background: color-mix(in srgb, var(--card-tint, #ffffff) 92%, #fff8e6);
+  box-shadow: 0 0 0 1.5px #f4b942, 0 3px 12px rgba(244, 185, 66, .22);
+}
+.ev-card.is-favorite:hover {
+  box-shadow: 0 0 0 1.5px #f4b942, 0 5px 18px rgba(244, 185, 66, .32);
+  transform: translateY(-2px);
+}
+
 /* Star button on event cards */
 .fav-btn {
   background: none;

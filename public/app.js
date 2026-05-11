@@ -1453,7 +1453,7 @@ function app() {
           `title="${isFav ? 'Remove from saved' : 'Save event'}" ` +
           `aria-label="${isFav ? 'Remove from saved' : 'Save event'}">★</button>`;
         out.push(
-          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-event-key="${esc(eventKey(e))}">` +
+          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}${isFav ? ' is-favorite' : ''}" data-event-key="${esc(eventKey(e))}">` +
             `<div class="ev-card-top">` +
               `<div class="ev-time">${esc(time)}</div>` +
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +

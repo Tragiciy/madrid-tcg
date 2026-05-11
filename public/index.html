@@ -271,7 +271,7 @@
                 </div>
                 <template x-for="e in seg.events" :key="e.source_url + e.datetime_start">
                   <div class="ev-card"
-                       :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '' ]"
+                       :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '', isFavorite(e) ? 'is-favorite' : '' ]"
                        @click="openEvent(e)">
                     <div class="ev-card-top">
                       <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
