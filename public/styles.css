@@ -1224,3 +1224,58 @@ input:focus, select:focus { border-color: var(--accent); }
   }
   .panel-title { font-size: 1.2rem; }
 }
+
+/* ── Favorites ──────────────────────────────────────────────────── */
+
+/* Favorited card — gold ring + warm glow so it stands out in the grid */
+.ev-card.is-favorite {
+  border-color: #e8a000;
+  background: color-mix(in srgb, var(--card-tint, #ffffff) 92%, #fff8e6);
+  box-shadow: 0 0 0 1.5px #f4b942, 0 3px 12px rgba(244, 185, 66, .22);
+}
+.ev-card.is-favorite:hover {
+  box-shadow: 0 0 0 1.5px #f4b942, 0 5px 18px rgba(244, 185, 66, .32);
+  transform: translateY(-2px);
+}
+
+/* Star button on event cards */
+.fav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: .95rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: var(--radius);
+  flex: 0 0 auto;
+  transition: color .15s, transform .1s;
+}
+.fav-btn:hover  { color: var(--accent); }
+.fav-btn.is-fav { color: #f4b942; }
+.fav-btn:active { transform: scale(1.3); }
+
+/* Horizontal grid: bottom-left to mirror calendar-btn (bottom-right) */
+.cal-grid-h .fav-btn {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  font-size: .75rem;
+}
+
+/* Panel save button */
+.fav-btn-panel { min-width: 80px; }
+.fav-btn-panel.is-fav { color: #f4b942; border-color: #f4b942; }
+
+/* "Show saved" toggle in filter bar */
+.fav-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.fav-toggle.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.fav-toggle.active:hover { background: #6d28d9; border-color: #6d28d9; }
