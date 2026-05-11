@@ -3,6 +3,7 @@
 const PRESETS_STORAGE_KEY = 'tcg-presets-v1';
 const DEFAULT_PRESET_STORAGE_KEY = 'tcg-default-preset-v1';
 const ONBOARDING_STORAGE_KEY = 'tcg-onboarding-v1';
+const FAVORITES_STORAGE_KEY = 'tcg-favorites-v1';
 
 // Returns YYYY-MM-DD string for a Date object, in local time
 function isoDay(d) {
@@ -271,6 +272,8 @@ function app() {
     selectedEvent: null,
     panelOpen: false,
     calendarMenuOpen: false,
+    favorites:         [],    // array of eventKey strings
+    showFavoritesOnly: false,
     // Reactive Europe/Madrid clock — refreshed every minute. Used to
     // mark past segments and past events on today.
     nowMadrid: readMadridNow(),
@@ -282,6 +285,7 @@ function app() {
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
+      this.loadFavorites();
       this.loadPresets();
       this.loadDefaultPreset();
       this.loadOnboardingState();
@@ -316,6 +320,7 @@ function app() {
       try {
         const res = await fetch('events.json');
         this.events = await res.json();
+        this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
         const hasUrlFilters = ['game', 'store', 'format'].some(f => params.get(f));
         if (hasUrlFilters) {
@@ -480,6 +485,51 @@ function app() {
       } catch (err) {
         console.warn('Failed to save presets', err);
       }
+    },
+
+    /* ── Favorites ──────────────────────────────────────────────────── */
+
+    loadFavorites() {
+      try {
+        const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed))
+          this.favorites = parsed.filter(k => typeof k === 'string' && k.length > 0);
+      } catch { this.favorites = []; }
+    },
+
+    persistFavorites() {
+      try {
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(this.favorites));
+      } catch (err) {
+        console.warn('Failed to save favorites', err);
+      }
+    },
+
+    isFavorite(e) {
+      if (!e) return false;
+      return this.favorites.includes(this.eventKey(e));
+    },
+
+    toggleFavorite(keyOrEvent) {
+      const key = typeof keyOrEvent === 'string' ? keyOrEvent : this.eventKey(keyOrEvent);
+      const idx = this.favorites.indexOf(key);
+      if (idx >= 0) this.favorites.splice(idx, 1);
+      else          this.favorites.push(key);
+      this.persistFavorites();
+    },
+
+    get favoritesCount() {
+      return this.favorites.length;
+    },
+
+    // Prune keys for events no longer present in events.json
+    cleanupFavorites() {
+      const allKeys = new Set(this.events.map(e => eventKey(e)));
+      const before  = this.favorites.length;
+      this.favorites = this.favorites.filter(key => allKeys.has(key));
+      if (this.favorites.length !== before) this.persistFavorites();
     },
 
     saveCurrentPreset() {
@@ -943,6 +993,7 @@ function app() {
       const includeWeek = opts.includeWeek === true;
       const s = this.filters.search.toLowerCase().trim();
       if (s && !e.title.toLowerCase().includes(s)) return false;
+      if (this.showFavoritesOnly && !this.isFavorite(e)) return false;
       if (includeWeek && !this.isInCurrentWeek(e)) return false;
       if (includeSegment && !this.segmentFilter[this.segmentOf(e.datetime_start)]) return false;
       for (const field of ['game', 'store', 'format']) {
@@ -1396,6 +1447,11 @@ function app() {
               `<span>GCal</span>` +
             `</button>`
           : '';
+        const isFav = this.favorites.includes(eventKey(e));
+        const favButton = `<button class="fav-btn${isFav ? ' is-fav' : ''}" type="button" ` +
+          `data-fav-key="${esc(eventKey(e))}" ` +
+          `title="${isFav ? 'Remove from saved' : 'Save event'}" ` +
+          `aria-label="${isFav ? 'Remove from saved' : 'Save event'}">★</button>`;
         out.push(
           `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}" data-event-key="${esc(eventKey(e))}">` +
             `<div class="ev-card-top">` +
@@ -1408,6 +1464,7 @@ function app() {
                 `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
                 `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
               `</div>` +
+              favButton +
               calendarButton +
             `</div>` +
           `</div>`
@@ -1420,6 +1477,12 @@ function app() {
          Chip click → toggle that filter and stop propagation.
          Card click → open detail panel. */
     onGridClick(ev) {
+      const favBtn = ev.target.closest('[data-fav-key]');
+      if (favBtn) {
+        ev.stopPropagation();
+        this.toggleFavorite(favBtn.dataset.favKey);
+        return;
+      }
       const calendarButton = ev.target.closest('[data-calendar-url]');
       if (calendarButton) {
         ev.stopPropagation();
@@ -1449,6 +1512,7 @@ function app() {
       this.filters = { search: '', game: [], store: [], format: [] };
       this.openFacet = null;
       this.defaultPresetActive = false;
+      this.showFavoritesOnly = false;
       this.cleanupFilters({ syncUrl: true });
     },
   };

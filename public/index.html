@@ -120,6 +120,16 @@
     </div>
     <button class="btn" style="align-self:flex-end" @click="resetFilters">✕ Clear</button>
     <button class="btn" style="align-self:flex-end" @click="saveCurrentPreset">Save preset</button>
+    <button class="btn fav-toggle"
+            :class="{ active: showFavoritesOnly }"
+            type="button"
+            style="align-self:flex-end"
+            @click="showFavoritesOnly = !showFavoritesOnly; cleanupFilters()"
+            x-show="favoritesCount > 0"
+            :title="showFavoritesOnly ? 'Show all events' : 'Show saved events only'">
+      <span>★</span>
+      <span x-text="favoritesCount"></span>
+    </button>
   </div>
 
   <!-- Saved filter presets -->
@@ -284,6 +294,13 @@
                           x-text="e.format || 'Unknown'"></span>
                       </div>
                       <button
+                        class="fav-btn"
+                        :class="{ 'is-fav': isFavorite(e) }"
+                        type="button"
+                        @click.stop="toggleFavorite(e)"
+                        :title="isFavorite(e) ? 'Remove from saved' : 'Save event'"
+                        :aria-label="isFavorite(e) ? 'Remove from saved' : 'Save event'">★</button>
+                      <button
                         class="calendar-btn"
                         type="button"
                         x-show="canAddToCalendar(e)"
@@ -401,6 +418,12 @@
         </div>
         <a class="btn" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-show="selectedEvent?.source_url" @click.stop>Open Source</a>
         <button class="btn" type="button" @click.stop="shareEvent(selectedEvent)">Share</button>
+        <button class="btn fav-btn-panel"
+                :class="{ 'is-fav': isFavorite(selectedEvent) }"
+                type="button"
+                x-show="selectedEvent"
+                @click.stop="toggleFavorite(selectedEvent)"
+                x-text="isFavorite(selectedEvent) ? '★ Saved' : '☆ Save'"></button>
       </div>
     </div>
 
