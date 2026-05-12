@@ -292,8 +292,7 @@
                           :class="{ active: isSelected('format', e.format || 'Unknown') }"
                           @click.stop="toggleFilter('format', e.format || 'Unknown')"
                           x-text="e.format || 'Unknown'"></span>
-                        <span class="tag best-of" x-show="e.best_of"
-                          x-text="'BO' + e.best_of"></span>
+
                       </div>
                       <button
                         class="fav-btn"
@@ -392,8 +391,7 @@
               :class="{ active: isSelected('format', selectedEvent?.format) }"
               @click.stop="filterFromPanel('format', selectedEvent?.format)"
               x-text="selectedEvent?.format || 'Unknown'"></span>
-        <span class="tag best-of" x-show="selectedEvent?.best_of"
-              x-text="'BO' + selectedEvent.best_of"></span>
+
         <button class="panel-store-filter" type="button"
                 x-show="selectedEvent?.store"
                 @click.stop="filterFromPanel('store', selectedEvent?.store)"
