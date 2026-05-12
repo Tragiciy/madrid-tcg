@@ -41,7 +41,12 @@ API_URL = "https://arte9.com/wp-json/tribe/events/v1/events"
 PER_PAGE = 50
 MAX_PAGES = 20  # safety cap; current dataset uses ~4
 
-from shared.scraper_keywords import FORMAT_KEYWORDS, extract_format_from_keywords
+from shared.scraper_keywords import (
+    FORMAT_KEYWORDS,
+    extract_format_from_keywords,
+    extract_format_for_event,
+    extract_best_of,
+)
 
 # ── Title-extraction tunables ──────────────────────────────────────────
 MAX_TITLE_LEN = 70           # default cap
@@ -419,20 +424,18 @@ def _parse_event(raw: dict, scraped_at: str) -> Optional[dict]:
     cat_name = cats[0].get("name") if cats else None
     game, fmt_hint = _split_category(cat_name)
 
-    # Format pipeline. Only canonical values from FORMAT_KEYWORDS land
-    # in `format`; non-canonical hints fall through to None.
-    fmt = None
-    candidates: list[str] = []
-    if fmt_hint:
-        candidates.append(fmt_hint)
-    m = _FORMATO_RE.search(description_text)
-    if m:
-        candidates.append(m.group(0))
-    candidates.append(f"{raw_title} {description_text}")
-    for c in candidates:
-        fmt = _extract_format(c)
-        if fmt:
-            break
+    # Format pipeline: title-priority Prerelease detection is built into
+    # extract_format_for_event, which also handles the category hint and
+    # game-aware default. The `fmt_hint` from the WordPress category is
+    # passed as `category` so it's searched AFTER title (fixes Sealed bug
+    # for "Presentación de 2 Cabezas").
+    fmt, fmt_official = extract_format_for_event(
+        title=raw_title,
+        description=description_text,
+        category=fmt_hint or "",
+        game=game,
+    )
+    best_of = extract_best_of(f"{raw_title} {description_text}")
 
     # Title pipeline. Resolved AFTER format because the synthesised
     # fallback uses fmt + set_name + game.
@@ -449,6 +452,8 @@ def _parse_event(raw: dict, scraped_at: str) -> Optional[dict]:
         "store":          STORE,
         "game":           game,
         "format":         fmt,
+        "format_official": fmt_official,
+        "best_of":        best_of,
         "title":          title,
         "datetime_start": datetime_start,
         "datetime_end":   datetime_end,

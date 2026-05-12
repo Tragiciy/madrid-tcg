@@ -147,13 +147,28 @@ ALLOWED_GAMES: set = {
 
 # Keep in sync with FORMAT_KEYWORDS values in scrapers/*.py.
 ALLOWED_FORMATS: set = {
-    "Store Championship", "Prerelease", "cEDH", "Commander", "Standard",
-    "Pioneer", "Modern", "Legacy", "Pauper", "Sealed", "Draft", "League",
-    "Weekly", "Casual", "BO3", "BO1",
-    # SWU competitive format used by Arte 9.
-    "Premier",
-    # Flesh and Blood organised-play event type.
-    "Armory",
+    # MTG-rich vocabulary
+    "Standard", "Pioneer", "Modern", "Legacy", "Pauper", "Vintage",
+    "Commander", "cEDH",
+    # Flesh and Blood differentiators
+    "Blitz", "Living Legend",
+    # Pokémon wider pool
+    "Expanded",
+    # YGO alternate
+    "Speed Duel",
+    # One Piece limited pool
+    "East Blue",
+    # Lorcana wider pool
+    "Infinity",
+    # SWU 2-leader
+    "Twin Suns",
+    # Limited / pre-launch
+    "Sealed", "Draft", "Prerelease",
+    # Note: Weekly / League / Casual / Store Championship / BO1 / BO3 /
+    #       Premier / Armory are intentionally NOT allowed as `format`.
+    #       Premier/Armory/CC/etc. → format=Standard, format_official=<name>
+    #       BO1/BO3 → separate `best_of` field.
+    #       Weekly/League/Casual → not formats (event types / level).
 }
 
 
@@ -400,6 +415,7 @@ def validate_events(events: list[dict], previous_events: list[dict]) -> dict:
         "missing_fields": 0,
         "unknown_format": 0,
         "unknown_game": 0,
+        "unknown_best_of": 0,
         "warnings": [],
     }
 
@@ -439,6 +455,10 @@ def validate_events(events: list[dict], previous_events: list[dict]) -> dict:
         g = e.get("game")
         if g and g not in ALLOWED_GAMES:
             report["unknown_game"] += 1
+        # best_of: 1 / 3 / None only
+        bo = e.get("best_of")
+        if bo is not None and bo not in (1, 3):
+            report["unknown_best_of"] += 1
 
         # Lifecycle
         if e.get("is_active"):
@@ -463,6 +483,8 @@ def validate_events(events: list[dict], previous_events: list[dict]) -> dict:
         report["warnings"].append(f"{report['missing_fields']} events missing required fields")
     if report["unknown_format"]:
         report["warnings"].append(f"{report['unknown_format']} events with unknown format value")
+    if report["unknown_best_of"]:
+        report["warnings"].append(f"{report['unknown_best_of']} events with invalid best_of (must be 1, 3, or null)")
 
     return report
 
@@ -479,6 +501,7 @@ def print_report(r: dict) -> None:
     print(f"Missing fields:   {r['missing_fields']}")
     print(f"Unknown format:   {r['unknown_format']}")
     print(f"Unknown game:     {r['unknown_game']}")
+    print(f"Invalid best_of:  {r['unknown_best_of']}")
     if r["warnings"]:
         print("Warnings:")
         for w in r["warnings"]:

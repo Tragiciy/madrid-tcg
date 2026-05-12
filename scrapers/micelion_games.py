@@ -28,7 +28,7 @@ DAYS_AHEAD = 90
 # Категории WCS, которые не являются названием игры
 _GENERIC_WCS_TYPES = {"destacados", "featured", "general"}
 
-from shared.scraper_keywords import GAME_KEYWORDS, FORMAT_KEYWORDS, extract_game_from_keywords, extract_format_from_keywords
+from shared.scraper_keywords import GAME_KEYWORDS, FORMAT_KEYWORDS, extract_game_from_keywords, extract_format_from_keywords, extract_format_for_event, extract_best_of
 
 HEADERS = {
     "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
@@ -121,12 +121,21 @@ def _parse_event(raw: dict, scraped_at: str) -> dict:
     combined_text = f"{raw_title} {title} {excerpt_text} {source_url or ''}"
 
     # --- format ---
-    fmt = _extract_format(combined_text)
+    # Pass title separately so the Prerelease-in-title priority works;
+    # excerpt + slug fall through to description.
+    fmt, fmt_official = extract_format_for_event(
+        title=f"{raw_title} {title}",
+        description=f"{excerpt_text} {source_url or ''}",
+        game=game,
+    )
+    best_of = extract_best_of(combined_text)
 
     return {
         "store": STORE,
         "game": game,
         "format": fmt,
+        "format_official": fmt_official,
+        "best_of": best_of,
         "title": title,
         "datetime_start": datetime_start,
         "datetime_end": datetime_end,

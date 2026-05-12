@@ -40,7 +40,7 @@ from zoneinfo import ZoneInfo
 import requests
 from bs4 import BeautifulSoup
 
-from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, extract_format_from_keywords, GAME_KEYWORDS, extract_game_from_keywords
+from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, extract_format_from_keywords, GAME_KEYWORDS, extract_game_from_keywords, extract_format_for_event, extract_best_of
 
 logger = logging.getLogger(__name__)
 
@@ -178,10 +178,14 @@ def _parse_event_anchor(a, day_iso: str, scraped_at: str) -> Optional[dict]:
 
     href = a.get("href") or None
 
+    _game = _extract_game(title)
+    _fmt, _fmt_official = extract_format_for_event(title=title, game=_game)
     return {
         "store":          STORE,
-        "game":           _extract_game(title),
-        "format":         _extract_format(title),
+        "game":           _game,
+        "format":         _fmt,
+        "format_official": _fmt_official,
+        "best_of":        extract_best_of(title),
         "title":          title,
         "datetime_start": dt.isoformat(),
         "datetime_end":   None,

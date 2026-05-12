@@ -20,6 +20,8 @@ try:
         GAME_KEYWORDS,
         extract_format_from_keywords,
         extract_game_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
     )
     from shared.wordpress_events import fetch_wp_events
 except ModuleNotFoundError:
@@ -29,6 +31,8 @@ except ModuleNotFoundError:
         GAME_KEYWORDS,
         extract_format_from_keywords,
         extract_game_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
     )
     from shared.wordpress_events import fetch_wp_events
 
@@ -58,13 +62,16 @@ def scrape() -> list[dict]:
         title = raw["title"]
         combined = f"{title} {raw.get('description') or ''}"
         game = _extract_game(combined)
-        fmt = _extract_format(combined)
+        fmt, fmt_official = extract_format_for_event(title=combined, game=game)
+        best_of = extract_best_of(combined)
 
         events.append(
             {
                 "store": STORE,
                 "game": game,
                 "format": fmt,
+                "format_official": fmt_official,
+                "best_of": best_of,
                 "title": title,
                 "datetime_start": raw["start_iso"],
                 "datetime_end": raw.get("end_iso"),
