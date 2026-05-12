@@ -36,9 +36,22 @@ must not have side effects at import time.
 
 `shared/scraper_keywords.py` provides:
 - `GAME_KEYWORDS` — `(keyword, canonical_name)` tuples, longest-first
-- `FORMAT_KEYWORDS` — `(keyword, canonical_format)` tuples, longest-first
+- `FORMAT_KEYWORDS` — `(keyword, unified_format, format_official_or_None)`
+  3-tuples, longest-first. `unified_format` lands in `event.format` (small
+  game-agnostic vocabulary); `format_official` (when not None) preserves the
+  original per-game name (e.g. "Premier", "Armory", "Liga Pokémon") for
+  display in the detail panel.
+- `DEFAULT_FORMAT_BY_GAME` — map game → fallback format (Standard for all
+  non-MTG games). Applied only when no keyword matched.
+- `extract_format_for_event(title, description, category, game)` —
+  game-aware extractor with title-priority Prerelease detection; returns
+  `(unified_format, format_official)`.
+- `extract_best_of(text)` — returns `1`, `3`, or `None` from explicit
+  BO1/BO3 mentions.
 - `extract_game_from_keywords(text, keywords)` — returns canonical game or None
-- `extract_format_from_keywords(text, keywords)` — returns canonical format or None
+- `extract_format_from_keywords(text, keywords)` — legacy helper, returns
+  unified canonical format or None. Kept for backward compat; new code uses
+  `extract_format_for_event` to also get `format_official`.
 
 Scrapers import these and may extend them with store-specific entries.
 
@@ -683,6 +696,11 @@ A change to one must keep all of them consistent. In particular:
 The frontend reads these fields from each event:
 
 - `store`, `game`, `format`, `title`
+- `format_official` (nullable string) — original per-game name (Premier,
+  Armory, Liga Pokémon, …), shown italic in detail panel under the chips.
+  Does NOT participate in filtering.
+- `best_of` (nullable: 1, 3, or null) — BO1/BO3 indicator extracted from
+  title. Rendered as a small grey chip after the format chip.
 - `datetime_start` (must carry an explicit Madrid offset),
   `datetime_end` (nullable; not currently displayed)
 - `language` (currently unused by the frontend, but present on every event)

@@ -1225,6 +1225,27 @@ input:focus, select:focus { border-color: var(--accent); }
   .panel-title { font-size: 1.2rem; }
 }
 
+/* ── Best-of chip (BO1/BO3) ────────────────────────────────────── */
+.tag.best-of {
+  color: var(--text-muted);
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  font-size: .6rem;
+  letter-spacing: .02em;
+  text-transform: none;
+  cursor: default;
+}
+.tag.best-of:hover { filter: none; }
+
+/* ── Official format label in detail panel ─────────────────────── */
+.panel-official {
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-top: .35rem;
+  font-style: italic;
+  letter-spacing: .01em;
+}
+
 /* ── Favorites ──────────────────────────────────────────────────── */
 
 /* Favorited card — gold ring + warm glow so it stands out in the grid */

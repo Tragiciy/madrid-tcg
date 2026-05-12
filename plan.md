@@ -79,6 +79,8 @@ Core user question: **"What can I play this week in my city?"**
 | ✅ | Improved preset management UX | Save / edit / delete preset flow polished |
 | ✅ | Cancelled-event cleanup | `aggregator.py` hard-deletes future events missing for 3 consecutive runs (`MISSING_RUNS_BEFORE_DELETE = 3`) |
 | ✅ | Undo filter button | `filterHistory` stack (max 5); `undoFilterAction()` reverses the most recent filter change |
+| ✅ | Single-event favorites | ★ on cards + panel, `tcg-favorites-v1` localStorage, "Show saved" toggle, gold visual highlight |
+| ✅ | Format unification + format_official + best_of | Unified `format` vocabulary (Premier/Armory/CC → Standard), per-game default for non-MTG, `format_official` for original names, `best_of` field for BO1/BO3, title-priority Prerelease fixes Sealed bug. Backfill via `scripts/reclassify_formats.py` reduced null format from 27.5% → 10.5% |
 
 ---
 

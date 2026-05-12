@@ -37,6 +37,8 @@ try:
         GAME_KEYWORDS,
         extract_format_from_keywords,
         extract_game_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
     )
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -45,6 +47,8 @@ except ModuleNotFoundError:
         GAME_KEYWORDS,
         extract_format_from_keywords,
         extract_game_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
     )
 
 logger = logging.getLogger(__name__)
@@ -111,12 +115,15 @@ def _parse_event(title: str, date_str: str, scraped_at: str) -> Optional[dict]:
         return None
 
     game = _extract_game(title)
-    fmt = _extract_format(title)
+    fmt, fmt_official = extract_format_for_event(title=title, game=game)
+    best_of = extract_best_of(title)
 
     return {
         "store": STORE,
         "game": game,
         "format": fmt,
+        "format_official": fmt_official,
+        "best_of": best_of,
         "title": title,
         "datetime_start": datetime_start,
         "datetime_end": None,

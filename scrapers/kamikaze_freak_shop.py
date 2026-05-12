@@ -24,10 +24,20 @@ import requests
 from bs4 import BeautifulSoup
 
 try:
-    from shared.scraper_keywords import FORMAT_KEYWORDS, extract_format_from_keywords
+    from shared.scraper_keywords import (
+        FORMAT_KEYWORDS,
+        extract_format_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
+    )
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from shared.scraper_keywords import FORMAT_KEYWORDS, extract_format_from_keywords
+    from shared.scraper_keywords import (
+        FORMAT_KEYWORDS,
+        extract_format_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -90,14 +100,20 @@ def _generate_instances(days_ahead: int = 90) -> list[dict]:
                 tzinfo=TZ,
             )
             title = template["title"]
-            fmt = template["format"] or extract_format_from_keywords(
-                title, FORMAT_KEYWORDS
-            )
+            if template["format"]:
+                fmt = template["format"]
+                fmt_official = None
+            else:
+                fmt, fmt_official = extract_format_for_event(
+                    title=title, game=DEFAULT_GAME,
+                )
             instances.append(
                 {
                     "title": title,
                     "datetime_start": dt.isoformat(),
                     "format": fmt,
+                    "format_official": fmt_official,
+                    "best_of": extract_best_of(title),
                 }
             )
             current += timedelta(days=7)
@@ -137,6 +153,8 @@ def scrape() -> list[dict]:
                 "store": STORE,
                 "game": DEFAULT_GAME,
                 "format": raw["format"],
+                "format_official": raw["format_official"],
+                "best_of": raw["best_of"],
                 "title": raw["title"],
                 "datetime_start": raw["datetime_start"],
                 "datetime_end": None,

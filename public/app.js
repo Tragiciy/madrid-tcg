@@ -1463,6 +1463,7 @@ function app() {
               `<div class="ev-tags">` +
                 `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
                 `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
+                (e.best_of ? `<span class="tag best-of">BO${e.best_of}</span>` : '') +
               `</div>` +
               favButton +
               calendarButton +

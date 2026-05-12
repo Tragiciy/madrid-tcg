@@ -38,6 +38,8 @@ try:
         FORMAT_KEYWORDS,
         extract_game_from_keywords,
         extract_format_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
     )
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -46,6 +48,8 @@ except ModuleNotFoundError:
         FORMAT_KEYWORDS,
         extract_game_from_keywords,
         extract_format_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
     )
 
 logger = logging.getLogger(__name__)
@@ -114,7 +118,8 @@ def _parse_event(raw: dict, scraped_at: str) -> Optional[dict]:
     combined_text = f"{raw_title} {content_text}"
 
     game = _extract_game(combined_text)
-    fmt = _extract_format(combined_text)
+    fmt, fmt_official = extract_format_for_event(title=combined_text, game=game)
+    best_of = extract_best_of(combined_text)
 
     # Clean up title — strip HTML entities and collapse whitespace
     title = re.sub(r"\s+", " ", raw_title).strip()
@@ -125,6 +130,8 @@ def _parse_event(raw: dict, scraped_at: str) -> Optional[dict]:
         "store": STORE,
         "game": game,
         "format": fmt,
+        "format_official": fmt_official,
+        "best_of": best_of,
         "title": title,
         "datetime_start": datetime_start,
         "datetime_end": None,

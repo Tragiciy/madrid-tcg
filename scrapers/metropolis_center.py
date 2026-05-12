@@ -58,7 +58,7 @@ _BLOCKED_DOMAINS = (
     "cloudflareinsights.com",
 )
 
-from shared.scraper_keywords import FORMAT_KEYWORDS, extract_format_from_keywords
+from shared.scraper_keywords import FORMAT_KEYWORDS, extract_format_from_keywords, extract_format_for_event, extract_best_of
 
 # Per-event detail fetch timeout (ms). Detail pages are tiny once
 # resources are blocked; 12s is generous.
@@ -93,10 +93,14 @@ def _parse_event(raw: dict, scraped_at: str) -> Optional[dict]:
 
     datetime_end = _make_iso(date_str, raw.get("end")) if raw.get("end") else None
 
+    _game = raw.get("game") or None
+    _fmt, _fmt_official = extract_format_for_event(title=title, game=_game)
     return {
         "store":          STORE,
-        "game":           raw.get("game") or None,
-        "format":         _extract_format(title),
+        "game":           _game,
+        "format":         _fmt,
+        "format_official": _fmt_official,
+        "best_of":        extract_best_of(title),
         "title":          title,
         "datetime_start": datetime_start,
         "datetime_end":   datetime_end,
