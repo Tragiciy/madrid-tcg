@@ -30,6 +30,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from shared.scraper_keywords import (  # noqa: E402
+    GAME_KEYWORDS,
+    extract_game_from_keywords,
     extract_format_for_event,
     extract_best_of,
 )
@@ -71,13 +73,38 @@ def main(dry_run: bool) -> int:
     from shared.scraper_keywords import _PRERELEASE_TITLE_RE  # noqa: PLC2701
 
     for e in events:
+        old_game = e.get("game")
         old_fmt = e.get("format")
         old_official = e.get("format_official")
         old_bo = e.get("best_of")
 
+        new_game = old_game
         new_fmt = old_fmt
         new_official = old_official
         new_bo = old_bo if old_bo is not None else extract_best_of(e.get("title", ""))
+
+        # Game re-extraction: if title now matches a different game, correct it.
+        # This fixes events scraped before new GAME_KEYWORDS entries were added
+        # (e.g. "UNLEASHED" events at Ítaca that were falling back to "Magic").
+        kw_game = extract_game_from_keywords(e.get("title", ""), GAME_KEYWORDS)
+        if kw_game and kw_game != old_game:
+            new_game = kw_game
+            stats["game_corrected"] += 1
+            e["game"] = new_game
+            # Re-extract format with corrected game so DEFAULT_FORMAT_BY_GAME
+            # for the new game applies. Do this when format is uncertain.
+            if old_fmt is None or old_fmt in DEPRECATED_FORMATS:
+                rfmt, roff = extract_format_for_event(
+                    title=e.get("title", ""), game=new_game,
+                )
+                # Update both old_fmt (controls branch selection below) and
+                # new_fmt (holds the value we will write) with the re-extracted
+                # result so the downstream logic sees a consistent state.
+                old_fmt = rfmt
+                new_fmt = rfmt
+                if roff:
+                    old_official = roff
+                    new_official = roff
 
         # Universal fix: title with "presentación" / "prerelease" always wins
         if old_fmt != "Prerelease" and _PRERELEASE_TITLE_RE.search(e.get("title", "")):

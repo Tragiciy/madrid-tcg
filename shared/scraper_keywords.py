@@ -37,6 +37,7 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     ("nexus night",                         "Riftbound"),
     ("liga star wars",                      "Star Wars: Unlimited"),
     ("riftbound unleashed",                 "Riftbound"),
+    ("unleashed",                           "Riftbound"),
     ("final fantasy",                       "Final Fantasy TCG"),
     ("star wars",                           "Star Wars: Unlimited"),
     ("naruto mythos",                       "Naruto Mythos"),
@@ -173,6 +174,9 @@ DEFAULT_FORMAT_BY_GAME: dict[str, str] = {
     "Final Fantasy TCG":    "Standard",
     "Naruto Mythos":        "Standard",
     "Weiß Schwarz":         "Standard",
+    # FAB: liga / unnamed events are always Classic Constructed → Standard.
+    # Blitz, Living Legend, Sealed, Draft still match via keywords above.
+    "Flesh and Blood":      "Standard",
 }
 
 
