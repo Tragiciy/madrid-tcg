@@ -68,6 +68,12 @@ var STORE_META = {
     address: 'C/ Entre Arroyos 1, Local 6, 28030 Madrid',
     website: 'https://www.thebigbanggames.com/',
   },
+  'Collectorage': {
+    website: 'https://collectorage.com/',
+  },
+  'TopDeck': {
+    website: 'https://topdeck.es/',
+  },
 };
 
 var GAME_CLASS_MAP = {
