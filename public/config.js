@@ -76,6 +76,26 @@ var STORE_META = {
     website: 'https://topdeck.es/',
     notes: 'Barrio de Prosperidad, near Avenida de América',
   },
+  'Padis': {
+    address: 'Calle del Maestro Ángel Llorca, 6, 28003 Madrid',
+    website: 'https://www.padis-store.com/',
+  },
+  'MADAKIBA': {
+    address: 'Calle de Relatores, 14, 28012 Madrid',
+    website: 'https://madakiba.com/',
+  },
+  'Goblintrader Central': {
+    address: 'Calle de la Montera, 12, 28013 Madrid',
+    website: 'https://www.goblintrader.es/',
+  },
+  'Gladius Games': {
+    address: 'Calle Cánovas del Castillo 5, Alcalá de Henares',
+    website: 'https://gladiusgames.net/',
+  },
+  'Mundicomics': {
+    address: 'Calle de Atocha, 65, 28012 Madrid',
+    website: 'https://www.mundicomics.com/',
+  },
 };
 
 var GAME_CLASS_MAP = {
