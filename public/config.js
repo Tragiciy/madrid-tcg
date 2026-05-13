@@ -68,6 +68,14 @@ var STORE_META = {
     address: 'C/ Entre Arroyos 1, Local 6, 28030 Madrid',
     website: 'https://www.thebigbanggames.com/',
   },
+  'Collectorage': {
+    website: 'https://collectorage.com/',
+  },
+  'TopDeck': {
+    address: 'Calle del Cardenal Silíceo, 17, 28002 Madrid',
+    website: 'https://topdeck.es/',
+    notes: 'Barrio de Prosperidad, near Avenida de América',
+  },
 };
 
 var GAME_CLASS_MAP = {
