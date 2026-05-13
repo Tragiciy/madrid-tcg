@@ -72,7 +72,9 @@ var STORE_META = {
     website: 'https://collectorage.com/',
   },
   'TopDeck': {
+    address: 'Calle del Cardenal Silíceo, 17, 28002 Madrid',
     website: 'https://topdeck.es/',
+    notes: 'Barrio de Prosperidad, near Avenida de América',
   },
 };
 
