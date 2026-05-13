@@ -987,7 +987,9 @@ function app() {
     },
 
     eventMatches(e, opts = {}) {
-      if (e.is_active === false) return false;
+      // Only hide cancelled/missing events that haven't happened yet;
+      // past events are kept visible as history.
+      if (e.is_active === false && !this.isEventPast(e)) return false;
       const ignore = opts.ignore || null;
       const includeSegment = opts.includeSegment !== false;
       const includeWeek = opts.includeWeek === true;
