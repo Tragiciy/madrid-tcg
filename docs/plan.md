@@ -19,7 +19,7 @@ Core user question: **"What can I play this week in my city?"**
 - **13 games** — Magic, Pokémon, One Piece, Digimon, Lorcana, Star Wars:
   Unlimited, Yu-Gi-Oh!, Flesh and Blood, Weiß Schwarz, Riftbound,
   Final Fantasy TCG, Naruto Mythos, plus Unknown
-- **0 `scrape_now` targets** remaining in `scraper_targets.json`
+- **0 `scrape_now` targets** remaining in `data/scraper_targets.json`
 
 ### Frontend
 - Alpine.js SPA split across 4 files: `index.html`, `styles.css`,
@@ -46,8 +46,8 @@ Core user question: **"What can I play this week in my city?"**
   (`GAME_KEYWORDS`, `FORMAT_KEYWORDS`)
 - `shared/store_matching.py`: store name/address normalization + fuzzy matching
 - Scraper stats + anomaly detection → `public/events_stats.json`
-- Discovery pipeline: `discover_stores.py` → `audit_store_event_pages.py`
-  → `build_scraper_targets.py` → `scraper_targets.json`
+- Discovery pipeline: `tools/discover_stores.py` → `tools/audit_store_event_pages.py`
+  → `tools/build_scraper_targets.py` → `data/scraper_targets.json`
 - GitHub Actions: daily `update.yml` cron (06:00 UTC)
 
 ---
@@ -64,7 +64,7 @@ Core user question: **"What can I play this week in my city?"**
 | ✅ | `STORE_META` system | Per-store address / notes / website in `config.js`; used by panel + calendar |
 | ✅ | Shared keyword utilities | `GAME_KEYWORDS`, `FORMAT_KEYWORDS`, `extract_*` in `shared/scraper_keywords.py` |
 | ✅ | Scraper anomaly detection | `events_stats.json` with `sharp_drop` flag per store |
-| ✅ | Store discovery pipeline | `discover_stores.py` + Wizards locator + audit + target classification |
+| ✅ | Store discovery pipeline | `tools/discover_stores.py` + Wizards locator + audit + target classification |
 | ✅ | URL params override localStorage | Filter state comes from URL; localStorage is personalization only |
 | ✅ | Responsive auto-view | First visit on narrow screen defaults to vertical; saved thereafter |
 | ✅ | Past-event dimming | Past segments and past events on today dimmed but not hidden |
@@ -197,7 +197,7 @@ One Piece–only stores).
 - `discoverers/swu_locator.py` — Star Wars: Unlimited OP locator if available
 
 Each follows the same `discover() -> list[dict]` interface as the existing
-`wizards_locator.py`. `discover_stores.py` auto-discovers them.
+`wizards_locator.py`. `tools/discover_stores.py` auto-discovers them.
 
 **Effort:** Medium (researching each API takes time). Run after A1 is done
 to maximize value from new stores found.

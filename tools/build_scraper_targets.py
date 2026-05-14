@@ -7,9 +7,12 @@ and writes scraper_targets.json with a clear, actionable list of stores to scrap
 """
 
 import json
+import pathlib
 
-INPUT_FILE = "store_event_audit.json"
-OUTPUT_FILE = "scraper_targets.json"
+ROOT = pathlib.Path(__file__).parent.parent
+
+INPUT_FILE = ROOT / "data" / "store_event_audit.json"
+OUTPUT_FILE = ROOT / "data" / "scraper_targets.json"
 
 READINESS_TO_ACTION = {
     "ready": "scrape_now",
