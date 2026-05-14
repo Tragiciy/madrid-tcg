@@ -4,7 +4,7 @@ discover_stores.py — run all discoverers, match against existing stores,
  deduplicate, and write candidate_stores.json for human review.
 
 Usage:
-    python3 discover_stores.py
+    python3 tools/discover_stores.py
 """
 
 import importlib
@@ -12,6 +12,9 @@ import json
 import pathlib
 import sys
 from collections import Counter
+
+ROOT = pathlib.Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 
 from shared.store_matching import (
     load_existing_stores,
@@ -110,7 +113,7 @@ def main() -> None:
         )
     )
 
-    output_path = pathlib.Path("candidate_stores.json")
+    output_path = ROOT / "data" / "candidate_stores.json"
     output_path.write_text(
         json.dumps(candidates, ensure_ascii=False, indent=2),
         encoding="utf-8",

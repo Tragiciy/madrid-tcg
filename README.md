@@ -125,8 +125,8 @@ python aggregator.py
 4. Run `python aggregator.py` and verify the new store appears in
    `public/events_stats.json`.
 
-See [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) for architecture rules and the
-full audit → `scraper_targets.json` → scraper expansion workflow.
+See [PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md) for architecture rules and the
+full audit → `data/scraper_targets.json` → scraper expansion workflow.
 
 ## Deploy
 
@@ -146,4 +146,4 @@ redeploy.
   any API at runtime.
 - **No database.** `events.json` is the entire persistence layer.
 - **Four-file frontend.** HTML, CSS, JS, and config are split into four
-  separate files — do not merge them. See `PROJECT_CONTEXT.md` §7 for why.
+  separate files — do not merge them. See `docs/PROJECT_CONTEXT.md` §7 for why.

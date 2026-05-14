@@ -7,11 +7,16 @@ store_event_audit.json with priority rankings for scraper development.
 """
 
 import json
+import pathlib
 import re
+import sys
 from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+
+ROOT = pathlib.Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 
 from shared.scraper_keywords import (
     FORMAT_KEYWORDS,
@@ -20,8 +25,8 @@ from shared.scraper_keywords import (
     extract_game_from_keywords,
 )
 
-CANDIDATE_FILE = "candidate_stores.json"
-OUTPUT_FILE = "store_event_audit.json"
+CANDIDATE_FILE = ROOT / "data" / "candidate_stores.json"
+OUTPUT_FILE = ROOT / "data" / "store_event_audit.json"
 
 REQUEST_TIMEOUT = 15
 USER_AGENT = (

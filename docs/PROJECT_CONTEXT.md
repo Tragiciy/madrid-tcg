@@ -57,8 +57,8 @@ must not have side effects at import time.
 Scrapers import these and may extend them with store-specific entries.
 
 `shared/store_matching.py` provides store-name and address normalization plus
-fuzzy matching. Used by discovery tooling (`discover_stores.py`,
-`audit_store_event_pages.py`), not by scrapers.
+fuzzy matching. Used by discovery tooling (`tools/discover_stores.py`,
+`tools/audit_store_event_pages.py`), not by scrapers.
 
 #### Shared keyword migration status
 
@@ -139,18 +139,18 @@ python aggregator.py          # full pipeline (all scrapers + merge + stats)
 
 The pipeline for finding and onboarding new stores follows these steps:
 
-1. **Store discovery** — `discover_stores.py` (and helpers in `discoverers/`)
+1. **Store discovery** — `tools/discover_stores.py` (and helpers in `discoverers/`)
    finds candidate stores from the Wizards locator and other sources, writing
-   `candidate_stores.json`.
+   `data/candidate_stores.json`.
 
-2. **Event-page audit** — `audit_store_event_pages.py` reads
-   `candidate_stores.json`, fetches each candidate's website, detects event
-   pages and calendar presence, and writes `store_event_audit.json`. It uses
+2. **Event-page audit** — `tools/audit_store_event_pages.py` reads
+   `data/candidate_stores.json`, fetches each candidate's website, detects event
+   pages and calendar presence, and writes `data/store_event_audit.json`. It uses
    `shared.scraper_keywords` for game/format signal detection.
 
-3. **Target selection** — `build_scraper_targets.py` reads
-   `store_event_audit.json` and classifies stores into four buckets, writing
-   `scraper_targets.json`:
+3. **Target selection** — `tools/build_scraper_targets.py` reads
+   `data/store_event_audit.json` and classifies stores into four buckets, writing
+   `data/scraper_targets.json`:
    - `scrape_now` — validated event page with clear game content; build a
      scraper immediately.
    - `possible` — event intent detected but no clean event page found; needs
@@ -162,9 +162,9 @@ The pipeline for finding and onboarding new stores follows these steps:
 4. **Scraper development** — for each store in `scrape_now`, create
    `scrapers/<name>.py` and add the store to `STORE_META` in `config.js`.
 
-`scraper_targets.json` lives at the repo root and is the canonical queue of
-stores awaiting scraper development. It is updated by re-running steps 2–3
-after sites change. **Do not hand-edit it.**
+`data/scraper_targets.json` is the canonical queue of stores awaiting scraper
+development. It is updated by re-running steps 2–3 after sites change.
+**Do not hand-edit it.**
 
 ---
 
@@ -794,11 +794,11 @@ legacy `STORE_ADDRESSES` — before or at the same time as shipping the scraper.
 
 ### Using the audit workflow to find candidate stores
 
-1. Ensure `candidate_stores.json` is up to date (re-run `discover_stores.py`
-   if it is stale).
-2. Run `python audit_store_event_pages.py` → writes `store_event_audit.json`.
-3. Run `python build_scraper_targets.py` → writes `scraper_targets.json`.
-4. Review `scraper_targets.json` `"scrape_now"` entries — these are validated
+1. Ensure `data/candidate_stores.json` is up to date (re-run
+   `tools/discover_stores.py` if it is stale).
+2. Run `python tools/audit_store_event_pages.py` → writes `data/store_event_audit.json`.
+3. Run `python tools/build_scraper_targets.py` → writes `data/scraper_targets.json`.
+4. Review `data/scraper_targets.json` `"scrape_now"` entries — these are validated
    stores with known event pages. Build scrapers for them in priority order.
 
 ### Adding a new game
