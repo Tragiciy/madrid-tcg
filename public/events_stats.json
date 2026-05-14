@@ -1,15 +1,15 @@
 {
   "total_events": 1356,
-  "active_events": 1044,
+  "active_events": 1027,
   "total_scrapers": 20,
   "successful_scrapers": 19,
   "failed_scrapers_count": 1,
   "by_store": {
     "Arte 9": {
       "total": 322,
-      "active": 259,
-      "raw_this_run": 259,
-      "previous_raw": 0,
+      "active": 256,
+      "raw_this_run": 256,
+      "previous_raw": 259,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -22,7 +22,7 @@
       "total": 216,
       "active": 130,
       "raw_this_run": 130,
-      "previous_raw": 131,
+      "previous_raw": 130,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -35,7 +35,7 @@
       "total": 214,
       "active": 174,
       "raw_this_run": 174,
-      "previous_raw": 176,
+      "previous_raw": 174,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -48,7 +48,7 @@
       "total": 185,
       "active": 121,
       "raw_this_run": 121,
-      "previous_raw": 124,
+      "previous_raw": 121,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -59,8 +59,8 @@
     },
     "TopDeck": {
       "total": 182,
-      "active": 182,
-      "raw_this_run": 182,
+      "active": 168,
+      "raw_this_run": 168,
       "previous_raw": 182,
       "dropped_this_run": 0,
       "drop_reasons": {
@@ -74,7 +74,7 @@
       "total": 79,
       "active": 40,
       "raw_this_run": 40,
-      "previous_raw": 42,
+      "previous_raw": 40,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -113,7 +113,7 @@
       "total": 18,
       "active": 18,
       "raw_this_run": 18,
-      "previous_raw": null,
+      "previous_raw": 18,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -139,7 +139,7 @@
       "total": 12,
       "active": 12,
       "raw_this_run": 12,
-      "previous_raw": null,
+      "previous_raw": 12,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -152,7 +152,7 @@
       "total": 11,
       "active": 9,
       "raw_this_run": 9,
-      "previous_raw": 10,
+      "previous_raw": 9,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -178,7 +178,7 @@
       "total": 3,
       "active": 3,
       "raw_this_run": 3,
-      "previous_raw": null,
+      "previous_raw": 3,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -191,7 +191,7 @@
       "total": 2,
       "active": 2,
       "raw_this_run": 2,
-      "previous_raw": null,
+      "previous_raw": 2,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -217,7 +217,7 @@
       "total": 1,
       "active": 1,
       "raw_this_run": 1,
-      "previous_raw": null,
+      "previous_raw": 1,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -245,15 +245,15 @@
   "scrapers": {
     "scrapers.arte9": {
       "store": "Arte 9",
-      "raw": 259,
-      "valid": 259,
+      "raw": 256,
+      "valid": 256,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 0,
+      "previous_raw": 259,
       "anomaly": null
     },
     "scrapers.asedio_gaming": {
@@ -305,7 +305,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": null,
+      "previous_raw": 12,
       "anomaly": null
     },
     "scrapers.goblintrader_central": {
@@ -318,7 +318,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": null,
+      "previous_raw": 2,
       "anomaly": null
     },
     "scrapers.goblintrader_madrid_norte": {
@@ -331,7 +331,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 10,
+      "previous_raw": 9,
       "anomaly": null
     },
     "scrapers.itaca": {
@@ -344,7 +344,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 124,
+      "previous_raw": 121,
       "anomaly": null
     },
     "scrapers.jupiter_juegos": {
@@ -357,7 +357,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 176,
+      "previous_raw": 174,
       "anomaly": null
     },
     "scrapers.kamikaze_freak_shop": {
@@ -396,7 +396,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": null,
+      "previous_raw": 1,
       "anomaly": null
     },
     "scrapers.metamorfo": {
@@ -422,7 +422,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 42,
+      "previous_raw": 40,
       "anomaly": null
     },
     "scrapers.micelion_games": {
@@ -435,7 +435,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 131,
+      "previous_raw": 130,
       "anomaly": null
     },
     "scrapers.mundicomics": {
@@ -448,7 +448,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": null,
+      "previous_raw": 18,
       "anomaly": null
     },
     "scrapers.padis": {
@@ -461,7 +461,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": null,
+      "previous_raw": 3,
       "anomaly": null
     },
     "scrapers.panda_games": {
@@ -473,7 +473,7 @@
         "missing_fields": 0,
         "bad_datetime": 0
       },
-      "error": "UnboundLocalError: local variable 'game' referenced before assignment",
+      "error": "UnboundLocalError: cannot access local variable 'game' where it is not associated with a value",
       "previous_raw": 0,
       "anomaly": null
     },
@@ -492,8 +492,8 @@
     },
     "scrapers.topdeck": {
       "store": "TopDeck",
-      "raw": 182,
-      "valid": 182,
+      "raw": 168,
+      "valid": 168,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -507,5 +507,5 @@
   "failed_scrapers": [
     "scrapers.panda_games"
   ],
-  "generated_at": "2026-05-14T00:53:45.387115+02:00"
+  "generated_at": "2026-05-14T10:44:28.035259+02:00"
 }
