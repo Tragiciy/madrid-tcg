@@ -23,6 +23,9 @@ one click.
 - **First-run onboarding** — wizard on the first visit that sets initial game/store filters.
 - **Search within filter dropdowns** — each facet (game, store, format) has a search input to narrow long lists.
 - **Undo last filter action** — button that reverses the most recent filter change (up to 5 steps back).
+- **Favorites** — star any event to save it locally (persisted in `localStorage`). A "Show saved"
+  toggle appears in the filter bar once at least one event is saved; starred events are highlighted
+  in gold.
 - **Time-segment chips** — Morning (<12), Afternoon (12–16), Evening (16–19),
   Late (19+); chips can be toggled to hide a segment, and segment headers in
   the horizontal grid can be collapsed to compact a busy week.
