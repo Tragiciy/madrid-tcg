@@ -23,10 +23,11 @@ must live outside this directory (currently in `shared/`). Do not modify
 `aggregator.py` merely to register a new scraper; place the scraper file in
 `scrapers/` and it is picked up automatically.
 
-Current scrapers (13): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
+Current scrapers (20): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
 `metropolis_center`, `micelion_games`, `asedio_gaming`, `generacion_x_elfo`,
-`goblintrader_madrid_norte`, `kamikaze_freak_shop`, `the_big_bang_games`,
-`panda_games`, `metamorfo`.
+`goblintrader_madrid_norte`, `goblintrader_central`, `kamikaze_freak_shop`,
+`the_big_bang_games`, `panda_games`, `metamorfo`, `collectorage`, `topdeck`,
+`gladius_games`, `madakiba`, `mundicomics`, `padis`.
 
 ### 1b. Shared utilities
 
@@ -76,12 +77,20 @@ fuzzy matching. Used by discovery tooling (`discover_stores.py`,
 | `the_big_bang_games` | Yes | Yes |
 | `panda_games` | Yes | Yes |
 | `metamorfo` | Yes | Yes |
+| `goblintrader_central` | Yes | Yes |
+| `collectorage` | Yes | Yes |
+| `topdeck` | Yes | Yes |
+| `gladius_games` | Yes | Yes |
+| `madakiba` | Yes | Yes |
+| `mundicomics` | Yes | Yes |
+| `padis` | Yes | Yes |
 
 Stores with `—` derive game from API category fields, not keyword matching.
 
-The four WordPress-based scrapers (`kamikaze_freak_shop`, `the_big_bang_games`,
-`panda_games`, `metamorfo`) share a helper at `shared/wordpress_events.py` that
-fetches events from The Events Calendar / Modern Events Calendar plugins.
+The six WordPress-based scrapers (`kamikaze_freak_shop`, `the_big_bang_games`,
+`panda_games`, `metamorfo`, `collectorage`, `topdeck`) share a helper at
+`shared/wordpress_events.py` that fetches events from The Events Calendar /
+Modern Events Calendar plugins.
 
 ### 1c. Scraper stats and anomaly detection
 
@@ -252,6 +261,7 @@ fetch('events.json')
         │  filters.search                                 │
         │  filters.game[]   filters.store[]               │
         │  filters.format[] segmentFilter{}               │
+        │  showFavoritesOnly                              │
         ▼                                                 │
   eventMatches(e)  ─▶  filteredEvents (getter)            │
         │                                                 │
@@ -270,7 +280,7 @@ fetch('events.json')
 Key things to note:
 
 - `init()` is the only side-effect-on-load function. It loads presets,
-  default-preset ID, and onboarding state from localStorage; registers a scroll
+  favorites, default-preset ID, and onboarding state from localStorage; registers a scroll
   listener (for Back-to-top), an Escape-key listener (closes panels/facets);
   starts a 60-second `setInterval` that refreshes `nowMadrid`; fetches
   `events.json`; then either applies filters from URL params or applies the
@@ -299,6 +309,7 @@ Key things to note:
 | `tcg-presets-v1` | JSON array | Saved filter presets |
 | `tcg-default-preset-v1` | JSON `{id}` | ID of the preset auto-applied on fresh visits |
 | `tcg-onboarding-v1` | JSON `{completed}` | Whether first-run onboarding has been completed |
+| `tcg-favorites-v1` | JSON array of strings | Starred event keys |
 
 localStorage is for user personalization only. Filter state (game/store/format
 selections) is never written to localStorage. URL params are the mechanism for

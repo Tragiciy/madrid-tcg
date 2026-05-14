@@ -7,18 +7,19 @@ Core user question: **"What can I play this week in my city?"**
 
 ---
 
-## Current State (as of 2026-05-09)
+## Current State (as of 2026-05-14)
 
 ### Data coverage
-- **13 scrapers** — Arte 9, Ítaca, Jupiter Juegos, Micelion Games,
+- **20 scrapers** — Arte 9, Ítaca, Jupiter Juegos, Micelion Games,
   La Guarida Juegos, Metropolis Center, Asedio Gaming,
-  Generacion X - Elfo, Goblintrader Madrid-Norte, Kamikaze Freak Shop,
-  The Big Bang Games, Panda Games, Metamorfo
-- **1,203 events** in `events.json` (662 active)
+  Generacion X - Elfo, Goblintrader Madrid-Norte, Goblintrader Central,
+  Kamikaze Freak Shop, The Big Bang Games, Panda Games, Metamorfo,
+  Collectorage, TopDeck, Gladius Games, MADAKIBA, Mundicomics, Padis
+- **~1,200 events** in `events.json` (~660 active; updated daily)
 - **13 games** — Magic, Pokémon, One Piece, Digimon, Lorcana, Star Wars:
   Unlimited, Yu-Gi-Oh!, Flesh and Blood, Weiß Schwarz, Riftbound,
   Final Fantasy TCG, Naruto Mythos, plus Unknown
-- **7 `scrape_now` targets** remaining in `scraper_targets.json`
+- **0 `scrape_now` targets** remaining in `scraper_targets.json`
 
 ### Frontend
 - Alpine.js SPA split across 4 files: `index.html`, `styles.css`,
@@ -81,273 +82,21 @@ Core user question: **"What can I play this week in my city?"**
 | ✅ | Undo filter button | `filterHistory` stack (max 5); `undoFilterAction()` reverses the most recent filter change |
 | ✅ | Single-event favorites | ★ on cards + panel, `tcg-favorites-v1` localStorage, "Show saved" toggle, gold visual highlight |
 | ✅ | Format unification + format_official + best_of | Unified `format` vocabulary (Premier/Armory/CC → Standard), per-game default for non-MTG, `format_official` for original names, `best_of` field for BO1/BO3, title-priority Prerelease fixes Sealed bug. Backfill via `scripts/reclassify_formats.py` reduced null format from 27.5% → 10.5% |
+| ✅ | TopDeck + Collectorage scrapers | WordPress batch via `shared/wordpress_events.py`; 2 new stores; 0 WordPress targets remaining (#61) |
+| ✅ | 5 unknown-platform scrapers | Padis (PrestaShop), MADAKIBA, Goblintrader Central, Gladius Games, Mundicomics; 0 `scrape_now` targets remaining (#62) |
 
 ---
 
-## Active sprint — two tracks
+## Completed sprint
 
-Two independent tracks. Track A is Python backend. Track B is entirely
-frontend. Both can run in parallel.
+Both tracks closed as of 2026-05-14.
 
----
-
-### Track A — Scraper expansion + pipeline automation
-
-#### A1. Build scrapers for remaining `scrape_now` targets
-
-7 scrapers shipped so far (Asedio Gaming, Generacion X - Elfo, Goblintrader
-Madrid-Norte, plus the WordPress batch: Kamikaze Freak Shop, The Big Bang
-Games, Panda Games, Metamorfo). 7 targets remain. Group by platform.
-
-**Group 1 — WordPress (2 stores remaining)**
-
-Both use The Events Calendar or Modern Events Calendar plugin. The shared
-helper `shared/wordpress_events.py` is already in place — each new scraper is
-a thin file that calls it and maps to the event schema.
-
-| Store | Event page | Primary game |
-|---|---|---|
-| Collectorage | /calendario | Star Wars: Unlimited |
-| TopDeck | /calendario-de-torneos/ | One Piece |
-
-Steps for each new store:
-
-1. Create `scrapers/<name>.py` calling `fetch_wp_events()` from
-   `shared/wordpress_events.py`, mapping output to the event schema, using
-   shared keyword extraction, falling back to `DEFAULT_GAME`.
-2. Add the store to `STORE_META` in `public/config.js` with a valid `address`.
-
-**Group 2 — Shopify (✅ shipped)**
-
-| Store | Event page | Primary game |
-|---|---|---|
-| ~~Asedio Gaming~~ | ~~shipped~~ | ~~Flesh and Blood~~ |
-
-**Group 3 — Unknown platform (5 stores remaining)**
-
-| Store | Event page | Notes |
-|---|---|---|
-| Goblintrader Central | /gb/eventos | Likely PrestaShop |
-| ~~Goblintrader Madrid-Norte~~ | ~~shipped~~ | ~~same codebase as Central~~ |
-| Gladius Games | /content/5-calendario-de-eventos | PrestaShop or custom |
-| MADAKIBA | /es/c/eventos | Unknown; fetch + inspect |
-| Mundicomics | /torneos-tcg | Unknown; fetch + inspect |
-| Padis | /284-inscripciones-torneos | PrestaShop category page |
-
-Goblintrader pair: audit together, share a `shared/goblintrader.py` helper
-if platform is confirmed. For each unknown: inspect in browser devtools,
-identify the data format, then write the scraper.
-
-**Acceptance criteria for every new scraper:**
-- `python -m scrapers.<name>` prints events without error.
-- All events have `store`, `title`, `datetime_start` (explicit Madrid offset),
-  `source_url`.
-- `game` populated for ≥ 80 % of events (keyword match or `DEFAULT_GAME`).
-- Store appears under `by_store` in `events_stats.json` after
-  `python aggregator.py`.
-- `STORE_META` entry in `public/config.js` has a valid `address`.
-
-#### A2. Automate the discovery pipeline
-
-**New file: `.github/workflows/discover.yml`** — weekly cron (Monday 08:00 UTC):
-
-```yaml
-name: Discover new stores
-on:
-  schedule:
-    - cron: "0 8 * * 1"
-  workflow_dispatch:
-jobs:
-  discover:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.11", cache: pip }
-      - run: pip install -r requirements.txt
-      - name: Run pipeline
-        run: |
-          python discover_stores.py
-          python audit_store_event_pages.py
-          python build_scraper_targets.py
-      - name: Commit if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- candidate_stores.json store_event_audit.json scraper_targets.json; then
-            exit 0
-          fi
-          git add candidate_stores.json store_event_audit.json scraper_targets.json
-          git commit -m "chore: update store discovery ($(date -u +'%Y-%m-%d'))"
-          git push
-      - name: Open issue for new targets
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const targets = JSON.parse(require('fs').readFileSync('scraper_targets.json'));
-            const newOnes = (targets.scrape_now || []).filter(t => t.new === true);
-            if (!newOnes.length) return;
-            const body = newOnes.map(t =>
-              `- **${t.name}** — [${t.best_event_page}](${t.best_event_page}) (${t.game_detected || '?'})`
-            ).join('\n');
-            await github.rest.issues.create({
-              owner: context.repo.owner, repo: context.repo.repo,
-              title: `New scraper targets (${newOnes.length})`,
-              body: `Weekly discovery found ${newOnes.length} new scrape_now stores:\n\n${body}`,
-              labels: ['scraper', 'new-store'],
-            });
-```
-
-**Required change to `build_scraper_targets.py`:** mark each `scrape_now`
-entry as `"new": true/false` by comparing against store names in
-`public/events_stats.json` (`by_store` keys = already-scraped stores).
-
----
-
-### Track B — Favorite events
-
-#### Alpine reactivity constraint
-`Set` mutations are not tracked by Alpine's proxy. Favorites must be a plain
-**array** in state. `Array.includes` is used for lookups. This keeps
-`cellCardsHtml` reactivity working — it reads `this.favorites` (the array)
-and re-renders when it changes.
-
-#### Horizontal grid constraint
-Cards in the horizontal grid are rendered as HTML strings by `cellCardsHtml()`
-and injected via `x-html`. Favorite buttons in that view must follow the
-`data-*` + `onGridClick` delegation pattern, not Alpine `@click` bindings.
-
-#### B1. Core state and persistence — `public/app.js`
-
-New constant near `PRESETS_STORAGE_KEY`:
-```js
-const FAVORITES_STORAGE_KEY = 'tcg-favorites-v1';
-```
-
-New state fields in `app()`:
-```js
-favorites:         [],    // array of eventKey strings
-showFavoritesOnly: false,
-```
-
-New methods:
-```js
-loadFavorites() {
-  try {
-    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed))
-        this.favorites = parsed.filter(k => typeof k === 'string');
-    }
-  } catch {}
-},
-persistFavorites() {
-  localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(this.favorites));
-},
-isFavorite(e) {
-  if (!e) return false;
-  return this.favorites.includes(this.eventKey(e));
-},
-toggleFavorite(keyOrEvent) {
-  const key = typeof keyOrEvent === 'string' ? keyOrEvent : this.eventKey(keyOrEvent);
-  const idx = this.favorites.indexOf(key);
-  if (idx >= 0) this.favorites.splice(idx, 1);
-  else           this.favorites.push(key);
-  this.persistFavorites();
-},
-get favoritesCount() { return this.favorites.length; },
-```
-
-Call `this.loadFavorites()` at the top of `init()`, before `fetch()`.
-
-Add to `eventMatches()` (after search check, before segment check):
-```js
-if (this.showFavoritesOnly && !this.favorites.includes(this.eventKey(e))) return false;
-```
-
-Add `showFavoritesOnly = false` to `resetFilters()`.
-
-#### B2. Star button — vertical view — `public/index.html`
-
-Inside `.ev-footer` alongside `.calendar-btn`:
-```html
-<button class="fav-btn" :class="{ 'is-fav': isFavorite(e) }" type="button"
-        @click.stop="toggleFavorite(e)"
-        :title="isFavorite(e) ? 'Remove from saved' : 'Save event'"
-        :aria-label="isFavorite(e) ? 'Remove from saved' : 'Save event'">★</button>
-```
-
-#### B3. Star button — horizontal view — `public/app.js`
-
-In `cellCardsHtml(cell)`, add to each card's HTML string:
-```js
-const isFav = this.favorites.includes(eventKey(e));
-// in card footer:
-`<button class="fav-btn${isFav ? ' is-fav' : ''}" data-fav-key="${esc(eventKey(e))}"
-         title="${isFav ? 'Remove from saved' : 'Save event'}">★</button>`
-```
-
-In `onGridClick(ev)`, new branch **before** the `.ev-card` branch:
-```js
-const favBtn = target.closest('[data-fav-key]');
-if (favBtn) { this.toggleFavorite(favBtn.dataset.favKey); ev.stopPropagation(); return; }
-```
-
-#### B4. Star button — Event Detail Panel — `public/index.html`
-
-In `.panel-actions` alongside "Open Source" and "Share":
-```html
-<button class="btn fav-btn" :class="{ 'is-fav': isFavorite(selectedEvent) }"
-        type="button" @click.stop="toggleFavorite(selectedEvent)"
-        x-show="selectedEvent"
-        x-text="isFavorite(selectedEvent) ? '★ Saved' : '☆ Save'"></button>
-```
-
-#### B5. "Show saved" toggle — `public/index.html`
-
-In the `.filters` bar, after the Format facet:
-```html
-<button class="btn fav-toggle" :class="{ active: showFavoritesOnly }"
-        @click="showFavoritesOnly = !showFavoritesOnly; cleanupFilters()"
-        x-show="favoritesCount > 0"
-        :title="showFavoritesOnly ? 'Show all events' : 'Show saved events only'">
-  <span>★</span>
-  <span x-text="favoritesCount"></span>
-</button>
-```
-
-Hidden until at least one event is saved (`x-show="favoritesCount > 0"`).
-
-#### B6. Styles — `public/styles.css`
-
-```css
-.fav-btn { background:none; border:none; cursor:pointer; color:var(--text-muted);
-           font-size:1rem; padding:2px 4px; line-height:1;
-           border-radius:var(--radius); transition:color .15s, transform .1s; }
-.fav-btn:hover  { color:var(--accent); }
-.fav-btn.is-fav { color:#f4b942; }
-.fav-btn:active { transform:scale(1.25); }
-.fav-toggle        { display:flex; align-items:center; gap:4px; }
-.fav-toggle.active { background:var(--accent); color:#fff; border-color:var(--accent); }
-```
-
-#### Implementation order within Track B
-
-```
-B1 (state + persistence)
-  ├── B2 (vertical) ──┐
-  └── B3 (horizontal) ┤
-                      ▼
-                  B4 (panel)
-                      │
-                      ▼
-                  B5 (filter toggle)
-                      │
-                      ▼
-                  B6 (styles — can run alongside B2/B3)
-```
+- **Track A** — all `scrape_now` targets shipped: WordPress batch (Collectorage,
+  TopDeck) in #61; unknown-platform stores (Padis, MADAKIBA, Goblintrader Central,
+  Gladius Games, Mundicomics) in #62. 20 active scrapers, 0 remaining targets.
+- **Track B** — Favorites implemented: `tcg-favorites-v1` localStorage,
+  star buttons in vertical + horizontal views and detail panel, "Show saved"
+  toggle in filter bar, gold highlight.
 
 ---
 
@@ -470,7 +219,7 @@ to maximize value from new stores found.
 ### Backend migration
 
 Introduce a backend only when **any** of the following is true:
-- 20+ active scrapers
+- 20+ active scrapers ← **reached (20 scrapers as of 2026-05-14)**
 - Multiple cities active
 - User accounts needed (notifications, cross-device favorites)
 - Events.json payload management becomes untenable even with Option A/B
@@ -498,15 +247,12 @@ Tables: `stores`, `events`, `scraper_runs`, `anomalies`, `candidate_stores`.
 
 ## Development timeline
 
-| Horizon | Track | Work |
-|---|---|---|
-| **Now** | A | Finish WordPress batch — Collectorage + TopDeck (2 remaining) |
-| **Now** | B | B1 → B2/B3 → B4 → B5/B6 (favorites, end-to-end) |
-| **Next 2–4 weeks** | A | Unknown-platform scrapers (6 stores); discovery automation |
-| **Next 2–4 weeks** | — | P1 health dashboard; P2 PWA |
-| **Next month** | — | P4 store metadata fill-out |
-| **Mid-term** | — | P3 payload management; P5 new discoverers |
-| **Long-term** | — | Phase 2 geographic expansion; backend migration triggers |
+| Horizon | Work |
+|---|---|
+| **Now** | P1 scraper health dashboard; A2 discovery automation |
+| **Next 2–4 weeks** | P2 PWA; P4 store metadata expansion |
+| **Mid-term** | P3 payload management; P5 new game discoverers |
+| **Long-term** | Phase 2 geographic expansion; backend migration |
 
 ---
 
