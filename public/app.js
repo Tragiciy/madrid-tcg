@@ -812,7 +812,7 @@ function app() {
     availableOptions(field) {
       const values = new Set();
       for (const e of this.events) {
-        if (this.eventMatches(e, { ignore: field, includeWeek: true })) {
+        if (this.eventMatches(e, { ignore: field, includeWeek: true, ignoreFavorites: true })) {
           values.add(this.valueFor(field, e));
         }
       }
@@ -987,13 +987,15 @@ function app() {
     },
 
     eventMatches(e, opts = {}) {
-      if (e.is_active === false) return false;
+      // Past events are never hidden (only dimmed). Only suppress inactive future events
+      // (they are awaiting hard-deletion after 3 missed runs in the aggregator).
+      if (e.is_active === false && !this.isEventPast(e)) return false;
       const ignore = opts.ignore || null;
       const includeSegment = opts.includeSegment !== false;
       const includeWeek = opts.includeWeek === true;
       const s = this.filters.search.toLowerCase().trim();
       if (s && !e.title.toLowerCase().includes(s)) return false;
-      if (this.showFavoritesOnly && !this.isFavorite(e)) return false;
+      if (this.showFavoritesOnly && !opts.ignoreFavorites && !this.isFavorite(e)) return false;
       if (includeWeek && !this.isInCurrentWeek(e)) return false;
       if (includeSegment && !this.segmentFilter[this.segmentOf(e.datetime_start)]) return false;
       for (const field of ['game', 'store', 'format']) {
