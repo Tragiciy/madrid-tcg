@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scraper Health — Madrid TCG</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .health-page { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+
+    .health-header { margin-bottom: 20px; }
+    .health-header h1 { font-size: 1.4rem; font-weight: 700; margin: 0 0 4px; }
+    .health-meta { font-size: .85rem; color: var(--text-muted); display: flex;
+                   align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px;
+             font-size: .75rem; font-weight: 700; }
+    .badge-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .badge-warn  { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-ok    { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+
+    .health-summary { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+    .stat-chip { background: var(--surface); border: 1px solid var(--border);
+                 border-radius: var(--radius); padding: 12px 20px; min-width: 120px; }
+    .stat-chip .num { font-size: 1.5rem; font-weight: 700; color: var(--accent);
+                      line-height: 1.2; }
+    .stat-chip .lbl { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .alerts { margin: 0 0 20px; display: flex; flex-direction: column; gap: 6px; }
+    .alert-error { background: #fef2f2; border: 1px solid #fca5a5;
+                   border-radius: var(--radius); padding: 8px 14px; color: #b91c1c;
+                   font-size: .85rem; }
+    .alert-warn  { background: #fffbeb; border: 1px solid #fcd34d;
+                   border-radius: var(--radius); padding: 8px 14px; color: #92400e;
+                   font-size: .85rem; }
+
+    .section-title { font-size: .75rem; font-weight: 700; text-transform: uppercase;
+                     letter-spacing: .05em; color: var(--text-muted);
+                     margin: 24px 0 10px; }
+
+    .table-wrap { overflow-x: auto; }
+    .health-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .health-table th { background: var(--surface2); padding: 8px 10px;
+                       text-align: left; border-bottom: 2px solid var(--border);
+                       white-space: nowrap; color: var(--text-muted);
+                       font-weight: 600; font-size: .75rem; }
+    .health-table td { padding: 7px 10px; border-bottom: 1px solid var(--border);
+                       vertical-align: top; }
+    .health-table tr:last-child td { border-bottom: none; }
+    .row-failed  { background: #fef2f2; }
+    .row-anomaly { background: #fffbeb; }
+    .status-ok   { color: #15803d; font-weight: 600; }
+    .status-fail { color: #b91c1c; font-weight: 600; }
+    .status-warn { color: #d97706; font-weight: 600; }
+    .delta-up    { color: #15803d; }
+    .delta-down  { color: #b91c1c; }
+    .muted       { color: var(--text-muted); }
+    .error-msg   { font-size: .75rem; color: #b91c1c; margin-top: 2px;
+                   font-family: monospace; word-break: break-word; }
+    .num-col     { text-align: right; }
+
+    .game-list { display: flex; flex-direction: column; gap: 6px; }
+    .game-row  { display: flex; align-items: center; gap: 10px; font-size: .85rem; }
+    .game-name { min-width: 180px; color: var(--text); }
+    .game-bar-wrap { flex: 1; background: var(--border); border-radius: 4px;
+                     height: 8px; overflow: hidden; }
+    .game-bar-fill { height: 100%; border-radius: 4px; background: var(--accent-dim); }
+    .game-count { min-width: 40px; text-align: right; color: var(--text-muted); }
+
+    .back-link { display: inline-block; margin-top: 32px; font-size: .8rem;
+                 color: var(--text-muted); text-decoration: none; }
+    .back-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+<div class="health-page">
+
+  <div class="health-header">
+    <h1>Madrid TCG — Scraper Health</h1>
+    <div class="health-meta">
+      <span id="last-run">Loading…</span>
+      <span id="status-badge"></span>
+    </div>
+  </div>
+
+  <div class="health-summary" id="summary"></div>
+
+  <div class="alerts" id="alerts"></div>
+
+  <div class="section-title">Scrapers</div>
+  <div class="table-wrap">
+    <table class="health-table">
+      <thead>
+        <tr>
+          <th>Store</th>
+          <th>Status</th>
+          <th class="num-col">This run</th>
+          <th class="num-col">Prev</th>
+          <th class="num-col">Δ</th>
+          <th class="num-col">Dropped</th>
+          <th class="num-col">Active</th>
+          <th class="num-col">Total</th>
+        </tr>
+      </thead>
+      <tbody id="scraper-rows"></tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Events by game</div>
+  <div class="game-list" id="game-list"></div>
+
+  <a class="back-link" href="/">← Back to calendar</a>
+
+</div>
+<script>
+fetch('events_stats.json')
+  .then(r => r.json())
+  .then(render)
+  .catch(() => {
+    document.getElementById('last-run').textContent = 'Failed to load events_stats.json';
+  });
+
+function render(s) {
+  renderHeader(s);
+  renderSummary(s);
+  renderAlerts(s);
+  renderTable(s);
+  renderGames(s);
+}
+
+function renderHeader(s) {
+  const d = new Date(s.generated_at);
+  const fmt = d.toLocaleString('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+    timeZone: 'Europe/Madrid',
+  });
+  document.getElementById('last-run').textContent = 'Last run: ' + fmt + ' (Madrid)';
+
+  const badge = document.getElementById('status-badge');
+  const anomalyCount = Object.values(s.by_store).filter(st => st.anomaly === 'sharp_drop').length;
+  if (s.failed_scrapers_count > 0) {
+    badge.innerHTML = `<span class="badge badge-error">${s.failed_scrapers_count} FAILED</span>`;
+  } else if (anomalyCount > 0) {
+    badge.innerHTML = `<span class="badge badge-warn">${anomalyCount} ANOMALY</span>`;
+  } else {
+    badge.innerHTML = `<span class="badge badge-ok">All OK</span>`;
+  }
+  if (anomalyCount > 0 && s.failed_scrapers_count > 0) {
+    badge.innerHTML += ` <span class="badge badge-warn">${anomalyCount} ANOMALY</span>`;
+  }
+}
+
+function renderSummary(s) {
+  const chips = [
+    { num: s.total_scrapers, lbl: 'scrapers' },
+    { num: `${s.successful_scrapers} / ${s.total_scrapers}`, lbl: 'scrapers OK' },
+    { num: s.active_events.toLocaleString(), lbl: 'active events' },
+    { num: s.total_events.toLocaleString(), lbl: 'total events' },
+  ];
+  document.getElementById('summary').innerHTML = chips.map(c =>
+    `<div class="stat-chip"><div class="num">${c.num}</div><div class="lbl">${c.lbl}</div></div>`
+  ).join('');
+}
+
+function renderAlerts(s) {
+  const lines = [];
+
+  for (const mod of (s.failed_scrapers || [])) {
+    const sc = s.scrapers[mod];
+    const store = sc ? sc.store : mod.replace('scrapers.', '');
+    const err = sc ? (sc.error || 'unknown error') : 'unknown error';
+    lines.push(`<div class="alert-error">&#9888; <strong>${esc(store)}</strong> — scraper failed: ${esc(err)}</div>`);
+  }
+
+  for (const [storeName, st] of Object.entries(s.by_store)) {
+    if (st.anomaly === 'sharp_drop') {
+      const prev = st.previous_raw ?? '?';
+      lines.push(`<div class="alert-warn">&#8595; <strong>${esc(storeName)}</strong> — sharp drop in events: ${st.raw_this_run} this run vs ${prev} previous</div>`);
+    }
+  }
+
+  const el = document.getElementById('alerts');
+  el.innerHTML = lines.join('');
+  el.style.display = lines.length ? '' : 'none';
+}
+
+function renderTable(s) {
+  const rows = Object.entries(s.scrapers).map(([mod, sc]) => {
+    const st = s.by_store[sc.store] || {};
+    return {
+      store:        sc.store,
+      failed:       !!sc.error,
+      error:        sc.error,
+      anomaly:      st.anomaly || null,
+      raw:          sc.raw,
+      previous_raw: sc.previous_raw,
+      dropped:      sc.dropped,
+      drop_reasons: sc.drop_reasons,
+      active:       st.active  ?? 0,
+      total:        st.total   ?? 0,
+    };
+  });
+
+  rows.sort((a, b) => {
+    if (a.failed !== b.failed) return a.failed ? -1 : 1;
+    if (!!a.anomaly !== !!b.anomaly) return a.anomaly ? -1 : 1;
+    return a.store.localeCompare(b.store);
+  });
+
+  document.getElementById('scraper-rows').innerHTML = rows.map(r => {
+    const rowCls = r.failed ? 'row-failed' : r.anomaly ? 'row-anomaly' : '';
+
+    let statusHtml;
+    if (r.failed)       statusHtml = '<span class="status-fail">&#10008; FAILED</span>';
+    else if (r.anomaly) statusHtml = '<span class="status-warn">&#8595; ANOMALY</span>';
+    else                statusHtml = '<span class="status-ok">&#10003; OK</span>';
+
+    const thisRun = r.failed ? '<span class="muted">—</span>' : r.raw;
+    const prev    = r.previous_raw != null ? r.previous_raw : '<span class="muted">—</span>';
+    const delta   = fmtDelta(r.raw, r.previous_raw, r.failed);
+    const dropped = fmtDropped(r.dropped, r.drop_reasons, r.failed);
+
+    let storeCell = `<strong>${esc(r.store)}</strong>`;
+    if (r.error) storeCell += `<div class="error-msg">${esc(r.error)}</div>`;
+
+    return `<tr class="${rowCls}">
+      <td>${storeCell}</td>
+      <td>${statusHtml}</td>
+      <td class="num-col">${thisRun}</td>
+      <td class="num-col">${prev}</td>
+      <td class="num-col">${delta}</td>
+      <td class="num-col">${dropped}</td>
+      <td class="num-col">${r.active}</td>
+      <td class="num-col">${r.total}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderGames(s) {
+  const entries = Object.entries(s.by_game).sort((a, b) => b[1] - a[1]);
+  const max = entries[0][1];
+  document.getElementById('game-list').innerHTML = entries.map(([game, count]) => {
+    const pct = Math.round(count / max * 100);
+    return `<div class="game-row">
+      <div class="game-name">${esc(game)}</div>
+      <div class="game-bar-wrap"><div class="game-bar-fill" style="width:${pct}%"></div></div>
+      <div class="game-count">${count}</div>
+    </div>`;
+  }).join('');
+}
+
+function fmtDelta(raw, prev, failed) {
+  if (failed) return '<span class="muted">—</span>';
+  if (prev == null) return '<span class="muted">new</span>';
+  if (prev === 0 && raw === 0) return '<span class="muted">—</span>';
+  if (prev === 0) return '<span class="delta-up">new</span>';
+  const pct = Math.round((raw - prev) / prev * 100);
+  const cls  = pct >= 0 ? 'delta-up' : 'delta-down';
+  const sign = pct >= 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${pct}%</span>`;
+}
+
+function fmtDropped(dropped, reasons, failed) {
+  if (failed) return '<span class="muted">—</span>';
+  if (!dropped) return '0';
+  const parts = [];
+  if (reasons.missing_fields) parts.push(`missing: ${reasons.missing_fields}`);
+  if (reasons.bad_datetime)   parts.push(`datetime: ${reasons.bad_datetime}`);
+  return `<span class="status-warn">${dropped}</span>${parts.length ? `<br><span class="muted" style="font-size:.75rem">${parts.join(', ')}</span>` : ''}`;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
