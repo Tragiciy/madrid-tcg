@@ -60,6 +60,10 @@ Scrapers import these and may extend them with store-specific entries.
 fuzzy matching. Used by discovery tooling (`tools/discover_stores.py`,
 `tools/audit_store_event_pages.py`), not by scrapers.
 
+`shared/carde_store_locator.py` provides a reusable helper for official
+Carde/Hydra-style store locators, currently used by the Lorcana and Riftbound
+discoverers.
+
 #### Shared keyword migration status
 
 | Scraper | Uses shared GAME_KEYWORDS | Uses shared FORMAT_KEYWORDS |
@@ -182,6 +186,12 @@ The pipeline for finding and onboarding new stores follows these steps:
      Ravensburger Play Store Locator, scoped to stores within 25 miles of
      Madrid city centre. It returns street-level addresses from the official
      API.
+   - `discoverers/riftbound_locator.py` — official Riftbound Play Network
+     locator, scoped to stores within 25 miles of Madrid city centre. It uses
+     the same Carde/Hydra helper as the Lorcana locator.
+   - `discoverers/yugioh_locator.py` — official Konami Europe Yu-Gi-Oh!
+     Official Tournament Store locator, scoped to stores within 50 km of
+     Madrid city centre.
    - `discoverers/wizards_locator.py` — Wizards Store Locator, scoped to a
      50 km radius around Madrid city centre.
    - `discoverers/swu_calendar.py` — official Star Wars: Unlimited Organized
