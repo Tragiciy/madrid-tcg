@@ -11,17 +11,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "243",
       "riftbound_locator": "243",
+      "one_piece_events": "12109",
       "wizards_locator": "7817"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -64,6 +67,168 @@
         ],
         "country": "ES",
         "zipcode": "28028",
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461366,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461428,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-18T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461433,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6586443,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-24T10:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461429,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-25T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461434,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461367,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-31T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461368,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-14T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "12109",
+        "event_id": 6461369,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-28T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.1543822386411056,
         "coordinates": {
           "lat": 40.430654,
           "lng": -3.6712819
@@ -113,20 +278,99 @@
   },
   {
     "name": "Collectorage",
-    "address": "calle Hernani 19. 28020. Madrid, Madrid, Madrid, 28020, Spain",
-    "source": "wizards_locator",
+    "address": "Calle Hernani 19 (Local Collectorage), Madrid, 28020, ES",
+    "source": "one_piece_events",
+    "website": "https://collectorage.com/",
+    "external_id": "7836",
+    "matched_existing_store": "Collectorage",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "one_piece_events",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://collectorage.com/",
-    "external_id": "21592",
     "external_ids": {
+      "one_piece_events": "7836",
       "wizards_locator": "21592"
     },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7836",
+        "event_id": 6434942,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-15T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.5145288859778874,
+        "coordinates": {
+          "lat": 40.4483563,
+          "lng": -3.7014509
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7836",
+        "event_id": 6434943,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-18T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.5145288859778874,
+        "coordinates": {
+          "lat": 40.4483563,
+          "lng": -3.7014509
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7836",
+        "event_id": 6434954,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-22T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.5145288859778874,
+        "coordinates": {
+          "lat": 40.4483563,
+          "lng": -3.7014509
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7836",
+        "event_id": 6434944,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-25T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.5145288859778874,
+        "coordinates": {
+          "lat": 40.4483563,
+          "lng": -3.7014509
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -136,11 +380,7 @@
         "url": "https://collectorage.com/",
         "external_id": "21592"
       }
-    ],
-    "matched_existing_store": "Collectorage",
-    "confidence": 0.9,
-    "status": "matched_existing_store",
-    "location_precision": "street"
+    ]
   },
   {
     "name": "Generacion X - Elfo",
@@ -185,6 +425,7 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator",
       "yugioh_locator"
@@ -192,12 +433,14 @@
     "external_ids": {
       "lorcana_locator": "16759",
       "riftbound_locator": "16759",
+      "one_piece_events": "17396",
       "wizards_locator": "18454",
       "yugioh_locator": "452357EU"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound",
       "Yu-Gi-Oh!"
     ],
@@ -244,6 +487,24 @@
         "coordinates": {
           "lat": 40.4875276,
           "lng": -3.3660494
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "17396",
+        "event_id": 6308452,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-16T17:00:00",
+        "city": "Alcalá de Henares",
+        "country": "ES",
+        "distance": 29.618717025343354,
+        "coordinates": {
+          "lat": 40.4873608,
+          "lng": -3.3662583
         }
       },
       {
@@ -305,21 +566,46 @@
     "location_precision": "street"
   },
   {
-    "name": "Goblintrader Madrid-Norte",
-    "address": "C. del Marqués de Lema 7, local 3, Madrid, MD, 28003, Spain",
-    "source": "wizards_locator",
+    "name": "Goblintrader Madrid Norte",
+    "address": "Marques de Lema 7, Local 3, Madrid, 28003, ES",
+    "source": "one_piece_events",
+    "website": "https://www.goblintrader.es/es/norte",
+    "external_id": "17850",
+    "matched_existing_store": "Goblintrader Madrid-Norte",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "one_piece_events",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.goblintrader.es",
-    "external_id": "7224",
     "external_ids": {
+      "one_piece_events": "17850",
       "wizards_locator": "7224"
     },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "17850",
+        "event_id": 6458276,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-16T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 3.211249065793949,
+        "coordinates": {
+          "lat": 40.445613,
+          "lng": -3.7063724
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -329,11 +615,7 @@
         "url": "https://www.goblintrader.es",
         "external_id": "7224"
       }
-    ],
-    "matched_existing_store": "Goblintrader Madrid-Norte",
-    "confidence": 0.9,
-    "status": "matched_existing_store",
-    "location_precision": "street"
+    ]
   },
   {
     "name": "Itaca",
@@ -347,17 +629,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "2628",
       "riftbound_locator": "2628",
+      "one_piece_events": "20191",
       "wizards_locator": "8422"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -406,6 +691,96 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20191",
+        "event_id": 6577590,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-16T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.7547465336864505,
+        "coordinates": {
+          "lat": 40.431350300309,
+          "lng": -3.7118251130984
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20191",
+        "event_id": 6477341,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.7547465336864505,
+        "coordinates": {
+          "lat": 40.431350300309,
+          "lng": -3.7118251130984
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20191",
+        "event_id": 6577589,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-23T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.7547465336864505,
+        "coordinates": {
+          "lat": 40.431350300309,
+          "lng": -3.7118251130984
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20191",
+        "event_id": 6577588,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-30T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.7547465336864505,
+        "coordinates": {
+          "lat": 40.431350300309,
+          "lng": -3.7118251130984
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20191",
+        "event_id": 6477340,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-14T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.7547465336864505,
+        "coordinates": {
+          "lat": 40.431350300309,
+          "lng": -3.7118251130984
+        }
+      },
+      {
         "source": "wizards_locator",
         "type": "official_store_locator",
         "games": [
@@ -415,6 +790,136 @@
         "external_id": "8422"
       }
     ]
+  },
+  {
+    "name": "Júpiter Juegos",
+    "address": "Calle Marques de la Valdavia 95, Avenida de Doctor Severo Ochoa 2, ALCOBENDAS, 28100, ES",
+    "source": "one_piece_events",
+    "sources": [
+      "one_piece_events"
+    ],
+    "games": [
+      "One Piece"
+    ],
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "354",
+    "external_ids": {
+      "one_piece_events": "354"
+    },
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "354",
+        "event_id": 6467347,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "ALCOBENDAS",
+        "country": "ES",
+        "distance": 15.050584266633283,
+        "coordinates": {
+          "lat": 40.5460604,
+          "lng": -3.6510105
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "354",
+        "event_id": 6579989,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T17:30:00",
+        "city": "ALCOBENDAS",
+        "country": "ES",
+        "distance": 15.050584266633283,
+        "coordinates": {
+          "lat": 40.5460604,
+          "lng": -3.6510105
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "354",
+        "event_id": 6579994,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-19T18:00:00",
+        "city": "ALCOBENDAS",
+        "country": "ES",
+        "distance": 15.050584266633283,
+        "coordinates": {
+          "lat": 40.5460604,
+          "lng": -3.6510105
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "354",
+        "event_id": 6579990,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T17:30:00",
+        "city": "ALCOBENDAS",
+        "country": "ES",
+        "distance": 15.050584266633283,
+        "coordinates": {
+          "lat": 40.5460604,
+          "lng": -3.6510105
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "354",
+        "event_id": 6579995,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-26T18:00:00",
+        "city": "ALCOBENDAS",
+        "country": "ES",
+        "distance": 15.050584266633283,
+        "coordinates": {
+          "lat": 40.5460604,
+          "lng": -3.6510105
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "354",
+        "event_id": 6579991,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T17:30:00",
+        "city": "ALCOBENDAS",
+        "country": "ES",
+        "distance": 15.050584266633283,
+        "coordinates": {
+          "lat": 40.5460604,
+          "lng": -3.6510105
+        }
+      }
+    ],
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
     "name": "Kamikaze Freak Shop",
@@ -529,6 +1034,227 @@
     ]
   },
   {
+    "name": "MADAKIBA",
+    "address": "Calle Afrodita, Nº 5, Local 7, VALDEMORO, 28342, ES",
+    "source": "one_piece_events",
+    "website": "https://www.madakiba.com/",
+    "external_id": "78",
+    "matched_existing_store": "MADAKIBA",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "78",
+      "riftbound_locator": "17882",
+      "wizards_locator": "9397"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6361601,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6361607,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-23T10:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6361166,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-23T10:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6361602,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T17:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6361608,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-30T10:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6411755,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-30T10:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6361603,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T17:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6411756,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-13T10:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "78",
+        "event_id": 6411754,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-16T10:00:00",
+        "city": "VALDEMORO",
+        "country": "ES",
+        "distance": 26.203177502717768,
+        "coordinates": {
+          "lat": 40.1817209,
+          "lng": -3.6822898
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "17882",
+        "game_store_id": "54621102-6e3f-4ecf-b52d-8ff2448409ef",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": null,
+        "coordinates": {
+          "lat": 40.1818595,
+          "lng": -3.6827108
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://madakiba.com/",
+        "external_id": "9397"
+      }
+    ]
+  },
+  {
     "name": "MICELION GAMES",
     "address": "8 Avenida del Mediterráneo, Madrid, MD, 28007, ES",
     "source": "lorcana_locator",
@@ -540,6 +1266,7 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "swu_calendar",
       "wizards_locator"
@@ -547,12 +1274,14 @@
     "external_ids": {
       "lorcana_locator": "3371",
       "riftbound_locator": "3371",
+      "one_piece_events": "10622",
       "swu_calendar": "3903",
       "wizards_locator": "17437"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound",
       "Star Wars: Unlimited"
     ],
@@ -602,6 +1331,258 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384796,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-16T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384829,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-16T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384820,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-21T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384825,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384797,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-23T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384830,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-23T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384821,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-28T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384826,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384798,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-30T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384831,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-30T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384799,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-06T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384800,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-13T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384801,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-20T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "10622",
+        "event_id": 6384824,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-15T17:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 2.4958550444270866,
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.6771613
+        }
+      },
+      {
         "source": "swu_calendar",
         "type": "official_event_calendar",
         "game": "Star Wars: Unlimited",
@@ -621,62 +1602,6 @@
         ],
         "url": "https://miceliongames.com",
         "external_id": "17437"
-      }
-    ]
-  },
-  {
-    "name": "Madakiba",
-    "address": "C. Afrodita, 5, local 7, 28341 Valdemoro, Madrid, España",
-    "source": "riftbound_locator",
-    "website": "https://www.madakiba.com",
-    "external_id": "17882",
-    "matched_existing_store": "MADAKIBA",
-    "confidence": 0.9,
-    "status": "matched_existing_store",
-    "location_precision": "street",
-    "sources": [
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "riftbound_locator": "17882",
-      "wizards_locator": "9397"
-    },
-    "games": [
-      "Magic: The Gathering",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "17882",
-        "game_store_id": "54621102-6e3f-4ecf-b52d-8ff2448409ef",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": null,
-        "coordinates": {
-          "lat": 40.1818595,
-          "lng": -3.6827108
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://madakiba.com/",
-        "external_id": "9397"
       }
     ]
   },
@@ -723,6 +1648,7 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator",
       "yugioh_locator"
@@ -730,12 +1656,14 @@
     "external_ids": {
       "lorcana_locator": "3368",
       "riftbound_locator": "3368",
+      "one_piece_events": "1014",
       "wizards_locator": "11202",
       "yugioh_locator": "280026EU"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound",
       "Yu-Gi-Oh!"
     ],
@@ -785,6 +1713,150 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6372584,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T11:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6372589,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-21T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6372585,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6372485,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-24T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6372590,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-28T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6372586,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6443402,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-04T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1014",
+        "event_id": 6443405,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-07T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.954941811579566,
+        "coordinates": {
+          "lat": 40.432412288025,
+          "lng": -3.7144196033478
+        }
+      },
+      {
         "source": "wizards_locator",
         "type": "official_store_locator",
         "games": [
@@ -823,17 +1895,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "3499",
       "riftbound_locator": "3499",
+      "one_piece_events": "1795",
       "wizards_locator": "14068"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -882,6 +1957,24 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1795",
+        "event_id": 6452071,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-30T11:00:00",
+        "city": "Torrejon de Ardoz",
+        "country": "ES",
+        "distance": 19.613328820432606,
+        "coordinates": {
+          "lat": 40.4582474,
+          "lng": -3.4785404
+        }
+      },
+      {
         "source": "wizards_locator",
         "type": "official_store_locator",
         "games": [
@@ -904,6 +1997,7 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator",
       "yugioh_locator"
@@ -911,12 +2005,14 @@
     "external_ids": {
       "lorcana_locator": "3759",
       "riftbound_locator": "3759",
+      "one_piece_events": "265",
       "wizards_locator": "16281",
       "yugioh_locator": "280029EU"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound",
       "Yu-Gi-Oh!"
     ],
@@ -963,6 +2059,114 @@
         "coordinates": {
           "lat": 40.4326428,
           "lng": -3.711473999999999
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "265",
+        "event_id": 6540677,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-17T11:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.8891060176566246,
+        "coordinates": {
+          "lat": 40.4327361,
+          "lng": -3.7115349
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "265",
+        "event_id": 6361230,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T23:15:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.8891060176566246,
+        "coordinates": {
+          "lat": 40.4327361,
+          "lng": -3.7115349
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "265",
+        "event_id": 6361235,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T05:15:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.8891060176566246,
+        "coordinates": {
+          "lat": 40.4327361,
+          "lng": -3.7115349
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "265",
+        "event_id": 6361231,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-23T23:15:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.8891060176566246,
+        "coordinates": {
+          "lat": 40.4327361,
+          "lng": -3.7115349
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "265",
+        "event_id": 6361236,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T05:15:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.8891060176566246,
+        "coordinates": {
+          "lat": 40.4327361,
+          "lng": -3.7115349
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "265",
+        "event_id": 6361232,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T23:15:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.8891060176566246,
+        "coordinates": {
+          "lat": 40.4327361,
+          "lng": -3.7115349
         }
       },
       {
@@ -1166,17 +2370,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "5037",
       "riftbound_locator": "5037",
+      "one_piece_events": "11041",
       "wizards_locator": "17593"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -1222,6 +2429,60 @@
         "coordinates": {
           "lat": 40.4447192,
           "lng": -3.6704943
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "11041",
+        "event_id": 6397901,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-16T18:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 3.862970717524253,
+        "coordinates": {
+          "lat": 40.4410087,
+          "lng": -3.671067
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "11041",
+        "event_id": 6397968,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T11:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 3.862970717524253,
+        "coordinates": {
+          "lat": 40.4410087,
+          "lng": -3.671067
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "11041",
+        "event_id": 6397970,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T11:00:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 3.862970717524253,
+        "coordinates": {
+          "lat": 40.4410087,
+          "lng": -3.671067
         }
       },
       {
@@ -1366,6 +2627,7 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "swu_calendar",
       "wizards_locator"
@@ -1373,12 +2635,14 @@
     "external_ids": {
       "lorcana_locator": "114",
       "riftbound_locator": "114",
+      "one_piece_events": "2011",
       "swu_calendar": "2211",
       "wizards_locator": "11845"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound",
       "Star Wars: Unlimited"
     ],
@@ -1428,6 +2692,42 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2011",
+        "event_id": 6434973,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:45:00",
+        "city": "ALCALA DE HENARES",
+        "country": "ES",
+        "distance": 30.18300415167939,
+        "coordinates": {
+          "lat": 40.4860661,
+          "lng": -3.3588969
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2011",
+        "event_id": 6434974,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:45:00",
+        "city": "ALCALA DE HENARES",
+        "country": "ES",
+        "distance": 30.18300415167939,
+        "coordinates": {
+          "lat": 40.4860661,
+          "lng": -3.3588969
+        }
+      },
+      {
         "source": "swu_calendar",
         "type": "official_event_calendar",
         "game": "Star Wars: Unlimited",
@@ -1452,27 +2752,48 @@
   },
   {
     "name": "Aquijabara Store",
-    "address": "Avenida de Portugal, 73, Local 4, MOSTOLES, M, 28934, ES",
-    "source": "riftbound_locator",
+    "address": "Avenida de Portugal, 73, Local 4, Móstoles, 28934, ES",
+    "source": "one_piece_events",
     "website": null,
-    "external_id": "36433",
+    "external_id": "19961",
     "matched_existing_store": null,
     "confidence": 0.0,
     "status": "candidate_new_store",
     "location_precision": "street",
     "sources": [
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
+      "one_piece_events": "19961",
       "riftbound_locator": "36433",
       "wizards_locator": "19306"
     },
     "games": [
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "19961",
+        "event_id": 6383617,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-28T17:00:00",
+        "city": "Móstoles",
+        "country": "ES",
+        "distance": 17.961408943588598,
+        "coordinates": {
+          "lat": 40.3207437,
+          "lng": -3.8742533
+        }
+      },
       {
         "source": "riftbound_locator",
         "type": "official_store_locator",
@@ -1662,28 +2983,139 @@
     "location_precision": "street"
   },
   {
-    "name": "Factory Cards",
-    "address": "Avenida Canillejas a Vicalvaro 61, local bajo 6, Madrid, M, 28022, ES",
-    "source": "riftbound_locator",
-    "website": "https://www.factorycardstcg.com",
-    "external_id": "17290",
+    "name": "Factory Cards.",
+    "address": "avenida Canillejas a vicalvaro 61, Madrid, 28022, ES",
+    "source": "one_piece_events",
+    "website": "Https://Www.factorycardstcg.com",
+    "external_id": "18341",
     "matched_existing_store": null,
     "confidence": 0.0,
     "status": "candidate_new_store",
     "location_precision": "street",
     "sources": [
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
+      "one_piece_events": "18341",
       "riftbound_locator": "17290",
       "wizards_locator": "20295"
     },
     "games": [
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "18341",
+        "event_id": 6517129,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-15T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 8.02321666869292,
+        "coordinates": {
+          "lat": 40.4355249,
+          "lng": -3.6122621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3451",
+        "event_id": 6392173,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 8.02321666869292,
+        "coordinates": {
+          "lat": 40.4355249,
+          "lng": -3.6122621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3451",
+        "event_id": 6392182,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-18T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 8.02321666869292,
+        "coordinates": {
+          "lat": 40.4355249,
+          "lng": -3.6122621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "18341",
+        "event_id": 6517130,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 8.02321666869292,
+        "coordinates": {
+          "lat": 40.4355249,
+          "lng": -3.6122621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "18341",
+        "event_id": 6465477,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 8.02321666869292,
+        "coordinates": {
+          "lat": 40.4355249,
+          "lng": -3.6122621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3451",
+        "event_id": 6392183,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-25T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 8.02321666869292,
+        "coordinates": {
+          "lat": 40.4355249,
+          "lng": -3.6122621
+        }
+      },
       {
         "source": "riftbound_locator",
         "type": "official_store_locator",
@@ -1718,21 +3150,176 @@
     ]
   },
   {
+    "name": "GALLEGOS DE LA TORRE S.L. (CRISIS ALCORCÓN JUEGOS)",
+    "address": "C/ Princesa Doña Sofía, nº 3. Local 2. Posterior, Entrada al local por Plaza Príncipes de España, s/n, Alcorcón, 28924, ES",
+    "source": "one_piece_events",
+    "sources": [
+      "one_piece_events"
+    ],
+    "games": [
+      "One Piece"
+    ],
+    "website": "https://www.juegoscrisis.com/",
+    "external_id": "5296",
+    "external_ids": {
+      "one_piece_events": "5296"
+    },
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5296",
+        "event_id": 6370508,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-16T17:00:00",
+        "city": "Alcorcón",
+        "country": "ES",
+        "distance": 12.296551780487654,
+        "coordinates": {
+          "lat": 40.3496837,
+          "lng": -3.8191818
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5296",
+        "event_id": 6370509,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-23T17:00:00",
+        "city": "Alcorcón",
+        "country": "ES",
+        "distance": 12.296551780487654,
+        "coordinates": {
+          "lat": 40.3496837,
+          "lng": -3.8191818
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5296",
+        "event_id": 6443293,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-23T17:00:00",
+        "city": "Alcorcón",
+        "country": "ES",
+        "distance": 12.296551780487654,
+        "coordinates": {
+          "lat": 40.3496837,
+          "lng": -3.8191818
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5296",
+        "event_id": 6370510,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-30T17:00:00",
+        "city": "Alcorcón",
+        "country": "ES",
+        "distance": 12.296551780487654,
+        "coordinates": {
+          "lat": 40.3496837,
+          "lng": -3.8191818
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5296",
+        "event_id": 6443294,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-13T17:00:00",
+        "city": "Alcorcón",
+        "country": "ES",
+        "distance": 12.296551780487654,
+        "coordinates": {
+          "lat": 40.3496837,
+          "lng": -3.8191818
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5296",
+        "event_id": 6443297,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-27T17:00:00",
+        "city": "Alcorcón",
+        "country": "ES",
+        "distance": 12.296551780487654,
+        "coordinates": {
+          "lat": 40.3496837,
+          "lng": -3.8191818
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street"
+  },
+  {
     "name": "Galaxy-comics",
     "address": "C/ Suecia, 4, Madrid, Madrid, 28022, Spain",
     "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
     "website": "https://m.facebook.com/p/Galaxy-Comics-100063759844587/",
     "external_id": "11226",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "wizards_locator"
+    ],
     "external_ids": {
+      "one_piece_events": "20641",
       "wizards_locator": "11226"
     },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20641",
+        "event_id": 6445576,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-06T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 8.03284052473541,
+        "coordinates": {
+          "lat": 40.4221595,
+          "lng": -3.609172
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1742,11 +3329,7 @@
         "url": "https://m.facebook.com/p/Galaxy-Comics-100063759844587/",
         "external_id": "11226"
       }
-    ],
-    "matched_existing_store": null,
-    "confidence": 0.0,
-    "status": "candidate_new_store",
-    "location_precision": "street"
+    ]
   },
   {
     "name": "Gen X Las Musas",
@@ -1905,6 +3488,46 @@
     ]
   },
   {
+    "name": "Isekai TCG Store",
+    "address": "Avenida Torres Bellas 4, Alcorcón, 28923, ES",
+    "source": "one_piece_events",
+    "sources": [
+      "one_piece_events"
+    ],
+    "games": [
+      "One Piece"
+    ],
+    "website": "https://isekai-alcorcon.es/es",
+    "external_id": "5434",
+    "external_ids": {
+      "one_piece_events": "5434"
+    },
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5434",
+        "event_id": 6972055,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-17T10:00:00",
+        "city": "Alcorcón",
+        "country": "ES",
+        "distance": 12.44420131741599,
+        "coordinates": {
+          "lat": 40.348692568396,
+          "lng": -3.8203802704811
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street"
+  },
+  {
     "name": "Juegos Crisis",
     "address": "3 Calle Princesa Doña Sofía, Alcorcón, MD, 28924, ES",
     "source": "riftbound_locator",
@@ -2029,17 +3652,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "2782",
       "riftbound_locator": "2782",
+      "one_piece_events": "15154",
       "wizards_locator": "14264"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -2088,59 +3714,111 @@
         }
       },
       {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.kingdomwargames.com/",
-        "external_id": "14264"
-      }
-    ]
-  },
-  {
-    "name": "LUDOTECA MALDITA",
-    "address": "Calle Vicente Espinel 4 local derecho, Madrid, M, 28017, ES",
-    "source": "riftbound_locator",
-    "website": "https://www.ludotecamaldita.com/",
-    "external_id": "17400",
-    "matched_existing_store": null,
-    "confidence": 0.0,
-    "status": "candidate_new_store",
-    "location_precision": "street",
-    "sources": [
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "riftbound_locator": "17400",
-      "wizards_locator": "21613"
-    },
-    "games": [
-      "Magic: The Gathering",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "17400",
-        "game_store_id": "d4393a86-a315-4b11-a67d-7cc3cb8248f1",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "15154",
+        "event_id": 6412675,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T11:00:00",
+        "city": "Madrid",
         "country": "ES",
-        "zipcode": "28017",
+        "distance": 5.381099372280987,
         "coordinates": {
-          "lat": 40.4359456,
-          "lng": -3.6412904
+          "lat": 40.4319099,
+          "lng": -3.6434082
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "15154",
+        "event_id": 6412904,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T11:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.381099372280987,
+        "coordinates": {
+          "lat": 40.4319099,
+          "lng": -3.6434082
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "15154",
+        "event_id": 6412676,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T11:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.381099372280987,
+        "coordinates": {
+          "lat": 40.4319099,
+          "lng": -3.6434082
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "15154",
+        "event_id": 6412677,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T11:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.381099372280987,
+        "coordinates": {
+          "lat": 40.4319099,
+          "lng": -3.6434082
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "15154",
+        "event_id": 6412905,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-31T11:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.381099372280987,
+        "coordinates": {
+          "lat": 40.4319099,
+          "lng": -3.6434082
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "15154",
+        "event_id": 6412906,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-14T11:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.381099372280987,
+        "coordinates": {
+          "lat": 40.4319099,
+          "lng": -3.6434082
         }
       },
       {
@@ -2149,8 +3827,8 @@
         "games": [
           "Magic: The Gathering"
         ],
-        "url": "https://www.ludotecamaldita.com",
-        "external_id": "21613"
+        "url": "https://www.kingdomwargames.com/",
+        "external_id": "14264"
       }
     ]
   },
@@ -2280,28 +3958,432 @@
     ]
   },
   {
-    "name": "Ludus Belli",
-    "address": "C. Zaragoza, 14, bajos local 2, 28934 Móstoles, Madrid, España",
-    "source": "riftbound_locator",
-    "website": "https://www.ludusbelli.com/",
-    "external_id": "17198",
+    "name": "Ludoteca Maldita",
+    "address": "Calle Gutierre de Cetina 12 Local Izquierdo, Madrid, 28017, ES",
+    "source": "one_piece_events",
+    "website": "https://www.ludotecamaldita.com",
+    "external_id": "13689",
     "matched_existing_store": null,
     "confidence": 0.0,
     "status": "candidate_new_store",
     "location_precision": "street",
     "sources": [
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
+      "one_piece_events": "13689",
+      "riftbound_locator": "17400",
+      "wizards_locator": "21613"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400509,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6321533,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-19T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400511,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-21T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400510,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6321534,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-26T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400512,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-28T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6538047,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-30T17:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400513,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-04T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400514,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-11T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400515,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-18T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "13689",
+        "event_id": 6400516,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-25T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.3660952264000805,
+        "coordinates": {
+          "lat": 40.4336249,
+          "lng": -3.6443841
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "17400",
+        "game_store_id": "d4393a86-a315-4b11-a67d-7cc3cb8248f1",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28017",
+        "coordinates": {
+          "lat": 40.4359456,
+          "lng": -3.6412904
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.ludotecamaldita.com",
+        "external_id": "21613"
+      }
+    ]
+  },
+  {
+    "name": "Ludus Belli",
+    "address": "C/ Zaragoza 14, bajos local Ludus Belli, Mostoles, 28934, ES",
+    "source": "one_piece_events",
+    "website": "https://www.ludusbelli.com/",
+    "external_id": "1302",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "1302",
       "riftbound_locator": "17198",
       "wizards_locator": "15952"
     },
     "games": [
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6541959,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-16T10:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6443263,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-16T17:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6443259,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-21T18:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6443264,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-23T10:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6443260,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-28T18:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6443265,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-30T10:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6445368,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-27T10:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1302",
+        "event_id": 6445367,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-13T10:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 17.553133098734023,
+        "coordinates": {
+          "lat": 40.3225607,
+          "lng": -3.8700242
+        }
+      },
       {
         "source": "riftbound_locator",
         "type": "official_store_locator",
@@ -2347,14 +4429,17 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator"
     ],
     "external_ids": {
       "lorcana_locator": "3365",
-      "riftbound_locator": "3365"
+      "riftbound_locator": "3365",
+      "one_piece_events": "3983"
     },
     "games": [
       "Lorcana",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -2400,6 +4485,96 @@
         "coordinates": {
           "lat": 40.3142861,
           "lng": -3.7277088
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3983",
+        "event_id": 6332875,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T17:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 11.613495563982479,
+        "coordinates": {
+          "lat": 40.3140686,
+          "lng": -3.7285123
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3983",
+        "event_id": 6332876,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T17:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 11.613495563982479,
+        "coordinates": {
+          "lat": 40.3140686,
+          "lng": -3.7285123
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3983",
+        "event_id": 6488652,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-27T17:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 11.613495563982479,
+        "coordinates": {
+          "lat": 40.3140686,
+          "lng": -3.7285123
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3983",
+        "event_id": 6488653,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-10T17:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 11.613495563982479,
+        "coordinates": {
+          "lat": 40.3140686,
+          "lng": -3.7285123
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "3983",
+        "event_id": 6488654,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-24T17:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 11.613495563982479,
+        "coordinates": {
+          "lat": 40.3140686,
+          "lng": -3.7285123
         }
       }
     ]
@@ -2598,6 +4773,287 @@
     "location_precision": "street"
   },
   {
+    "name": "TABLERUM",
+    "address": "Lago Constanza 10, L10, MADRID, 28017, ES",
+    "source": "one_piece_events",
+    "website": "https://tablerum.com",
+    "external_id": "6628",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "one_piece_events"
+    ],
+    "external_ids": {
+      "lorcana_locator": "4504",
+      "one_piece_events": "6628"
+    },
+    "games": [
+      "Lorcana",
+      "One Piece"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "4504",
+        "game_store_id": "28d21cce-15d3-48e4-9d99-125a70e82769",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28017",
+        "coordinates": {
+          "lat": 40.4301264,
+          "lng": -3.6461133
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468534,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-15T17:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468539,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-16T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468689,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468535,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468540,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-23T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468690,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468536,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468541,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-30T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468455,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-30T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468691,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-31T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468692,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-07T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468693,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-21T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "6628",
+        "event_id": 6468694,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-28T11:30:00",
+        "city": "MADRID",
+        "country": "ES",
+        "distance": 5.02953622529727,
+        "coordinates": {
+          "lat": 40.4323467,
+          "lng": -3.6480031
+        }
+      }
+    ]
+  },
+  {
     "name": "TCG Academy Madrid",
     "address": "Av. de la Constitución, 90, 28850 Torrejón de Ardoz, Madrid, Spain",
     "source": "riftbound_locator",
@@ -2709,17 +5165,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "4603",
       "riftbound_locator": "4603",
+      "one_piece_events": "19692",
       "wizards_locator": "6616"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -2768,6 +5227,60 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "19692",
+        "event_id": 6382709,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-21T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.32901414889774,
+        "coordinates": {
+          "lat": 40.433356,
+          "lng": -3.6447206
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "19692",
+        "event_id": 6382710,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-28T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.32901414889774,
+        "coordinates": {
+          "lat": 40.433356,
+          "lng": -3.6447206
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "19692",
+        "event_id": 6383384,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-13T10:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.32901414889774,
+        "coordinates": {
+          "lat": 40.433356,
+          "lng": -3.6447206
+        }
+      },
+      {
         "source": "wizards_locator",
         "type": "official_store_locator",
         "games": [
@@ -2778,41 +5291,127 @@
     ]
   },
   {
-    "name": "Tablerum",
-    "address": "Calle del Lago Constanza, 10, L10, Madrid, MD, 28017, ES",
-    "source": "lorcana_locator",
+    "name": "Troopertoys",
+    "address": "Troopertoys, Madrid, 28017, ES",
+    "source": "one_piece_events",
     "sources": [
-      "lorcana_locator"
+      "one_piece_events"
     ],
     "games": [
-      "Lorcana"
+      "One Piece"
     ],
-    "website": null,
-    "external_id": "4504",
+    "website": "https://troopertoys.com/es/",
+    "external_id": "5632",
     "external_ids": {
-      "lorcana_locator": "4504"
+      "one_piece_events": "5632"
     },
     "evidence": [
       {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "4504",
-        "game_store_id": "28d21cce-15d3-48e4-9d99-125a70e82769",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5632",
+        "event_id": 6324514,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-18T18:00:00",
+        "city": "Madrid",
         "country": "ES",
-        "zipcode": "28017",
+        "distance": 5.70211951762537,
         "coordinates": {
-          "lat": 40.4301264,
-          "lng": -3.6461133
+          "lat": 40.435811,
+          "lng": -3.641236
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5632",
+        "event_id": 6324518,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.70211951762537,
+        "coordinates": {
+          "lat": 40.435811,
+          "lng": -3.641236
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5632",
+        "event_id": 6394317,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-22T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.70211951762537,
+        "coordinates": {
+          "lat": 40.435811,
+          "lng": -3.641236
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5632",
+        "event_id": 6324515,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-25T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.70211951762537,
+        "coordinates": {
+          "lat": 40.435811,
+          "lng": -3.641236
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5632",
+        "event_id": 6324519,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.70211951762537,
+        "coordinates": {
+          "lat": 40.435811,
+          "lng": -3.641236
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5632",
+        "event_id": 6394318,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-29T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 5.70211951762537,
+        "coordinates": {
+          "lat": 40.435811,
+          "lng": -3.641236
         }
       }
     ],
@@ -3268,14 +5867,17 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator"
     ],
     "external_ids": {
       "lorcana_locator": "18686",
-      "riftbound_locator": "18686"
+      "riftbound_locator": "18686",
+      "one_piece_events": "5877"
     },
     "games": [
       "Lorcana",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -3321,6 +5923,24 @@
         "coordinates": {
           "lat": 40.3075048,
           "lng": -3.7338981
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5877",
+        "event_id": 6976457,
+        "event_series_id": "1240",
+        "event_series_title": "Instant Event",
+        "event_date": "2026-05-15T19:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 12.302008179313322,
+        "coordinates": {
+          "lat": 40.3084342,
+          "lng": -3.7330543
         }
       }
     ]
@@ -3501,6 +6121,256 @@
     "location_precision": "street"
   },
   {
+    "name": "Jupiter Central",
+    "address": "C/ Manuel Silvela 8 LOCAL, Madrid, 28010, ES",
+    "source": "one_piece_events",
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "264",
+    "matched_existing_store": "Goblintrader Central",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "264",
+      "wizards_locator": "8420"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362300,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458389,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362305,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362301,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458390,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362306,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362302,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458391,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-31T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6577265,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-31T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458392,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-07T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458393,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-14T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458394,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-21T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.jupiterjuegos.com/pagina/jupiter-madrid",
+        "external_id": "8420"
+      }
+    ]
+  },
+  {
     "name": "Júpiter Alcobendas",
     "address": "95 Calle del Marqués de la Valdavia, Local 2, Alcobendas, MD, 28100, ES",
     "source": "lorcana_locator",
@@ -3568,37 +6438,6 @@
         }
       }
     ]
-  },
-  {
-    "name": "Júpiter Central",
-    "address": "C / Manuel Silvela, 8 , Madrid, M, 28010, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.jupiterjuegos.com/pagina/jupiter-madrid",
-    "external_id": "8420",
-    "external_ids": {
-      "wizards_locator": "8420"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.jupiterjuegos.com/pagina/jupiter-madrid",
-        "external_id": "8420"
-      }
-    ],
-    "matched_existing_store": "Goblintrader Central",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
   },
   {
     "name": "Júpiter Juegos Alcorcón",
@@ -3782,6 +6621,82 @@
     "location_precision": "street"
   },
   {
+    "name": "Krucis Games",
+    "address": "Krucis Games, Ontígola, 45340, ES",
+    "source": "one_piece_events",
+    "sources": [
+      "one_piece_events"
+    ],
+    "games": [
+      "One Piece"
+    ],
+    "website": null,
+    "external_id": "7561",
+    "external_ids": {
+      "one_piece_events": "7561"
+    },
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7561",
+        "event_id": 6478507,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-18T16:00:00",
+        "city": "Ontígola",
+        "country": "ES",
+        "distance": 46.11921983131411,
+        "coordinates": {
+          "lat": 40.01451300202,
+          "lng": -3.5715984043621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7561",
+        "event_id": 6478508,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-25T16:00:00",
+        "city": "Ontígola",
+        "country": "ES",
+        "distance": 46.11921983131411,
+        "coordinates": {
+          "lat": 40.01451300202,
+          "lng": -3.5715984043621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7561",
+        "event_id": 6478458,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-29T16:00:00",
+        "city": "Ontígola",
+        "country": "ES",
+        "distance": 46.11921983131411,
+        "coordinates": {
+          "lat": 40.01451300202,
+          "lng": -3.5715984043621
+        }
+      }
+    ],
+    "matched_existing_store": "Gladius Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street"
+  },
+  {
     "name": "La Guarida del vigilante",
     "address": "29 C. de Sánchez Barcáiztegui, Madrid, MD, 28007, Spain",
     "source": "wizards_locator",
@@ -3814,20 +6729,171 @@
   },
   {
     "name": "Libertalia Juegos",
-    "address": "Calle Badajoz, 32, Móstoles, M, 28931, Spain",
-    "source": "wizards_locator",
+    "address": "C/ Badajoz 32, Mostoles, 28931, ES",
+    "source": "one_piece_events",
+    "website": "https://libertaliajuegos.com/",
+    "external_id": "1918",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
     "sources": [
+      "one_piece_events",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.instagram.com/libertaliajuegos/",
-    "external_id": "14361",
     "external_ids": {
+      "one_piece_events": "1918",
       "wizards_locator": "14361"
     },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434166,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-18T18:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6321285,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6349915,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-23T10:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434168,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T10:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434167,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-25T18:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6321286,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434169,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-31T10:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6321284,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-15T17:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -3837,11 +6903,7 @@
         "url": "https://www.instagram.com/libertaliajuegos/",
         "external_id": "14361"
       }
-    ],
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
+    ]
   },
   {
     "name": "Medusa Cómics",
@@ -3855,17 +6917,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "10644",
       "riftbound_locator": "10644",
+      "one_piece_events": "2042",
       "wizards_locator": "18456"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -3914,6 +6979,96 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6487035,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6312351,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T17:30:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6487036,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T17:00:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6312352,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T17:30:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6312353,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T17:30:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
         "source": "wizards_locator",
         "type": "official_store_locator",
         "games": [
@@ -3936,14 +7091,17 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator"
     ],
     "external_ids": {
       "lorcana_locator": "3750",
-      "riftbound_locator": "3750"
+      "riftbound_locator": "3750",
+      "one_piece_events": "2754"
     },
     "games": [
       "Lorcana",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -3990,25 +7148,176 @@
           "lat": 40.5535039,
           "lng": -3.6601676
         }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2754",
+        "event_id": 6442824,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-31T11:00:00",
+        "city": "Alcobendas",
+        "country": "ES",
+        "distance": 15.659191859306468,
+        "coordinates": {
+          "lat": 40.553664665229,
+          "lng": -3.660189786586
+        }
       }
     ]
   },
   {
     "name": "Ohana Games",
-    "address": "Avenida del Mediterraneo, 38, Madrid, M, 28007, Spain",
-    "source": "wizards_locator",
+    "address": "Calle Sánchez Barcaiztegui, Nº29, Madrid, 28007, ES",
+    "source": "one_piece_events",
+    "website": "https://www.ohanagamesmadrid.com/",
+    "external_id": "677",
+    "matched_existing_store": "Panda Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
     "sources": [
+      "one_piece_events",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.ohanagamesmadrid.com/",
-    "external_id": "12959",
     "external_ids": {
+      "one_piece_events": "677",
       "wizards_locator": "12959"
     },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
     "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371076,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-15T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6475426,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-19T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371072,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371077,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6475427,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-26T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371073,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371078,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -4018,11 +7327,7 @@
         "url": "https://www.ohanagamesmadrid.com/",
         "external_id": "12959"
       }
-    ],
-    "matched_existing_store": "Panda Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
+    ]
   },
   {
     "name": "Portal Juegos",
@@ -4036,17 +7341,20 @@
     "location_precision": "street",
     "sources": [
       "lorcana_locator",
+      "one_piece_events",
       "riftbound_locator",
       "wizards_locator"
     ],
     "external_ids": {
       "lorcana_locator": "3953",
       "riftbound_locator": "3953",
+      "one_piece_events": "20564",
       "wizards_locator": "15914"
     },
     "games": [
       "Lorcana",
       "Magic: The Gathering",
+      "One Piece",
       "Riftbound"
     ],
     "evidence": [
@@ -4095,6 +7403,78 @@
         }
       },
       {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20564",
+        "event_id": 6424689,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:00:00",
+        "city": "Collado Villalba",
+        "country": "ES",
+        "distance": 34.34783982111867,
+        "coordinates": {
+          "lat": 40.628024476793,
+          "lng": -4.0003108978271
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20564",
+        "event_id": 6424641,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-22T17:00:00",
+        "city": "Collado Villalba",
+        "country": "ES",
+        "distance": 34.34783982111867,
+        "coordinates": {
+          "lat": 40.628024476793,
+          "lng": -4.0003108978271
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20564",
+        "event_id": 6424690,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:00:00",
+        "city": "Collado Villalba",
+        "country": "ES",
+        "distance": 34.34783982111867,
+        "coordinates": {
+          "lat": 40.628024476793,
+          "lng": -4.0003108978271
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20564",
+        "event_id": 6424688,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-15T17:00:00",
+        "city": "Collado Villalba",
+        "country": "ES",
+        "distance": 34.34783982111867,
+        "coordinates": {
+          "lat": 40.628024476793,
+          "lng": -4.0003108978271
+        }
+      },
+      {
         "source": "wizards_locator",
         "type": "official_store_locator",
         "games": [
@@ -4106,59 +7486,62 @@
     ]
   },
   {
-    "name": "TITAN GAMES",
-    "address": "Av. Buenos Aires, 25, 28907 Getafe, Madrid, Spain",
-    "source": "riftbound_locator",
-    "website": null,
-    "external_id": "18900",
-    "matched_existing_store": "Panda Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
+    "name": "TCG Games",
+    "address": "Pº de Recoletos 5, Madrid, 28004, ES",
+    "source": "one_piece_events",
     "sources": [
-      "riftbound_locator",
-      "wizards_locator"
+      "one_piece_events"
     ],
-    "external_ids": {
-      "riftbound_locator": "18900",
-      "wizards_locator": "11651"
-    },
     "games": [
-      "Magic: The Gathering",
-      "Riftbound"
+      "One Piece"
     ],
+    "website": null,
+    "external_id": "2650",
+    "external_ids": {
+      "one_piece_events": "2650"
+    },
     "evidence": [
       {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "18900",
-        "game_store_id": "efbd8849-921f-476e-b609-8329a283ff05",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play"
-        ],
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2650",
+        "event_id": 6465436,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-18T06:00:00",
+        "city": "Madrid",
         "country": "ES",
-        "zipcode": "28907",
+        "distance": 0.9955224890164157,
         "coordinates": {
-          "lat": 40.32801929980569,
-          "lng": -3.7365841128974853
+          "lat": 40.4206907,
+          "lng": -3.6932088
         }
       },
       {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "external_id": "11651"
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2650",
+        "event_id": 6465415,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-25T17:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 0.9955224890164157,
+        "coordinates": {
+          "lat": 40.4206907,
+          "lng": -3.6932088
+        }
       }
-    ]
+    ],
+    "matched_existing_store": "Gladius Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Three Stones Games",
@@ -4203,6 +7586,100 @@
     "confidence": 0.65,
     "status": "possible_duplicate",
     "location_precision": "street"
+  },
+  {
+    "name": "Titan games",
+    "address": "Avenida Buenos Aires 25, Getafe, 28907, ES",
+    "source": "one_piece_events",
+    "website": null,
+    "external_id": "5088",
+    "matched_existing_store": "Panda Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "5088",
+      "riftbound_locator": "18900",
+      "wizards_locator": "11651"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5088",
+        "event_id": 6494983,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T18:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 10.251904297327881,
+        "coordinates": {
+          "lat": 40.3280112,
+          "lng": -3.7364027
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5088",
+        "event_id": 6494984,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T18:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 10.251904297327881,
+        "coordinates": {
+          "lat": 40.3280112,
+          "lng": -3.7364027
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "18900",
+        "game_store_id": "efbd8849-921f-476e-b609-8329a283ff05",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28907",
+        "coordinates": {
+          "lat": 40.32801929980569,
+          "lng": -3.7365841128974853
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "external_id": "11651"
+      }
+    ]
   },
   {
     "name": "Tsuki Center",

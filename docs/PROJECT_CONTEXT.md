@@ -189,6 +189,10 @@ The pipeline for finding and onboarding new stores follows these steps:
    - `discoverers/riftbound_locator.py` — official Riftbound Play Network
      locator, scoped to stores within 25 miles of Madrid city centre. It uses
      the same Carde/Hydra helper as the Lorcana locator.
+   - `discoverers/one_piece_events.py` — official Bandai TCG+ One Piece event
+     locator, scoped to upcoming events within 50 km of Madrid city centre.
+     This is event-based: stores are discovered only when they have future
+     One Piece events in Bandai TCG+.
    - `discoverers/yugioh_locator.py` — official Konami Europe Yu-Gi-Oh!
      Official Tournament Store locator, scoped to stores within 50 km of
      Madrid city centre.
