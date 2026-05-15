@@ -49,6 +49,9 @@ Core user question: **"What can I play this week in my city?"**
 - Scraper stats + anomaly detection → `public/events_stats.json`
 - Discovery pipeline: `tools/discover_stores.py` → `tools/audit_store_event_pages.py`
   → `tools/build_scraper_targets.py` → `data/scraper_targets.json`
+  - Discoverers currently include Wizards Store Locator, Disney Lorcana /
+    Ravensburger Play Store Locator, and Star Wars: Unlimited Organized Play
+    Calendar
 - GitHub Actions: daily `update.yml` cron (06:00 UTC)
 
 ---
@@ -175,10 +178,16 @@ potentially a "Browse stores" section.
 One Piece–only stores).
 
 **New discoverer modules:**
+- ✅ `discoverers/lorcana_locator.py` — Ravensburger Play / Disney Lorcana
+  locator, filtered to Madrid-area stores
+- ✅ `discoverers/swu_calendar.py` — Star Wars: Unlimited Organized Play
+  Calendar, filtered to Spain/Madrid entries
 - `discoverers/pokemon_locator.py` — Pokémon Play locator API
   (`op.pokemon-card.com` or the Play! Pokémon store finder)
 - `discoverers/one_piece_locator.py` — Bandai Namco official store finder
-- `discoverers/swu_locator.py` — Star Wars: Unlimited OP locator if available
+- `discoverers/riftbound_locator.py` — Riftbound Play Network locator
+- `discoverers/fab_locator.py` — Flesh and Blood GEM locator
+- `discoverers/yugioh_locator.py` — Konami OTS / tournament store locator
 
 Each follows the same `discover() -> list[dict]` interface as the existing
 `wizards_locator.py`. `tools/discover_stores.py` auto-discovers them.
