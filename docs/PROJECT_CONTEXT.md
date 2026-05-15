@@ -167,10 +167,28 @@ The pipeline for finding and onboarding new stores follows these steps:
    - `evidence` — source records explaining why the store is a candidate
      (official locator hit, event locator hit, etc.).
    - `games` — canonical games inferred from all sources.
+   - `location_precision` — `street` by default; discoverers that only expose
+     city-level location data should return `city`.
 
    New discoverers should return canonical game names where possible. Common
    aliases such as `MTG`, `SWU`, and `FAB` are normalized by
-   `tools/discover_stores.py`.
+   `tools/discover_stores.py`. Cross-source merge is intentionally limited to
+   exact normalized store-name matches; fuzzy candidate review still happens
+   through `possible_duplicate`.
+
+   Current discoverers:
+
+   - `discoverers/lorcana_locator.py` — official Disney Lorcana /
+     Ravensburger Play Store Locator, scoped to stores within 25 miles of
+     Madrid city centre. It returns street-level addresses from the official
+     API.
+   - `discoverers/wizards_locator.py` — Wizards Store Locator, scoped to a
+     50 km radius around Madrid city centre.
+   - `discoverers/swu_calendar.py` — official Star Wars: Unlimited Organized
+     Play Calendar, scoped to Spain/Madrid rows. The SWU calendar exposes
+     city-level location data rather than street addresses, so its candidates
+     are marked with `location_precision: "city"` and mostly serve as
+     provenance for matching known stores and review.
 
 2. **Event-page audit** — `tools/audit_store_event_pages.py` reads
    `data/candidate_stores.json`, fetches each candidate's website, detects event

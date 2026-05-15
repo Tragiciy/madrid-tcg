@@ -1,20 +1,49 @@
 [
   {
     "name": "Arte 9",
-    "address": "Francisco Silvela, 21, Madrid, M, 28028, Spain",
-    "source": "wizards_locator",
+    "address": "21 Calle de Francisco Silvela, Madrid, MD, 28028, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.arte9.com",
+    "external_id": "243",
+    "matched_existing_store": "Arte 9",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://arte9.com/",
-    "external_id": "7817",
     "external_ids": {
+      "lorcana_locator": "243",
       "wizards_locator": "7817"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "243",
+        "game_store_id": "a133f8ba-36b6-4ff8-b791-b008429dacf6",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28028",
+        "coordinates": {
+          "lat": 40.430654,
+          "lng": -3.6712819
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -24,10 +53,7 @@
         "url": "https://arte9.com/",
         "external_id": "7817"
       }
-    ],
-    "matched_existing_store": "Arte 9",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "Asedio Gaming",
@@ -57,7 +83,8 @@
     ],
     "matched_existing_store": "Asedio Gaming",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
     "name": "Collectorage",
@@ -87,7 +114,8 @@
     ],
     "matched_existing_store": "Collectorage",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
     "name": "Generacion X - Elfo",
@@ -117,24 +145,54 @@
     ],
     "matched_existing_store": "Generacion X - Elfo",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
     "name": "Gladius Games",
-    "address": "Calle Cánovas del Castillo, 5 , Local 6, Alcalá de Henares, Madrid, 28807, Spain",
-    "source": "wizards_locator",
+    "address": "C. Cánovas del Castillo, Calle Cánovas del Castillo, 5 , Alcalá de Henares, MD, 28807, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.gladiusgames.net",
+    "external_id": "16759",
+    "matched_existing_store": "Gladius Games",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://gladiusgames.net/",
-    "external_id": "18454",
     "external_ids": {
+      "lorcana_locator": "16759",
       "wizards_locator": "18454"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "16759",
+        "game_store_id": "581d8e44-740a-42c1-86dc-15f86d896866",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28807",
+        "coordinates": {
+          "lat": 40.4875276,
+          "lng": -3.3660494
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -144,10 +202,7 @@
         "url": "https://gladiusgames.net/",
         "external_id": "18454"
       }
-    ],
-    "matched_existing_store": "Gladius Games",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "Goblintrader Central",
@@ -177,7 +232,8 @@
     ],
     "matched_existing_store": "Goblintrader Central",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
     "name": "Goblintrader Madrid-Norte",
@@ -207,24 +263,54 @@
     ],
     "matched_existing_store": "Goblintrader Madrid-Norte",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
     "name": "Itaca",
-    "address": "Calle Blasco de Garay, 15 - Local 1, Madrid, M, 28015, Spain",
-    "source": "wizards_locator",
+    "address": "15 C. de Blasco de Garay, local 1, Chamberí, MD, 28015, ES",
+    "source": "lorcana_locator",
+    "website": "https://Itaca.gg",
+    "external_id": "2628",
+    "matched_existing_store": "Ítaca",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.itaca.gg",
-    "external_id": "8422",
     "external_ids": {
+      "lorcana_locator": "2628",
       "wizards_locator": "8422"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2628",
+        "game_store_id": "55daac0d-7756-43a8-af4e-1ca961d4e0c1",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28015",
+        "coordinates": {
+          "lat": 40.4315552,
+          "lng": -3.711902
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -234,10 +320,7 @@
         "url": "https://www.itaca.gg",
         "external_id": "8422"
       }
-    ],
-    "matched_existing_store": "Ítaca",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "Kamikaze Freak Shop",
@@ -267,24 +350,54 @@
     ],
     "matched_existing_store": "Kamikaze Freak Shop",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
     "name": "La Guarida Juegos",
     "address": "C \\ Peñuelas 14, Madrid, M, 28005, Spain",
     "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
     "website": "https://www.instagram.com/la.guarida.juegos",
     "external_id": "11228",
+    "matched_existing_store": "La Guarida Juegos",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "wizards_locator"
+    ],
     "external_ids": {
+      "lorcana_locator": "2896",
       "wizards_locator": "11228"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2896",
+        "game_store_id": "c33db9bb-0f87-4be1-9e87-955a4ad54145",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28005",
+        "coordinates": {
+          "lat": 40.40325230000001,
+          "lng": -3.7043325
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -294,10 +407,7 @@
         "url": "https://www.instagram.com/la.guarida.juegos",
         "external_id": "11228"
       }
-    ],
-    "matched_existing_store": "La Guarida Juegos",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "MADAKIBA",
@@ -327,7 +437,79 @@
     ],
     "matched_existing_store": "MADAKIBA",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
+  },
+  {
+    "name": "MICELION GAMES",
+    "address": "8 Avenida del Mediterráneo, Madrid, MD, 28007, ES",
+    "source": "lorcana_locator",
+    "website": "https://miceliongames.com",
+    "external_id": "3371",
+    "matched_existing_store": "Micelion Games",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "swu_calendar",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "3371",
+      "swu_calendar": "3903",
+      "wizards_locator": "17437"
+    },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering",
+      "Star Wars: Unlimited"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3371",
+        "game_store_id": "3e0669eb-8582-4916-8c0f-6f16059bffe5",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28007",
+        "coordinates": {
+          "lat": 40.4071864,
+          "lng": -3.677161299999999
+        }
+      },
+      {
+        "source": "swu_calendar",
+        "type": "official_event_calendar",
+        "game": "Star Wars: Unlimited",
+        "url": "https://starwarsunlimited.com/es/search?myLocation=false&searchTerm=micel&store=3903",
+        "external_id": "3903",
+        "event_date": "Saturday, April 11, 2026",
+        "event_type": "Limited",
+        "city": "Madrid",
+        "region": "Madrid",
+        "country": "Spain"
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://miceliongames.com",
+        "external_id": "17437"
+      }
+    ]
   },
   {
     "name": "Metamorfo",
@@ -357,24 +539,54 @@
     ],
     "matched_existing_store": "Metamorfo",
     "confidence": 0.9,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
-    "name": "Metropolis Center",
-    "address": "Calle Andrés Mellado 22, Madrid, M, 28015, Spain",
-    "source": "wizards_locator",
+    "name": "Metrópolis Center",
+    "address": "22, C. de Andrés Mellado, Madrid, MD, 28015, ES",
+    "source": "lorcana_locator",
+    "website": "https://metropolis-center.com/es/catalogo/juegos-de-cartas/riftbound",
+    "external_id": "3368",
+    "matched_existing_store": "Metropolis Center",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://metropolis-center.com",
-    "external_id": "11202",
     "external_ids": {
+      "lorcana_locator": "3368",
       "wizards_locator": "11202"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3368",
+        "game_store_id": "43b46f53-2976-4048-a798-6d0f248c6a9e",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28015",
+        "coordinates": {
+          "lat": 40.4324117,
+          "lng": -3.7144276
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -384,57 +596,53 @@
         "url": "https://metropolis-center.com",
         "external_id": "11202"
       }
-    ],
-    "matched_existing_store": "Metropolis Center",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
-  },
-  {
-    "name": "Micelion Games",
-    "address": "8 Av. del Mediterráneo, Madrid, MD, 28007, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://miceliongames.com",
-    "external_id": "17437",
-    "external_ids": {
-      "wizards_locator": "17437"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://miceliongames.com",
-        "external_id": "17437"
-      }
-    ],
-    "matched_existing_store": "Micelion Games",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "Mundicomics",
-    "address": "C/Ramon y Cajal 3 Local 1, Torrejón de Ardoz, M, 28850, Spain",
-    "source": "wizards_locator",
+    "address": "3 Calle Ramón y Cajal, Torrejon de Ardoz, MD, 28850, ES",
+    "source": "lorcana_locator",
+    "website": "http://www.mundicomics.com",
+    "external_id": "3499",
+    "matched_existing_store": "Mundicomics",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.mundicomics.com/",
-    "external_id": "14068",
     "external_ids": {
+      "lorcana_locator": "3499",
       "wizards_locator": "14068"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3499",
+        "game_store_id": "4b5b43cc-76b5-41e0-81b8-9a0d98323190",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28850",
+        "coordinates": {
+          "lat": 40.4580083,
+          "lng": -3.4783478
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -444,27 +652,53 @@
         "url": "https://www.mundicomics.com/",
         "external_id": "14068"
       }
-    ],
-    "matched_existing_store": "Mundicomics",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "Padis",
-    "address": "36 C. de Blasco de Garay, Madrid, MD, 28015, Spain",
-    "source": "wizards_locator",
+    "address": "36 Calle de Blasco de Garay, Calle Blasco de Garay, 36, Local Padis, Madrid, MD, 28015, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.padis-store.com",
+    "external_id": "3759",
+    "matched_existing_store": "Padis",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.padis-store.com/",
-    "external_id": "16281",
     "external_ids": {
+      "lorcana_locator": "3759",
       "wizards_locator": "16281"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3759",
+        "game_store_id": "754742f2-9df8-48d7-b598-9644e88200a4",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28015",
+        "coordinates": {
+          "lat": 40.4326428,
+          "lng": -3.711473999999999
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -474,27 +708,53 @@
         "url": "https://www.padis-store.com/",
         "external_id": "16281"
       }
-    ],
-    "matched_existing_store": "Padis",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "Panda Games",
-    "address": "Calle Oslo 53 CC. X- Madrid. Planta 1 L81, Alcorcón, Madrid, 28922, Spain",
-    "source": "wizards_locator",
+    "address": "local 81, 53, C. Oslo, Alcorcón, MD, 28922, ES",
+    "source": "lorcana_locator",
+    "website": "https://pandagames.es",
+    "external_id": "25906",
+    "matched_existing_store": "Panda Games",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://pandagames.es/",
-    "external_id": "20210",
     "external_ids": {
+      "lorcana_locator": "25906",
       "wizards_locator": "20210"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "25906",
+        "game_store_id": "0afc987b-f0da-4c33-a734-7a19fca03e3a",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28922",
+        "coordinates": {
+          "lat": 40.3388628,
+          "lng": -3.8481169
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -504,27 +764,53 @@
         "url": "https://pandagames.es/",
         "external_id": "20210"
       }
-    ],
-    "matched_existing_store": "Panda Games",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "The Big Bang Games",
-    "address": "1 C. Entre Arroyos, Madrid, MD, 28030, Spain",
-    "source": "wizards_locator",
+    "address": "1 Calle Entre Arroyos, Madrid, MD, 28030, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.thebigbanggames.com/",
+    "external_id": "4643",
+    "matched_existing_store": "The Big Bang Games",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.thebigbanggames.com",
-    "external_id": "17728",
     "external_ids": {
+      "lorcana_locator": "4643",
       "wizards_locator": "17728"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "4643",
+        "game_store_id": "79bcff45-dbd0-46e4-b3d6-2bb77b81c715",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28030",
+        "coordinates": {
+          "lat": 40.4091415,
+          "lng": -3.6564189
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -534,27 +820,53 @@
         "url": "https://www.thebigbanggames.com",
         "external_id": "17728"
       }
-    ],
-    "matched_existing_store": "The Big Bang Games",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "TopDeck",
-    "address": "Calle del Cardenal Silíceo, 17, Chamartín, Madrid, Madrid, 28002, Spain",
-    "source": "wizards_locator",
+    "address": "16 Calle del Cardenal Silíceo, Madrid, MD, 28002, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.topdeck.es",
+    "external_id": "5037",
+    "matched_existing_store": "TopDeck",
+    "confidence": 0.9,
+    "status": "matched_existing_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://topdeck.es",
-    "external_id": "17593",
     "external_ids": {
+      "lorcana_locator": "5037",
       "wizards_locator": "17593"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "5037",
+        "game_store_id": "13768a28-3803-4dfe-96f7-410ced09968c",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28002",
+        "coordinates": {
+          "lat": 40.4447192,
+          "lng": -3.6704943
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -564,10 +876,7 @@
         "url": "https://topdeck.es",
         "external_id": "17593"
       }
-    ],
-    "matched_existing_store": "TopDeck",
-    "confidence": 0.9,
-    "status": "matched_existing_store"
+    ]
   },
   {
     "name": "Goblin Trader - Madrid Sur",
@@ -597,24 +906,113 @@
     ],
     "matched_existing_store": "Goblintrader Madrid-Norte",
     "confidence": 0.8,
-    "status": "matched_existing_store"
+    "status": "matched_existing_store",
+    "location_precision": "street"
   },
   {
-    "name": "Alcala Comics",
-    "address": "Plaza España 3 - Local 9, Alcala de Henares, M, 28805, Spain",
-    "source": "wizards_locator",
+    "name": "3Meeples",
+    "address": "1 Plaza del Toro, CC la rotonda local 115, Tres Cantos, MD, 28760, ES",
+    "source": "lorcana_locator",
     "sources": [
-      "wizards_locator"
+      "lorcana_locator"
     ],
     "games": [
-      "Magic: The Gathering"
+      "Lorcana"
     ],
-    "website": "https://www.alcalacomics.com/",
-    "external_id": "11845",
+    "website": null,
+    "external_id": "27",
     "external_ids": {
-      "wizards_locator": "11845"
+      "lorcana_locator": "27"
     },
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "27",
+        "game_store_id": "062c677f-b1c0-47ab-8d1c-d6ba066b045a",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28760",
+        "coordinates": {
+          "lat": 40.6054179,
+          "lng": -3.7174109
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street"
+  },
+  {
+    "name": "ALCALA COMICS",
+    "address": "Local 9, 3, Pl. de España, Alcalá de Henares, MD, 28805, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.alcalacomics.com/",
+    "external_id": "114",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "swu_calendar",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "114",
+      "swu_calendar": "2211",
+      "wizards_locator": "11845"
+    },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering",
+      "Star Wars: Unlimited"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "114",
+        "game_store_id": "8e287460-5de7-4ff6-bcdc-50be86d0c733",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28805",
+        "coordinates": {
+          "lat": 40.4860174,
+          "lng": -3.3589934
+        }
+      },
+      {
+        "source": "swu_calendar",
+        "type": "official_event_calendar",
+        "game": "Star Wars: Unlimited",
+        "url": "https://starwarsunlimited.com/es/search?myLocation=false&searchTerm=alcala+co&store=2211",
+        "external_id": "2211",
+        "event_date": "Saturday, May 9, 2026",
+        "event_type": "Premier",
+        "city": "Alcalá de Henares",
+        "region": "Madrid",
+        "country": "Spain"
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -624,10 +1022,7 @@
         "url": "https://www.alcalacomics.com/",
         "external_id": "11845"
       }
-    ],
-    "matched_existing_store": null,
-    "confidence": 0.0,
-    "status": "candidate_new_store"
+    ]
   },
   {
     "name": "Aquijabara Store",
@@ -656,24 +1051,54 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
-    "name": "Crisis Alcorcon Juegos",
-    "address": "C/Princesa Doña Sofía, Nº 3. Local 2., Alcorcon, M, 28924, Spain",
-    "source": "wizards_locator",
+    "name": "Crisis Alcorcón Juegos",
+    "address": "Calle Princesa Doña Sofía, Alcorcón, MD, 28924, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.juegoscrisis.com/",
+    "external_id": "1017",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.juegoscrisis.com/",
-    "external_id": "8800",
     "external_ids": {
+      "lorcana_locator": "1017",
       "wizards_locator": "8800"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "1017",
+        "game_store_id": "e74b0aa7-036c-49d7-be90-125049f68605",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28924",
+        "coordinates": {
+          "lat": 40.3499234,
+          "lng": -3.8184328
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -683,10 +1108,7 @@
         "url": "https://www.juegoscrisis.com/",
         "external_id": "8800"
       }
-    ],
-    "matched_existing_store": null,
-    "confidence": 0.0,
-    "status": "candidate_new_store"
+    ]
   },
   {
     "name": "Dark Ritual TCG S.L.",
@@ -716,7 +1138,8 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "EL TURNO EXTRA",
@@ -746,7 +1169,8 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Factory Cards",
@@ -776,7 +1200,8 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Galaxy-comics",
@@ -806,7 +1231,52 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
+  },
+  {
+    "name": "Gen X Las Musas",
+    "address": "113 Av. de Canillejas a Vicálvaro, Av. Canillejas a Vicalvaro 113. 28022. Madrid, San Blas-Canillejas, MD, 28022, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": null,
+    "external_id": "2144",
+    "external_ids": {
+      "lorcana_locator": "2144"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2144",
+        "game_store_id": "2e74f8c7-f36b-42ce-b1b3-d506223fedd3",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28022",
+        "coordinates": {
+          "lat": 40.4293351,
+          "lng": -3.6105003
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Hobby Shop Wargames S.L",
@@ -836,7 +1306,8 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "ISEKAI",
@@ -866,7 +1337,8 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Karak 7 Picos",
@@ -896,24 +1368,54 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Kingdom Wargames",
-    "address": "C. Arroyo de la ELipa, Madrid, M, 28017, Spain",
-    "source": "wizards_locator",
+    "address": "12 Calle Arroyo de la Elipa, Madrid, MD, 28017, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.kingdomwargames.com/",
+    "external_id": "2782",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.kingdomwargames.com/",
-    "external_id": "14264",
     "external_ids": {
+      "lorcana_locator": "2782",
       "wizards_locator": "14264"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2782",
+        "game_store_id": "6d87a045-e783-42aa-94f1-1cffdd7f4a65",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28017",
+        "coordinates": {
+          "lat": 40.4319099,
+          "lng": -3.6434082
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -923,10 +1425,7 @@
         "url": "https://www.kingdomwargames.com/",
         "external_id": "14264"
       }
-    ],
-    "matched_existing_store": null,
-    "confidence": 0.0,
-    "status": "candidate_new_store"
+    ]
   },
   {
     "name": "LUDOTECA MALDITA",
@@ -956,24 +1455,54 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "La Jugación",
-    "address": "Calle Río Duero, 46, Leganés, Madrid, 28913, Spain",
-    "source": "wizards_locator",
+    "address": "46, C. Rio Duero, Leganés, MD, 28913, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.instagram.com/la_jugacion/",
+    "external_id": "13836",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://lajugacion.es/",
-    "external_id": "18286",
     "external_ids": {
+      "lorcana_locator": "13836",
       "wizards_locator": "18286"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "13836",
+        "game_store_id": "e03c8069-0d14-40d9-bd66-2a7324dfe4ec",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28913",
+        "coordinates": {
+          "lat": 40.3353937,
+          "lng": -3.7705334
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -983,10 +1512,51 @@
         "url": "https://lajugacion.es/",
         "external_id": "18286"
       }
+    ]
+  },
+  {
+    "name": "Libertalia",
+    "address": "32 Calle Badajoz, Local Libertalia, Móstoles, MD, 28931, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": null,
+    "external_id": "3102",
+    "external_ids": {
+      "lorcana_locator": "3102"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3102",
+        "game_store_id": "3d5b2b29-2154-42f8-96c1-f14417ffdab9",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28931",
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      }
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Ludus Belli",
@@ -1016,7 +1586,52 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
+  },
+  {
+    "name": "Metamorfo (Santiago Palacios)",
+    "address": "3 Calle de la Ilustración, Local comercial Metamorfo, Getafe, MD, 28902, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": "https://metamorfo.es/",
+    "external_id": "3365",
+    "external_ids": {
+      "lorcana_locator": "3365"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3365",
+        "game_store_id": "eb4e3006-5af6-4ef4-b920-2d4446bbec1d",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28902",
+        "coordinates": {
+          "lat": 40.3142861,
+          "lng": -3.7277088
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Next Dice",
@@ -1046,24 +1661,54 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Rebellion",
     "address": "Av. Portugal 21, posterior, Mostoles, M, 28931, Spain",
     "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
     "website": "https://www.rebellion.es/tiendarebel/index.php",
     "external_id": "9812",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "wizards_locator"
+    ],
     "external_ids": {
+      "lorcana_locator": "4065",
       "wizards_locator": "9812"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "4065",
+        "game_store_id": "6f917e08-3a08-4fc6-922c-d20f29f305cc",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28931",
+        "coordinates": {
+          "lat": 40.3271984,
+          "lng": -3.8588885
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1073,10 +1718,7 @@
         "url": "https://www.rebellion.es/tiendarebel/index.php",
         "external_id": "9812"
       }
-    ],
-    "matched_existing_store": null,
-    "confidence": 0.0,
-    "status": "candidate_new_store"
+    ]
   },
   {
     "name": "Replay Boardgame Cafe",
@@ -1106,7 +1748,8 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "SIMONV TCG",
@@ -1136,24 +1779,54 @@
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
-    "name": "Te Juego Mucho",
-    "address": "1 C. Antonio Muñoz Molina, Rivas-Vaciamadrid, MD, 28521, Spain",
-    "source": "wizards_locator",
+    "name": "TE JUEGO MUCHO",
+    "address": "Av. Pablo Iglesias, 87, 28521 Rivas-Vaciamadrid, Madrid, Spain",
+    "source": "lorcana_locator",
+    "website": "https://tejuegomucho.com",
+    "external_id": "16918",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.instagram.com/tejuegomucho/",
-    "external_id": "17599",
     "external_ids": {
+      "lorcana_locator": "16918",
       "wizards_locator": "17599"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "16918",
+        "game_store_id": "7c1b752b-94bd-4c10-8242-649c3674638e",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28521",
+        "coordinates": {
+          "lat": 40.3464002,
+          "lng": -3.5216519
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1163,27 +1836,53 @@
         "url": "https://www.instagram.com/tejuegomucho/",
         "external_id": "17599"
       }
-    ],
-    "matched_existing_store": null,
-    "confidence": 0.0,
-    "status": "candidate_new_store"
+    ]
   },
   {
-    "name": "Tempest - Store",
-    "address": "C/ Timoteo Domingo, 17, Madrid, M, 28017, Spain",
-    "source": "wizards_locator",
+    "name": "TEMPEST STORE",
+    "address": "17 Calle de Timoteo Domingo, Local, Madrid, MD, 28017, ES",
+    "source": "lorcana_locator",
+    "website": null,
+    "external_id": "4603",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": null,
-    "external_id": "6616",
     "external_ids": {
+      "lorcana_locator": "4603",
       "wizards_locator": "6616"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "4603",
+        "game_store_id": "1a487681-027e-4efa-bfa4-3c65ca3f3439",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28017",
+        "coordinates": {
+          "lat": 40.433356,
+          "lng": -3.6447206
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1192,27 +1891,97 @@
         ],
         "external_id": "6616"
       }
+    ]
+  },
+  {
+    "name": "Tablerum",
+    "address": "Calle del Lago Constanza, 10, L10, Madrid, MD, 28017, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": null,
+    "external_id": "4504",
+    "external_ids": {
+      "lorcana_locator": "4504"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "4504",
+        "game_store_id": "28d21cce-15d3-48e4-9d99-125a70e82769",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28017",
+        "coordinates": {
+          "lat": 40.4301264,
+          "lng": -3.6461133
+        }
+      }
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Velkarion",
-    "address": "Calle las vegas 18, alcorcon, Madrid, 28921, Spain",
-    "source": "wizards_locator",
+    "address": "18, Calle las Vegas, Alcorcón, MD, 28921, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.instagram.com/velkariontcg/",
+    "external_id": "18738",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.instagram.com/velkariontcg/",
-    "external_id": "18616",
     "external_ids": {
+      "lorcana_locator": "18738",
       "wizards_locator": "18616"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "18738",
+        "game_store_id": "ccb78599-b5c8-4c6b-84b3-65463c78fb77",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28921",
+        "coordinates": {
+          "lat": 40.3485684,
+          "lng": -3.8312405
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1222,10 +1991,137 @@
         "url": "https://www.instagram.com/velkariontcg/",
         "external_id": "18616"
       }
+    ]
+  },
+  {
+    "name": "Victory Road",
+    "address": "10, P.º de Valdelasfuentes, Alcobendas, MD, 28100, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": "https://tcg.victoryroad.pro/es/",
+    "external_id": "17178",
+    "external_ids": {
+      "lorcana_locator": "17178"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "17178",
+        "game_store_id": "71035a7f-6c77-4c8a-9efe-6fe464c5d7f6",
+        "store_types": [
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28100",
+        "coordinates": {
+          "lat": 40.5510234,
+          "lng": -3.6527831
+        }
+      }
     ],
     "matched_existing_store": null,
     "confidence": 0.0,
-    "status": "candidate_new_store"
+    "status": "candidate_new_store",
+    "location_precision": "street"
+  },
+  {
+    "name": "ZACATRUS PIRAMIDES",
+    "address": "67 Paseo de las Acacias, Madrid, MD, 28005, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": null,
+    "external_id": "5444",
+    "external_ids": {
+      "lorcana_locator": "5444"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "5444",
+        "game_store_id": "da8101d6-67a4-4313-9a6e-9ba03616cb8b",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28005",
+        "coordinates": {
+          "lat": 40.4011797,
+          "lng": -3.712752
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street"
+  },
+  {
+    "name": "Zacatrus! Madrid Chamberí",
+    "address": "57 Calle de Fernández de los Ríos, Tienda Zacatrus, Madrid, MD, 28015, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": "https://www.zacatrus.es/events",
+    "external_id": "5443",
+    "external_ids": {
+      "lorcana_locator": "5443"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "5443",
+        "game_store_id": "2fdcf789-0cc6-4a1b-9b54-7c7b692ed5da",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28015",
+        "coordinates": {
+          "lat": 40.4351508,
+          "lng": -3.7120526
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street"
   },
   {
     "name": "Dracarys Juegos",
@@ -1255,24 +2151,54 @@
     ],
     "matched_existing_store": "La Guarida Juegos",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Generacion X - Carranza",
     "address": "c/ Carranza 25, Madrid, M, 28004, Spain",
     "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
     "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
     "external_id": "12545",
+    "matched_existing_store": "Generacion X - Elfo",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "wizards_locator"
+    ],
     "external_ids": {
+      "lorcana_locator": "2136",
       "wizards_locator": "12545"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2136",
+        "game_store_id": "ef36a9cb-4ab1-4683-9034-58564a190717",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28004",
+        "coordinates": {
+          "lat": 40.4292795,
+          "lng": -3.7049465
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1282,10 +2208,7 @@
         "url": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
         "external_id": "12545"
       }
-    ],
-    "matched_existing_store": "Generacion X - Elfo",
-    "confidence": 0.65,
-    "status": "possible_duplicate"
+    ]
   },
   {
     "name": "Generacion X - Coslada",
@@ -1315,7 +2238,8 @@
     ],
     "matched_existing_store": "Generacion X - Elfo",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Generacion X - Las musas",
@@ -1345,7 +2269,52 @@
     ],
     "matched_existing_store": "Generacion X - Elfo",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
+  },
+  {
+    "name": "Generación X Getafe",
+    "address": "1, C. Gral. Pingarrón, Getafe, MD, 28901, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": "https://www.instagram.com/generacionx_getafe?igsh=ajcyN2pxMnQ1OWJz&utm_source=qr",
+    "external_id": "18686",
+    "external_ids": {
+      "lorcana_locator": "18686"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "18686",
+        "game_store_id": "c4015872-0ba5-44f1-abd0-e2e19b2e7605",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28901",
+        "coordinates": {
+          "lat": 40.3075048,
+          "lng": -3.7338981
+        }
+      }
+    ],
+    "matched_existing_store": "Generacion X - Elfo",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Generación X Goya",
@@ -1375,7 +2344,52 @@
     ],
     "matched_existing_store": "Generacion X - Elfo",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
+  },
+  {
+    "name": "Generación X Tirso",
+    "address": "3 Calle del Conde de Romanones, Madrid, MD, 28012, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": "http://generacionx.es/",
+    "external_id": "2138",
+    "external_ids": {
+      "lorcana_locator": "2138"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2138",
+        "game_store_id": "2a128284-2bc3-49e6-bd86-f186a80c514c",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28012",
+        "coordinates": {
+          "lat": 40.41377013401061,
+          "lng": -3.7044986403168623
+        }
+      }
+    ],
+    "matched_existing_store": "Generacion X - Elfo",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Genex Comics",
@@ -1405,7 +2419,52 @@
     ],
     "matched_existing_store": "Mundicomics",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
+  },
+  {
+    "name": "Júpiter Alcobendas",
+    "address": "95 Calle del Marqués de la Valdavia, Local 2, Alcobendas, MD, 28100, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": "https://www.jupiterjuegos.com/calendario?tienda=jupiter-alcobendas",
+    "external_id": "2712",
+    "external_ids": {
+      "lorcana_locator": "2712"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2712",
+        "game_store_id": "7aee1f50-20af-400d-9cc0-de9e3cc8181d",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28100",
+        "coordinates": {
+          "lat": 40.545955443312664,
+          "lng": -3.650816996845787
+        }
+      }
+    ],
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Júpiter Central",
@@ -1435,24 +2494,54 @@
     ],
     "matched_existing_store": "Goblintrader Central",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Júpiter Juegos Alcorcón",
-    "address": "10 C. Parque Bujaruelo, Alcorcón, MD, 28924, Spain",
-    "source": "wizards_locator",
+    "address": "10, C. Parque Bujaruelo, Alcorcón, MD, 28924, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "2708",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.jupiterjuegos.com/",
-    "external_id": "15540",
     "external_ids": {
+      "lorcana_locator": "2708",
       "wizards_locator": "15540"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2708",
+        "game_store_id": "8fc60e73-be04-4e22-8249-525a15469d0b",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28924",
+        "coordinates": {
+          "lat": 40.3478993,
+          "lng": -3.807262100000001
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1462,10 +2551,51 @@
         "url": "https://www.jupiterjuegos.com/",
         "external_id": "15540"
       }
+    ]
+  },
+  {
+    "name": "Júpiter Juegos Madrid",
+    "address": "8 Calle de Manuel Silvela, Madrid, MD, 28010, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
+    ],
+    "games": [
+      "Lorcana"
+    ],
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "2711",
+    "external_ids": {
+      "lorcana_locator": "2711"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2711",
+        "game_store_id": "4a569a38-a4b2-4033-9108-f9c97ec87179",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28010",
+        "coordinates": {
+          "lat": 40.4292853,
+          "lng": -3.698401099999999
+        }
+      }
     ],
     "matched_existing_store": "Jupiter Juegos",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Júpiter Madrid Norte",
@@ -1495,7 +2625,8 @@
     ],
     "matched_existing_store": "Goblintrader Madrid-Norte",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "La Guarida del vigilante",
@@ -1525,7 +2656,8 @@
     ],
     "matched_existing_store": "La Guarida Juegos",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Libertalia Juegos",
@@ -1555,24 +2687,54 @@
     ],
     "matched_existing_store": "Jupiter Juegos",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Medusa Cómics",
-    "address": "Ronda de la Pescadería, 21, Alcalá de Henares, Madrid, 28801, Spain",
-    "source": "wizards_locator",
+    "address": "21, Rda. de la Pescadería, Alcalá de Henares, MD, 28801, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.instagram.com/comicsmedusa/",
+    "external_id": "10644",
+    "matched_existing_store": "Mundicomics",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.facebook.com/comicsmedusa/",
-    "external_id": "18456",
     "external_ids": {
+      "lorcana_locator": "10644",
       "wizards_locator": "18456"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "10644",
+        "game_store_id": "51f28f01-b303-4b0b-b727-a4bf979da69e",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28801",
+        "coordinates": {
+          "lat": 40.4778032,
+          "lng": -3.3657483
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1582,10 +2744,51 @@
         "url": "https://www.facebook.com/comicsmedusa/",
         "external_id": "18456"
       }
+    ]
+  },
+  {
+    "name": "OZ JUEGOS",
+    "address": "13 P.º de Fuente Lucha, Alcobendas, MD, 28100, ES",
+    "source": "lorcana_locator",
+    "sources": [
+      "lorcana_locator"
     ],
-    "matched_existing_store": "Mundicomics",
+    "games": [
+      "Lorcana"
+    ],
+    "website": "https://www.ozjuegos.com",
+    "external_id": "3750",
+    "external_ids": {
+      "lorcana_locator": "3750"
+    },
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3750",
+        "game_store_id": "dfda081c-d10c-4246-b9f9-742d7879723e",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28100",
+        "coordinates": {
+          "lat": 40.5535039,
+          "lng": -3.6601676
+        }
+      }
+    ],
+    "matched_existing_store": "Jupiter Juegos",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Ohana Games",
@@ -1615,24 +2818,54 @@
     ],
     "matched_existing_store": "Panda Games",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Portal Juegos",
     "address": "24 Av. de Honorio Lozano, Collado Villalba, MD, 28400, Spain",
     "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
     "website": "https://portaljuegos.es/index.php",
     "external_id": "15914",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "wizards_locator"
+    ],
     "external_ids": {
+      "lorcana_locator": "3953",
       "wizards_locator": "15914"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3953",
+        "game_store_id": "4f66284b-3403-4bf1-acfa-53b180de2394",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28400",
+        "coordinates": {
+          "lat": 40.6291735,
+          "lng": -4.0016368
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1642,10 +2875,7 @@
         "url": "https://portaljuegos.es/index.php",
         "external_id": "15914"
       }
-    ],
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate"
+    ]
   },
   {
     "name": "Titan Games",
@@ -1674,24 +2904,54 @@
     ],
     "matched_existing_store": "Panda Games",
     "confidence": 0.65,
-    "status": "possible_duplicate"
+    "status": "possible_duplicate",
+    "location_precision": "street"
   },
   {
     "name": "Wargen Wargames",
-    "address": "2B Av. de Las Águilas, Madrid, MD, 28044, Spain",
-    "source": "wizards_locator",
+    "address": "2B Avenida de Las Águilas, Local 2, Madrid, MD, 28044, ES",
+    "source": "lorcana_locator",
+    "website": "https://wargenwargames.com",
+    "external_id": "5310",
+    "matched_existing_store": "Panda Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street",
     "sources": [
+      "lorcana_locator",
       "wizards_locator"
     ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://wargenwargames.com",
-    "external_id": "15373",
     "external_ids": {
+      "lorcana_locator": "5310",
       "wizards_locator": "15373"
     },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering"
+    ],
     "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "5310",
+        "game_store_id": "b3c61776-3320-454f-b590-9eddd11696f1",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28044",
+        "coordinates": {
+          "lat": 40.3845501,
+          "lng": -3.7651606
+        }
+      },
       {
         "source": "wizards_locator",
         "type": "official_store_locator",
@@ -1701,9 +2961,6 @@
         "url": "https://wargenwargames.com",
         "external_id": "15373"
       }
-    ],
-    "matched_existing_store": "Panda Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate"
+    ]
   }
 ]

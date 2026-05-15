@@ -141,15 +141,21 @@ def _merge_key(candidate: dict) -> tuple[str, str]:
     )
 
 
+def _location_precision(candidate: dict) -> str:
+    return candidate.get("location_precision") or "street"
+
+
 def _prefer_primary(current: dict, incoming: dict) -> bool:
     current_score = (
         STATUS_ORDER.get(current["status"], 99),
         -current["confidence"],
+        1 if _location_precision(current) == "city" else 0,
         0 if current.get("website") else 1,
     )
     incoming_score = (
         STATUS_ORDER.get(incoming["status"], 99),
         -incoming["confidence"],
+        1 if _location_precision(incoming) == "city" else 0,
         0 if incoming.get("website") else 1,
     )
     return incoming_score < current_score
@@ -166,6 +172,7 @@ def _merge_candidate(current: dict, incoming: dict) -> dict:
             "matched_existing_store": incoming.get("matched_existing_store"),
             "confidence": incoming.get("confidence", 0.0),
             "status": incoming.get("status", "candidate_new_store"),
+            "location_precision": _location_precision(incoming),
         }
     else:
         primary = {
@@ -177,6 +184,7 @@ def _merge_candidate(current: dict, incoming: dict) -> dict:
             "matched_existing_store": current.get("matched_existing_store"),
             "confidence": current.get("confidence", 0.0),
             "status": current.get("status", "candidate_new_store"),
+            "location_precision": _location_precision(current),
         }
 
     sources = _unique_sorted(current.get("sources", []) + incoming.get("sources", []))
@@ -215,7 +223,41 @@ def _build_candidate(cand: dict, module_name: str, match_result: dict) -> dict:
         "matched_existing_store": match_result.get("matched_existing_store"),
         "confidence": match_result.get("confidence", 0.0),
         "status": match_result.get("status", "candidate_new_store"),
+        "location_precision": cand.get("location_precision", "street"),
     }
+
+
+def _merge_exact_name_cross_source_candidates(candidates: list[dict]) -> list[dict]:
+    """
+    Merge exact-name records from different discoverers.
+
+    Different official locators often format the same street address
+    differently. Keeping the primary strict name+address merge avoids unsafe
+    chain-store collapses, while this second pass lets exact same-name records
+    from different sources contribute provenance. Records from the same source
+    are left separate.
+    """
+    merged: list[dict] = []
+
+    for cand in candidates:
+        key = normalize_name(cand["name"])
+        cand_sources = set(cand.get("sources", []))
+        merge_index = None
+
+        for index, existing in enumerate(merged):
+            if normalize_name(existing["name"]) != key:
+                continue
+            existing_sources = set(existing.get("sources", []))
+            if cand_sources.isdisjoint(existing_sources):
+                merge_index = index
+                break
+
+        if merge_index is None:
+            merged.append(cand)
+        else:
+            merged[merge_index] = _merge_candidate(merged[merge_index], cand)
+
+    return merged
 
 
 def main() -> None:
@@ -268,7 +310,7 @@ def main() -> None:
         else:
             seen[key] = cand
 
-    candidates = list(seen.values())
+    candidates = _merge_exact_name_cross_source_candidates(list(seen.values()))
 
     # Deterministic sort: status order asc, confidence desc, name asc
     candidates.sort(
