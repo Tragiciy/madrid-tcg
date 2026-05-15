@@ -203,13 +203,11 @@ The pipeline for finding and onboarding new stores follows these steps:
      city-level location data rather than street addresses, so its candidates
      are marked with `location_precision: "city"` and mostly serve as
      provenance for matching known stores and review.
-
-   Flesh and Blood / GEM discovery was researched on 2026-05-15, but a stable
-   public unauthenticated Madrid store/event endpoint has not been confirmed.
-   `fabtcg.com` locator/event pages returned 403 during API probing, and the
-   public GEM bundle exposed authenticated/admin-style tournament/store
-   management chunks rather than a public locator API. Do not add
-   `discoverers/fab_locator.py` until a reliable endpoint is verified.
+   - `discoverers/fab_locator.py` — Flesh and Blood / Carde Play Network
+     store locator, scoped to game-approved establishments within 50 km of
+     Madrid city centre. Earlier direct `fabtcg.com` / GEM probing returned
+     403 or authenticated/admin-style endpoints; the implemented source uses
+     the public Carde Play API with the Flesh and Blood `game-id` header.
 
 2. **Event-page audit** — `tools/audit_store_event_pages.py` reads
    `data/candidate_stores.json`, fetches each candidate's website, detects event

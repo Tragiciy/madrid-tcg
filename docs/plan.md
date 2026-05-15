@@ -191,12 +191,8 @@ One Piece–only stores).
   filtered to upcoming events within 50 km of Madrid
 - `discoverers/pokemon_locator.py` — Pokémon Play locator API
   (`op.pokemon-card.com` or the Play! Pokémon store finder)
-- ⚠️ Flesh and Blood / GEM discovery — researched, but no stable public
-  unauthenticated locator endpoint has been confirmed yet. `fabtcg.com`
-  locator/event pages returned 403 during API probing, and the public GEM
-  bundle exposed authenticated/admin-style tournament/store management chunks
-  rather than a public Madrid store/event search API. Keep this as a research
-  item before adding `discoverers/fab_locator.py`.
+- ✅ `discoverers/fab_locator.py` — Flesh and Blood / Carde Play Network store
+  locator, filtered to game-approved establishments within 50 km of Madrid
 
 Each follows the same `discover() -> list[dict]` interface as the existing
 `wizards_locator.py`. `tools/discover_stores.py` auto-discovers them.

@@ -7682,6 +7682,49 @@
     ]
   },
   {
+    "name": "Toy Games",
+    "address": "C. de Francisco Aritio, Guadalajara, CM, 19004, ES",
+    "source": "fab_locator",
+    "sources": [
+      "fab_locator"
+    ],
+    "games": [
+      "Flesh and Blood"
+    ],
+    "website": null,
+    "external_id": "fcd725ea-e235-4580-b59c-53d07c4f7040",
+    "external_ids": {
+      "fab_locator": "fcd725ea-e235-4580-b59c-53d07c4f7040"
+    },
+    "evidence": [
+      {
+        "source": "fab_locator",
+        "type": "official_store_locator",
+        "game": "Flesh and Blood",
+        "url": "https://play.carde.io/stores/search",
+        "external_id": "fcd725ea-e235-4580-b59c-53d07c4f7040",
+        "game_id": "1ceb00e9-28ea-45ac-8dfb-c84957f75ed1",
+        "game_establishment_id": "93e14072-4cae-498f-819c-6153c01415e4",
+        "store_number": 21488,
+        "carries_product": true,
+        "organized_play_status": "approved",
+        "retailer_status": "approved",
+        "physical_retailer_status": "approved",
+        "country": "ES",
+        "city": "Guadalajara",
+        "distance": 49.72026497206,
+        "coordinates": {
+          "lat": 40.6240352,
+          "lng": -3.1990379
+        }
+      }
+    ],
+    "matched_existing_store": "Micelion Games",
+    "confidence": 0.65,
+    "status": "possible_duplicate",
+    "location_precision": "street"
+  },
+  {
     "name": "Tsuki Center",
     "address": "C. Carabaña, 11, 28806 Alcalá de Henares, Madrid, Spain",
     "source": "riftbound_locator",
