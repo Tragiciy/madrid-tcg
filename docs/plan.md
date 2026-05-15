@@ -51,7 +51,8 @@ Core user question: **"What can I play this week in my city?"**
   → `tools/build_scraper_targets.py` → `data/scraper_targets.json`
   - Discoverers currently include Wizards Store Locator, Disney Lorcana /
     Ravensburger Play Store Locator, Riftbound Play Network, Star Wars:
-    Unlimited Organized Play Calendar, and Konami Yu-Gi-Oh! OTS Locator
+    Unlimited Organized Play Calendar, Bandai TCG+ One Piece event locator,
+    and Konami Yu-Gi-Oh! OTS Locator
 - GitHub Actions: daily `update.yml` cron (06:00 UTC)
 
 ---
@@ -186,9 +187,10 @@ One Piece–only stores).
   filtered to Madrid-area stores
 - ✅ `discoverers/yugioh_locator.py` — Konami EU Official Tournament Store
   locator, filtered to stores within 50 km of Madrid
+- ✅ `discoverers/one_piece_events.py` — Bandai TCG+ One Piece event locator,
+  filtered to upcoming events within 50 km of Madrid
 - `discoverers/pokemon_locator.py` — Pokémon Play locator API
   (`op.pokemon-card.com` or the Play! Pokémon store finder)
-- `discoverers/one_piece_locator.py` — Bandai Namco official store finder
 - `discoverers/fab_locator.py` — Flesh and Blood GEM locator
 
 Each follows the same `discover() -> list[dict]` interface as the existing
