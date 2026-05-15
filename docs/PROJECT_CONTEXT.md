@@ -204,6 +204,13 @@ The pipeline for finding and onboarding new stores follows these steps:
      are marked with `location_precision: "city"` and mostly serve as
      provenance for matching known stores and review.
 
+   Flesh and Blood / GEM discovery was researched on 2026-05-15, but a stable
+   public unauthenticated Madrid store/event endpoint has not been confirmed.
+   `fabtcg.com` locator/event pages returned 403 during API probing, and the
+   public GEM bundle exposed authenticated/admin-style tournament/store
+   management chunks rather than a public locator API. Do not add
+   `discoverers/fab_locator.py` until a reliable endpoint is verified.
+
 2. **Event-page audit** — `tools/audit_store_event_pages.py` reads
    `data/candidate_stores.json`, fetches each candidate's website, detects event
    pages and calendar presence, and writes `data/store_event_audit.json`. It uses
