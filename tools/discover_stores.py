@@ -31,6 +31,17 @@ STATUS_ORDER = {
     "needs_manual_review": 3,
 }
 
+GAME_ALIASES = {
+    "MTG": "Magic: The Gathering",
+    "Magic": "Magic: The Gathering",
+    "SWU": "Star Wars: Unlimited",
+    "FAB": "Flesh and Blood",
+    "Flesh & Blood": "Flesh and Blood",
+    "Yugioh": "Yu-Gi-Oh!",
+    "Yu-Gi-Oh": "Yu-Gi-Oh!",
+    "OnePiece": "One Piece",
+}
+
 
 def _discover_modules() -> list[str]:
     """Module names of every *.py inside discoverers/ except __init__."""
@@ -39,6 +50,172 @@ def _discover_modules() -> list[str]:
         for p in sorted(DISCOVERERS_DIR.glob("*.py"))
         if p.stem != "__init__"
     ]
+
+
+def _canonical_game(game: str) -> str:
+    game = str(game).strip()
+    return GAME_ALIASES.get(game, game)
+
+
+def _unique_sorted(values: list[str]) -> list[str]:
+    return sorted({v for v in values if v})
+
+
+def _candidate_source(cand: dict, module_name: str) -> str:
+    return cand.get("source") or module_name.replace("discoverers.", "")
+
+
+def _candidate_games(cand: dict) -> list[str]:
+    games = cand.get("games") or []
+    if isinstance(games, str):
+        games = [games]
+    return _unique_sorted([_canonical_game(g) for g in games])
+
+
+def _candidate_external_ids(cand: dict, source: str) -> dict[str, str]:
+    external_ids = cand.get("external_ids")
+    if isinstance(external_ids, dict):
+        return {
+            str(k): str(v)
+            for k, v in external_ids.items()
+            if k and v is not None and str(v)
+        }
+
+    external_id = cand.get("external_id")
+    if external_id is None or str(external_id) == "":
+        return {}
+    return {source: str(external_id)}
+
+
+def _candidate_evidence(cand: dict, source: str, games: list[str]) -> list[dict]:
+    """
+    Return source evidence records for a discovered store.
+
+    Discoverers may provide rich evidence themselves. Older discoverers only
+    provide source/games/website/external_id, so we synthesize one evidence
+    record to preserve provenance in the new multi-source model.
+    """
+    evidence = cand.get("evidence")
+    if isinstance(evidence, list):
+        normalized = []
+        for item in evidence:
+            if not isinstance(item, dict):
+                continue
+            record = dict(item)
+            record.setdefault("source", source)
+            if "game" in record:
+                record["game"] = _canonical_game(record["game"])
+            if isinstance(record.get("games"), list):
+                record["games"] = _unique_sorted([
+                    _canonical_game(g) for g in record["games"]
+                ])
+            normalized.append(record)
+        if normalized:
+            return normalized
+
+    record = {
+        "source": source,
+        "type": cand.get("evidence_type", "official_store_locator"),
+    }
+    if games:
+        record["games"] = games
+    if cand.get("website"):
+        record["url"] = cand["website"]
+    if cand.get("external_id") is not None:
+        record["external_id"] = str(cand["external_id"])
+    return [record]
+
+
+def _merge_key(candidate: dict) -> tuple[str, str]:
+    """
+    Merge exact duplicate records from different discoverers.
+
+    Keep the key deliberately strict. A loose key based on matched existing
+    store can collapse distinct branches of a chain into one candidate when
+    fuzzy matching maps them to the same known store. Later dedupe phases can
+    add geocoding or safer cross-source fuzzy merge.
+    """
+    return (
+        normalize_name(candidate["name"]),
+        normalize_address(candidate["address"]),
+    )
+
+
+def _prefer_primary(current: dict, incoming: dict) -> bool:
+    current_score = (
+        STATUS_ORDER.get(current["status"], 99),
+        -current["confidence"],
+        0 if current.get("website") else 1,
+    )
+    incoming_score = (
+        STATUS_ORDER.get(incoming["status"], 99),
+        -incoming["confidence"],
+        0 if incoming.get("website") else 1,
+    )
+    return incoming_score < current_score
+
+
+def _merge_candidate(current: dict, incoming: dict) -> dict:
+    if _prefer_primary(current, incoming):
+        primary = {
+            "name": incoming["name"],
+            "address": incoming["address"],
+            "source": incoming["source"],
+            "website": incoming.get("website") or current.get("website"),
+            "external_id": incoming.get("external_id") or current.get("external_id"),
+            "matched_existing_store": incoming.get("matched_existing_store"),
+            "confidence": incoming.get("confidence", 0.0),
+            "status": incoming.get("status", "candidate_new_store"),
+        }
+    else:
+        primary = {
+            "name": current["name"],
+            "address": current["address"],
+            "source": current["source"],
+            "website": current.get("website") or incoming.get("website"),
+            "external_id": current.get("external_id") or incoming.get("external_id"),
+            "matched_existing_store": current.get("matched_existing_store"),
+            "confidence": current.get("confidence", 0.0),
+            "status": current.get("status", "candidate_new_store"),
+        }
+
+    sources = _unique_sorted(current.get("sources", []) + incoming.get("sources", []))
+    games = _unique_sorted(current.get("games", []) + incoming.get("games", []))
+    external_ids = {
+        **current.get("external_ids", {}),
+        **incoming.get("external_ids", {}),
+    }
+    evidence = current.get("evidence", []) + incoming.get("evidence", [])
+
+    return {
+        **primary,
+        "sources": sources,
+        "external_ids": external_ids,
+        "games": games,
+        "evidence": evidence,
+    }
+
+
+def _build_candidate(cand: dict, module_name: str, match_result: dict) -> dict:
+    source = _candidate_source(cand, module_name)
+    games = _candidate_games(cand)
+    external_ids = _candidate_external_ids(cand, source)
+    external_id = external_ids.get(source)
+
+    return {
+        "name": cand["name"],
+        "address": cand["address"],
+        "source": source,
+        "sources": [source],
+        "games": games,
+        "website": cand.get("website"),
+        "external_id": external_id,
+        "external_ids": external_ids,
+        "evidence": _candidate_evidence(cand, source, games),
+        "matched_existing_store": match_result.get("matched_existing_store"),
+        "confidence": match_result.get("confidence", 0.0),
+        "status": match_result.get("status", "candidate_new_store"),
+    }
 
 
 def main() -> None:
@@ -75,30 +252,19 @@ def main() -> None:
                     continue
 
                 match_result = match_existing_store(cand, existing)
-                candidate = {
-                    "name": cand["name"],
-                    "address": cand["address"],
-                    "source": cand.get("source", module_name.replace("discoverers.", "")),
-                    "games": cand.get("games", []),
-                    "website": cand.get("website"),
-                    "external_id": cand.get("external_id"),
-                    "matched_existing_store": match_result.get("matched_existing_store"),
-                    "confidence": match_result.get("confidence", 0.0),
-                    "status": match_result.get("status", "candidate_new_store"),
-                }
+                candidate = _build_candidate(cand, module_name, match_result)
                 all_candidates.append(candidate)
         except Exception as exc:
             err = f"{module_name}: {type(exc).__name__}: {exc}"
             errors.append(err)
             print(f"ERROR: {err}", file=sys.stderr)
 
-    # Deduplicate by normalized (name, address)
+    # Deduplicate and merge repeated stores across discoverers.
     seen: dict[tuple[str, str], dict] = {}
     for cand in all_candidates:
-        key = (normalize_name(cand["name"]), normalize_address(cand["address"]))
+        key = _merge_key(cand)
         if key in seen:
-            if cand["confidence"] > seen[key]["confidence"]:
-                seen[key] = cand
+            seen[key] = _merge_candidate(seen[key], cand)
         else:
             seen[key] = cand
 
