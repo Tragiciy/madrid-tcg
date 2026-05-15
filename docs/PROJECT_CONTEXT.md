@@ -143,6 +143,35 @@ The pipeline for finding and onboarding new stores follows these steps:
    finds candidate stores from the Wizards locator and other sources, writing
    `data/candidate_stores.json`.
 
+   Each discoverer module exposes `discover() -> list[dict]`. The minimum
+   candidate shape is:
+
+   ```json
+   {
+     "name": "Store name",
+     "address": "Street, city, country",
+     "source": "source_name",
+     "games": ["Magic: The Gathering"],
+     "website": "https://example.com",
+     "external_id": "source-specific-id"
+   }
+   ```
+
+   `tools/discover_stores.py` merges duplicate records across discoverers and
+   preserves provenance. The canonical `candidate_stores.json` record keeps
+   legacy compatibility fields (`source`, `website`, `external_id`, `status`)
+   and also includes:
+
+   - `sources` — all discoverers that found the store.
+   - `external_ids` — source name → source-specific ID.
+   - `evidence` — source records explaining why the store is a candidate
+     (official locator hit, event locator hit, etc.).
+   - `games` — canonical games inferred from all sources.
+
+   New discoverers should return canonical game names where possible. Common
+   aliases such as `MTG`, `SWU`, and `FAB` are normalized by
+   `tools/discover_stores.py`.
+
 2. **Event-page audit** — `tools/audit_store_event_pages.py` reads
    `data/candidate_stores.json`, fetches each candidate's website, detects event
    pages and calendar presence, and writes `data/store_event_audit.json`. It uses

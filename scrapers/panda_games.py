@@ -222,10 +222,9 @@ def scrape() -> list[dict]:
             hour, minute, tzinfo=TZ,
         )
 
-        fmt, fmt_official = extract_format_for_event(title=title, game=game)
-
-        best_of = extract_best_of(title)
         game = _extract_game(title, page_text)
+        fmt, fmt_official = extract_format_for_event(title=title, game=game)
+        best_of = extract_best_of(title)
 
         events.append(
             {

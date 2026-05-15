@@ -34,6 +34,7 @@ Core user question: **"What can I play this week in my city?"**
 - Event Detail Panel: title, game, format, store address, Google Maps link
 - Calendar export: Google Calendar, iCalendar (.ics), Outlook
 - Event sharing: `navigator.share()` + clipboard fallback; `?event=` deep-link
+- Scraper health dashboard at `/health`, backed by `events_stats.json`
 - Time-segment chips (Morning / Afternoon / Evening / Late)
 - Responsive: horizontal scroll on mobile, auto-switch to vertical on
   first visit on narrow screens
@@ -84,6 +85,7 @@ Core user question: **"What can I play this week in my city?"**
 | ✅ | Format unification + format_official + best_of | Unified `format` vocabulary (Premier/Armory/CC → Standard), per-game default for non-MTG, `format_official` for original names, `best_of` field for BO1/BO3, title-priority Prerelease fixes Sealed bug. Backfill via `scripts/reclassify_formats.py` reduced null format from 27.5% → 10.5% |
 | ✅ | TopDeck + Collectorage scrapers | WordPress batch via `shared/wordpress_events.py`; 2 new stores; 0 WordPress targets remaining (#61) |
 | ✅ | 5 unknown-platform scrapers | Padis (PrestaShop), MADAKIBA, Goblintrader Central, Gladius Games, Mundicomics; 0 `scrape_now` targets remaining (#62) |
+| ✅ | Scraper health dashboard | Static `/health` page fetches `events_stats.json`, shows last run, per-store raw/active/dropped counts, anomaly badges, failed scraper alerts, and is linked from the footer |
 
 ---
 
@@ -104,24 +106,6 @@ Both tracks closed as of 2026-05-14.
 
 These are confirmed-valuable items that follow the active sprint. Order roughly
 by impact-to-effort ratio.
-
-### P1 — Scraper health dashboard
-
-**Goal:** Visualize scraper status without reading raw JSON.
-
-**Implementation:**
-- Static `public/health.html` — a standalone page (no Alpine dependency,
-  plain JS) that fetches `events_stats.json` and renders:
-  - Per-store table: `raw_this_run`, `active`, `dropped`, `anomaly` badge.
-  - Last-run timestamp.
-  - Anomaly warnings highlighted in amber.
-  - Failed scrapers highlighted in red.
-- No backend required; refreshes automatically on each `aggregator.py` run
-  since `events_stats.json` is regenerated daily.
-- Link from the site footer or a hidden `/health` path for maintainers only.
-
-**Effort:** Small (1 day). **Impact:** Medium — eliminates manual JSON
-inspection for ongoing maintenance.
 
 ### P2 — Progressive Web App (PWA)
 
@@ -249,7 +233,7 @@ Tables: `stores`, `events`, `scraper_runs`, `anomalies`, `candidate_stores`.
 
 | Horizon | Work |
 |---|---|
-| **Now** | P1 scraper health dashboard; A2 discovery automation |
+| **Now** | A2 discovery automation |
 | **Next 2–4 weeks** | P2 PWA; P4 store metadata expansion |
 | **Mid-term** | P3 payload management; P5 new game discoverers |
 | **Long-term** | Phase 2 geographic expansion; backend migration |
