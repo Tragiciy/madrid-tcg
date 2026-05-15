@@ -1,87 +1,7 @@
 {
   "scrape_now": [
     {
-      "name": "Asedio Gaming",
-      "website": "https://asediogaming.com/",
-      "best_event_page": "https://asediogaming.com/pages/eventos",
-      "platform": "shopify",
-      "game_detected": "Flesh and Blood",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with Flesh and Blood content"
-    },
-    {
-      "name": "Collectorage",
-      "website": "https://collectorage.com/",
-      "best_event_page": "https://collectorage.com/calendario",
-      "platform": "wordpress",
-      "game_detected": "Star Wars: Unlimited",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with Star Wars: Unlimited content"
-    },
-    {
-      "name": "Generacion X - Elfo",
-      "website": "https://genexcomics.com/",
-      "best_event_page": "https://genexcomics.com/eventos/",
-      "platform": "wordpress",
-      "game_detected": "Magic: The Gathering",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with MTG content"
-    },
-    {
-      "name": "Gladius Games",
-      "website": "https://gladiusgames.net/",
-      "best_event_page": "https://gladiusgames.net/content/5-calendario-de-eventos",
-      "platform": "unknown",
-      "game_detected": "Magic: The Gathering",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with MTG content"
-    },
-    {
-      "name": "Goblintrader Central",
-      "website": "https://www.goblintrader.es/gb/",
-      "best_event_page": "https://www.goblintrader.es/gb/eventos",
-      "platform": "unknown",
-      "game_detected": "Star Wars: Unlimited",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with Star Wars: Unlimited content"
-    },
-    {
-      "name": "Goblintrader Madrid-Norte",
-      "website": "https://www.goblintrader.es",
-      "best_event_page": "https://www.goblintrader.es/es/eventos",
-      "platform": "unknown",
-      "game_detected": "Star Wars: Unlimited",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with Star Wars: Unlimited content"
-    },
-    {
-      "name": "Kamikaze Freak Shop",
-      "website": "https://kamikazefreakshop.es/",
-      "best_event_page": "https://kamikazefreakshop.es/index.php/eventos/",
-      "platform": "wordpress",
-      "game_detected": "Magic: The Gathering",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with MTG content"
-    },
-    {
-      "name": "MADAKIBA",
-      "website": "https://madakiba.com/",
-      "best_event_page": "https://madakiba.com/es/c/eventos",
-      "platform": "unknown",
-      "game_detected": "Star Wars: Unlimited",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with Star Wars: Unlimited content"
-    },
-    {
-      "name": "Metamorfo",
+      "name": "Metamorfo (Santiago Palacios)",
       "website": "https://metamorfo.es/",
       "best_event_page": "https://metamorfo.es/calendario",
       "platform": "wordpress",
@@ -91,29 +11,9 @@
       "reason": "validated event page with Yu-Gi-Oh! content"
     },
     {
-      "name": "Mundicomics",
-      "website": "https://www.mundicomics.com/",
-      "best_event_page": "https://www.mundicomics.com/torneos-tcg",
-      "platform": "unknown",
-      "game_detected": "Magic: The Gathering",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with MTG content"
-    },
-    {
-      "name": "Padis",
-      "website": "https://www.padis-store.com/",
-      "best_event_page": "https://www.padis-store.com/284-inscripciones-torneos",
-      "platform": "unknown",
-      "game_detected": "Flesh and Blood",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with Flesh and Blood content"
-    },
-    {
-      "name": "Panda Games",
-      "website": "https://pandagames.es/",
-      "best_event_page": "https://pandagames.es/juegos/eventos/",
+      "name": "Next Dice",
+      "website": "https://nextdice.es/contact_next_dice/",
+      "best_event_page": "https://nextdice.es/events/",
       "platform": "wordpress",
       "game_detected": "Magic: The Gathering",
       "priority": "high",
@@ -121,29 +21,19 @@
       "reason": "validated event page with MTG content"
     },
     {
-      "name": "The Big Bang Games",
-      "website": "https://www.thebigbanggames.com",
-      "best_event_page": "http://www.thebigbanggames.com/eventos",
+      "name": "Replay Boardgame Cafe",
+      "website": "https://www.replayoutletcafe.com",
+      "best_event_page": "https://www.replayoutletcafe.com/event-details/rcd-riftbound-community-day-edicion-unleashed",
       "platform": "wordpress",
-      "game_detected": "Star Wars: Unlimited",
+      "game_detected": "Riftbound",
       "priority": "high",
       "recommended_action": "scrape_now",
-      "reason": "validated event page with Star Wars: Unlimited content"
-    },
-    {
-      "name": "TopDeck",
-      "website": "https://topdeck.es",
-      "best_event_page": "https://topdeck.es/calendario-de-torneos/",
-      "platform": "wordpress",
-      "game_detected": "One Piece",
-      "priority": "high",
-      "recommended_action": "scrape_now",
-      "reason": "validated event page with One Piece content"
+      "reason": "validated event page with Riftbound content"
     }
   ],
   "possible": [
     {
-      "name": "Alcala Comics",
+      "name": "ALCALA COMICS",
       "website": "https://www.alcalacomics.com/",
       "best_event_page": null,
       "platform": "wordpress",
@@ -153,7 +43,7 @@
       "reason": "Homepage has event intent keywords but no clean event page found."
     },
     {
-      "name": "Crisis Alcorcon Juegos",
+      "name": "Crisis Alcorcón Juegos",
       "website": "https://www.juegoscrisis.com/",
       "best_event_page": null,
       "platform": "wordpress",
@@ -163,27 +53,27 @@
       "reason": "Homepage has event intent keywords but no clean event page found."
     },
     {
-      "name": "Generacion X - Carranza",
-      "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
+      "name": "Factory Cards.",
+      "website": "Https://Www.factorycardstcg.com",
       "best_event_page": null,
-      "platform": "unknown",
+      "platform": "shopify",
       "game_detected": null,
       "priority": "medium",
       "recommended_action": "investigate",
       "reason": "Homepage has event intent keywords but no clean event page found."
     },
     {
-      "name": "Generacion X - Coslada",
-      "website": "http://www.generacionx.es/",
+      "name": "GALLEGOS DE LA TORRE S.L. (CRISIS ALCORCÓN JUEGOS)",
+      "website": "https://www.juegoscrisis.com/",
       "best_event_page": null,
-      "platform": "unknown",
+      "platform": "wordpress",
       "game_detected": null,
       "priority": "medium",
       "recommended_action": "investigate",
       "reason": "Homepage has event intent keywords but no clean event page found."
     },
     {
-      "name": "LUDOTECA MALDITA",
+      "name": "Ludoteca Maldita",
       "website": "https://www.ludotecamaldita.com",
       "best_event_page": null,
       "platform": "wordpress",
@@ -213,10 +103,40 @@
       "reason": "Homepage has event intent keywords but no clean event page found."
     },
     {
-      "name": "Wargen Wargames",
-      "website": "https://wargenwargames.com",
-      "best_event_page": null,
+      "name": "Somosjuegos",
+      "website": "https://www.somosjuegos.com/",
+      "best_event_page": "https://www.somosjuegos.com/agenda/",
+      "platform": "wordpress",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Found 1 clean event page(s) but could not validate game/format content."
+    },
+    {
+      "name": "TABLERUM",
+      "website": "https://tablerum.com",
+      "best_event_page": "https://tablerum.com/torneos/mes/2026-05",
       "platform": "unknown",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Found 1 clean event page(s) but could not validate game/format content."
+    },
+    {
+      "name": "TE JUEGO MUCHO",
+      "website": "https://tejuegomucho.com",
+      "best_event_page": "https://tejuegomucho.com/event",
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Found 1 clean event page(s) but could not validate game/format content."
+    },
+    {
+      "name": "Victory Road",
+      "website": "https://tcg.victoryroad.pro/es/",
+      "best_event_page": null,
+      "platform": "wordpress",
       "game_detected": null,
       "priority": "medium",
       "recommended_action": "investigate",
@@ -235,36 +155,6 @@
       "reason": "Social-only page; not a straightforward scraper target."
     },
     {
-      "name": "Generacion X - Las musas",
-      "website": "https://www.instagram.com/genxlasmusas/",
-      "best_event_page": null,
-      "platform": "unknown",
-      "game_detected": null,
-      "priority": "manual_review",
-      "recommended_action": "manual_review",
-      "reason": "Social-only page; not a straightforward scraper target."
-    },
-    {
-      "name": "Generación X Goya",
-      "website": "https://www.instagram.com/genxgoya/?hl=it",
-      "best_event_page": null,
-      "platform": "unknown",
-      "game_detected": null,
-      "priority": "manual_review",
-      "recommended_action": "manual_review",
-      "reason": "Social-only page; not a straightforward scraper target."
-    },
-    {
-      "name": "Goblin Trader - Madrid Sur",
-      "website": "https://www.instagram.com/gtsmadridsur/?hl=en",
-      "best_event_page": null,
-      "platform": "unknown",
-      "game_detected": null,
-      "priority": "manual_review",
-      "recommended_action": "manual_review",
-      "reason": "Social-only page; not a straightforward scraper target."
-    },
-    {
       "name": "Hobby Shop Wargames S.L",
       "website": "https://www.instagram.com/hobbyshopwargames/",
       "best_event_page": null,
@@ -275,8 +165,8 @@
       "reason": "Social-only page; not a straightforward scraper target."
     },
     {
-      "name": "Medusa Cómics",
-      "website": "https://www.facebook.com/comicsmedusa/",
+      "name": "La Jugación",
+      "website": "https://www.instagram.com/la_jugacion/",
       "best_event_page": null,
       "platform": "unknown",
       "game_detected": null,
@@ -285,8 +175,8 @@
       "reason": "Social-only page; not a straightforward scraper target."
     },
     {
-      "name": "Te Juego Mucho",
-      "website": "https://www.instagram.com/tejuegomucho/",
+      "name": "SIMONV TCG",
+      "website": "https://www.instagram.com/simonvtcg/",
       "best_event_page": null,
       "platform": "unknown",
       "game_detected": null,
@@ -303,21 +193,31 @@
       "priority": "manual_review",
       "recommended_action": "manual_review",
       "reason": "Social-only page; not a straightforward scraper target."
+    },
+    {
+      "name": "Zacatrus! Madrid Chamberí",
+      "website": "https://www.zacatrus.es/events",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "manual_review",
+      "recommended_action": "manual_review",
+      "reason": "Homepage unreachable: 403 Client Error: Forbidden for url: https://www.zacatrus.es/events"
     }
   ],
   "not_ready": [
     {
-      "name": "Factory Cards",
-      "website": "https://www.factorycardstcg.com",
+      "name": "ISEKAI",
+      "website": "https://isekai-alcorcon.es/es",
       "best_event_page": null,
-      "platform": "shopify",
+      "platform": "unknown",
       "game_detected": null,
       "priority": "low",
       "recommended_action": "skip_for_now",
       "reason": "Reachable website but no event intent signals detected."
     },
     {
-      "name": "ISEKAI",
+      "name": "Isekai TCG Store",
       "website": "https://isekai-alcorcon.es/es",
       "best_event_page": null,
       "platform": "unknown",
@@ -347,10 +247,10 @@
       "reason": "Reachable website but no event intent signals detected."
     },
     {
-      "name": "La Jugación",
-      "website": "https://lajugacion.es/",
+      "name": "Troopertoys",
+      "website": "https://troopertoys.com/es/",
       "best_event_page": null,
-      "platform": "wordpress",
+      "platform": "unknown",
       "game_detected": null,
       "priority": "low",
       "recommended_action": "skip_for_now",
