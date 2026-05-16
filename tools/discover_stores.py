@@ -24,6 +24,7 @@ from shared.store_matching import (
 )
 
 DISCOVERERS_DIR = pathlib.Path("discoverers")
+DISCOVERY_OVERRIDES_FILE = ROOT / "data" / "store_discovery_overrides.json"
 STATUS_ORDER = {
     "matched_existing_store": 0,
     "candidate_new_store": 1,
@@ -260,6 +261,57 @@ def _merge_exact_name_cross_source_candidates(candidates: list[dict]) -> list[di
     return merged
 
 
+def _load_discovery_overrides() -> dict[tuple[str, str], dict]:
+    if not DISCOVERY_OVERRIDES_FILE.exists():
+        return {}
+
+    try:
+        data = json.loads(DISCOVERY_OVERRIDES_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+    if not isinstance(data, list):
+        return {}
+
+    overrides = {}
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name")
+        address = item.get("address")
+        if not name or not address:
+            continue
+        overrides[(normalize_name(name), normalize_address(address))] = item
+
+    return overrides
+
+
+def _apply_discovery_overrides(candidates: list[dict]) -> list[dict]:
+    overrides = _load_discovery_overrides()
+    if not overrides:
+        return candidates
+
+    for candidate in candidates:
+        key = (
+            normalize_name(candidate["name"]),
+            normalize_address(candidate["address"]),
+        )
+        override = overrides.get(key)
+        if not override:
+            continue
+
+        candidate["status"] = override["status"]
+        candidate["matched_existing_store"] = override.get("matched_existing_store")
+        candidate["confidence"] = override.get("confidence", candidate["confidence"])
+        candidate["manual_review"] = {
+            "decision": override.get("decision"),
+            "reviewed_at": override.get("reviewed_at"),
+            "note": override.get("note"),
+        }
+
+    return candidates
+
+
 def main() -> None:
     existing = load_existing_stores()
     print(f"Loaded {len(existing)} existing stores", file=sys.stderr)
@@ -311,6 +363,7 @@ def main() -> None:
             seen[key] = cand
 
     candidates = _merge_exact_name_cross_source_candidates(list(seen.values()))
+    candidates = _apply_discovery_overrides(candidates)
 
     # Deterministic sort: status order asc, confidence desc, name asc
     candidates.sort(

@@ -1,5 +1,29 @@
 [
   {
+    "name": "GenexComics",
+    "website": "https://www.genexcomics.com",
+    "address": "C. de Elfo, 98, Cdad. Lineal, 28027 Madrid, Spain",
+    "external_id": "24364",
+    "event_pages": [
+      "https://genexcomics.com/eventos/"
+    ],
+    "best_event_page": "https://genexcomics.com/eventos/",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:calendario",
+      "event_page_game:Magic: The Gathering",
+      "event_page_format:Prerelease",
+      "platform:wordpress",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Magic: The Gathering",
+    "format_detected": "Prerelease",
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
     "name": "Metamorfo (Santiago Palacios)",
     "website": "https://metamorfo.es/",
     "address": "3 Calle de la Ilustración, Local comercial Metamorfo, Getafe, MD, 28902, ES",
@@ -54,6 +78,27 @@
     "notes": "Found 1 clean event page(s); best page validates with game/format content."
   },
   {
+    "name": "OZ JUEGOS",
+    "website": "https://www.ozjuegos.com",
+    "address": "13 P.º de Fuente Lucha, Alcobendas, MD, 28100, ES",
+    "external_id": "3750",
+    "event_pages": [
+      "https://ozjuegos.com/eventos/"
+    ],
+    "best_event_page": "https://ozjuegos.com/eventos/",
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:presentación",
+      "event_page_game:Flesh and Blood",
+      "platform:wordpress"
+    ],
+    "game_detected": "Flesh and Blood",
+    "format_detected": null,
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
+  },
+  {
     "name": "Replay Boardgame Cafe",
     "website": "https://www.replayoutletcafe.com",
     "address": "Calle Ribera Curtidores 26 Local 3, Madrid, Madrid, 28005, Spain",
@@ -62,8 +107,7 @@
       "https://www.replayoutletcafe.com/event-details/apconcitas-de-junio-3",
       "https://www.replayoutletcafe.com/event-details/cena-con-misterio-una-noche-en-venecia-2",
       "https://www.replayoutletcafe.com/event-details/rcd-riftbound-community-day-edicion-unleashed",
-      "https://www.replayoutletcafe.com/event-details/trivia-tapas-night-2",
-      "https://www.replayoutletcafe.com/eventos"
+      "https://www.replayoutletcafe.com/event-details/trivia-tapas-night-2"
     ],
     "best_event_page": "https://www.replayoutletcafe.com/event-details/rcd-riftbound-community-day-edicion-unleashed",
     "signals": [
@@ -82,7 +126,31 @@
     "format_detected": "Draft",
     "scraper_priority": "high",
     "scraper_readiness": "ready",
-    "notes": "Found 5 clean event page(s); best page validates with game/format content."
+    "notes": "Found 4 clean event page(s); best page validates with game/format content."
+  },
+  {
+    "name": "Three Stones Games",
+    "website": "https://threestonesgames.com",
+    "address": "Pl. del Toro, Centro Comercia La Rotonda, 28760 Tres Cantos, Madrid, Spain",
+    "external_id": "24012",
+    "event_pages": [
+      "https://threestonesgames.com/pages/calendario-de-eventos"
+    ],
+    "best_event_page": "https://threestonesgames.com/pages/calendario-de-eventos",
+    "signals": [
+      "homepage_event_keyword:evento",
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:torneo",
+      "event_page_game:Star Wars: Unlimited",
+      "platform:shopify",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": "Star Wars: Unlimited",
+    "format_detected": null,
+    "scraper_priority": "high",
+    "scraper_readiness": "ready",
+    "notes": "Found 1 clean event page(s); best page validates with game/format content."
   },
   {
     "name": "ALCALA COMICS",
@@ -124,10 +192,10 @@
     "notes": "Homepage has event intent keywords but no clean event page found."
   },
   {
-    "name": "Factory Cards.",
-    "website": "Https://Www.factorycardstcg.com",
-    "address": "avenida Canillejas a vicalvaro 61, Madrid, 28022, ES",
-    "external_id": "18341",
+    "name": "Factory Cards",
+    "website": "https://www.factorycardstcg.com",
+    "address": "Avenida de Canillejas a Vicalvaro 61, bajo 6, Madrid, 28022, ES",
+    "external_id": "3451",
     "event_pages": [],
     "best_event_page": null,
     "signals": [
@@ -151,6 +219,118 @@
     "signals": [
       "homepage_event_keyword:eventos",
       "platform:wordpress",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Generacion X - Carranza",
+    "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
+    "address": "c/ Carranza 25, Madrid, M, 28004, Spain",
+    "external_id": "12545",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:event",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Generacion X - Coslada",
+    "website": "http://www.generacionx.es/",
+    "address": "Avenida de la Cañada 51 , Coslada, M, 28823  , Spain",
+    "external_id": "11220",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:event",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Generación X Tirso",
+    "website": "http://generacionx.es/",
+    "address": "3 Calle del Conde de Romanones, Madrid, MD, 28012, ES",
+    "external_id": "2138",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:event",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Jupiter Central",
+    "website": "https://www.jupiterjuegos.com/",
+    "address": "C/ Manuel Silvela 8 LOCAL, Madrid, 28010, ES",
+    "external_id": "264",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:calendario",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Júpiter Alcobendas",
+    "website": "https://www.jupiterjuegos.com/calendario?tienda=jupiter-alcobendas",
+    "address": "95 Calle del Marqués de la Valdavia, Local 2, Alcobendas, MD, 28100, ES",
+    "external_id": "2712",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:eventos",
+      "homepage_event_keyword:calendario",
+      "homepage_event_keyword:presentación",
+      "homepage_event_keyword:presentacion",
+      "homepage_event_keyword:liga",
+      "platform:instagram",
+      "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "medium",
+    "scraper_readiness": "possible",
+    "notes": "Homepage has event intent keywords but no clean event page found."
+  },
+  {
+    "name": "Júpiter Juegos Alcorcón",
+    "website": "https://www.jupiterjuegos.com/",
+    "address": "10, C. Parque Bujaruelo, Alcorcón, MD, 28924, ES",
+    "external_id": "2708",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "homepage_event_keyword:calendario",
+      "platform:instagram",
       "platform:facebook"
     ],
     "game_detected": null,
@@ -328,6 +508,54 @@
     "notes": "Social-only page; not a straightforward scraper target."
   },
   {
+    "name": "Generacion X - Las musas",
+    "website": "https://www.instagram.com/genxlasmusas/",
+    "address": "Av. Canillejas a Vicalvaro nº 113, Madrid, Madrid, 28022, Spain",
+    "external_id": "11182",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Generación X Getafe",
+    "website": "https://www.instagram.com/generacionx_getafe?igsh=ajcyN2pxMnQ1OWJz&utm_source=qr",
+    "address": "1, C. Gral. Pingarrón, Getafe, MD, 28901, ES",
+    "external_id": "18686",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Generación X Goya",
+    "website": "https://www.instagram.com/genxgoya/?hl=it",
+    "address": "Calle de las Mártires Concepcionistas 5, Madrid, M, 28006, Spain",
+    "external_id": "14184",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
     "name": "Hobby Shop Wargames S.L",
     "website": "https://www.instagram.com/hobbyshopwargames/",
     "address": "18 C. de Talamanca, Alcalá de Henares, MD, 28807, Spain",
@@ -344,10 +572,40 @@
     "notes": "Social-only page; not a straightforward scraper target."
   },
   {
+    "name": "La Guarida del vigilante",
+    "website": "https://laguaridadelvigilante.com/",
+    "address": "29 C. de Sánchez Barcáiztegui, Madrid, MD, 28007, Spain",
+    "external_id": "17038",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Homepage unreachable: 403 Client Error: Forbidden for url: https://laguaridadelvigilante.com/"
+  },
+  {
     "name": "La Jugación",
     "website": "https://www.instagram.com/la_jugacion/",
     "address": "46, C. Rio Duero, Leganés, MD, 28913, ES",
     "external_id": "13836",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:social_only"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "manual_review",
+    "scraper_readiness": "manual_review",
+    "notes": "Social-only page; not a straightforward scraper target."
+  },
+  {
+    "name": "Medusa Cómics",
+    "website": "https://www.instagram.com/comicsmedusa/",
+    "address": "21, Rda. de la Pescadería, Alcalá de Henares, MD, 28801, ES",
+    "external_id": "10644",
     "event_pages": [],
     "best_event_page": null,
     "signals": [
@@ -472,6 +730,55 @@
     "notes": "Reachable website but no event intent signals detected."
   },
   {
+    "name": "Libertalia Juegos",
+    "website": "https://libertaliajuegos.com/",
+    "address": "C/ Badajoz 32, Mostoles, 28931, ES",
+    "external_id": "1918",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:wordpress",
+      "platform:linktree"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
+    "name": "Ohana Games",
+    "website": "https://www.ohanagamesmadrid.com/",
+    "address": "Calle Sánchez Barcaiztegui, Nº29, Madrid, 28007, ES",
+    "external_id": "677",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:instagram",
+      "platform:facebook",
+      "platform:discord"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
+    "name": "Portal Juegos",
+    "website": "https://portaljuegos.es/index.php",
+    "address": "24 Av. de Honorio Lozano, Collado Villalba, MD, 28400, Spain",
+    "external_id": "15914",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
     "name": "Troopertoys",
     "website": "https://troopertoys.com/es/",
     "address": "Troopertoys, Madrid, 28017, ES",
@@ -481,6 +788,23 @@
     "signals": [
       "platform:instagram",
       "platform:facebook"
+    ],
+    "game_detected": null,
+    "format_detected": null,
+    "scraper_priority": "low",
+    "scraper_readiness": "not_ready",
+    "notes": "Reachable website but no event intent signals detected."
+  },
+  {
+    "name": "Wargen Wargames",
+    "website": "https://wargenwargames.com",
+    "address": "2B Avenida de Las Águilas, Local 2, Madrid, MD, 28044, ES",
+    "external_id": "5310",
+    "event_pages": [],
+    "best_event_page": null,
+    "signals": [
+      "platform:instagram",
+      "platform:google_calendar"
     ],
     "game_detected": null,
     "format_detected": null,
