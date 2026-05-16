@@ -212,12 +212,12 @@
   {
     "name": "TCG Games",
     "address": "Pº de Recoletos 5, Madrid, 28004, ES",
-    "status": "needs_manual_review",
+    "status": "backlog",
     "matched_existing_store": null,
     "confidence": 0.0,
-    "decision": "needs_more_information",
-    "reviewed_at": "2026-05-16",
-    "note": "Manual review: generic name; unclear whether this is a real distinct store."
+    "decision": "deferred_storefront_review",
+    "reviewed_at": "2026-05-17",
+    "note": "Bandai TCG+ organizer exists (id 2650, phone 692495498, business hours 8-21) with One Piece events at Pº de Recoletos 5, but no public website/social/storefront was confirmed. Keep in backlog for later manual Bandai/site review."
   },
   {
     "name": "Three Stones Games",
