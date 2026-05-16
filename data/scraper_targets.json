@@ -1,6 +1,16 @@
 {
   "scrape_now": [
     {
+      "name": "GenexComics",
+      "website": "https://www.genexcomics.com",
+      "best_event_page": "https://genexcomics.com/eventos/",
+      "platform": "wordpress",
+      "game_detected": "Magic: The Gathering",
+      "priority": "high",
+      "recommended_action": "scrape_now",
+      "reason": "validated event page with MTG content"
+    },
+    {
       "name": "Metamorfo (Santiago Palacios)",
       "website": "https://metamorfo.es/",
       "best_event_page": "https://metamorfo.es/calendario",
@@ -21,6 +31,16 @@
       "reason": "validated event page with MTG content"
     },
     {
+      "name": "OZ JUEGOS",
+      "website": "https://www.ozjuegos.com",
+      "best_event_page": "https://ozjuegos.com/eventos/",
+      "platform": "wordpress",
+      "game_detected": "Flesh and Blood",
+      "priority": "high",
+      "recommended_action": "scrape_now",
+      "reason": "validated event page with Flesh and Blood content"
+    },
+    {
       "name": "Replay Boardgame Cafe",
       "website": "https://www.replayoutletcafe.com",
       "best_event_page": "https://www.replayoutletcafe.com/event-details/rcd-riftbound-community-day-edicion-unleashed",
@@ -29,6 +49,16 @@
       "priority": "high",
       "recommended_action": "scrape_now",
       "reason": "validated event page with Riftbound content"
+    },
+    {
+      "name": "Three Stones Games",
+      "website": "https://threestonesgames.com",
+      "best_event_page": "https://threestonesgames.com/pages/calendario-de-eventos",
+      "platform": "shopify",
+      "game_detected": "Star Wars: Unlimited",
+      "priority": "high",
+      "recommended_action": "scrape_now",
+      "reason": "validated event page with Star Wars: Unlimited content"
     }
   ],
   "possible": [
@@ -53,8 +83,8 @@
       "reason": "Homepage has event intent keywords but no clean event page found."
     },
     {
-      "name": "Factory Cards.",
-      "website": "Https://Www.factorycardstcg.com",
+      "name": "Factory Cards",
+      "website": "https://www.factorycardstcg.com",
       "best_event_page": null,
       "platform": "shopify",
       "game_detected": null,
@@ -67,6 +97,66 @@
       "website": "https://www.juegoscrisis.com/",
       "best_event_page": null,
       "platform": "wordpress",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Homepage has event intent keywords but no clean event page found."
+    },
+    {
+      "name": "Generacion X - Carranza",
+      "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Homepage has event intent keywords but no clean event page found."
+    },
+    {
+      "name": "Generacion X - Coslada",
+      "website": "http://www.generacionx.es/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Homepage has event intent keywords but no clean event page found."
+    },
+    {
+      "name": "Generación X Tirso",
+      "website": "http://generacionx.es/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Homepage has event intent keywords but no clean event page found."
+    },
+    {
+      "name": "Jupiter Central",
+      "website": "https://www.jupiterjuegos.com/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Homepage has event intent keywords but no clean event page found."
+    },
+    {
+      "name": "Júpiter Alcobendas",
+      "website": "https://www.jupiterjuegos.com/calendario?tienda=jupiter-alcobendas",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "medium",
+      "recommended_action": "investigate",
+      "reason": "Homepage has event intent keywords but no clean event page found."
+    },
+    {
+      "name": "Júpiter Juegos Alcorcón",
+      "website": "https://www.jupiterjuegos.com/",
+      "best_event_page": null,
+      "platform": "unknown",
       "game_detected": null,
       "priority": "medium",
       "recommended_action": "investigate",
@@ -155,6 +245,36 @@
       "reason": "Social-only page; not a straightforward scraper target."
     },
     {
+      "name": "Generacion X - Las musas",
+      "website": "https://www.instagram.com/genxlasmusas/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "manual_review",
+      "recommended_action": "manual_review",
+      "reason": "Social-only page; not a straightforward scraper target."
+    },
+    {
+      "name": "Generación X Getafe",
+      "website": "https://www.instagram.com/generacionx_getafe?igsh=ajcyN2pxMnQ1OWJz&utm_source=qr",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "manual_review",
+      "recommended_action": "manual_review",
+      "reason": "Social-only page; not a straightforward scraper target."
+    },
+    {
+      "name": "Generación X Goya",
+      "website": "https://www.instagram.com/genxgoya/?hl=it",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "manual_review",
+      "recommended_action": "manual_review",
+      "reason": "Social-only page; not a straightforward scraper target."
+    },
+    {
       "name": "Hobby Shop Wargames S.L",
       "website": "https://www.instagram.com/hobbyshopwargames/",
       "best_event_page": null,
@@ -165,8 +285,28 @@
       "reason": "Social-only page; not a straightforward scraper target."
     },
     {
+      "name": "La Guarida del vigilante",
+      "website": "https://laguaridadelvigilante.com/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "manual_review",
+      "recommended_action": "manual_review",
+      "reason": "Homepage unreachable: 403 Client Error: Forbidden for url: https://laguaridadelvigilante.com/"
+    },
+    {
       "name": "La Jugación",
       "website": "https://www.instagram.com/la_jugacion/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "manual_review",
+      "recommended_action": "manual_review",
+      "reason": "Social-only page; not a straightforward scraper target."
+    },
+    {
+      "name": "Medusa Cómics",
+      "website": "https://www.instagram.com/comicsmedusa/",
       "best_event_page": null,
       "platform": "unknown",
       "game_detected": null,
@@ -247,8 +387,48 @@
       "reason": "Reachable website but no event intent signals detected."
     },
     {
+      "name": "Libertalia Juegos",
+      "website": "https://libertaliajuegos.com/",
+      "best_event_page": null,
+      "platform": "wordpress",
+      "game_detected": null,
+      "priority": "low",
+      "recommended_action": "skip_for_now",
+      "reason": "Reachable website but no event intent signals detected."
+    },
+    {
+      "name": "Ohana Games",
+      "website": "https://www.ohanagamesmadrid.com/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "low",
+      "recommended_action": "skip_for_now",
+      "reason": "Reachable website but no event intent signals detected."
+    },
+    {
+      "name": "Portal Juegos",
+      "website": "https://portaljuegos.es/index.php",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "low",
+      "recommended_action": "skip_for_now",
+      "reason": "Reachable website but no event intent signals detected."
+    },
+    {
       "name": "Troopertoys",
       "website": "https://troopertoys.com/es/",
+      "best_event_page": null,
+      "platform": "unknown",
+      "game_detected": null,
+      "priority": "low",
+      "recommended_action": "skip_for_now",
+      "reason": "Reachable website but no event intent signals detected."
+    },
+    {
+      "name": "Wargen Wargames",
+      "website": "https://wargenwargames.com",
       "best_event_page": null,
       "platform": "unknown",
       "game_detected": null,

@@ -1,5 +1,79 @@
 [
   {
+    "name": "Júpiter Juegos Madrid",
+    "address": "8 Calle de Manuel Silvela, Madrid, MD, 28010, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "2711",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 1.0,
+    "status": "matched_existing_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "riftbound_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "2711",
+      "riftbound_locator": "2711"
+    },
+    "games": [
+      "Lorcana",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2711",
+        "game_store_id": "4a569a38-a4b2-4033-9108-f9c97ec87179",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28010",
+        "coordinates": {
+          "lat": 40.4292853,
+          "lng": -3.698401099999999
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "2711",
+        "game_store_id": "c9f95793-ce13-4052-8b14-6234ad1cda21",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28010",
+        "coordinates": {
+          "lat": 40.4292853,
+          "lng": -3.698401099999999
+        }
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_existing_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: same store as existing Jupiter Juegos."
+    }
+  },
+  {
     "name": "Arte 9",
     "address": "21 Calle de Francisco Silvela, Madrid, MD, 28028, ES",
     "source": "lorcana_locator",
@@ -299,24 +373,6 @@
       "One Piece"
     ],
     "evidence": [
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "7836",
-        "event_id": 6434942,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-15T17:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 3.5145288859778874,
-        "coordinates": {
-          "lat": 40.4483563,
-          "lng": -3.7014509
-        }
-      },
       {
         "source": "one_piece_events",
         "type": "official_event_locator",
@@ -1556,24 +1612,6 @@
         "event_series_id": "6806",
         "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
         "event_date": "2026-06-20T11:30:00",
-        "city": "MADRID",
-        "country": "ES",
-        "distance": 2.4958550444270866,
-        "coordinates": {
-          "lat": 40.4071864,
-          "lng": -3.6771613
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "10622",
-        "event_id": 6384824,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-15T17:00:00",
         "city": "MADRID",
         "country": "ES",
         "distance": 2.4958550444270866,
@@ -2952,6 +2990,42 @@
     "location_precision": "street"
   },
   {
+    "name": "Dracarys Juegos",
+    "address": "13 C. de la Imaginación, Alcobendas, MD, 28100, Spain",
+    "source": "wizards_locator",
+    "sources": [
+      "wizards_locator"
+    ],
+    "games": [
+      "Magic: The Gathering"
+    ],
+    "website": "http://wpn.wizards.com",
+    "external_id": "14898",
+    "external_ids": {
+      "wizards_locator": "14898"
+    },
+    "evidence": [
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "http://wpn.wizards.com",
+        "external_id": "14898"
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word, different store."
+    }
+  },
+  {
     "name": "EL TURNO EXTRA",
     "address": "166 C. del Capitán Angosto Gómez Castrillón, Aranjuez, Madrid, 28300, Spain",
     "source": "wizards_locator",
@@ -2983,11 +3057,11 @@
     "location_precision": "street"
   },
   {
-    "name": "Factory Cards.",
-    "address": "avenida Canillejas a vicalvaro 61, Madrid, 28022, ES",
+    "name": "Factory Cards",
+    "address": "Avenida de Canillejas a Vicalvaro 61, bajo 6, Madrid, 28022, ES",
     "source": "one_piece_events",
-    "website": "Https://Www.factorycardstcg.com",
-    "external_id": "18341",
+    "website": "https://www.factorycardstcg.com",
+    "external_id": "3451",
     "matched_existing_store": null,
     "confidence": 0.0,
     "status": "candidate_new_store",
@@ -2998,7 +3072,7 @@
       "wizards_locator"
     ],
     "external_ids": {
-      "one_piece_events": "18341",
+      "one_piece_events": "3451",
       "riftbound_locator": "17290",
       "wizards_locator": "20295"
     },
@@ -3008,24 +3082,6 @@
       "Riftbound"
     ],
     "evidence": [
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "18341",
-        "event_id": 6517129,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-15T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 8.02321666869292,
-        "coordinates": {
-          "lat": 40.4355249,
-          "lng": -3.6122621
-        }
-      },
       {
         "source": "one_piece_events",
         "type": "official_event_locator",
@@ -3401,6 +3457,433 @@
     ]
   },
   {
+    "name": "Generacion X - Carranza",
+    "address": "c/ Carranza 25, Madrid, M, 28004, Spain",
+    "source": "wizards_locator",
+    "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
+    "external_id": "12545",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "2136",
+      "riftbound_locator": "2136",
+      "wizards_locator": "12545"
+    },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2136",
+        "game_store_id": "ef36a9cb-4ab1-4683-9034-58564a190717",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28004",
+        "coordinates": {
+          "lat": 40.4292795,
+          "lng": -3.7049465
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "2136",
+        "game_store_id": "50f10886-1f64-4f3b-a444-d38cfa5fa6f2",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28004",
+        "coordinates": {
+          "lat": 40.4292795,
+          "lng": -3.7049465
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
+        "external_id": "12545"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+    }
+  },
+  {
+    "name": "Generacion X - Coslada",
+    "address": "Avenida de la Cañada 51 , Coslada, M, 28823  , Spain",
+    "source": "wizards_locator",
+    "sources": [
+      "wizards_locator"
+    ],
+    "games": [
+      "Magic: The Gathering"
+    ],
+    "website": "http://www.generacionx.es/",
+    "external_id": "11220",
+    "external_ids": {
+      "wizards_locator": "11220"
+    },
+    "evidence": [
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "http://www.generacionx.es/",
+        "external_id": "11220"
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+    }
+  },
+  {
+    "name": "Generacion X - Las musas",
+    "address": "Av. Canillejas a Vicalvaro nº 113, Madrid, Madrid, 28022, Spain",
+    "source": "wizards_locator",
+    "sources": [
+      "wizards_locator"
+    ],
+    "games": [
+      "Magic: The Gathering"
+    ],
+    "website": "https://www.instagram.com/genxlasmusas/",
+    "external_id": "11182",
+    "external_ids": {
+      "wizards_locator": "11182"
+    },
+    "evidence": [
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.instagram.com/genxlasmusas/",
+        "external_id": "11182"
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+    }
+  },
+  {
+    "name": "Generación X Getafe",
+    "address": "1, C. Gral. Pingarrón, Getafe, MD, 28901, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.instagram.com/generacionx_getafe?igsh=ajcyN2pxMnQ1OWJz&utm_source=qr",
+    "external_id": "18686",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "riftbound_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "18686",
+      "riftbound_locator": "18686"
+    },
+    "games": [
+      "Lorcana",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "18686",
+        "game_store_id": "c4015872-0ba5-44f1-abd0-e2e19b2e7605",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28901",
+        "coordinates": {
+          "lat": 40.3075048,
+          "lng": -3.7338981
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "18686",
+        "game_store_id": "c00c5c25-cd8c-4a3b-a8a1-9fc65db4d04a",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28901",
+        "coordinates": {
+          "lat": 40.3075048,
+          "lng": -3.7338981
+        }
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+    }
+  },
+  {
+    "name": "Generación X Goya",
+    "address": "Calle de las Mártires Concepcionistas 5, Madrid, M, 28006, Spain",
+    "source": "wizards_locator",
+    "sources": [
+      "wizards_locator"
+    ],
+    "games": [
+      "Magic: The Gathering"
+    ],
+    "website": "https://www.instagram.com/genxgoya/?hl=it",
+    "external_id": "14184",
+    "external_ids": {
+      "wizards_locator": "14184"
+    },
+    "evidence": [
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.instagram.com/genxgoya/?hl=it",
+        "external_id": "14184"
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+    }
+  },
+  {
+    "name": "Generación X Tirso",
+    "address": "3 Calle del Conde de Romanones, Madrid, MD, 28012, ES",
+    "source": "lorcana_locator",
+    "website": "http://generacionx.es/",
+    "external_id": "2138",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "riftbound_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "2138",
+      "riftbound_locator": "2138"
+    },
+    "games": [
+      "Lorcana",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2138",
+        "game_store_id": "2a128284-2bc3-49e6-bd86-f186a80c514c",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28012",
+        "coordinates": {
+          "lat": 40.41377013401061,
+          "lng": -3.7044986403168623
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "2138",
+        "game_store_id": "5f5242a5-ee62-47f4-a4eb-5c6cf493352a",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28012",
+        "coordinates": {
+          "lat": 40.41377013401061,
+          "lng": -3.7044986403168623
+        }
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+    }
+  },
+  {
+    "name": "Genex Comics",
+    "address": "C/ Santa Casilda, nº 3, Madrid, Madrid, 28005, Spain",
+    "source": "wizards_locator",
+    "sources": [
+      "wizards_locator"
+    ],
+    "games": [
+      "Magic: The Gathering"
+    ],
+    "website": "http://wpn.wizards.com",
+    "external_id": "11268",
+    "external_ids": {
+      "wizards_locator": "11268"
+    },
+    "evidence": [
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "http://wpn.wizards.com",
+        "external_id": "11268"
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; different store from Mundicomics."
+    }
+  },
+  {
+    "name": "GenexComics",
+    "address": "C. de Elfo, 98, Cdad. Lineal, 28027 Madrid, Spain",
+    "source": "riftbound_locator",
+    "sources": [
+      "riftbound_locator"
+    ],
+    "games": [
+      "Riftbound"
+    ],
+    "website": "https://www.genexcomics.com",
+    "external_id": "24364",
+    "external_ids": {
+      "riftbound_locator": "24364"
+    },
+    "evidence": [
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "24364",
+        "game_store_id": "f4dcc64d-9b50-422b-a696-13199cefbac4",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28027",
+        "coordinates": {
+          "lat": 40.4354101,
+          "lng": -3.6462844
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; different store from Mundicomics."
+    }
+  },
+  {
     "name": "Hobby Shop Wargames S.L",
     "address": "18 C. de Talamanca, Alcalá de Henares, MD, 28807, Spain",
     "source": "wizards_locator",
@@ -3572,6 +4055,335 @@
     "location_precision": "street"
   },
   {
+    "name": "Jupiter Central",
+    "address": "C/ Manuel Silvela 8 LOCAL, Madrid, 28010, ES",
+    "source": "one_piece_events",
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "264",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "264",
+      "wizards_locator": "8420"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362300,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458389,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362305,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362301,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458390,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362306,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6362302,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458391,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-31T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6577265,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-31T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458392,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-07T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458393,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-14T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "264",
+        "event_id": 6458394,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-21T11:30:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 1.460038392653593,
+        "coordinates": {
+          "lat": 40.4292706,
+          "lng": -3.6984011
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.jupiterjuegos.com/pagina/jupiter-madrid",
+        "external_id": "8420"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; different store from Goblintrader Central."
+    }
+  },
+  {
+    "name": "Júpiter Alcobendas",
+    "address": "95 Calle del Marqués de la Valdavia, Local 2, Alcobendas, MD, 28100, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.jupiterjuegos.com/calendario?tienda=jupiter-alcobendas",
+    "external_id": "2712",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "riftbound_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "2712",
+      "riftbound_locator": "2712"
+    },
+    "games": [
+      "Lorcana",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2712",
+        "game_store_id": "7aee1f50-20af-400d-9cc0-de9e3cc8181d",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28100",
+        "coordinates": {
+          "lat": 40.545955443312664,
+          "lng": -3.650816996845787
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "2712",
+        "game_store_id": "f4e83026-5bcf-41bf-b620-fbc051cab6fc",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28100",
+        "coordinates": {
+          "lat": 40.545955443312664,
+          "lng": -3.650816996845787
+        }
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Jupiter branch."
+    }
+  },
+  {
     "name": "Júpiter Guadalajara",
     "address": "C/San Roque, 15, Bajo Izquierda,Guadalajara,19002,Spain",
     "source": "yugioh_locator",
@@ -3608,6 +4420,128 @@
     "confidence": 0.0,
     "status": "candidate_new_store",
     "location_precision": "street"
+  },
+  {
+    "name": "Júpiter Juegos Alcorcón",
+    "address": "10, C. Parque Bujaruelo, Alcorcón, MD, 28924, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.jupiterjuegos.com/",
+    "external_id": "2708",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "2708",
+      "riftbound_locator": "2708",
+      "wizards_locator": "15540"
+    },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "2708",
+        "game_store_id": "8fc60e73-be04-4e22-8249-525a15469d0b",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28924",
+        "coordinates": {
+          "lat": 40.3478993,
+          "lng": -3.807262100000001
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "2708",
+        "game_store_id": "ee3aa620-f3c1-4f5e-ae7a-181cd3f3b96e",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28924",
+        "coordinates": {
+          "lat": 40.3478993,
+          "lng": -3.807262100000001
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.jupiterjuegos.com/",
+        "external_id": "15540"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Jupiter branch."
+    }
+  },
+  {
+    "name": "Júpiter Madrid Norte",
+    "address": "Calle Marques de la Valdavia 95, Local 2, Alcobendas, C, 28100, Spain",
+    "source": "wizards_locator",
+    "sources": [
+      "wizards_locator"
+    ],
+    "games": [
+      "Magic: The Gathering"
+    ],
+    "website": "https://magic.wizards.com/",
+    "external_id": "6154",
+    "external_ids": {
+      "wizards_locator": "6154"
+    },
+    "evidence": [
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://magic.wizards.com/",
+        "external_id": "6154"
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: separate Jupiter branch, not Goblintrader Madrid-Norte."
+    }
   },
   {
     "name": "Karak 7 Picos",
@@ -3833,6 +4767,123 @@
     ]
   },
   {
+    "name": "Krucis Games",
+    "address": "Krucis Games, Ontígola, 45340, ES",
+    "source": "one_piece_events",
+    "sources": [
+      "one_piece_events"
+    ],
+    "games": [
+      "One Piece"
+    ],
+    "website": null,
+    "external_id": "7561",
+    "external_ids": {
+      "one_piece_events": "7561"
+    },
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7561",
+        "event_id": 6478507,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-18T16:00:00",
+        "city": "Ontígola",
+        "country": "ES",
+        "distance": 46.11921983131411,
+        "coordinates": {
+          "lat": 40.01451300202,
+          "lng": -3.5715984043621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7561",
+        "event_id": 6478508,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-25T16:00:00",
+        "city": "Ontígola",
+        "country": "ES",
+        "distance": 46.11921983131411,
+        "coordinates": {
+          "lat": 40.01451300202,
+          "lng": -3.5715984043621
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "7561",
+        "event_id": 6478458,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-06-29T16:00:00",
+        "city": "Ontígola",
+        "country": "ES",
+        "distance": 46.11921983131411,
+        "coordinates": {
+          "lat": 40.01451300202,
+          "lng": -3.5715984043621
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word."
+    }
+  },
+  {
+    "name": "La Guarida del vigilante",
+    "address": "29 C. de Sánchez Barcáiztegui, Madrid, MD, 28007, Spain",
+    "source": "wizards_locator",
+    "sources": [
+      "wizards_locator"
+    ],
+    "games": [
+      "Magic: The Gathering"
+    ],
+    "website": "https://laguaridadelvigilante.com/",
+    "external_id": "17038",
+    "external_ids": {
+      "wizards_locator": "17038"
+    },
+    "evidence": [
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://laguaridadelvigilante.com/",
+        "external_id": "17038"
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: different store from La Guarida Juegos."
+    }
+  },
+  {
     "name": "La Jugación",
     "address": "46, C. Rio Duero, Leganés, MD, 28913, ES",
     "source": "lorcana_locator",
@@ -3956,6 +5007,171 @@
         }
       }
     ]
+  },
+  {
+    "name": "Libertalia Juegos",
+    "address": "C/ Badajoz 32, Mostoles, 28931, ES",
+    "source": "one_piece_events",
+    "website": "https://libertaliajuegos.com/",
+    "external_id": "1918",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "1918",
+      "wizards_locator": "14361"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434166,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-18T18:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6321285,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6349915,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-23T10:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434168,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T10:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434167,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-25T18:00:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6321286,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "1918",
+        "event_id": 6434169,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-31T10:30:00",
+        "city": "Mostoles",
+        "country": "ES",
+        "distance": 16.38075149483852,
+        "coordinates": {
+          "lat": 40.3279741,
+          "lng": -3.8580611
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.instagram.com/libertaliajuegos/",
+        "external_id": "14361"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word."
+    }
   },
   {
     "name": "Ludoteca Maldita",
@@ -4418,6 +5634,185 @@
     ]
   },
   {
+    "name": "Medusa Cómics",
+    "address": "21, Rda. de la Pescadería, Alcalá de Henares, MD, 28801, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.instagram.com/comicsmedusa/",
+    "external_id": "10644",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "one_piece_events",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "10644",
+      "riftbound_locator": "10644",
+      "one_piece_events": "2042",
+      "wizards_locator": "18456"
+    },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering",
+      "One Piece",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "10644",
+        "game_store_id": "51f28f01-b303-4b0b-b727-a4bf979da69e",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28801",
+        "coordinates": {
+          "lat": 40.4778032,
+          "lng": -3.3657483
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "10644",
+        "game_store_id": "e6e9e169-bc12-406d-aa66-e226be291fe7",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28801",
+        "coordinates": {
+          "lat": 40.4778032,
+          "lng": -3.3657483
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6487035,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-17T17:00:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6312351,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-17T17:30:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6487036,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-24T17:00:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6312352,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-24T17:30:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2042",
+        "event_id": 6312353,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-31T17:30:00",
+        "city": "Alcala de Henares",
+        "country": "ES",
+        "distance": 29.391433468518652,
+        "coordinates": {
+          "lat": 40.477782209731,
+          "lng": -3.3658343553543
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.facebook.com/comicsmedusa/",
+        "external_id": "18456"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: different store from Mundicomics."
+    }
+  },
+  {
     "name": "Metamorfo (Santiago Palacios)",
     "address": "3 Calle de la Ilustración, Local comercial Metamorfo, Getafe, MD, 28902, ES",
     "source": "lorcana_locator",
@@ -4609,6 +6004,391 @@
     "confidence": 0.0,
     "status": "candidate_new_store",
     "location_precision": "street"
+  },
+  {
+    "name": "OZ JUEGOS",
+    "address": "13 P.º de Fuente Lucha, Alcobendas, MD, 28100, ES",
+    "source": "lorcana_locator",
+    "website": "https://www.ozjuegos.com",
+    "external_id": "3750",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "one_piece_events",
+      "riftbound_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "3750",
+      "riftbound_locator": "3750",
+      "one_piece_events": "2754"
+    },
+    "games": [
+      "Lorcana",
+      "One Piece",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3750",
+        "game_store_id": "dfda081c-d10c-4246-b9f9-742d7879723e",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28100",
+        "coordinates": {
+          "lat": 40.5535039,
+          "lng": -3.6601676
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "3750",
+        "game_store_id": "a4e32872-9384-4006-a302-5e237d2a9a98",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28100",
+        "coordinates": {
+          "lat": 40.5535039,
+          "lng": -3.6601676
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "2754",
+        "event_id": 6442824,
+        "event_series_id": "6795",
+        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
+        "event_date": "2026-05-31T11:00:00",
+        "city": "Alcobendas",
+        "country": "ES",
+        "distance": 15.659191859306468,
+        "coordinates": {
+          "lat": 40.553664665229,
+          "lng": -3.660189786586
+        }
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word."
+    }
+  },
+  {
+    "name": "Ohana Games",
+    "address": "Calle Sánchez Barcaiztegui, Nº29, Madrid, 28007, ES",
+    "source": "one_piece_events",
+    "website": "https://www.ohanagamesmadrid.com/",
+    "external_id": "677",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "677",
+      "wizards_locator": "12959"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6475426,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-19T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371072,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371077,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6475427,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-26T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371073,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "677",
+        "event_id": 6371078,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T18:00:00",
+        "city": "Madrid",
+        "country": "ES",
+        "distance": 2.8525929098982226,
+        "coordinates": {
+          "lat": 40.404508,
+          "lng": -3.674227
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://www.ohanagamesmadrid.com/",
+        "external_id": "12959"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word."
+    }
+  },
+  {
+    "name": "Portal Juegos",
+    "address": "24 Av. de Honorio Lozano, Collado Villalba, MD, 28400, Spain",
+    "source": "wizards_locator",
+    "website": "https://portaljuegos.es/index.php",
+    "external_id": "15914",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "one_piece_events",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "3953",
+      "riftbound_locator": "3953",
+      "one_piece_events": "20564",
+      "wizards_locator": "15914"
+    },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering",
+      "One Piece",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "3953",
+        "game_store_id": "4f66284b-3403-4bf1-acfa-53b180de2394",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28400",
+        "coordinates": {
+          "lat": 40.6291735,
+          "lng": -4.0016368
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "3953",
+        "game_store_id": "bd9351c8-bf2f-4a19-913d-2debb027028a",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28400",
+        "coordinates": {
+          "lat": 40.6291735,
+          "lng": -4.0016368
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20564",
+        "event_id": 6424689,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-22T17:00:00",
+        "city": "Collado Villalba",
+        "country": "ES",
+        "distance": 34.34783982111867,
+        "coordinates": {
+          "lat": 40.628024476793,
+          "lng": -4.0003108978271
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20564",
+        "event_id": 6424641,
+        "event_series_id": "6806",
+        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
+        "event_date": "2026-05-22T17:00:00",
+        "city": "Collado Villalba",
+        "country": "ES",
+        "distance": 34.34783982111867,
+        "coordinates": {
+          "lat": 40.628024476793,
+          "lng": -4.0003108978271
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "20564",
+        "event_id": 6424690,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-29T17:00:00",
+        "city": "Collado Villalba",
+        "country": "ES",
+        "distance": 34.34783982111867,
+        "coordinates": {
+          "lat": 40.628024476793,
+          "lng": -4.0003108978271
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://portaljuegos.es/index.php",
+        "external_id": "15914"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word."
+    }
   },
   {
     "name": "Rebellion",
@@ -4815,24 +6595,6 @@
         "coordinates": {
           "lat": 40.4301264,
           "lng": -3.6461133
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "6628",
-        "event_id": 6468534,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-15T17:30:00",
-        "city": "MADRID",
-        "country": "ES",
-        "distance": 5.02953622529727,
-        "coordinates": {
-          "lat": 40.4323467,
-          "lng": -3.6480031
         }
       },
       {
@@ -5291,6 +7053,202 @@
     ]
   },
   {
+    "name": "Three Stones Games",
+    "address": "Pl. del Toro, Centro Comercia La Rotonda, 28760 Tres Cantos, Madrid, Spain",
+    "source": "riftbound_locator",
+    "sources": [
+      "riftbound_locator"
+    ],
+    "games": [
+      "Riftbound"
+    ],
+    "website": "https://threestonesgames.com",
+    "external_id": "24012",
+    "external_ids": {
+      "riftbound_locator": "24012"
+    },
+    "evidence": [
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "24012",
+        "game_store_id": "01aefd19-6880-4ab2-9b40-889750bb8044",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28760",
+        "coordinates": {
+          "lat": 40.6055044,
+          "lng": -3.7173079999999996
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; different store from The Big Bang Games."
+    }
+  },
+  {
+    "name": "Titan games",
+    "address": "Avenida Buenos Aires 25, Getafe, 28907, ES",
+    "source": "one_piece_events",
+    "website": null,
+    "external_id": "5088",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "one_piece_events",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "one_piece_events": "5088",
+      "riftbound_locator": "18900",
+      "wizards_locator": "11651"
+    },
+    "games": [
+      "Magic: The Gathering",
+      "One Piece",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5088",
+        "event_id": 6494983,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-20T18:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 10.251904297327881,
+        "coordinates": {
+          "lat": 40.3280112,
+          "lng": -3.7364027
+        }
+      },
+      {
+        "source": "one_piece_events",
+        "type": "official_event_locator",
+        "game": "One Piece",
+        "url": "https://www.bandai-tcg-plus.com/",
+        "external_id": "5088",
+        "event_id": 6494984,
+        "event_series_id": "6509",
+        "event_series_title": "[May 2026] OP Store Tournament Event",
+        "event_date": "2026-05-27T18:00:00",
+        "city": "Getafe",
+        "country": "ES",
+        "distance": 10.251904297327881,
+        "coordinates": {
+          "lat": 40.3280112,
+          "lng": -3.7364027
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "18900",
+        "game_store_id": "efbd8849-921f-476e-b609-8329a283ff05",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28907",
+        "coordinates": {
+          "lat": 40.32801929980569,
+          "lng": -3.7365841128974853
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "external_id": "11651"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word."
+    }
+  },
+  {
+    "name": "Toy Games",
+    "address": "C. de Francisco Aritio, Guadalajara, CM, 19004, ES",
+    "source": "fab_locator",
+    "sources": [
+      "fab_locator"
+    ],
+    "games": [
+      "Flesh and Blood"
+    ],
+    "website": null,
+    "external_id": "fcd725ea-e235-4580-b59c-53d07c4f7040",
+    "external_ids": {
+      "fab_locator": "fcd725ea-e235-4580-b59c-53d07c4f7040"
+    },
+    "evidence": [
+      {
+        "source": "fab_locator",
+        "type": "official_store_locator",
+        "game": "Flesh and Blood",
+        "url": "https://play.carde.io/stores/search",
+        "external_id": "fcd725ea-e235-4580-b59c-53d07c4f7040",
+        "game_id": "1ceb00e9-28ea-45ac-8dfb-c84957f75ed1",
+        "game_establishment_id": "93e14072-4cae-498f-819c-6153c01415e4",
+        "store_number": 21488,
+        "carries_product": true,
+        "organized_play_status": "approved",
+        "retailer_status": "approved",
+        "physical_retailer_status": "approved",
+        "country": "ES",
+        "city": "Guadalajara",
+        "distance": 49.72026497206,
+        "coordinates": {
+          "lat": 40.6240352,
+          "lng": -3.1990379
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: FAB candidate; different store from Micelion Games."
+    }
+  },
+  {
     "name": "Troopertoys",
     "address": "Troopertoys, Madrid, 28017, ES",
     "source": "one_piece_events",
@@ -5421,6 +7379,57 @@
     "location_precision": "street"
   },
   {
+    "name": "Tsuki Center",
+    "address": "C. Carabaña, 11, 28806 Alcalá de Henares, Madrid, Spain",
+    "source": "riftbound_locator",
+    "sources": [
+      "riftbound_locator"
+    ],
+    "games": [
+      "Riftbound"
+    ],
+    "website": null,
+    "external_id": "53232",
+    "external_ids": {
+      "riftbound_locator": "53232"
+    },
+    "evidence": [
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "53232",
+        "game_store_id": "1f523ff2-ccc6-4411-8cda-d104244d773c",
+        "store_types": [
+          "physicalAndOnlineRetailer",
+          "organizedPlay",
+          "physicalRetailer"
+        ],
+        "store_types_pretty": [
+          "Physical and Online Retailer",
+          "Organized Play",
+          "Physical Retailer"
+        ],
+        "country": "ES",
+        "zipcode": "28806",
+        "coordinates": {
+          "lat": 40.492889999999996,
+          "lng": -3.3626998
+        }
+      }
+    ],
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; different store from Metropolis Center."
+    }
+  },
+  {
     "name": "Velkarion",
     "address": "18, Calle las Vegas, Alcorcón, MD, 28921, ES",
     "source": "lorcana_locator",
@@ -5542,6 +7551,92 @@
     "confidence": 0.0,
     "status": "candidate_new_store",
     "location_precision": "street"
+  },
+  {
+    "name": "Wargen Wargames",
+    "address": "2B Avenida de Las Águilas, Local 2, Madrid, MD, 28044, ES",
+    "source": "lorcana_locator",
+    "website": "https://wargenwargames.com",
+    "external_id": "5310",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "candidate_new_store",
+    "location_precision": "street",
+    "sources": [
+      "lorcana_locator",
+      "riftbound_locator",
+      "wizards_locator"
+    ],
+    "external_ids": {
+      "lorcana_locator": "5310",
+      "riftbound_locator": "5310",
+      "wizards_locator": "15373"
+    },
+    "games": [
+      "Lorcana",
+      "Magic: The Gathering",
+      "Riftbound"
+    ],
+    "evidence": [
+      {
+        "source": "lorcana_locator",
+        "type": "official_store_locator",
+        "game": "Lorcana",
+        "url": "https://tcg.ravensburgerplay.com/stores/search",
+        "external_id": "5310",
+        "game_store_id": "b3c61776-3320-454f-b590-9eddd11696f1",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28044",
+        "coordinates": {
+          "lat": 40.3845501,
+          "lng": -3.7651606
+        }
+      },
+      {
+        "source": "riftbound_locator",
+        "type": "official_store_locator",
+        "game": "Riftbound",
+        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
+        "external_id": "5310",
+        "game_store_id": "50b8582a-0ef2-4475-8eb7-5fd06f67a3d5",
+        "store_types": [
+          "physicalRetailer",
+          "organizedPlay"
+        ],
+        "store_types_pretty": [
+          "Physical Retailer",
+          "Organized Play"
+        ],
+        "country": "ES",
+        "zipcode": "28044",
+        "coordinates": {
+          "lat": 40.3845501,
+          "lng": -3.7651606
+        }
+      },
+      {
+        "source": "wizards_locator",
+        "type": "official_store_locator",
+        "games": [
+          "Magic: The Gathering"
+        ],
+        "url": "https://wargenwargames.com",
+        "external_id": "15373"
+      }
+    ],
+    "manual_review": {
+      "decision": "confirmed_new_store",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: fuzzy match only; shared generic word."
+    }
   },
   {
     "name": "ZACATRUS PIRAMIDES",
@@ -5682,1810 +7777,6 @@
     ]
   },
   {
-    "name": "Dracarys Juegos",
-    "address": "13 C. de la Imaginación, Alcobendas, MD, 28100, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "http://wpn.wizards.com",
-    "external_id": "14898",
-    "external_ids": {
-      "wizards_locator": "14898"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "http://wpn.wizards.com",
-        "external_id": "14898"
-      }
-    ],
-    "matched_existing_store": "La Guarida Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Generacion X - Carranza",
-    "address": "c/ Carranza 25, Madrid, M, 28004, Spain",
-    "source": "wizards_locator",
-    "website": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
-    "external_id": "12545",
-    "matched_existing_store": "Generacion X - Elfo",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "2136",
-      "riftbound_locator": "2136",
-      "wizards_locator": "12545"
-    },
-    "games": [
-      "Lorcana",
-      "Magic: The Gathering",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "2136",
-        "game_store_id": "ef36a9cb-4ab1-4683-9034-58564a190717",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28004",
-        "coordinates": {
-          "lat": 40.4292795,
-          "lng": -3.7049465
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "2136",
-        "game_store_id": "50f10886-1f64-4f3b-a444-d38cfa5fa6f2",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28004",
-        "coordinates": {
-          "lat": 40.4292795,
-          "lng": -3.7049465
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.generacionx.es/?utm_source=adtraction&utm_medium=affiliate&utm_campaign=adtraction&at_gd=5CF17AD4735DE8775D77C916E6EB6901AB82E362",
-        "external_id": "12545"
-      }
-    ]
-  },
-  {
-    "name": "Generacion X - Coslada",
-    "address": "Avenida de la Cañada 51 , Coslada, M, 28823  , Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "http://www.generacionx.es/",
-    "external_id": "11220",
-    "external_ids": {
-      "wizards_locator": "11220"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "http://www.generacionx.es/",
-        "external_id": "11220"
-      }
-    ],
-    "matched_existing_store": "Generacion X - Elfo",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Generacion X - Las musas",
-    "address": "Av. Canillejas a Vicalvaro nº 113, Madrid, Madrid, 28022, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.instagram.com/genxlasmusas/",
-    "external_id": "11182",
-    "external_ids": {
-      "wizards_locator": "11182"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.instagram.com/genxlasmusas/",
-        "external_id": "11182"
-      }
-    ],
-    "matched_existing_store": "Generacion X - Elfo",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Generación X Getafe",
-    "address": "1, C. Gral. Pingarrón, Getafe, MD, 28901, ES",
-    "source": "lorcana_locator",
-    "website": "https://www.instagram.com/generacionx_getafe?igsh=ajcyN2pxMnQ1OWJz&utm_source=qr",
-    "external_id": "18686",
-    "matched_existing_store": "Generacion X - Elfo",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "one_piece_events",
-      "riftbound_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "18686",
-      "riftbound_locator": "18686",
-      "one_piece_events": "5877"
-    },
-    "games": [
-      "Lorcana",
-      "One Piece",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "18686",
-        "game_store_id": "c4015872-0ba5-44f1-abd0-e2e19b2e7605",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28901",
-        "coordinates": {
-          "lat": 40.3075048,
-          "lng": -3.7338981
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "18686",
-        "game_store_id": "c00c5c25-cd8c-4a3b-a8a1-9fc65db4d04a",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28901",
-        "coordinates": {
-          "lat": 40.3075048,
-          "lng": -3.7338981
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "5877",
-        "event_id": 6976457,
-        "event_series_id": "1240",
-        "event_series_title": "Instant Event",
-        "event_date": "2026-05-15T19:00:00",
-        "city": "Getafe",
-        "country": "ES",
-        "distance": 12.302008179313322,
-        "coordinates": {
-          "lat": 40.3084342,
-          "lng": -3.7330543
-        }
-      }
-    ]
-  },
-  {
-    "name": "Generación X Goya",
-    "address": "Calle de las Mártires Concepcionistas 5, Madrid, M, 28006, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://www.instagram.com/genxgoya/?hl=it",
-    "external_id": "14184",
-    "external_ids": {
-      "wizards_locator": "14184"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.instagram.com/genxgoya/?hl=it",
-        "external_id": "14184"
-      }
-    ],
-    "matched_existing_store": "Generacion X - Elfo",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Generación X Tirso",
-    "address": "3 Calle del Conde de Romanones, Madrid, MD, 28012, ES",
-    "source": "lorcana_locator",
-    "website": "http://generacionx.es/",
-    "external_id": "2138",
-    "matched_existing_store": "Generacion X - Elfo",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "riftbound_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "2138",
-      "riftbound_locator": "2138"
-    },
-    "games": [
-      "Lorcana",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "2138",
-        "game_store_id": "2a128284-2bc3-49e6-bd86-f186a80c514c",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28012",
-        "coordinates": {
-          "lat": 40.41377013401061,
-          "lng": -3.7044986403168623
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "2138",
-        "game_store_id": "5f5242a5-ee62-47f4-a4eb-5c6cf493352a",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28012",
-        "coordinates": {
-          "lat": 40.41377013401061,
-          "lng": -3.7044986403168623
-        }
-      }
-    ]
-  },
-  {
-    "name": "Genex Comics",
-    "address": "C/ Santa Casilda, nº 3, Madrid, Madrid, 28005, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "http://wpn.wizards.com",
-    "external_id": "11268",
-    "external_ids": {
-      "wizards_locator": "11268"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "http://wpn.wizards.com",
-        "external_id": "11268"
-      }
-    ],
-    "matched_existing_store": "Mundicomics",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "GenexComics",
-    "address": "C. de Elfo, 98, Cdad. Lineal, 28027 Madrid, Spain",
-    "source": "riftbound_locator",
-    "sources": [
-      "riftbound_locator"
-    ],
-    "games": [
-      "Riftbound"
-    ],
-    "website": "https://www.genexcomics.com",
-    "external_id": "24364",
-    "external_ids": {
-      "riftbound_locator": "24364"
-    },
-    "evidence": [
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "24364",
-        "game_store_id": "f4dcc64d-9b50-422b-a696-13199cefbac4",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28027",
-        "coordinates": {
-          "lat": 40.4354101,
-          "lng": -3.6462844
-        }
-      }
-    ],
-    "matched_existing_store": "Mundicomics",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Jupiter Central",
-    "address": "C/ Manuel Silvela 8 LOCAL, Madrid, 28010, ES",
-    "source": "one_piece_events",
-    "website": "https://www.jupiterjuegos.com/",
-    "external_id": "264",
-    "matched_existing_store": "Goblintrader Central",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "one_piece_events",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "one_piece_events": "264",
-      "wizards_locator": "8420"
-    },
-    "games": [
-      "Magic: The Gathering",
-      "One Piece"
-    ],
-    "evidence": [
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6362300,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-17T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6458389,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-17T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6362305,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-20T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6362301,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-24T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6458390,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-24T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6362306,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-27T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6362302,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-31T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6458391,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-31T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6577265,
-        "event_series_id": "6795",
-        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
-        "event_date": "2026-05-31T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6458392,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-06-07T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6458393,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-06-14T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "264",
-        "event_id": 6458394,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-06-21T11:30:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 1.460038392653593,
-        "coordinates": {
-          "lat": 40.4292706,
-          "lng": -3.6984011
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.jupiterjuegos.com/pagina/jupiter-madrid",
-        "external_id": "8420"
-      }
-    ]
-  },
-  {
-    "name": "Júpiter Alcobendas",
-    "address": "95 Calle del Marqués de la Valdavia, Local 2, Alcobendas, MD, 28100, ES",
-    "source": "lorcana_locator",
-    "website": "https://www.jupiterjuegos.com/calendario?tienda=jupiter-alcobendas",
-    "external_id": "2712",
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "riftbound_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "2712",
-      "riftbound_locator": "2712"
-    },
-    "games": [
-      "Lorcana",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "2712",
-        "game_store_id": "7aee1f50-20af-400d-9cc0-de9e3cc8181d",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28100",
-        "coordinates": {
-          "lat": 40.545955443312664,
-          "lng": -3.650816996845787
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "2712",
-        "game_store_id": "f4e83026-5bcf-41bf-b620-fbc051cab6fc",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28100",
-        "coordinates": {
-          "lat": 40.545955443312664,
-          "lng": -3.650816996845787
-        }
-      }
-    ]
-  },
-  {
-    "name": "Júpiter Juegos Alcorcón",
-    "address": "10, C. Parque Bujaruelo, Alcorcón, MD, 28924, ES",
-    "source": "lorcana_locator",
-    "website": "https://www.jupiterjuegos.com/",
-    "external_id": "2708",
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "2708",
-      "riftbound_locator": "2708",
-      "wizards_locator": "15540"
-    },
-    "games": [
-      "Lorcana",
-      "Magic: The Gathering",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "2708",
-        "game_store_id": "8fc60e73-be04-4e22-8249-525a15469d0b",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28924",
-        "coordinates": {
-          "lat": 40.3478993,
-          "lng": -3.807262100000001
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "2708",
-        "game_store_id": "ee3aa620-f3c1-4f5e-ae7a-181cd3f3b96e",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28924",
-        "coordinates": {
-          "lat": 40.3478993,
-          "lng": -3.807262100000001
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.jupiterjuegos.com/",
-        "external_id": "15540"
-      }
-    ]
-  },
-  {
-    "name": "Júpiter Juegos Madrid",
-    "address": "8 Calle de Manuel Silvela, Madrid, MD, 28010, ES",
-    "source": "lorcana_locator",
-    "website": "https://www.jupiterjuegos.com/",
-    "external_id": "2711",
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "riftbound_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "2711",
-      "riftbound_locator": "2711"
-    },
-    "games": [
-      "Lorcana",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "2711",
-        "game_store_id": "4a569a38-a4b2-4033-9108-f9c97ec87179",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28010",
-        "coordinates": {
-          "lat": 40.4292853,
-          "lng": -3.698401099999999
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "2711",
-        "game_store_id": "c9f95793-ce13-4052-8b14-6234ad1cda21",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28010",
-        "coordinates": {
-          "lat": 40.4292853,
-          "lng": -3.698401099999999
-        }
-      }
-    ]
-  },
-  {
-    "name": "Júpiter Madrid Norte",
-    "address": "Calle Marques de la Valdavia 95, Local 2, Alcobendas, C, 28100, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://magic.wizards.com/",
-    "external_id": "6154",
-    "external_ids": {
-      "wizards_locator": "6154"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://magic.wizards.com/",
-        "external_id": "6154"
-      }
-    ],
-    "matched_existing_store": "Goblintrader Madrid-Norte",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Krucis Games",
-    "address": "Krucis Games, Ontígola, 45340, ES",
-    "source": "one_piece_events",
-    "sources": [
-      "one_piece_events"
-    ],
-    "games": [
-      "One Piece"
-    ],
-    "website": null,
-    "external_id": "7561",
-    "external_ids": {
-      "one_piece_events": "7561"
-    },
-    "evidence": [
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "7561",
-        "event_id": 6478507,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-18T16:00:00",
-        "city": "Ontígola",
-        "country": "ES",
-        "distance": 46.11921983131411,
-        "coordinates": {
-          "lat": 40.01451300202,
-          "lng": -3.5715984043621
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "7561",
-        "event_id": 6478508,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-25T16:00:00",
-        "city": "Ontígola",
-        "country": "ES",
-        "distance": 46.11921983131411,
-        "coordinates": {
-          "lat": 40.01451300202,
-          "lng": -3.5715984043621
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "7561",
-        "event_id": 6478458,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-06-29T16:00:00",
-        "city": "Ontígola",
-        "country": "ES",
-        "distance": 46.11921983131411,
-        "coordinates": {
-          "lat": 40.01451300202,
-          "lng": -3.5715984043621
-        }
-      }
-    ],
-    "matched_existing_store": "Gladius Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "La Guarida del vigilante",
-    "address": "29 C. de Sánchez Barcáiztegui, Madrid, MD, 28007, Spain",
-    "source": "wizards_locator",
-    "sources": [
-      "wizards_locator"
-    ],
-    "games": [
-      "Magic: The Gathering"
-    ],
-    "website": "https://laguaridadelvigilante.com/",
-    "external_id": "17038",
-    "external_ids": {
-      "wizards_locator": "17038"
-    },
-    "evidence": [
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://laguaridadelvigilante.com/",
-        "external_id": "17038"
-      }
-    ],
-    "matched_existing_store": "La Guarida Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Libertalia Juegos",
-    "address": "C/ Badajoz 32, Mostoles, 28931, ES",
-    "source": "one_piece_events",
-    "website": "https://libertaliajuegos.com/",
-    "external_id": "1918",
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "one_piece_events",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "one_piece_events": "1918",
-      "wizards_locator": "14361"
-    },
-    "games": [
-      "Magic: The Gathering",
-      "One Piece"
-    ],
-    "evidence": [
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6434166,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-18T18:00:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6321285,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-22T17:30:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6349915,
-        "event_series_id": "6795",
-        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
-        "event_date": "2026-05-23T10:00:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6434168,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-24T10:30:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6434167,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-25T18:00:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6321286,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-29T17:30:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6434169,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-31T10:30:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "1918",
-        "event_id": 6321284,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-15T17:30:00",
-        "city": "Mostoles",
-        "country": "ES",
-        "distance": 16.38075149483852,
-        "coordinates": {
-          "lat": 40.3279741,
-          "lng": -3.8580611
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.instagram.com/libertaliajuegos/",
-        "external_id": "14361"
-      }
-    ]
-  },
-  {
-    "name": "Medusa Cómics",
-    "address": "21, Rda. de la Pescadería, Alcalá de Henares, MD, 28801, ES",
-    "source": "lorcana_locator",
-    "website": "https://www.instagram.com/comicsmedusa/",
-    "external_id": "10644",
-    "matched_existing_store": "Mundicomics",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "one_piece_events",
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "10644",
-      "riftbound_locator": "10644",
-      "one_piece_events": "2042",
-      "wizards_locator": "18456"
-    },
-    "games": [
-      "Lorcana",
-      "Magic: The Gathering",
-      "One Piece",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "10644",
-        "game_store_id": "51f28f01-b303-4b0b-b727-a4bf979da69e",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28801",
-        "coordinates": {
-          "lat": 40.4778032,
-          "lng": -3.3657483
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "10644",
-        "game_store_id": "e6e9e169-bc12-406d-aa66-e226be291fe7",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28801",
-        "coordinates": {
-          "lat": 40.4778032,
-          "lng": -3.3657483
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "2042",
-        "event_id": 6487035,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-17T17:00:00",
-        "city": "Alcala de Henares",
-        "country": "ES",
-        "distance": 29.391433468518652,
-        "coordinates": {
-          "lat": 40.477782209731,
-          "lng": -3.3658343553543
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "2042",
-        "event_id": 6312351,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-17T17:30:00",
-        "city": "Alcala de Henares",
-        "country": "ES",
-        "distance": 29.391433468518652,
-        "coordinates": {
-          "lat": 40.477782209731,
-          "lng": -3.3658343553543
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "2042",
-        "event_id": 6487036,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-24T17:00:00",
-        "city": "Alcala de Henares",
-        "country": "ES",
-        "distance": 29.391433468518652,
-        "coordinates": {
-          "lat": 40.477782209731,
-          "lng": -3.3658343553543
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "2042",
-        "event_id": 6312352,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-24T17:30:00",
-        "city": "Alcala de Henares",
-        "country": "ES",
-        "distance": 29.391433468518652,
-        "coordinates": {
-          "lat": 40.477782209731,
-          "lng": -3.3658343553543
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "2042",
-        "event_id": 6312353,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-31T17:30:00",
-        "city": "Alcala de Henares",
-        "country": "ES",
-        "distance": 29.391433468518652,
-        "coordinates": {
-          "lat": 40.477782209731,
-          "lng": -3.3658343553543
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.facebook.com/comicsmedusa/",
-        "external_id": "18456"
-      }
-    ]
-  },
-  {
-    "name": "OZ JUEGOS",
-    "address": "13 P.º de Fuente Lucha, Alcobendas, MD, 28100, ES",
-    "source": "lorcana_locator",
-    "website": "https://www.ozjuegos.com",
-    "external_id": "3750",
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "one_piece_events",
-      "riftbound_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "3750",
-      "riftbound_locator": "3750",
-      "one_piece_events": "2754"
-    },
-    "games": [
-      "Lorcana",
-      "One Piece",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "3750",
-        "game_store_id": "dfda081c-d10c-4246-b9f9-742d7879723e",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28100",
-        "coordinates": {
-          "lat": 40.5535039,
-          "lng": -3.6601676
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "3750",
-        "game_store_id": "a4e32872-9384-4006-a302-5e237d2a9a98",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28100",
-        "coordinates": {
-          "lat": 40.5535039,
-          "lng": -3.6601676
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "2754",
-        "event_id": 6442824,
-        "event_series_id": "6795",
-        "event_series_title": "ONE PIECE CARD GAME Extra Grand Battle for Stores 2026 May​",
-        "event_date": "2026-05-31T11:00:00",
-        "city": "Alcobendas",
-        "country": "ES",
-        "distance": 15.659191859306468,
-        "coordinates": {
-          "lat": 40.553664665229,
-          "lng": -3.660189786586
-        }
-      }
-    ]
-  },
-  {
-    "name": "Ohana Games",
-    "address": "Calle Sánchez Barcaiztegui, Nº29, Madrid, 28007, ES",
-    "source": "one_piece_events",
-    "website": "https://www.ohanagamesmadrid.com/",
-    "external_id": "677",
-    "matched_existing_store": "Panda Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "one_piece_events",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "one_piece_events": "677",
-      "wizards_locator": "12959"
-    },
-    "games": [
-      "Magic: The Gathering",
-      "One Piece"
-    ],
-    "evidence": [
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "677",
-        "event_id": 6371076,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-15T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 2.8525929098982226,
-        "coordinates": {
-          "lat": 40.404508,
-          "lng": -3.674227
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "677",
-        "event_id": 6475426,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-19T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 2.8525929098982226,
-        "coordinates": {
-          "lat": 40.404508,
-          "lng": -3.674227
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "677",
-        "event_id": 6371072,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-20T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 2.8525929098982226,
-        "coordinates": {
-          "lat": 40.404508,
-          "lng": -3.674227
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "677",
-        "event_id": 6371077,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-22T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 2.8525929098982226,
-        "coordinates": {
-          "lat": 40.404508,
-          "lng": -3.674227
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "677",
-        "event_id": 6475427,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-26T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 2.8525929098982226,
-        "coordinates": {
-          "lat": 40.404508,
-          "lng": -3.674227
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "677",
-        "event_id": 6371073,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-27T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 2.8525929098982226,
-        "coordinates": {
-          "lat": 40.404508,
-          "lng": -3.674227
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "677",
-        "event_id": 6371078,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-29T18:00:00",
-        "city": "Madrid",
-        "country": "ES",
-        "distance": 2.8525929098982226,
-        "coordinates": {
-          "lat": 40.404508,
-          "lng": -3.674227
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://www.ohanagamesmadrid.com/",
-        "external_id": "12959"
-      }
-    ]
-  },
-  {
-    "name": "Portal Juegos",
-    "address": "24 Av. de Honorio Lozano, Collado Villalba, MD, 28400, Spain",
-    "source": "wizards_locator",
-    "website": "https://portaljuegos.es/index.php",
-    "external_id": "15914",
-    "matched_existing_store": "Jupiter Juegos",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "one_piece_events",
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "3953",
-      "riftbound_locator": "3953",
-      "one_piece_events": "20564",
-      "wizards_locator": "15914"
-    },
-    "games": [
-      "Lorcana",
-      "Magic: The Gathering",
-      "One Piece",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "3953",
-        "game_store_id": "4f66284b-3403-4bf1-acfa-53b180de2394",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28400",
-        "coordinates": {
-          "lat": 40.6291735,
-          "lng": -4.0016368
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "3953",
-        "game_store_id": "bd9351c8-bf2f-4a19-913d-2debb027028a",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28400",
-        "coordinates": {
-          "lat": 40.6291735,
-          "lng": -4.0016368
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "20564",
-        "event_id": 6424689,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-22T17:00:00",
-        "city": "Collado Villalba",
-        "country": "ES",
-        "distance": 34.34783982111867,
-        "coordinates": {
-          "lat": 40.628024476793,
-          "lng": -4.0003108978271
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "20564",
-        "event_id": 6424641,
-        "event_series_id": "6806",
-        "event_series_title": "ONE PIECE CARD GAME Pirates Party 2026 Vol.1",
-        "event_date": "2026-05-22T17:00:00",
-        "city": "Collado Villalba",
-        "country": "ES",
-        "distance": 34.34783982111867,
-        "coordinates": {
-          "lat": 40.628024476793,
-          "lng": -4.0003108978271
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "20564",
-        "event_id": 6424690,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-29T17:00:00",
-        "city": "Collado Villalba",
-        "country": "ES",
-        "distance": 34.34783982111867,
-        "coordinates": {
-          "lat": 40.628024476793,
-          "lng": -4.0003108978271
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "20564",
-        "event_id": 6424688,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-15T17:00:00",
-        "city": "Collado Villalba",
-        "country": "ES",
-        "distance": 34.34783982111867,
-        "coordinates": {
-          "lat": 40.628024476793,
-          "lng": -4.0003108978271
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://portaljuegos.es/index.php",
-        "external_id": "15914"
-      }
-    ]
-  },
-  {
     "name": "TCG Games",
     "address": "Pº de Recoletos 5, Madrid, 28004, ES",
     "source": "one_piece_events",
@@ -7538,317 +7829,14 @@
         }
       }
     ],
-    "matched_existing_store": "Gladius Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Three Stones Games",
-    "address": "Pl. del Toro, Centro Comercia La Rotonda, 28760 Tres Cantos, Madrid, Spain",
-    "source": "riftbound_locator",
-    "sources": [
-      "riftbound_locator"
-    ],
-    "games": [
-      "Riftbound"
-    ],
-    "website": "https://threestonesgames.com",
-    "external_id": "24012",
-    "external_ids": {
-      "riftbound_locator": "24012"
-    },
-    "evidence": [
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "24012",
-        "game_store_id": "01aefd19-6880-4ab2-9b40-889750bb8044",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28760",
-        "coordinates": {
-          "lat": 40.6055044,
-          "lng": -3.7173079999999996
-        }
-      }
-    ],
-    "matched_existing_store": "The Big Bang Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Titan games",
-    "address": "Avenida Buenos Aires 25, Getafe, 28907, ES",
-    "source": "one_piece_events",
-    "website": null,
-    "external_id": "5088",
-    "matched_existing_store": "Panda Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "status": "needs_manual_review",
     "location_precision": "street",
-    "sources": [
-      "one_piece_events",
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "one_piece_events": "5088",
-      "riftbound_locator": "18900",
-      "wizards_locator": "11651"
-    },
-    "games": [
-      "Magic: The Gathering",
-      "One Piece",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "5088",
-        "event_id": 6494983,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-20T18:00:00",
-        "city": "Getafe",
-        "country": "ES",
-        "distance": 10.251904297327881,
-        "coordinates": {
-          "lat": 40.3280112,
-          "lng": -3.7364027
-        }
-      },
-      {
-        "source": "one_piece_events",
-        "type": "official_event_locator",
-        "game": "One Piece",
-        "url": "https://www.bandai-tcg-plus.com/",
-        "external_id": "5088",
-        "event_id": 6494984,
-        "event_series_id": "6509",
-        "event_series_title": "[May 2026] OP Store Tournament Event",
-        "event_date": "2026-05-27T18:00:00",
-        "city": "Getafe",
-        "country": "ES",
-        "distance": 10.251904297327881,
-        "coordinates": {
-          "lat": 40.3280112,
-          "lng": -3.7364027
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "18900",
-        "game_store_id": "efbd8849-921f-476e-b609-8329a283ff05",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28907",
-        "coordinates": {
-          "lat": 40.32801929980569,
-          "lng": -3.7365841128974853
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "external_id": "11651"
-      }
-    ]
-  },
-  {
-    "name": "Toy Games",
-    "address": "C. de Francisco Aritio, Guadalajara, CM, 19004, ES",
-    "source": "fab_locator",
-    "sources": [
-      "fab_locator"
-    ],
-    "games": [
-      "Flesh and Blood"
-    ],
-    "website": null,
-    "external_id": "fcd725ea-e235-4580-b59c-53d07c4f7040",
-    "external_ids": {
-      "fab_locator": "fcd725ea-e235-4580-b59c-53d07c4f7040"
-    },
-    "evidence": [
-      {
-        "source": "fab_locator",
-        "type": "official_store_locator",
-        "game": "Flesh and Blood",
-        "url": "https://play.carde.io/stores/search",
-        "external_id": "fcd725ea-e235-4580-b59c-53d07c4f7040",
-        "game_id": "1ceb00e9-28ea-45ac-8dfb-c84957f75ed1",
-        "game_establishment_id": "93e14072-4cae-498f-819c-6153c01415e4",
-        "store_number": 21488,
-        "carries_product": true,
-        "organized_play_status": "approved",
-        "retailer_status": "approved",
-        "physical_retailer_status": "approved",
-        "country": "ES",
-        "city": "Guadalajara",
-        "distance": 49.72026497206,
-        "coordinates": {
-          "lat": 40.6240352,
-          "lng": -3.1990379
-        }
-      }
-    ],
-    "matched_existing_store": "Micelion Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Tsuki Center",
-    "address": "C. Carabaña, 11, 28806 Alcalá de Henares, Madrid, Spain",
-    "source": "riftbound_locator",
-    "sources": [
-      "riftbound_locator"
-    ],
-    "games": [
-      "Riftbound"
-    ],
-    "website": null,
-    "external_id": "53232",
-    "external_ids": {
-      "riftbound_locator": "53232"
-    },
-    "evidence": [
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "53232",
-        "game_store_id": "1f523ff2-ccc6-4411-8cda-d104244d773c",
-        "store_types": [
-          "physicalAndOnlineRetailer",
-          "organizedPlay",
-          "physicalRetailer"
-        ],
-        "store_types_pretty": [
-          "Physical and Online Retailer",
-          "Organized Play",
-          "Physical Retailer"
-        ],
-        "country": "ES",
-        "zipcode": "28806",
-        "coordinates": {
-          "lat": 40.492889999999996,
-          "lng": -3.3626998
-        }
-      }
-    ],
-    "matched_existing_store": "Metropolis Center",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street"
-  },
-  {
-    "name": "Wargen Wargames",
-    "address": "2B Avenida de Las Águilas, Local 2, Madrid, MD, 28044, ES",
-    "source": "lorcana_locator",
-    "website": "https://wargenwargames.com",
-    "external_id": "5310",
-    "matched_existing_store": "Panda Games",
-    "confidence": 0.65,
-    "status": "possible_duplicate",
-    "location_precision": "street",
-    "sources": [
-      "lorcana_locator",
-      "riftbound_locator",
-      "wizards_locator"
-    ],
-    "external_ids": {
-      "lorcana_locator": "5310",
-      "riftbound_locator": "5310",
-      "wizards_locator": "15373"
-    },
-    "games": [
-      "Lorcana",
-      "Magic: The Gathering",
-      "Riftbound"
-    ],
-    "evidence": [
-      {
-        "source": "lorcana_locator",
-        "type": "official_store_locator",
-        "game": "Lorcana",
-        "url": "https://tcg.ravensburgerplay.com/stores/search",
-        "external_id": "5310",
-        "game_store_id": "b3c61776-3320-454f-b590-9eddd11696f1",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28044",
-        "coordinates": {
-          "lat": 40.3845501,
-          "lng": -3.7651606
-        }
-      },
-      {
-        "source": "riftbound_locator",
-        "type": "official_store_locator",
-        "game": "Riftbound",
-        "url": "https://locator.riftbound.uvsgames.com/stores/search?lang=en",
-        "external_id": "5310",
-        "game_store_id": "50b8582a-0ef2-4475-8eb7-5fd06f67a3d5",
-        "store_types": [
-          "physicalRetailer",
-          "organizedPlay"
-        ],
-        "store_types_pretty": [
-          "Physical Retailer",
-          "Organized Play"
-        ],
-        "country": "ES",
-        "zipcode": "28044",
-        "coordinates": {
-          "lat": 40.3845501,
-          "lng": -3.7651606
-        }
-      },
-      {
-        "source": "wizards_locator",
-        "type": "official_store_locator",
-        "games": [
-          "Magic: The Gathering"
-        ],
-        "url": "https://wargenwargames.com",
-        "external_id": "15373"
-      }
-    ]
+    "manual_review": {
+      "decision": "needs_more_information",
+      "reviewed_at": "2026-05-16",
+      "note": "Manual review: generic name; unclear whether this is a real distinct store."
+    }
   }
 ]

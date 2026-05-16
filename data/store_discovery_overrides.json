@@ -1,0 +1,272 @@
+[
+  {
+    "name": "Dracarys Juegos",
+    "address": "13 C. de la Imaginación, Alcobendas, MD, 28100, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word, different store."
+  },
+  {
+    "name": "Generacion X - Carranza",
+    "address": "c/ Carranza 25, Madrid, M, 28004, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+  },
+  {
+    "name": "Generacion X - Coslada",
+    "address": "Avenida de la Cañada 51 , Coslada, M, 28823  , Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+  },
+  {
+    "name": "Generacion X - Las musas",
+    "address": "Av. Canillejas a Vicalvaro nº 113, Madrid, Madrid, 28022, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+  },
+  {
+    "name": "Generación X Getafe",
+    "address": "1, C. Gral. Pingarrón, Getafe, MD, 28901, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+  },
+  {
+    "name": "Generación X Goya",
+    "address": "Calle de las Mártires Concepcionistas 5, Madrid, M, 28006, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+  },
+  {
+    "name": "Generación X Tirso",
+    "address": "3 Calle del Conde de Romanones, Madrid, MD, 28012, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Generacion X branch, not the existing Elfo store."
+  },
+  {
+    "name": "Genex Comics",
+    "address": "C/ Santa Casilda, nº 3, Madrid, Madrid, 28005, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; different store from Mundicomics."
+  },
+  {
+    "name": "GenexComics",
+    "address": "C. de Elfo, 98, Cdad. Lineal, 28027 Madrid, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; different store from Mundicomics."
+  },
+  {
+    "name": "Jupiter Central",
+    "address": "C/ Manuel Silvela 8 LOCAL, Madrid, 28010, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; different store from Goblintrader Central."
+  },
+  {
+    "name": "Júpiter Alcobendas",
+    "address": "95 Calle del Marqués de la Valdavia, Local 2, Alcobendas, MD, 28100, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Jupiter branch."
+  },
+  {
+    "name": "Júpiter Juegos Alcorcón",
+    "address": "10, C. Parque Bujaruelo, Alcorcón, MD, 28924, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Jupiter branch."
+  },
+  {
+    "name": "Júpiter Juegos Madrid",
+    "address": "8 Calle de Manuel Silvela, Madrid, MD, 28010, ES",
+    "status": "matched_existing_store",
+    "matched_existing_store": "Jupiter Juegos",
+    "confidence": 1.0,
+    "decision": "confirmed_existing_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: same store as existing Jupiter Juegos."
+  },
+  {
+    "name": "Júpiter Madrid Norte",
+    "address": "Calle Marques de la Valdavia 95, Local 2, Alcobendas, C, 28100, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: separate Jupiter branch, not Goblintrader Madrid-Norte."
+  },
+  {
+    "name": "Krucis Games",
+    "address": "Krucis Games, Ontígola, 45340, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word."
+  },
+  {
+    "name": "La Guarida del vigilante",
+    "address": "29 C. de Sánchez Barcáiztegui, Madrid, MD, 28007, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: different store from La Guarida Juegos."
+  },
+  {
+    "name": "Libertalia Juegos",
+    "address": "C/ Badajoz 32, Mostoles, 28931, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word."
+  },
+  {
+    "name": "Medusa Cómics",
+    "address": "21, Rda. de la Pescadería, Alcalá de Henares, MD, 28801, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: different store from Mundicomics."
+  },
+  {
+    "name": "OZ JUEGOS",
+    "address": "13 P.º de Fuente Lucha, Alcobendas, MD, 28100, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word."
+  },
+  {
+    "name": "Ohana Games",
+    "address": "Calle Sánchez Barcaiztegui, Nº29, Madrid, 28007, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word."
+  },
+  {
+    "name": "Portal Juegos",
+    "address": "24 Av. de Honorio Lozano, Collado Villalba, MD, 28400, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word."
+  },
+  {
+    "name": "TCG Games",
+    "address": "Pº de Recoletos 5, Madrid, 28004, ES",
+    "status": "needs_manual_review",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "needs_more_information",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: generic name; unclear whether this is a real distinct store."
+  },
+  {
+    "name": "Three Stones Games",
+    "address": "Pl. del Toro, Centro Comercia La Rotonda, 28760 Tres Cantos, Madrid, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; different store from The Big Bang Games."
+  },
+  {
+    "name": "Titan games",
+    "address": "Avenida Buenos Aires 25, Getafe, 28907, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word."
+  },
+  {
+    "name": "Toy Games",
+    "address": "C. de Francisco Aritio, Guadalajara, CM, 19004, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: FAB candidate; different store from Micelion Games."
+  },
+  {
+    "name": "Tsuki Center",
+    "address": "C. Carabaña, 11, 28806 Alcalá de Henares, Madrid, Spain",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; different store from Metropolis Center."
+  },
+  {
+    "name": "Wargen Wargames",
+    "address": "2B Avenida de Las Águilas, Local 2, Madrid, MD, 28044, ES",
+    "status": "candidate_new_store",
+    "matched_existing_store": null,
+    "confidence": 0.0,
+    "decision": "confirmed_new_store",
+    "reviewed_at": "2026-05-16",
+    "note": "Manual review: fuzzy match only; shared generic word."
+  }
+]

@@ -180,6 +180,13 @@ The pipeline for finding and onboarding new stores follows these steps:
    exact normalized store-name matches; fuzzy candidate review still happens
    through `possible_duplicate`.
 
+   Manual duplicate-review decisions are stored in
+   `data/store_discovery_overrides.json` and applied by
+   `tools/discover_stores.py` after discovery merge. Use this file for durable
+   decisions such as confirmed new stores, confirmed existing-store matches, or
+   records that need more information; do not hand-edit generated statuses only
+   in `data/candidate_stores.json`.
+
    Current discoverers:
 
    - `discoverers/lorcana_locator.py` — official Disney Lorcana /
