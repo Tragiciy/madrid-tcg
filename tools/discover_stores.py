@@ -30,6 +30,7 @@ STATUS_ORDER = {
     "candidate_new_store": 1,
     "possible_duplicate": 2,
     "needs_manual_review": 3,
+    "backlog": 4,
 }
 
 GAME_ALIASES = {
@@ -390,6 +391,7 @@ def main() -> None:
     print(f"Candidate new stores: {counts.get('candidate_new_store', 0)}")
     print(f"Possible duplicates:  {counts.get('possible_duplicate', 0)}")
     print(f"Needs manual review:  {counts.get('needs_manual_review', 0)}")
+    print(f"Backlog:              {counts.get('backlog', 0)}")
 
     if errors:
         print(f"\nErrors ({len(errors)}):")

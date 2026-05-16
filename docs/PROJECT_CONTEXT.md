@@ -184,8 +184,9 @@ The pipeline for finding and onboarding new stores follows these steps:
    `data/store_discovery_overrides.json` and applied by
    `tools/discover_stores.py` after discovery merge. Use this file for durable
    decisions such as confirmed new stores, confirmed existing-store matches, or
-   records that need more information; do not hand-edit generated statuses only
-   in `data/candidate_stores.json`.
+   records that need more information; use `backlog` for deferred candidates
+   that should remain in discovery data but stay out of immediate onboarding.
+   Do not hand-edit generated statuses only in `data/candidate_stores.json`.
 
    Current discoverers:
 
