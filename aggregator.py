@@ -249,7 +249,12 @@ def event_key(event: dict) -> str:
     ])
 
 
-def merge_events(existing: list[dict], fresh: list[dict], now_iso: str) -> list[dict]:
+def merge_events(
+    existing: list[dict],
+    fresh: list[dict],
+    now_iso: str,
+    failed_stores: Optional[set[str]] = None,
+) -> list[dict]:
     """
     Upsert fresh events onto existing with reschedule detection and deferred cleanup.
 
@@ -266,11 +271,17 @@ def merge_events(existing: list[dict], fresh: list[dict], now_iso: str) -> list[
       the old record is re-keyed under the new datetime and first_seen_at is
       preserved.
 
+    Failed scraper handling:
+      If a store's scraper failed in this run, existing events for that store
+      are left untouched. A temporary upstream timeout should not hide or
+      delete future events as if the site had intentionally removed them.
+
     Deferred cleanup:
       Future events missing for MISSING_RUNS_BEFORE_DELETE consecutive runs
       are hard-deleted. Past events are kept indefinitely as history.
     """
     MISSING_RUNS_BEFORE_DELETE = 3
+    failed_stores = failed_stores or set()
 
     now_dt = datetime.fromisoformat(now_iso)
     by_key: dict = {event_key(e): e for e in existing}
@@ -309,6 +320,8 @@ def merge_events(existing: list[dict], fresh: list[dict], now_iso: str) -> list[
         if k in fresh_keys:
             continue
         e = by_key[k]
+        if e.get("store") in failed_stores:
+            continue
         dt_str = e.get("datetime_start") or ""
         try:
             evt_dt = datetime.fromisoformat(dt_str)
@@ -713,8 +726,15 @@ def main() -> None:
         e["game"] = _normalize_game(e.get("game"), e.get("title", ""))
     by_game_after = Counter(e.get("game") or "Unknown" for e in fresh)
 
-    # 4. Merge into the persistent record.
-    merged = merge_events(existing, fresh, now_iso)
+    # 4. Merge into the persistent record. For failed stores, preserve
+    #    existing events instead of treating the absence of fresh events as
+    #    cancellations.
+    failed_stores = {
+        scraper_stats[name]["store"]
+        for name in failed_scrapers
+        if name in scraper_stats
+    }
+    merged = merge_events(existing, fresh, now_iso, failed_stores=failed_stores)
     new_count = len(merged) - len(existing)
     logger.info(
         "After merge: %d total (%+d vs. existing %d)",

@@ -373,20 +373,25 @@ def scrape() -> list[dict]:
         page_resp.raise_for_status()
     except Exception as exc:
         logger.error("%s: listing fetch failed: %s", STORE, exc)
-        return []
+        raise
     calendar_id = _discover_calendar_id(page_resp.text)
 
     events: list[dict] = []
+    failed_months = 0
     for year, month in months:
         try:
             html = _fetch_month(session, calendar_id, year, month)
         except Exception as exc:
             logger.warning("%s: month %04d-%02d failed: %s", STORE, year, month, exc)
+            failed_months += 1
             continue
         parsed = _parse_events(html, scraped_at)
         logger.info("%s: %04d-%02d → %d events", STORE, year, month, len(parsed))
         events.extend(parsed)
         time.sleep(0.3)
+
+    if failed_months == len(months):
+        raise RuntimeError(f"{STORE}: all calendar month requests failed")
 
     seen: dict[tuple[str, str, str], dict] = {}
     for event in events:

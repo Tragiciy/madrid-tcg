@@ -24,8 +24,10 @@ import html as _html
 import json
 import logging
 import re
+import sys
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo
 
@@ -41,12 +43,21 @@ API_URL = "https://arte9.com/wp-json/tribe/events/v1/events"
 PER_PAGE = 50
 MAX_PAGES = 20  # safety cap; current dataset uses ~4
 
-from shared.scraper_keywords import (
-    FORMAT_KEYWORDS,
-    extract_format_from_keywords,
-    extract_format_for_event,
-    extract_best_of,
-)
+try:
+    from shared.scraper_keywords import (
+        FORMAT_KEYWORDS,
+        extract_format_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
+    )
+except ModuleNotFoundError:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from shared.scraper_keywords import (
+        FORMAT_KEYWORDS,
+        extract_format_from_keywords,
+        extract_format_for_event,
+        extract_best_of,
+    )
 
 # ── Title-extraction tunables ──────────────────────────────────────────
 MAX_TITLE_LEN = 70           # default cap
@@ -480,13 +491,14 @@ def scrape() -> list[dict]:
             )
         except Exception as exc:
             logger.error("%s: request failed (page %d): %s", STORE, page, exc)
-            break
+            raise
         if resp.status_code == 400 and page > 1:
             # Tribe returns 400 once you walk past the last page.
             break
         if resp.status_code != 200:
-            logger.error("%s: HTTP %d on page %d", STORE, resp.status_code, page)
-            break
+            msg = f"{STORE}: HTTP {resp.status_code} on page {page}"
+            logger.error(msg)
+            raise RuntimeError(msg)
 
         data = resp.json() or {}
         items = data.get("events") or []
