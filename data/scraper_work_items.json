@@ -1,0 +1,102 @@
+{
+  "source": "data/scraper_targets.json",
+  "work_items": [
+    {
+      "store_name": "GenexComics",
+      "game": "Magic: The Gathering",
+      "website": "https://www.genexcomics.com",
+      "target_url": "https://genexcomics.com/eventos/",
+      "platform": "wordpress",
+      "recommended_scraper_file": "scrapers/genexcomics.py",
+      "priority": "high",
+      "reason": "validated event page with MTG content",
+      "implementation_notes": [
+        "Try shared.wordpress_events.fetch_wp_events first; fall back to page HTML parsing if the events API is empty.",
+        "Target URL looks like an event listing or calendar page.",
+        "Default or filter detected game as Magic: The Gathering when the page omits an explicit game label."
+      ],
+      "risk": "low: WordPress target should be compatible with shared helpers or simple HTML parsing"
+    },
+    {
+      "store_name": "Metamorfo (Santiago Palacios)",
+      "game": "Yu-Gi-Oh!",
+      "website": "https://metamorfo.es/",
+      "target_url": "https://metamorfo.es/calendario",
+      "platform": "wordpress",
+      "recommended_scraper_file": "scrapers/metamorfo.py",
+      "priority": "high",
+      "reason": "validated event page with Yu-Gi-Oh! content",
+      "implementation_notes": [
+        "Recommended scraper file already exists; verify coverage before changing it.",
+        "Try shared.wordpress_events.fetch_wp_events first; fall back to page HTML parsing if the events API is empty.",
+        "Target URL looks like an event listing or calendar page.",
+        "Default or filter detected game as Yu-Gi-Oh! when the page omits an explicit game label."
+      ],
+      "risk": "low: scraper module already exists, validate behavior against this target"
+    },
+    {
+      "store_name": "Next Dice",
+      "game": "Magic: The Gathering",
+      "website": "https://nextdice.es/contact_next_dice/",
+      "target_url": "https://nextdice.es/events/",
+      "platform": "wordpress",
+      "recommended_scraper_file": "scrapers/next_dice.py",
+      "priority": "high",
+      "reason": "validated event page with MTG content",
+      "implementation_notes": [
+        "Try shared.wordpress_events.fetch_wp_events first; fall back to page HTML parsing if the events API is empty.",
+        "Target URL looks like an event listing or calendar page.",
+        "Default or filter detected game as Magic: The Gathering when the page omits an explicit game label."
+      ],
+      "risk": "low: WordPress target should be compatible with shared helpers or simple HTML parsing"
+    },
+    {
+      "store_name": "OZ JUEGOS",
+      "game": "Flesh and Blood",
+      "website": "https://www.ozjuegos.com",
+      "target_url": "https://ozjuegos.com/eventos/",
+      "platform": "wordpress",
+      "recommended_scraper_file": "scrapers/oz_juegos.py",
+      "priority": "high",
+      "reason": "validated event page with Flesh and Blood content",
+      "implementation_notes": [
+        "Try shared.wordpress_events.fetch_wp_events first; fall back to page HTML parsing if the events API is empty.",
+        "Target URL looks like an event listing or calendar page.",
+        "Default or filter detected game as Flesh and Blood when the page omits an explicit game label."
+      ],
+      "risk": "low: WordPress target should be compatible with shared helpers or simple HTML parsing"
+    },
+    {
+      "store_name": "Replay Boardgame Cafe",
+      "game": "Riftbound",
+      "website": "https://www.replayoutletcafe.com",
+      "target_url": "https://www.replayoutletcafe.com/event-details/rcd-riftbound-community-day-edicion-unleashed",
+      "platform": "wordpress",
+      "recommended_scraper_file": "scrapers/replay_boardgame_cafe.py",
+      "priority": "high",
+      "reason": "validated event page with Riftbound content",
+      "implementation_notes": [
+        "Try shared.wordpress_events.fetch_wp_events first; fall back to page HTML parsing if the events API is empty.",
+        "Target URL looks like a single event page, so find a listing source before relying on it.",
+        "Default or filter detected game as Riftbound when the page omits an explicit game label."
+      ],
+      "risk": "high: discovered URL may not enumerate future events"
+    },
+    {
+      "store_name": "Three Stones Games",
+      "game": "Star Wars: Unlimited",
+      "website": "https://threestonesgames.com",
+      "target_url": "https://threestonesgames.com/pages/calendario-de-eventos",
+      "platform": "shopify",
+      "recommended_scraper_file": "scrapers/three_stones_games.py",
+      "priority": "high",
+      "reason": "validated event page with Star Wars: Unlimited content",
+      "implementation_notes": [
+        "Parse the event page HTML directly; Shopify stores may expose events as pages rather than products.",
+        "Target URL looks like an event listing or calendar page.",
+        "Default or filter detected game as Star Wars: Unlimited when the page omits an explicit game label."
+      ],
+      "risk": "medium: Shopify event pages often need custom HTML extraction"
+    }
+  ]
+}
