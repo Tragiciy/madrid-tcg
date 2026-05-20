@@ -216,8 +216,10 @@ def scrape() -> list[dict]:
 
         except PWTimeout as exc:
             logger.error("%s: scrape timed out: %s", STORE, exc)
+            raise
         except Exception as exc:
             logger.error("%s: scrape failed: %s", STORE, exc)
+            raise
         finally:
             try:
                 context.close()
