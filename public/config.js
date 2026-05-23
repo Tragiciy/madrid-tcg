@@ -2,11 +2,16 @@ var STORE_ADDRESSES = {
   'Arte 9': 'Calle de Francisco Silvela, 21, 28028 Madrid',
   'Asedio Gaming': 'Calle Soria 5, Bajo Izquierda, Las Rozas, 28231',
   'Generacion X - Elfo': 'Elfo 98, 28027 Madrid',
+  'GenexComics': 'C. de Elfo, 98, Cdad. Lineal, 28027 Madrid',
   'Goblintrader Madrid-Norte': 'C. del Marqués de Lema 7, local 3, 28003 Madrid',
   'Jupiter Juegos': 'Jupiter Madrid',
   'La Guarida Juegos': 'Calle de las Peñuelas, 14, Local 1, 28005 Madrid',
   'Metropolis Center': 'Calle Andrés Mellado, 22, 28015 Madrid',
   'Micelion Games': 'Avenida del Mediterráneo, 8, 28007 Madrid',
+  'Next Dice': 'Calle de Jorge Manrique S/N, Local 19, Algete, Madrid, 28110',
+  'OZ JUEGOS': 'P.º de Fuente Lucha 13, Alcobendas, 28100 Madrid',
+  'Replay Boardgame Cafe': 'Calle de la Ribera de Curtidores, 26, Local 3, 28005 Madrid',
+  'Three Stones Games': 'Pl. del Toro, Centro Comercial La Rotonda, 28760 Tres Cantos, Madrid',
   'Ítaca': 'Ítaca, Madrid',
 };
 
@@ -31,6 +36,10 @@ var STORE_META = {
     address: 'Elfo 98, 28027 Madrid',
     website: 'https://genexcomics.com/',
   },
+  'GenexComics': {
+    address: 'C. de Elfo, 98, Cdad. Lineal, 28027 Madrid',
+    website: 'https://www.genexcomics.com/',
+  },
   'Goblintrader Madrid-Norte': {
     address: 'C. del Marqués de Lema 7, local 3, 28003 Madrid',
     website: 'https://www.goblintrader.es',
@@ -47,6 +56,22 @@ var STORE_META = {
   },
   'Micelion Games': {
     address: 'Avenida del Mediterráneo, 8, 28007 Madrid',
+  },
+  'Next Dice': {
+    address: 'Calle de Jorge Manrique S/N, Local 19, Algete, Madrid, 28110',
+    website: 'https://nextdice.es/',
+  },
+  'OZ JUEGOS': {
+    address: 'P.º de Fuente Lucha 13, Alcobendas, 28100 Madrid',
+    website: 'https://www.ozjuegos.com/',
+  },
+  'Replay Boardgame Cafe': {
+    address: 'Calle de la Ribera de Curtidores, 26, Local 3, 28005 Madrid',
+    website: 'https://www.replayoutletcafe.com/',
+  },
+  'Three Stones Games': {
+    address: 'Pl. del Toro, Centro Comercial La Rotonda, 28760 Tres Cantos, Madrid',
+    website: 'https://threestonesgames.com/',
   },
   'Ítaca': {
     address: 'Calle del Pez, 20, 28004 Madrid',
