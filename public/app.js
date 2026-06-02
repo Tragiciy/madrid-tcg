@@ -318,7 +318,7 @@ function app() {
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
       
       try {
-        const res = await fetch('events.json');
+        const res = await fetch(`events.json?v=${Date.now()}`, { cache: 'no-store' });
         this.events = await res.json();
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
