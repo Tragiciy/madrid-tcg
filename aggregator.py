@@ -33,6 +33,8 @@ from datetime import datetime
 from typing import Optional
 from zoneinfo import ZoneInfo
 
+from shared.scraper_keywords import extract_format_for_event
+
 logger = logging.getLogger(__name__)
 
 TZ = ZoneInfo("Europe/Madrid")
@@ -176,16 +178,16 @@ ALLOWED_FORMATS: set = {
 
 
 def _normalize_game(game: Optional[str], title: str = "") -> Optional[str]:
-    """Resolve to canonical name; None if not in ALLOWED_GAMES."""
-    if game:
-        canonical = GAME_CANONICAL.get(game.lower())
-        if canonical:
-            return canonical if canonical in ALLOWED_GAMES else None
-
+    """Resolve to a canonical game name, prioritising explicit title signals."""
     lower_title = title.lower()
     for keyword in sorted(GAME_CANONICAL, key=len, reverse=True):
         if keyword in lower_title:
             canonical = GAME_CANONICAL[keyword]
+            return canonical if canonical in ALLOWED_GAMES else None
+
+    if game:
+        canonical = GAME_CANONICAL.get(game.lower())
+        if canonical:
             return canonical if canonical in ALLOWED_GAMES else None
 
     return None
@@ -727,6 +729,15 @@ def main() -> None:
     by_game_before = Counter(e.get("game") or "Unknown" for e in fresh)
     for e in fresh:
         e["game"] = _normalize_game(e.get("game"), e.get("title", ""))
+        # A prerelease marker in the title is more reliable than a stale
+        # source/default format. This also backfills events that were first
+        # scraped before a new prerelease name was added to a scraper.
+        title_format, _ = extract_format_for_event(
+            title=e.get("title", ""), game=e["game"],
+        )
+        if title_format == "Prerelease":
+            e["format"] = "Prerelease"
+            e["format_official"] = None
     by_game_after = Counter(e.get("game") or "Unknown" for e in fresh)
 
     # 4. Merge into the persistent record. For failed stores, preserve
