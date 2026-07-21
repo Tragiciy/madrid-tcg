@@ -120,6 +120,9 @@ GAME_CANONICAL: dict = {
     # Title-driven
     "liga star wars": "Star Wars: Unlimited",
     "rcq": "Magic: The Gathering",
+    # "Pre-Rift" is the Riftbound: Vendetta prerelease.
+    "pre-rift": "Riftbound",
+    "pre rift": "Riftbound",
     "presentacion riftbound": "Riftbound",
     "presentación riftbound": "Riftbound",
     "riftbound unleashed": "Riftbound",

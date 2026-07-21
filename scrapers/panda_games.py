@@ -161,8 +161,6 @@ def _fetch_event_detail(url: str) -> Optional[tuple[date, tuple[int, int], str]]
 
 def _extract_game(title: str, page_text: str = "") -> Optional[str]:
     combined = f"{title} {page_text}"
-    if "pre-rift" in combined.lower():
-        return "Riftbound"
     return extract_game_from_keywords(combined, GAME_KEYWORDS) or DEFAULT_GAME
 
 
