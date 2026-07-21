@@ -24,6 +24,10 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     # Title-driven / multi-word phrases (longest first)
     ("competitive elder dragon highlander", "Magic: The Gathering"),
     ("magic: the gathering",                "Magic: The Gathering"),
+    # "Pre-Rift" is the Riftbound: Vendetta prerelease, even when a
+    # store omits the game name (for example, "PRE RIFT VENDETTA").
+    ("pre-rift",                             "Riftbound"),
+    ("pre rift",                             "Riftbound"),
     ("presentacion riftbound",              "Riftbound"),
     ("presentación riftbound",              "Riftbound"),
     ("flesh and blood",                     "Flesh and Blood"),
@@ -184,7 +188,7 @@ DEFAULT_FORMAT_BY_GAME: dict[str, str] = {
 # Sealed/Prerelease ambiguity (e.g. Arte 9 «Presentación de 2 Cabezas»
 # with WordPress category "Magic - Sealed" used to come out as Sealed).
 _PRERELEASE_TITLE_RE = re.compile(
-    r"\b(presentaci[oó]n(?:es)?|pre[-\s]?release|prerelease)\b",
+    r"\b(presentaci[oó]n(?:es)?|pre[-\s]?release|prerelease|pre[-\s]+rift)\b",
     re.IGNORECASE,
 )
 
