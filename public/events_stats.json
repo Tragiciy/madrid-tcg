@@ -1,15 +1,15 @@
 {
   "total_events": 2848,
-  "active_events": 777,
+  "active_events": 764,
   "total_scrapers": 25,
   "successful_scrapers": 25,
   "failed_scrapers_count": 0,
   "by_store": {
     "Arte 9": {
       "total": 596,
-      "active": 219,
-      "raw_this_run": 219,
-      "previous_raw": 222,
+      "active": 217,
+      "raw_this_run": 217,
+      "previous_raw": 219,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -22,20 +22,20 @@
       "total": 397,
       "active": 0,
       "raw_this_run": 0,
-      "previous_raw": 195,
+      "previous_raw": 0,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "anomaly": "sharp_drop"
+      "anomaly": null
     },
     "Micelion Games": {
       "total": 394,
-      "active": 50,
-      "raw_this_run": 50,
-      "previous_raw": 53,
+      "active": 47,
+      "raw_this_run": 47,
+      "previous_raw": 50,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -46,9 +46,9 @@
     },
     "Ítaca": {
       "total": 368,
-      "active": 110,
-      "raw_this_run": 110,
-      "previous_raw": 113,
+      "active": 109,
+      "raw_this_run": 109,
+      "previous_raw": 110,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -72,22 +72,22 @@
     },
     "Metropolis Center": {
       "total": 244,
-      "active": 22,
-      "raw_this_run": 22,
-      "previous_raw": 46,
+      "active": 20,
+      "raw_this_run": 20,
+      "previous_raw": 22,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "anomaly": "sharp_drop"
+      "anomaly": null
     },
     "Three Stones Games": {
       "total": 119,
-      "active": 56,
-      "raw_this_run": 56,
-      "previous_raw": 57,
+      "active": 53,
+      "raw_this_run": 53,
+      "previous_raw": 56,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -113,7 +113,7 @@
       "total": 93,
       "active": 12,
       "raw_this_run": 12,
-      "previous_raw": 11,
+      "previous_raw": 12,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -124,8 +124,8 @@
     },
     "The Big Bang Games": {
       "total": 69,
-      "active": 6,
-      "raw_this_run": 6,
+      "active": 5,
+      "raw_this_run": 5,
       "previous_raw": 6,
       "dropped_this_run": 0,
       "drop_reasons": {
@@ -163,8 +163,8 @@
     },
     "Next Dice": {
       "total": 27,
-      "active": 1,
-      "raw_this_run": 1,
+      "active": 0,
+      "raw_this_run": 0,
       "previous_raw": 1,
       "dropped_this_run": 0,
       "drop_reasons": {
@@ -172,7 +172,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "anomaly": null
+      "anomaly": "sharp_drop"
     },
     "Goblintrader Madrid-Norte": {
       "total": 24,
@@ -284,15 +284,15 @@
   "scrapers": {
     "scrapers.arte9": {
       "store": "Arte 9",
-      "raw": 219,
-      "valid": 219,
+      "raw": 217,
+      "valid": 217,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 222,
+      "previous_raw": 219,
       "anomaly": null
     },
     "scrapers.asedio_gaming": {
@@ -357,7 +357,7 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 11,
+      "previous_raw": 12,
       "anomaly": null
     },
     "scrapers.goblintrader_central": {
@@ -388,15 +388,15 @@
     },
     "scrapers.itaca": {
       "store": "Ítaca",
-      "raw": 110,
-      "valid": 110,
+      "raw": 109,
+      "valid": 109,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 113,
+      "previous_raw": 110,
       "anomaly": null
     },
     "scrapers.jupiter_juegos": {
@@ -409,8 +409,8 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 195,
-      "anomaly": "sharp_drop"
+      "previous_raw": 0,
+      "anomaly": null
     },
     "scrapers.kamikaze_freak_shop": {
       "store": "Kamikaze Freak Shop",
@@ -466,28 +466,28 @@
     },
     "scrapers.metropolis_center": {
       "store": "Metropolis Center",
-      "raw": 22,
-      "valid": 22,
+      "raw": 20,
+      "valid": 20,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 46,
-      "anomaly": "sharp_drop"
+      "previous_raw": 22,
+      "anomaly": null
     },
     "scrapers.micelion_games": {
       "store": "Micelion Games",
-      "raw": 50,
-      "valid": 50,
+      "raw": 47,
+      "valid": 47,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 53,
+      "previous_raw": 50,
       "anomaly": null
     },
     "scrapers.mundicomics": {
@@ -505,8 +505,8 @@
     },
     "scrapers.next_dice": {
       "store": "Next Dice",
-      "raw": 1,
-      "valid": 1,
+      "raw": 0,
+      "valid": 0,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -514,7 +514,7 @@
       },
       "error": null,
       "previous_raw": 1,
-      "anomaly": null
+      "anomaly": "sharp_drop"
     },
     "scrapers.oz_juegos": {
       "store": "OZ JUEGOS",
@@ -570,8 +570,8 @@
     },
     "scrapers.the_big_bang_games": {
       "store": "The Big Bang Games",
-      "raw": 6,
-      "valid": 6,
+      "raw": 5,
+      "valid": 5,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -583,15 +583,15 @@
     },
     "scrapers.three_stones_games": {
       "store": "Three Stones Games",
-      "raw": 56,
-      "valid": 56,
+      "raw": 53,
+      "valid": 53,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 57,
+      "previous_raw": 56,
       "anomaly": null
     },
     "scrapers.topdeck": {
@@ -609,5 +609,5 @@
     }
   },
   "failed_scrapers": [],
-  "generated_at": "2026-07-23T10:37:37.156878+02:00"
+  "generated_at": "2026-07-24T10:33:41.652142+02:00"
 }
