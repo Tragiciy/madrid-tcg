@@ -1,6 +1,6 @@
 {
-  "total_events": 2694,
-  "active_events": 689,
+  "total_events": 2770,
+  "active_events": 759,
   "total_scrapers": 25,
   "successful_scrapers": 24,
   "failed_scrapers_count": 1,
@@ -20,9 +20,9 @@
     },
     "Micelion Games": {
       "total": 398,
-      "active": 32,
-      "raw_this_run": 32,
-      "previous_raw": 31,
+      "active": 29,
+      "raw_this_run": 29,
+      "previous_raw": 32,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -33,9 +33,22 @@
     },
     "Ítaca": {
       "total": 368,
-      "active": 93,
-      "raw_this_run": 93,
-      "previous_raw": 96,
+      "active": 91,
+      "raw_this_run": 91,
+      "previous_raw": 93,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "anomaly": null
+    },
+    "Metropolis Center": {
+      "total": 297,
+      "active": 81,
+      "raw_this_run": 81,
+      "previous_raw": 4,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -57,19 +70,6 @@
       "scraper_failed": false,
       "anomaly": null
     },
-    "Metropolis Center": {
-      "total": 218,
-      "active": 4,
-      "raw_this_run": 4,
-      "previous_raw": 6,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "anomaly": "sharp_drop"
-    },
     "Jupiter Juegos": {
       "total": 208,
       "active": 0,
@@ -84,10 +84,10 @@
       "anomaly": null
     },
     "Three Stones Games": {
-      "total": 120,
-      "active": 44,
-      "raw_this_run": 44,
-      "previous_raw": 45,
+      "total": 113,
+      "active": 41,
+      "raw_this_run": 41,
+      "previous_raw": 44,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -123,10 +123,10 @@
       "anomaly": null
     },
     "The Big Bang Games": {
-      "total": 78,
-      "active": 11,
-      "raw_this_run": 11,
-      "previous_raw": 12,
+      "total": 80,
+      "active": 10,
+      "raw_this_run": 10,
+      "previous_raw": 11,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -201,9 +201,9 @@
       "anomaly": null
     },
     "Panda Games": {
-      "total": 20,
-      "active": 1,
-      "raw_this_run": 1,
+      "total": 22,
+      "active": 3,
+      "raw_this_run": 3,
       "previous_raw": 1,
       "dropped_this_run": 0,
       "drop_reasons": {
@@ -217,14 +217,14 @@
       "total": 7,
       "active": 0,
       "raw_this_run": 0,
-      "previous_raw": 1,
+      "previous_raw": 0,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "anomaly": "sharp_drop"
+      "anomaly": null
     },
     "Goblintrader Central": {
       "total": 5,
@@ -267,18 +267,18 @@
     }
   },
   "by_game": {
-    "Magic: The Gathering": 1049,
-    "Riftbound": 495,
-    "Unknown": 312,
-    "One Piece": 303,
-    "Lorcana": 141,
-    "Pokémon": 129,
-    "Star Wars: Unlimited": 84,
+    "Magic: The Gathering": 1068,
+    "Riftbound": 492,
+    "Unknown": 322,
+    "One Piece": 313,
+    "Lorcana": 145,
+    "Pokémon": 144,
+    "Star Wars: Unlimited": 88,
     "Flesh and Blood": 67,
-    "Digimon": 49,
-    "Yu-Gi-Oh!": 28,
+    "Digimon": 55,
+    "Yu-Gi-Oh!": 37,
+    "Naruto Mythos": 14,
     "Weiß Schwarz": 13,
-    "Naruto Mythos": 12,
     "Final Fantasy TCG": 12
   },
   "scrapers": {
@@ -388,15 +388,15 @@
     },
     "scrapers.itaca": {
       "store": "Ítaca",
-      "raw": 93,
-      "valid": 93,
+      "raw": 91,
+      "valid": 91,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 96,
+      "previous_raw": 93,
       "anomaly": null
     },
     "scrapers.jupiter_juegos": {
@@ -466,28 +466,28 @@
     },
     "scrapers.metropolis_center": {
       "store": "Metropolis Center",
-      "raw": 4,
-      "valid": 4,
+      "raw": 81,
+      "valid": 81,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 6,
-      "anomaly": "sharp_drop"
+      "previous_raw": 4,
+      "anomaly": null
     },
     "scrapers.micelion_games": {
       "store": "Micelion Games",
-      "raw": 32,
-      "valid": 32,
+      "raw": 29,
+      "valid": 29,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 31,
+      "previous_raw": 32,
       "anomaly": null
     },
     "scrapers.mundicomics": {
@@ -539,13 +539,13 @@
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 1,
-      "anomaly": "sharp_drop"
+      "previous_raw": 0,
+      "anomaly": null
     },
     "scrapers.panda_games": {
       "store": "Panda Games",
-      "raw": 1,
-      "valid": 1,
+      "raw": 3,
+      "valid": 3,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -570,28 +570,28 @@
     },
     "scrapers.the_big_bang_games": {
       "store": "The Big Bang Games",
-      "raw": 11,
-      "valid": 11,
+      "raw": 10,
+      "valid": 10,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 12,
+      "previous_raw": 11,
       "anomaly": null
     },
     "scrapers.three_stones_games": {
       "store": "Three Stones Games",
-      "raw": 44,
-      "valid": 44,
+      "raw": 41,
+      "valid": 41,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "error": null,
-      "previous_raw": 45,
+      "previous_raw": 44,
       "anomaly": null
     },
     "scrapers.topdeck": {
@@ -611,5 +611,5 @@
   "failed_scrapers": [
     "scrapers.arte9"
   ],
-  "generated_at": "2026-07-30T10:35:13.613674+02:00"
+  "generated_at": "2026-07-31T10:56:07.752300+02:00"
 }
