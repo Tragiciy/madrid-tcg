@@ -194,12 +194,11 @@ function downloadIcs(e) {
 
 // Address for an event's store. The locator-supplied address comes first:
 // it is the venue of that very event (chains have several branches), then
-// curated STORE_META, then the legacy STORE_ADDRESSES map.
+// the store registry (STORE_META, loaded from stores.json).
 function storeAddress(e) {
   if (!e) return '';
   return e.store_address
     || (STORE_META[e.store] && STORE_META[e.store].address)
-    || STORE_ADDRESSES[e.store]
     || '';
 }
 
@@ -356,9 +355,14 @@ function app() {
         // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
         // every visit and gets a cheap 304 when the data hasn't changed.
         // Must match the <link rel="preload"> in index.html to reuse it.
+        // Store details are optional: the calendar still works without them.
+        const storesReq = fetch('stores.json')
+          .then(r => (r.ok ? r.json() : {}))
+          .catch(() => ({}));
         const res = await fetch('events.json');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         this.events = await res.json();
+        Object.assign(STORE_META, await storesReq);
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
         const hasUrlFilters = ['game', 'store', 'format'].some(f => params.get(f));

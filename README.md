@@ -48,8 +48,8 @@ one click.
     responsive breakpoints
   - `app.js` — the Alpine `app()` factory, all runtime logic, state, and
     renderers
-  - `config.js` — static extension points: `STORE_META`, `STORE_ADDRESSES`,
-    `SEGMENTS`, `GAME_CLASS_MAP`
+  - `config.js` — static extension points: `SEGMENTS`, `GAME_CLASS_MAP`,
+    and `STORE_META`, which is filled at runtime from `public/stores.json`
 - **Alpine.js v3.14.1** (loaded from CDN) — provides reactivity. The whole UI
   is one Alpine component (`x-data="app()"` on the `<html>` element).
 - **Static JSON data** — the frontend's only runtime data source is
@@ -119,8 +119,7 @@ python aggregator.py
 2. Import `GAME_KEYWORDS` / `FORMAT_KEYWORDS` from `shared.scraper_keywords`
    for game/format detection. Put any shared helpers in `shared/`, not in
    `scrapers/`.
-3. Add an entry to `STORE_META` in `public/config.js` with at least an
-   `address` field. This is required for the Event Detail Panel store card and
+3. Add an entry to the store registry `data/stores.json` (`name`, `address`; the `id` is a stable slug). This is required for the Event Detail Panel store card and
    for the "Add to Calendar" location field.
 4. Run `python aggregator.py` and verify the new store appears in
    `public/events_stats.json`.

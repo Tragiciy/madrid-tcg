@@ -15,7 +15,7 @@ import logging
 import re
 
 from shared.locator_common import (
-    CITY, StoreResolver, make_event, request_json, session, to_madrid_iso, window,
+    CITY, StoreResolver, make_event, request_json, store_hint, session, to_madrid_iso, window,
 )
 
 logger = logging.getLogger(__name__)
@@ -89,6 +89,8 @@ def parse_events(raw_events: list[dict], game: str, resolver: StoreResolver) -> 
             start_iso=start,
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=f"https://www.bandai-tcg-plus.com/event/{ev['id']}",
+            hint=store_hint(SOURCE, ev.get("organizer_id"), name, address,
+                            (ev.get("place_geo") or {}).get("x"), (ev.get("place_geo") or {}).get("y")),
         ))
     return out
 

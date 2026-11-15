@@ -1,0 +1,1458 @@
+{
+  "_comment": "One record per physical store, with a stable `id` that never changes once\nassigned:",
+  "ignore": {
+    "names": [],
+    "external": []
+  },
+  "stores": [
+    {
+      "id": "alcala-comics",
+      "name": "Alcalá Cómics",
+      "city": "madrid",
+      "address": "PLAZA ESPAÑA 3 LOCAL 9, 28805, ALCALA DE HENARES",
+      "lat": 40.4860661,
+      "lng": -3.3588969,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "ALCALA COMICS"
+        ],
+        "external": [
+          "bandai:2011",
+          "ravensburger:114"
+        ]
+      }
+    },
+    {
+      "id": "aquijabara-store",
+      "name": "Aquijabara Store",
+      "city": "madrid",
+      "address": "73 Av. de Portugal, Mostoles, Madrid, MD, 28934, Spain",
+      "lat": 40.3207,
+      "lng": -3.8744,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:19961",
+          "wizards:19306"
+        ]
+      }
+    },
+    {
+      "id": "arte-9",
+      "name": "Arte 9",
+      "city": "madrid",
+      "address": "Calle de Francisco Silvela, 21, 28028 Madrid",
+      "lat": 40.430654,
+      "lng": -3.6712819,
+      "website": "https://arte9.es",
+      "notes": "Near Diego de León metro (L4, L5, L6)",
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:12109",
+          "gem:arte-9",
+          "ravensburger:243"
+        ]
+      }
+    },
+    {
+      "id": "asedio-gaming",
+      "name": "Asedio Gaming",
+      "city": "madrid",
+      "address": "Calle Soria 5, Bajo Izquierda, Las Rozas, 28231",
+      "lat": null,
+      "lng": null,
+      "website": "https://asediogaming.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": []
+      }
+    },
+    {
+      "id": "collectorage",
+      "name": "Collectorage",
+      "city": "madrid",
+      "address": "Calle Hernani, 19, 28020 Madrid",
+      "lat": 40.4483563,
+      "lng": -3.7014509,
+      "website": "https://collectorage.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:7836"
+        ]
+      }
+    },
+    {
+      "id": "crisis-alcorcon-juegos",
+      "name": "Crisis Alcorcón Juegos",
+      "city": "madrid",
+      "address": "C/Princesa Doña Sofía, Nº 3. Local 2., Alcorcon, M, 28924, Spain",
+      "lat": 40.34946,
+      "lng": -3.81976,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Crisis Alcorcon Juegos",
+          "GALLEGOS DE LA TORRE S.L. (CRISIS ALCORCÓN JUEGOS)"
+        ],
+        "external": [
+          "bandai:5296",
+          "ravensburger:1017",
+          "wizards:8800"
+        ]
+      }
+    },
+    {
+      "id": "dark-ritual-tcg",
+      "name": "Dark Ritual TCG",
+      "city": "madrid",
+      "address": "Calle de la Cañada Real de Toledo Nº16, Pinto, Madrid, 28320, Spain",
+      "lat": 40.23823,
+      "lng": -3.700372,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Dark Ritual TCG S.L."
+        ],
+        "external": [
+          "bandai:22970",
+          "wizards:21965"
+        ]
+      }
+    },
+    {
+      "id": "deckeadittos",
+      "name": "Deckeadittos",
+      "city": "madrid",
+      "address": "Paseo Fuentelucha 19, 28100, Alcobendas",
+      "lat": 40.555525710978,
+      "lng": -3.6600298313403,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:25160"
+        ]
+      }
+    },
+    {
+      "id": "dracarys-juegos",
+      "name": "Dracarys Juegos",
+      "city": "madrid",
+      "address": "13 C. de la Imaginación, Alcobendas, MD, 28100, Spain",
+      "lat": 40.5537703,
+      "lng": -3.6605075,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:14898"
+        ]
+      }
+    },
+    {
+      "id": "ego-ludo",
+      "name": "Ego Ludo",
+      "city": "madrid",
+      "address": "Av. Canillejas a Vicalvaro 113. L2, 28022, Madrid",
+      "lat": 40.429326,
+      "lng": -3.610518,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:2015"
+        ]
+      }
+    },
+    {
+      "id": "el-turno-extra",
+      "name": "El Turno Extra",
+      "city": "madrid",
+      "address": "166 C. del Capitán Angosto Gómez Castrillón, Aranjuez, Madrid, 28300, Spain",
+      "lat": 40.028415,
+      "lng": -3.602454,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "EL TURNO EXTRA"
+        ],
+        "external": [
+          "bandai:17657",
+          "wizards:20135"
+        ]
+      }
+    },
+    {
+      "id": "factory-cards",
+      "name": "Factory Cards",
+      "city": "madrid",
+      "address": "Avenida de Canillejas a Vicalvaro 61, bajo 6, 28022, Madrid",
+      "lat": 40.4355249,
+      "lng": -3.6122621,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Factory Cards."
+        ],
+        "external": [
+          "bandai:18341",
+          "bandai:3451",
+          "ravensburger:17290"
+        ]
+      }
+    },
+    {
+      "id": "galaxy-comics",
+      "name": "Galaxy Comics",
+      "city": "madrid",
+      "address": "C/ Suecia, 4, Madrid, Madrid, 28022, Spain",
+      "lat": 40.42182,
+      "lng": -3.60952,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Galaxy-comics"
+        ],
+        "external": [
+          "bandai:20641",
+          "wizards:11226"
+        ]
+      }
+    },
+    {
+      "id": "generacion-x-carranza",
+      "name": "Generacion X Carranza",
+      "city": "madrid",
+      "address": "25 Calle de Carranza, Madrid, MD, 28004, ES",
+      "lat": 40.4292795,
+      "lng": -3.7049465,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "ravensburger:2136"
+        ]
+      }
+    },
+    {
+      "id": "generacion-x-elfo",
+      "name": "Generacion X - Elfo",
+      "city": "madrid",
+      "address": "Elfo 98, 28027 Madrid",
+      "lat": 40.4354101,
+      "lng": -3.6462844,
+      "website": "https://genexcomics.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "GenexComics"
+        ],
+        "external": [
+          "bandai:19123"
+        ]
+      }
+    },
+    {
+      "id": "generacion-x-getafe",
+      "name": "Generacion X Getafe",
+      "city": "madrid",
+      "address": "Calle Generar Pingarron Nº1, 28901, Getafe",
+      "lat": 40.3084342,
+      "lng": -3.7330543,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:5877"
+        ]
+      }
+    },
+    {
+      "id": "generacion-x-tirso",
+      "name": "Generación X Tirso",
+      "city": "madrid",
+      "address": "3 Calle del Conde de Romanones, Madrid, MD, 28012, ES",
+      "lat": 40.41377013401061,
+      "lng": -3.7044986403168623,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "ravensburger:2138"
+        ]
+      }
+    },
+    {
+      "id": "genex-comics",
+      "name": "Genex Comics",
+      "city": "madrid",
+      "address": "C/ Santa Casilda, nº 3, Madrid, Madrid, 28005, Spain",
+      "lat": 40.40504,
+      "lng": -3.71388,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:2354",
+          "wizards:11268"
+        ]
+      }
+    },
+    {
+      "id": "gladius-games",
+      "name": "Gladius Games",
+      "city": "madrid",
+      "address": "Calle Cánovas del Castillo, 5, Local 6, 28807 Alcalá de Henares",
+      "lat": 40.4874794067517,
+      "lng": -3.365886597060743,
+      "website": "https://gladiusgames.net/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:17396",
+          "wizards:18454"
+        ]
+      }
+    },
+    {
+      "id": "goblintrader-central",
+      "name": "Goblintrader Central",
+      "city": "madrid",
+      "address": "Calle de la Montera, 12, 28013 Madrid",
+      "lat": null,
+      "lng": null,
+      "website": "https://www.goblintrader.es/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": []
+      }
+    },
+    {
+      "id": "goblintrader-madrid-norte",
+      "name": "Goblintrader Madrid-Norte",
+      "city": "madrid",
+      "address": "C. del Marqués de Lema 7, local 3, 28003 Madrid",
+      "lat": null,
+      "lng": null,
+      "website": "https://www.goblintrader.es",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": []
+      }
+    },
+    {
+      "id": "hobby-shop-wargames",
+      "name": "Hobby Shop Wargames",
+      "city": "madrid",
+      "address": "18 C. de Talamanca, Alcalá de Henares, MD, 28807, Spain",
+      "lat": 40.4863242,
+      "lng": -3.3662759,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Hobby Shop Wargames S.L"
+        ],
+        "external": [
+          "bandai:16676",
+          "wizards:19290"
+        ]
+      }
+    },
+    {
+      "id": "isekai-tcg-store",
+      "name": "Isekai TCG Store",
+      "city": "madrid",
+      "address": "4 Av. Torres Bellas, Alcorcón, MD, 28923, Spain",
+      "lat": 40.348582,
+      "lng": -3.8205065,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "ISEKAI"
+        ],
+        "external": [
+          "bandai:5434",
+          "wizards:15520"
+        ]
+      }
+    },
+    {
+      "id": "itaca",
+      "name": "Ítaca",
+      "city": "madrid",
+      "address": "Calle Blasco de Garay, 15, Local 1, 28015 Madrid",
+      "lat": 40.43163,
+      "lng": -3.71172,
+      "website": null,
+      "notes": "Malasaña",
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Itaca"
+        ],
+        "external": [
+          "bandai:20191",
+          "ravensburger:2628",
+          "wizards:8422"
+        ]
+      }
+    },
+    {
+      "id": "jupiter-central",
+      "name": "Júpiter Central",
+      "city": "madrid",
+      "address": "C / Manuel Silvela, 8 , Madrid, M, 28010, Spain",
+      "lat": 40.42928,
+      "lng": -3.6985,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Jupiter Central",
+          "Júpiter Juegos Madrid"
+        ],
+        "external": [
+          "bandai:264",
+          "ravensburger:2711",
+          "wizards:8420"
+        ]
+      }
+    },
+    {
+      "id": "jupiter-juegos",
+      "name": "Jupiter Juegos",
+      "city": "madrid",
+      "address": "Calle de la Cruz, 10, 28012 Madrid",
+      "lat": null,
+      "lng": null,
+      "website": null,
+      "notes": "Sol / Gran Vía area",
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": []
+      }
+    },
+    {
+      "id": "jupiter-madrid-norte",
+      "name": "Júpiter Madrid Norte",
+      "city": "madrid",
+      "address": "Calle Marques de la Valdavia 95, Local 2, Alcobendas, C, 28100, Spain",
+      "lat": 40.54595,
+      "lng": -3.65085,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:354",
+          "wizards:6154"
+        ]
+      }
+    },
+    {
+      "id": "kamikaze-freak-shop",
+      "name": "Kamikaze Freak Shop",
+      "city": "madrid",
+      "address": "Calle Ponferrada, 11, 28029 Madrid",
+      "lat": 40.47539,
+      "lng": -3.71319,
+      "website": "https://kamikazefreakshop.es/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:8755"
+        ]
+      }
+    },
+    {
+      "id": "karak-7-picos",
+      "name": "Karak 7 Picos",
+      "city": "madrid",
+      "address": "17 C. de la Iglesia, Moralzarzal, MD, 28411, Spain",
+      "lat": 40.6800953,
+      "lng": -3.972473,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:17218"
+        ]
+      }
+    },
+    {
+      "id": "kingdom-wargames",
+      "name": "Kingdom Wargames",
+      "city": "madrid",
+      "address": "C. Arroyo de la ELipa, Madrid, M, 28017, Spain",
+      "lat": 40.43199,
+      "lng": -3.64342,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:15154",
+          "ravensburger:2782",
+          "wizards:14264"
+        ]
+      }
+    },
+    {
+      "id": "krucis-games",
+      "name": "Krucis Games",
+      "city": "madrid",
+      "address": "Krucis Games, 45340, Ontígola",
+      "lat": 40.05865,
+      "lng": -3.606421,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:7561"
+        ]
+      }
+    },
+    {
+      "id": "la-forja-de-tcg",
+      "name": "La Forja de TCG",
+      "city": "madrid",
+      "address": "19 Calle de Eulalia Gil, Madrid, madrid, 28025, Spain",
+      "lat": 40.385073,
+      "lng": -3.742688,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:26417",
+          "ravensburger:64123",
+          "wizards:22698"
+        ]
+      }
+    },
+    {
+      "id": "la-guarida-del-vigilante",
+      "name": "La Guarida del Vigilante",
+      "city": "madrid",
+      "address": "C. de Sánchez Barcáiztegui, 29, Retiro, 28007 Madrid, 28007, Madrid",
+      "lat": 40.4053026,
+      "lng": -3.6736817,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:9598"
+        ]
+      }
+    },
+    {
+      "id": "la-guarida-juegos",
+      "name": "La Guarida Juegos",
+      "city": "madrid",
+      "address": "Calle de las Peñuelas, 14, Local 1, 28005 Madrid",
+      "lat": 40.40331,
+      "lng": -3.7042,
+      "website": null,
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "gem:la-guarida-juegos",
+          "wizards:11228"
+        ]
+      }
+    },
+    {
+      "id": "la-jugacion",
+      "name": "La Jugación",
+      "city": "madrid",
+      "address": "Calle Río Duero, 46, Leganés, Madrid, 28913, Spain",
+      "lat": 40.33553270165082,
+      "lng": -3.7705226741345985,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:18286"
+        ]
+      }
+    },
+    {
+      "id": "libertalia-juegos",
+      "name": "Libertalia Juegos",
+      "city": "madrid",
+      "address": "Calle Badajoz, 32, Móstoles, M, 28931, Spain",
+      "lat": 40.32799,
+      "lng": -3.85806,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Libertalia"
+        ],
+        "external": [
+          "bandai:1918",
+          "ravensburger:3102",
+          "wizards:14361"
+        ]
+      }
+    },
+    {
+      "id": "ludoteca-maldita",
+      "name": "Ludoteca Maldita",
+      "city": "madrid",
+      "address": "Calle Vicente Espinel 4 local derecha, Madrid, Madrid, 28017, Spain",
+      "lat": 40.436149722518564,
+      "lng": -3.6412796751270373,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "LUDOTECA MALDITA"
+        ],
+        "external": [
+          "bandai:13689",
+          "ravensburger:17400",
+          "wizards:21613"
+        ]
+      }
+    },
+    {
+      "id": "ludus-belli",
+      "name": "Ludus Belli",
+      "city": "madrid",
+      "address": "Calle Zaragoza 14, bajos local 2, Móstoles, Madrid, 28934, Spain",
+      "lat": 40.32252895460357,
+      "lng": -3.870214510879227,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:1302",
+          "wizards:15952"
+        ]
+      }
+    },
+    {
+      "id": "madakiba",
+      "name": "MADAKIBA",
+      "city": "madrid",
+      "address": "Calle Afrodita, 5, Local 7, 28342 Valdemoro",
+      "lat": 40.18023,
+      "lng": -3.68564,
+      "website": "https://madakiba.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:78",
+          "wizards:9397"
+        ]
+      }
+    },
+    {
+      "id": "medusa-comics",
+      "name": "Medusa Cómics",
+      "city": "madrid",
+      "address": "Ronda de la Pescadería, 21, Alcalá de Henares, Madrid, 28801, Spain",
+      "lat": 40.47797049966747,
+      "lng": -3.365834130679034,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Medusa Comics"
+        ],
+        "external": [
+          "bandai:2042",
+          "ravensburger:10644",
+          "wizards:18456"
+        ]
+      }
+    },
+    {
+      "id": "metamorfo",
+      "name": "Metamorfo",
+      "city": "madrid",
+      "address": "Calle Ilustración 3, 28902 Getafe",
+      "lat": 40.31442,
+      "lng": -3.72971,
+      "website": "https://metamorfo.es/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Metamorfo (Santiago Palacios)"
+        ],
+        "external": [
+          "bandai:3983",
+          "ravensburger:3365",
+          "wizards:13409"
+        ]
+      }
+    },
+    {
+      "id": "metropolis-center",
+      "name": "Metropolis Center",
+      "city": "madrid",
+      "address": "Calle Andrés Mellado, 22, 28015 Madrid",
+      "lat": 40.43244,
+      "lng": -3.71647,
+      "website": null,
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Metrópolis Center"
+        ],
+        "external": [
+          "bandai:1014",
+          "ravensburger:3368",
+          "wizards:11202"
+        ]
+      }
+    },
+    {
+      "id": "micelion-games",
+      "name": "Micelion Games",
+      "city": "madrid",
+      "address": "Avenida del Mediterráneo, 8, 28007 Madrid",
+      "lat": 40.4071864,
+      "lng": -3.677161299999999,
+      "website": null,
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "MICELION GAMES"
+        ],
+        "external": [
+          "bandai:10622",
+          "ravensburger:3371",
+          "wizards:17437"
+        ]
+      }
+    },
+    {
+      "id": "mundicomics",
+      "name": "Mundicomics",
+      "city": "madrid",
+      "address": "Calle Ramón y Cajal, 3, Local 1, 28850 Torrejón de Ardoz",
+      "lat": 40.45801,
+      "lng": -3.47835,
+      "website": "https://www.mundicomics.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "MUNDICOMICS"
+        ],
+        "external": [
+          "bandai:1795",
+          "ravensburger:3499",
+          "wizards:14068"
+        ]
+      }
+    },
+    {
+      "id": "next-dice",
+      "name": "Next Dice",
+      "city": "madrid",
+      "address": "Calle de Jorge Manrique S/N, Local 19, Algete, Madrid, 28110",
+      "lat": 40.597096,
+      "lng": -3.505614,
+      "website": "https://nextdice.es/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:22158",
+          "ravensburger:59506",
+          "wizards:21913"
+        ]
+      }
+    },
+    {
+      "id": "ninpo-store",
+      "name": "Ninpo Store",
+      "city": "madrid",
+      "address": "2 Calle de Villar del Pozo, Madrid, Madrid, 28031, Spain",
+      "lat": 40.37111380648247,
+      "lng": -3.617321031612853,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:30730",
+          "ravensburger:66337",
+          "wizards:24208"
+        ]
+      }
+    },
+    {
+      "id": "oz-juegos",
+      "name": "OZ JUEGOS",
+      "city": "madrid",
+      "address": "P.º de Fuente Lucha 13, Alcobendas, 28100 Madrid",
+      "lat": 40.553664665229,
+      "lng": -3.660189786586,
+      "website": "https://www.ozjuegos.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Oz Juegos",
+          "Oz juegos"
+        ],
+        "external": [
+          "bandai:2754",
+          "gem:oz-juegos",
+          "ravensburger:3750"
+        ]
+      }
+    },
+    {
+      "id": "padis",
+      "name": "Padis",
+      "city": "madrid",
+      "address": "Calle Blasco de Garay, 36, 28015 Madrid",
+      "lat": 40.4327361,
+      "lng": -3.7115349,
+      "website": "https://www.padis-store.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:265",
+          "ravensburger:3759"
+        ]
+      }
+    },
+    {
+      "id": "panda-games",
+      "name": "Panda Games",
+      "city": "madrid",
+      "address": "CC X-Madrid, planta alta, Calle Oslo, 53, 28922 Alcorcón",
+      "lat": 40.34017313580379,
+      "lng": -3.8482675702370424,
+      "website": "https://pandagames.es/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:19083",
+          "ravensburger:25906",
+          "wizards:20210"
+        ]
+      }
+    },
+    {
+      "id": "pokesportscards",
+      "name": "PokeSportsCards",
+      "city": "madrid",
+      "address": "C/NARVAEZ 4 PORTAL 2 L5, VALDEMORO, MADRID, 28342, Spain",
+      "lat": 40.1975654,
+      "lng": -3.6944082,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:23881"
+        ]
+      }
+    },
+    {
+      "id": "portal-juegos",
+      "name": "Portal Juegos",
+      "city": "madrid",
+      "address": "24 Av. de Honorio Lozano, Collado Villalba, MD, 28400, Spain",
+      "lat": 40.6290237,
+      "lng": -4.0016537,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:20564",
+          "wizards:15914"
+        ]
+      }
+    },
+    {
+      "id": "rebellion",
+      "name": "Rebellion",
+      "city": "madrid",
+      "address": "Av. Portugal 21, posterior, Mostoles, M, 28931, Spain",
+      "lat": 40.32762,
+      "lng": -3.85871,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "REBELLION"
+        ],
+        "external": [
+          "bandai:21569",
+          "ravensburger:4065",
+          "wizards:9812"
+        ]
+      }
+    },
+    {
+      "id": "replay-boardgame-cafe",
+      "name": "Replay Boardgame Cafe",
+      "city": "madrid",
+      "address": "Calle de la Ribera de Curtidores, 26, Local 3, 28005 Madrid",
+      "lat": 40.406098811504,
+      "lng": -3.7073117494583,
+      "website": "https://www.replayoutletcafe.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:23755"
+        ]
+      }
+    },
+    {
+      "id": "simonv-tcg",
+      "name": "SimonV TCG",
+      "city": "madrid",
+      "address": "Calle de Madrid 18, 28912, Leganés",
+      "lat": 40.331351571144,
+      "lng": -3.7631475116275,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:23060",
+          "ravensburger:54031"
+        ]
+      }
+    },
+    {
+      "id": "tablerum",
+      "name": "Tablerum",
+      "city": "madrid",
+      "address": "Lago Constanza 10, L10, 28017, MADRID",
+      "lat": 40.4323467,
+      "lng": -3.6480031,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "TABLERUM"
+        ],
+        "external": [
+          "bandai:6628"
+        ]
+      }
+    },
+    {
+      "id": "tcg-academy-madrid",
+      "name": "TCG Academy Madrid",
+      "city": "madrid",
+      "address": "C.C. El Círculo  Av. de la Constitución 90 Local 22, 28850, Torrejón de Ardoz",
+      "lat": 40.456678700341,
+      "lng": -3.4728920459747,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:23569",
+          "ravensburger:52274"
+        ]
+      }
+    },
+    {
+      "id": "tcg-box",
+      "name": "TCG Box",
+      "city": "madrid",
+      "address": "Calle Alcala 454 Bj Dcha, Madrid, Madrid, 28027, Spain",
+      "lat": 40.438731507839854,
+      "lng": -3.634394570762558,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:24039",
+          "wizards:22618"
+        ]
+      }
+    },
+    {
+      "id": "tcg-games",
+      "name": "TCG Games",
+      "city": "madrid",
+      "address": "Pº de Recoletos 5, 28004, Madrid",
+      "lat": 40.4206907,
+      "lng": -3.6932088,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:2650"
+        ]
+      }
+    },
+    {
+      "id": "te-juego-mucho",
+      "name": "Te Juego Mucho",
+      "city": "madrid",
+      "address": "1 C. Antonio Muñoz Molina, Rivas-Vaciamadrid, MD, 28521, Spain",
+      "lat": 40.346368,
+      "lng": -3.5221362,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "TE JUEGO MUCHO"
+        ],
+        "external": [
+          "bandai:22673",
+          "ravensburger:16918",
+          "wizards:17599"
+        ]
+      }
+    },
+    {
+      "id": "tempest-store",
+      "name": "Tempest Store",
+      "city": "madrid",
+      "address": "Calle timoteo domingo 17, 28017, Madrid",
+      "lat": 40.4214074,
+      "lng": -3.7175546,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:19692"
+        ]
+      }
+    },
+    {
+      "id": "the-big-bang-games",
+      "name": "The Big Bang Games",
+      "city": "madrid",
+      "address": "C/ Entre Arroyos 1, Local 6, 28030 Madrid",
+      "lat": 40.4095580371222,
+      "lng": -3.656340554625121,
+      "website": "https://www.thebigbanggames.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:17728"
+        ]
+      }
+    },
+    {
+      "id": "three-stones-games",
+      "name": "Three Stones Games",
+      "city": "madrid",
+      "address": "Pl. del Toro, Centro Comercial La Rotonda, 28760 Tres Cantos, Madrid",
+      "lat": 40.605564365335134,
+      "lng": -3.7172978799123646,
+      "website": "https://threestonesgames.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:23573",
+          "ravensburger:24012",
+          "wizards:22370"
+        ]
+      }
+    },
+    {
+      "id": "titan-games",
+      "name": "Titan Games",
+      "city": "madrid",
+      "address": "Avenida Buenos Aires 25, 28907, Getafe",
+      "lat": 40.3280112,
+      "lng": -3.7364027,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Titan games"
+        ],
+        "external": [
+          "bandai:5088"
+        ]
+      }
+    },
+    {
+      "id": "topdeck",
+      "name": "TopDeck",
+      "city": "madrid",
+      "address": "Calle del Cardenal Silíceo, 17, 28002 Madrid",
+      "lat": 40.44484164617468,
+      "lng": -3.67053721834735,
+      "website": "https://topdeck.es/",
+      "notes": "Barrio de Prosperidad, near Avenida de América",
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:11041",
+          "wizards:17593"
+        ]
+      }
+    },
+    {
+      "id": "torrejugones",
+      "name": "Torrejugones",
+      "city": "madrid",
+      "address": "C/ Circunvalación 9, 28850, Torrejon de Ardoz",
+      "lat": 40.4494876,
+      "lng": -3.4666589,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:24867"
+        ]
+      }
+    },
+    {
+      "id": "troopertoys",
+      "name": "Troopertoys",
+      "city": "madrid",
+      "address": "Troopertoys, 28017, Madrid",
+      "lat": 40.435811,
+      "lng": -3.641236,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:5632"
+        ]
+      }
+    },
+    {
+      "id": "tsuki-center",
+      "name": "Tsuki Center",
+      "city": "madrid",
+      "address": "Calle carabaña 11, Alcalá de Henares, Madrid, 28806, Spain",
+      "lat": 40.49275,
+      "lng": -3.36275,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:25774",
+          "ravensburger:53232",
+          "wizards:24073"
+        ]
+      }
+    },
+    {
+      "id": "velkarion",
+      "name": "Velkarion",
+      "city": "madrid",
+      "address": "Calle las vegas 18, alcorcon, Madrid, 28921, Spain",
+      "lat": 40.34866646339661,
+      "lng": -3.831261954217819,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:15475",
+          "wizards:18616"
+        ]
+      }
+    },
+    {
+      "id": "villano-tcg",
+      "name": "Villano TCG",
+      "city": "madrid",
+      "address": "Plaza albufera 8 Local A, 28945, Fuenlabrada",
+      "lat": 40.2908624,
+      "lng": -3.7920921,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:23408"
+        ]
+      }
+    },
+    {
+      "id": "vortex-tcg-games",
+      "name": "Vortex TCG & Games",
+      "city": "madrid",
+      "address": "Calle Ugena 3, Carabanchel, Madrid, 28025, Spain",
+      "lat": 40.37418324737503,
+      "lng": -3.7250584196022642,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:23981"
+        ]
+      }
+    },
+    {
+      "id": "wargen-wargames",
+      "name": "Wargen Wargames",
+      "city": "madrid",
+      "address": "Avenida de las Águilas, 2B, Local 2, 28044 Madrid",
+      "lat": 40.38462,
+      "lng": -3.76506,
+      "website": "https://wargenwargames.com/",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:21396",
+          "ravensburger:5310",
+          "wizards:15373"
+        ]
+      }
+    },
+    {
+      "id": "zacatrus-chamberi",
+      "name": "Zacatrus Chamberí",
+      "city": "madrid",
+      "address": "C/Fernández de los Ríos 57, 28015, Madrid",
+      "lat": 40.4351951,
+      "lng": -3.7121387,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Zacatrus Chamberi",
+          "Zacatrus! Madrid Chamberí"
+        ],
+        "external": [
+          "bandai:19154",
+          "ravensburger:5443"
+        ]
+      }
+    },
+    {
+      "id": "zacatrus-piramides",
+      "name": "Zacatrus Pirámides",
+      "city": "madrid",
+      "address": "Paseo de las Acacias 67, 28005, Madrid",
+      "lat": 40.401244148083,
+      "lng": -3.7127767726184,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Piramides Zacatrus",
+          "ZACATRUS PIRAMIDES"
+        ],
+        "external": [
+          "bandai:19228",
+          "ravensburger:5444"
+        ]
+      }
+    },
+    {
+      "id": "zial-tcg-store",
+      "name": "Zial TCG Store",
+      "city": "madrid",
+      "address": "Calle Ruperto Chapí 55, 28100, Alcobendas",
+      "lat": 40.548170378226,
+      "lng": -3.6395108699799,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "ZIAL TCG STORE"
+        ],
+        "external": [
+          "bandai:29007"
+        ]
+      }
+    }
+  ]
+}

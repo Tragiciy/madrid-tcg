@@ -133,9 +133,19 @@ def _extract_string_map(text: str, var_name: str) -> dict[str, str]:
 
 def load_existing_stores() -> list[dict]:
     """
-    Load existing store references from public/config.js (STORE_META +
-    STORE_ADDRESSES fallback) or, if that fails, from public/events.json.
+    Load existing store references: the store registry (data/stores.json)
+    first, then the legacy public/config.js STORE_META, then the store
+    names in public/events.json.
     """
+    registry_path = pathlib.Path("data/stores.json")
+    if registry_path.exists():
+        try:
+            stores = json.loads(registry_path.read_text(encoding="utf-8")).get("stores", [])
+            if stores:
+                return [{"name": s["name"], "address": s.get("address") or ""} for s in stores]
+        except Exception:
+            pass
+
     config_path = pathlib.Path("public/config.js")
     if config_path.exists():
         text = config_path.read_text(encoding="utf-8")

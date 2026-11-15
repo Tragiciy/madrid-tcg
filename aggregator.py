@@ -35,15 +35,17 @@ from pipeline.config import (
 from pipeline.health import build_stats, print_report, print_scraper_health, validate_events
 from pipeline.normalize import _normalize_game, _shape_drop_reason
 from pipeline.reconcile import (
-    _upcoming_active, backfill_sources, drop_locator_duplicates,
+    _upcoming_active, attach_store_ids, backfill_sources, drop_locator_duplicates,
     find_store_name_variants, find_suspect_zero_sources, is_locator, merge_events,
 )
 from pipeline.repository import (
     CorruptEventsFile, append_source_runs, apply_store_renames, drop_retired_stores,
-    load_existing, load_previous_stats, write_events, write_json_atomic,
+    load_existing, load_previous_stats, save_store_registry, write_events,
+    write_json_atomic,
 )
 from pipeline.runner import _discover_scrapers, run_all_scrapers
 from shared.scraper_keywords import extract_format_for_event
+from shared.store_registry import StoreRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -163,6 +165,10 @@ def main() -> None:
     if backfilled:
         logger.info("Backfilled source on %d existing events", backfilled)
     find_store_name_variants(fresh)
+    registry = StoreRegistry.load()
+    new_stores = attach_store_ids(fresh, existing, registry)
+    if new_stores:
+        logger.info("Store registry: %d new store(s) learned from this run", new_stores)
     fresh, dup_count = drop_locator_duplicates(fresh, existing, now_iso)
     logger.info("Dropped %d locator events already covered by store scrapers", dup_count)
 
@@ -206,6 +212,7 @@ def main() -> None:
     # 5. Sort and persist.
     merged.sort(key=lambda e: (e["datetime_start"], e.get("store", ""), e.get("title", "")))
     write_events(merged)
+    save_store_registry(registry)
 
     # 6. Build stats first (so anomaly flags propagate into scraper_stats),
     #    then print both blocks.
