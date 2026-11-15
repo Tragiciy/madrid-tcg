@@ -70,6 +70,7 @@ STALE_AFTER_DAYS = 14
 # baseline for source health over time (and the future `source_runs` table).
 SOURCE_RUNS_FILE = pathlib.Path("data/source_runs.jsonl")
 RETIRED_STORES_FILE = pathlib.Path("data/retired_stores.json")
+STORE_RENAMES_FILE = pathlib.Path("data/store_renames.json")
 # Abort if upcoming active events fall below this share of the previous
 # run's: history-inclusive totals hide losing every future event.
 UPCOMING_DROP_THRESHOLD = 0.5
@@ -660,6 +661,25 @@ def drop_retired_stores(events: list[dict],
     return kept
 
 
+def apply_store_renames(events: list[dict],
+                        path: Optional[pathlib.Path] = None) -> list[dict]:
+    """Rename stores per data/store_renames.json so history stays under one name."""
+    path = path or STORE_RENAMES_FILE
+    if not path.exists():
+        return events
+    renames = {k: v for k, v in json.loads(path.read_text(encoding="utf-8")).items()
+               if not k.startswith("_")}
+    n = 0
+    for e in events:
+        new = renames.get(e.get("store"))
+        if new:
+            e["store"] = new
+            n += 1
+    if n:
+        logger.info("Renamed store on %d existing events", n)
+    return events
+
+
 def write_json_atomic(path: pathlib.Path, data) -> None:
     """Write JSON to a temp file in the same directory, then rename over path."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -1023,7 +1043,7 @@ def main() -> None:
     except CorruptEventsFile as exc:
         logger.error("%s — aborting without writing anything", exc)
         sys.exit(1)
-    existing = drop_retired_stores(existing)
+    existing = apply_store_renames(drop_retired_stores(existing))
     previous_stats = load_previous_stats()
     logger.info(
         "Existing events on disk: %d  (previous stats run at %s)",

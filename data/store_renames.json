@@ -1,0 +1,8 @@
+{
+  "_comment": "Old store name -> current store name, applied to events.json on load. Use when a store's display name changes so its history stays under one name. Keys are exact names.",
+  "Itaca (28015)": "Ítaca",
+  "Kamikaze Freak Shop (28029)": "Kamikaze Freak Shop",
+  "MADAKIBA (28342)": "MADAKIBA",
+  "Padis (28015)": "Padis",
+  "Panda Games (28922)": "Panda Games"
+}
