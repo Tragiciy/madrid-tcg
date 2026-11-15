@@ -271,13 +271,30 @@ def extract_format_from_keywords(
     return None
 
 
+# Set codes that unambiguously identify a game even when the title omits
+# the game name (e.g. Ítaca's "PRESENTACION OP18"). Only One Piece's
+# "OPnn" is used: "EBnn"/"STnn" are shared with Gundam and Digimon.
+GAME_PATTERNS: list[tuple[re.Pattern, str]] = [
+    (re.compile(r"\bop[\s-]?\d{2}\b", re.IGNORECASE), "One Piece"),
+]
+
+
+def extract_game_from_patterns(text: str) -> Optional[str]:
+    """Return the canonical game for the first matching set-code pattern."""
+    for pattern, canonical in GAME_PATTERNS:
+        if pattern.search(text or ""):
+            return canonical
+    return None
+
+
 def extract_game_from_keywords(text: str, keywords: list[tuple[str, str]]) -> Optional[str]:
     """
-    Scan *text* for the first matching game keyword (longest-first).
+    Scan *text* for the first matching game keyword (longest-first),
+    falling back to set-code patterns (GAME_PATTERNS).
     Returns the canonical game name or None.
     """
     lower = (text or "").lower()
     for keyword, canonical in keywords:
         if keyword in lower:
             return canonical
-    return None
+    return extract_game_from_patterns(text)
