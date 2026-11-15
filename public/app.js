@@ -192,7 +192,22 @@ function downloadIcs(e) {
   URL.revokeObjectURL(url);
 }
 
+// Stable event identity. Mirrors aggregator.event_key() exactly, which is
+// unique across events.json by construction (merge is keyed on it).
 function eventKey(e) {
+  const store = e.store || '';
+  const sid = e.source_event_id;
+  // Namespaced ids ("wizards:123") are globally unique: no store prefix, so a
+  // store rename never changes the key.
+  if (sid && sid.includes(':')) return `id:${sid}`;
+  if (sid) return `${store}|id:${sid}`;
+  return [store, e.title || '', e.datetime_start || '', e.location || ''].join('|');
+}
+
+// Pre-2026-11 key (source_url + datetime_start). Not unique — listing-URL
+// scrapers share one source_url — kept only to migrate saved favorites and
+// resolve old shared ?event= links.
+function legacyEventKey(e) {
   return (e.source_url || '') + (e.datetime_start || '');
 }
 
@@ -244,12 +259,19 @@ function readMadridNow() {
   };
 }
 
+// Today's calendar date in Madrid as a local-midnight Date, so week maths
+// matches the Madrid dates in events.json for visitors in any timezone.
+function madridToday() {
+  const [y, m, d] = readMadridNow().iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 /* ── Alpine app ────────────────────────────────────────────────────── */
 function app() {
   return {
     events:       [],
     loading:      true,
-    weekStart:    weekMonday(new Date()),
+    weekStart:    weekMonday(madridToday()),
     filters:      { search: '', game: [], store: [], format: [] },
     filterSearch: { game: '', store: '', format: '' },
     savedPresets: [],
@@ -336,7 +358,8 @@ function app() {
         if (rawEventParam) {
           const decoded = decodeEventParam(rawEventParam);
           const eventKey = decoded !== null ? decoded : rawEventParam;
-          const event = this.events.find(ev => this.eventKey(ev) === eventKey);
+          const event = this.events.find(ev => this.eventKey(ev) === eventKey)
+            || this.events.find(ev => legacyEventKey(ev) === eventKey);
           if (event) this.openPanel(event);
         }
       } catch (err) {
@@ -397,11 +420,11 @@ function app() {
       this.cleanupFilters();
     },
     goToday() {
-      this.weekStart = weekMonday(new Date());
+      this.weekStart = weekMonday(madridToday());
       this.cleanupFilters();
       // In vertical view scroll to today after Alpine re-renders the week
       if (this.viewMode === 'vertical') {
-        this.$nextTick(() => this.scrollToDay(isoDay(new Date())));
+        this.$nextTick(() => this.scrollToDay(readMadridNow().iso));
       }
     },
 
@@ -527,9 +550,21 @@ function app() {
     // Prune keys for events no longer present in events.json
     cleanupFavorites() {
       const allKeys = new Set(this.events.map(e => eventKey(e)));
-      const before  = this.favorites.length;
-      this.favorites = this.favorites.filter(key => allKeys.has(key));
-      if (this.favorites.length !== before) this.persistFavorites();
+      const byLegacy = new Map();
+      for (const e of this.events) {
+        const lk = legacyEventKey(e);
+        if (!byLegacy.has(lk)) byLegacy.set(lk, []);
+        byLegacy.get(lk).push(eventKey(e));
+      }
+      const next = new Set();
+      for (const key of this.favorites) {
+        if (allKeys.has(key)) next.add(key);
+        else for (const k of byLegacy.get(key) || []) next.add(k);  // migrate old keys
+      }
+      const changed = next.size !== this.favorites.length
+        || this.favorites.some(k => !next.has(k));
+      this.favorites = [...next];
+      if (changed) this.persistFavorites();
     },
 
     saveCurrentPreset() {
@@ -980,10 +1015,11 @@ function app() {
       return segmentForHour(parseInt(iso.slice(11, 13), 10));
     },
 
+    // Compare Madrid calendar dates as strings (same as weekDays bucketing),
+    // not instants against the browser's local midnight.
     isInCurrentWeek(e) {
-      const d = new Date(e.datetime_start);
-      const weekEnd = addDays(this.weekStart, 7);
-      return d >= this.weekStart && d < weekEnd;
+      const day = e.datetime_start.slice(0, 10);
+      return day >= isoDay(this.weekStart) && day < isoDay(addDays(this.weekStart, 7));
     },
 
     eventMatches(e, opts = {}) {
@@ -1080,7 +1116,7 @@ function app() {
 
     /* ── 7-day array for the current week ───────────────────────────── */
     get weekDays() {
-      const todayISO = isoDay(new Date());
+      const todayISO = this.nowMadrid ? this.nowMadrid.iso : readMadridNow().iso;
       const DOW_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
       // Build a map: ISO date → sorted events
@@ -1149,89 +1185,6 @@ function app() {
         hour: '2-digit', minute: '2-digit',
         timeZone: 'Europe/Madrid',
       });
-    },
-
-    eventKey(e) {
-      return eventKey(e);
-    },
-
-    eventUrl(e) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('event', this.eventKey(e));
-      return url.toString();
-    },
-
-    syncEventParam(e) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('event', this.eventKey(e));
-      history.replaceState(null, '', url.toString());
-    },
-
-    clearEventParam() {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('event');
-      history.replaceState(null, '', url.toString());
-    },
-
-    copyEventLink(e) {
-      if (!e) return;
-      const text = this.eventUrl(e);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(() => this.fallbackCopy(text));
-      } else {
-        this.fallbackCopy(text);
-      }
-    },
-
-    fallbackCopy(text) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand('copy');
-      } catch (err) {
-        console.error('Failed to copy event link', err);
-      }
-      document.body.removeChild(ta);
-    },
-
-    buildShareText(e) {
-      if (!e) return '';
-      const lines = [
-        e.title,
-        e.game || 'Unknown game',
-        e.format || 'Unknown format',
-      ];
-      if (e.datetime_start) {
-        const date = this.formatDateLong(e.datetime_start);
-        const time = this.formatTime(e.datetime_start);
-        lines.push(`${date} at ${time}`);
-      }
-      lines.push(e.store || 'Unknown store');
-      const address = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store];
-      if (address) lines.push(address);
-      if (e.source_url) lines.push(e.source_url);
-      return lines.join('\n');
-    },
-
-    shareEvent(e) {
-      if (!e) return;
-      const url = this.eventUrl(e);
-      const text = this.buildShareText(e);
-      if (navigator.share) {
-        navigator.share({
-          title: e.title || 'Event',
-          text: text,
-          url: url,
-        }).catch(() => {
-          this.copyEventLink(e);
-        });
-      } else {
-        this.copyEventLink(e);
-      }
     },
 
     openEvent(e) {
@@ -1382,24 +1335,6 @@ function app() {
       document.body.removeChild(ta);
     },
 
-    buildShareText(e) {
-      if (!e) return '';
-      const lines = [
-        e.title,
-        e.game || 'Unknown game',
-        e.format || 'Unknown format',
-      ];
-      if (e.datetime_start) {
-        const date = this.formatDateLong(e.datetime_start);
-        const time = this.formatTime(e.datetime_start);
-        lines.push(`${date} at ${time}`);
-      }
-      lines.push(e.store || 'Unknown store');
-      const address = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store];
-      if (address) lines.push(address);
-      if (e.source_url) lines.push(e.source_url);
-      return lines.join('\n');
-    },
 
     shareEvent(e) {
       if (!e) return;
