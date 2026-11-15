@@ -260,6 +260,7 @@ function app() {
   return {
     events:       [],
     loading:      true,
+    loadError:    null,
     weekStart:    weekMonday(new Date()),
     filters:      { search: '', game: [], store: [], format: [] },
     filterSearch: { game: '', store: '', format: '' },
@@ -329,7 +330,12 @@ function app() {
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
       
       try {
-        const res = await fetch(`events.json?v=${Date.now()}`, { cache: 'no-store' });
+        // Plain fetch: Cloudflare Pages serves events.json with
+        // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
+        // every visit and gets a cheap 304 when the data hasn't changed.
+        // Must match the <link rel="preload"> in index.html to reuse it.
+        const res = await fetch('events.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         this.events = await res.json();
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
@@ -352,6 +358,7 @@ function app() {
         }
       } catch (err) {
         console.error('Failed to load events.json', err);
+        this.loadError = 'Could not load events. Check your connection and try again.';
       } finally {
         this.loading = false;
       }

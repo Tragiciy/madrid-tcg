@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Madrid TCG Events</title>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <link rel="preload" href="events.json" as="fetch" crossorigin="anonymous" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -188,9 +189,13 @@
 
   <!-- Loading -->
   <div class="state-msg" x-show="loading">Loading events…</div>
+  <div class="state-msg state-error" x-show="!loading && loadError" role="alert">
+    <span x-text="loadError"></span>
+    <button class="btn" @click="location.reload()">Retry</button>
+  </div>
 
   <!-- Calendar grid -->
-  <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading">
+  <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading && !loadError">
 
     <!-- ── HORIZONTAL: global grid; segments aligned across days ── -->
     <template x-if="viewMode === 'horizontal'">
