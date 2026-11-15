@@ -26,6 +26,7 @@ Run:
 import importlib
 import json
 import logging
+import os
 import pathlib
 import sys
 from collections import Counter
@@ -66,17 +67,25 @@ def _discover_scrapers() -> list[str]:
     ]
 
 
-def _run_scraper(module_name: str) -> tuple:
-    """Import and call scrape(). Returns (events, None) or ([], error)."""
+def _run_scraper(module_name: str) -> tuple[list[dict], Optional[str], Optional[str]]:
+    """
+    Import and call scrape(). Returns (events, error, store_constant).
+
+    Import errors are caught here too, so a broken scraper module can never
+    abort the whole run. store_constant is the module's STORE attribute
+    (None if the module failed to import or doesn't define it).
+    """
+    store = None
     try:
         module = importlib.import_module(module_name)
+        store = getattr(module, "STORE", None)
         events = module.scrape()
         logger.info("%s → %d events", module_name, len(events))
-        return events, None
+        return events, None, store
     except Exception as exc:
         msg = f"{type(exc).__name__}: {exc}"
         logger.error("Scraper %s failed: %s", module_name, msg)
-        return [], msg
+        return [], msg, store
 
 
 # ---------------------------------------------------------------------------
@@ -349,19 +358,60 @@ def merge_events(
     return list(by_key.values())
 
 
+def stores_with_upcoming_events(events: list[dict], now_iso: str) -> set[str]:
+    """Stores that have at least one active event starting after now."""
+    now_dt = datetime.fromisoformat(now_iso)
+    stores: set[str] = set()
+    for e in events:
+        if not e.get("is_active", True):
+            continue
+        try:
+            if datetime.fromisoformat(e.get("datetime_start") or "") > now_dt:
+                stores.add(e.get("store"))
+        except (ValueError, TypeError):
+            continue
+    return stores
+
+
+def find_suspect_zero_stores(scraper_stats: dict, existing: list[dict], now_iso: str) -> set[str]:
+    """
+    Stores whose scraper "succeeded" with zero valid events while we still
+    hold upcoming events for them. Treated like a failed scraper: a site that
+    silently stopped rendering its calendar must not look like a store that
+    cancelled everything.
+    """
+    zero = {
+        ms["store"]
+        for ms in scraper_stats.values()
+        if not ms.get("error") and ms.get("valid", 0) == 0
+    }
+    return zero & stores_with_upcoming_events(existing, now_iso)
+
+
 # ---------------------------------------------------------------------------
 # Persistence
 # ---------------------------------------------------------------------------
 
+class CorruptEventsFile(RuntimeError):
+    """events.json exists but cannot be parsed. Never overwrite it."""
+
+
 def load_existing() -> list[dict]:
-    """Read events.json (if present) and backfill missing lifecycle fields."""
+    """
+    Read events.json (if present) and backfill missing lifecycle fields.
+
+    Raises CorruptEventsFile if the file exists but is unreadable: starting
+    from an empty list would silently replace the full history with only
+    this run's events.
+    """
     if not EVENTS_FILE.exists():
         return []
     try:
         data = json.loads(EVENTS_FILE.read_text(encoding="utf-8"))
     except Exception as exc:
-        logger.error("Could not read %s: %s — starting empty", EVENTS_FILE, exc)
-        return []
+        raise CorruptEventsFile(f"Could not read {EVENTS_FILE}: {exc}") from exc
+    if not isinstance(data, list):
+        raise CorruptEventsFile(f"{EVENTS_FILE} is not a JSON list")
 
     for e in data:
         # Pre-refactor records had only scraped_at; use it as a sensible
@@ -373,12 +423,16 @@ def load_existing() -> list[dict]:
     return data
 
 
+def write_json_atomic(path: pathlib.Path, data) -> None:
+    """Write JSON to a temp file in the same directory, then rename over path."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
+
+
 def write_events(events: list[dict]) -> None:
-    EVENTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    EVENTS_FILE.write_text(
-        json.dumps(events, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    write_json_atomic(EVENTS_FILE, events)
     logger.info("Wrote: %s (%d events)", EVENTS_FILE, len(events))
 
 
@@ -536,13 +590,16 @@ def build_stats(events: list[dict],
                 scraper_stats: dict,
                 failed_scrapers: list[str],
                 generated_at: str,
-                previous_stats: Optional[dict] = None) -> dict:
+                previous_stats: Optional[dict] = None,
+                suspect_zero_stores: Optional[set[str]] = None) -> dict:
     """
     Build the stats document. by_store is a nested per-store breakdown
     including this-run scraper observability (raw/valid/dropped + reason
-    buckets) and a sharp-drop anomaly flag derived from the prior run.
+    buckets) and an anomaly flag: "suspect_zero" (0 events while upcoming
+    events are still held) or "sharp_drop" (raw below the prior run's).
     """
     previous_stats = previous_stats or {}
+    suspect_zero_stores = suspect_zero_stores or set()
 
     by_store_total = Counter(e["store"] for e in events)
     by_store_active = Counter(e["store"] for e in events if e.get("is_active"))
@@ -576,7 +633,9 @@ def build_stats(events: list[dict],
         # Anomaly detection: a sharp drop is a current raw count below
         # SHARP_DROP_THRESHOLD of the previous run's raw.
         anomaly: Optional[str] = None
-        if prev_raw is not None and prev_raw > 0 and raw_now < prev_raw * SHARP_DROP_THRESHOLD:
+        if store in suspect_zero_stores:
+            anomaly = "suspect_zero"
+        elif prev_raw is not None and prev_raw > 0 and raw_now < prev_raw * SHARP_DROP_THRESHOLD:
             anomaly = "sharp_drop"
 
         by_store[store] = {
@@ -628,12 +687,14 @@ def print_scraper_health(scraper_stats: dict) -> None:
         if s.get("anomaly") == "sharp_drop":
             prev = s.get("previous_raw")
             print(f"  [WARN] {name} raw dropped from {prev} → {s['raw']}")
+        elif s.get("anomaly") == "suspect_zero":
+            print(f"  [WARN] {name} returned 0 events but upcoming events exist — kept as-is")
 
     name_w = max(len(name) for name in scraper_stats) + 2
     for name in sorted(scraper_stats):
         s = scraper_stats[name]
         flag = "FAIL" if s.get("error") else (
-            "WARN" if s.get("anomaly") == "sharp_drop" else "ok  "
+            "WARN" if s.get("anomaly") else "ok  "
         )
         prev_raw = s.get("previous_raw")
         prev_str = "n/a" if prev_raw is None else str(prev_raw)
@@ -664,7 +725,11 @@ def main() -> None:
     # 1. Load persisted events and the previous run's stats. Stats are
     #    read BEFORE we overwrite the file at the end of this run; they
     #    feed per-store anomaly detection (sharp_drop).
-    existing = load_existing()
+    try:
+        existing = load_existing()
+    except CorruptEventsFile as exc:
+        logger.error("%s — aborting without writing anything", exc)
+        sys.exit(1)
     previous_stats = load_previous_stats()
     logger.info(
         "Existing events on disk: %d  (previous stats run at %s)",
@@ -680,7 +745,7 @@ def main() -> None:
     raw_total = 0
 
     for module_name in _discover_scrapers():
-        events, error = _run_scraper(module_name)
+        events, error, store_constant = _run_scraper(module_name)
         if error:
             failed_scrapers.append(module_name)
 
@@ -701,7 +766,7 @@ def main() -> None:
         store_name = (
             (valid[0].get("store") if valid else None)
             or (events[0].get("store") if events else None)
-            or getattr(importlib.import_module(module_name), "STORE", None)
+            or store_constant
             or module_name
         )
 
@@ -748,12 +813,30 @@ def main() -> None:
         for name in failed_scrapers
         if name in scraper_stats
     }
-    merged = merge_events(existing, fresh, now_iso, failed_stores=failed_stores)
+    suspect_zero_stores = find_suspect_zero_stores(scraper_stats, existing, now_iso)
+    if suspect_zero_stores:
+        logger.warning(
+            "Suspect-zero stores (0 events, upcoming events kept): %s",
+            sorted(suspect_zero_stores),
+        )
+    merged = merge_events(
+        existing, fresh, now_iso,
+        failed_stores=failed_stores | suspect_zero_stores,
+    )
     new_count = len(merged) - len(existing)
     logger.info(
         "After merge: %d total (%+d vs. existing %d)",
         len(merged), new_count, len(existing),
     )
+
+    # Merge only ever deletes future events after repeated misses, so a large
+    # drop in the total means something is broken. Refuse to write.
+    if existing and len(merged) < len(existing) * COUNT_DROP_THRESHOLD:
+        logger.error(
+            "Merged total %d is below %.0f%% of existing %d — aborting without writing",
+            len(merged), COUNT_DROP_THRESHOLD * 100, len(existing),
+        )
+        sys.exit(1)
 
     # 5. Sort and persist.
     merged.sort(key=lambda e: (e["datetime_start"], e.get("store", ""), e.get("title", "")))
@@ -763,14 +846,12 @@ def main() -> None:
     #    then print both blocks.
     stats = build_stats(
         merged, scraper_stats, failed_scrapers, now_iso, previous_stats,
+        suspect_zero_stores=suspect_zero_stores,
     )
     report = validate_events(merged, existing)
     print_report(report)
     print_scraper_health(scraper_stats)
-    STATS_FILE.write_text(
-        json.dumps(stats, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    write_json_atomic(STATS_FILE, stats)
     logger.info("Wrote: %s", STATS_FILE)
 
     # 9. Console summary

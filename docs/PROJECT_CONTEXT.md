@@ -104,7 +104,7 @@ per-store breakdown. Each store entry contains:
 - `raw_this_run` — events fetched by the scraper this run, before validation drops
 - `previous_raw` — the same counter from the immediately preceding run's stats file
 - `dropped_this_run`, `drop_reasons` — validation drop counts per failure category
-- `anomaly` — `"sharp_drop"` if the raw count fell sharply, or `null`
+- `anomaly` — `"suspect_zero"`, `"sharp_drop"`, or `null`
 
 **Anomaly detection logic** (`aggregator.py:49`, `aggregator.py:484`): the
 previous run's stats file is loaded at startup, before being overwritten. For
@@ -116,6 +116,21 @@ returns 0 events — due to a site-structure change, for example — triggers th
 flag even if the merged events store still contains historical data from prior
 runs. When there is no previous stats file to compare against, `previous_raw`
 is `null` and no anomaly is flagged.
+
+**Suspect zero** (`find_suspect_zero_stores`): a scraper that finishes
+without raising but yields 0 valid events, for a store that still has
+upcoming active events on disk, is flagged `"suspect_zero"` and treated like a
+failed scraper: its existing events are left untouched instead of counting
+towards deletion. Unlike `sharp_drop`, it keeps firing on every run until the
+scraper returns events again. Scrapers should still raise on fetch errors
+rather than return `[]`, so the failure reason shows up in `error`.
+
+**Write safety**: if `public/events.json` exists but cannot be parsed, the run
+aborts (exit 1) without writing. If the merged total is below
+`COUNT_DROP_THRESHOLD` (70%) of the existing total, the run aborts without
+writing. Both JSON files are written atomically (temp file + `os.replace`).
+Import errors in a scraper module are caught per scraper and never abort the
+run.
 
 ### 1d. Event identity and merge
 
