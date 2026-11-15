@@ -1,6 +1,10 @@
 """
-scrapers/locator_bandai.py — One Piece and Digimon events from the Bandai
-TCG+ event locator (api.bandai-tcg-plus.com).
+shared/bandai_locator.py — Bandai TCG+ event locator client
+(api.bandai-tcg-plus.com), shared by one scraper module per game:
+scrapers/locator_bandai_onepiece.py and scrapers/locator_bandai_digimon.py.
+One module per game makes each game its own source, so protection and
+suspect_zero health work per game (Digimon going to zero is not hidden by
+One Piece still returning events).
 
 Bandai returns local start times without an offset plus an IANA timezone,
 and event titles are series names like "[November 2026] OP Store
@@ -16,14 +20,13 @@ from shared.locator_common import (
 
 logger = logging.getLogger(__name__)
 
-STORE = "Bandai TCG+ Locator"
 SOURCE = "bandai"
 LIST_URL = "https://api.bandai-tcg-plus.com/api/user/event/list"
 HEADERS = {
     "Origin": "https://www.bandai-tcg-plus.com",
     "Referer": "https://www.bandai-tcg-plus.com/",
 }
-GAMES = {4: "One Piece", 2: "Digimon"}  # game_title_id → canonical game
+GAME_TITLE_IDS = {"One Piece": 4, "Digimon": 2}
 PAGE_SIZE = 100
 MAX_EVENTS_PER_GAME = 1000
 
@@ -43,7 +46,7 @@ def _fetch_game(sess, game_title_id: int) -> list[dict]:
         })
         success = data.get("success")
         if not isinstance(success, dict):
-            raise RuntimeError(f"{STORE}: unexpected response {str(data)[:200]}")
+            raise RuntimeError(f"Bandai TCG+: unexpected response {str(data)[:200]}")
         batch = success.get("event_list") or []
         events += batch
         offset += PAGE_SIZE
@@ -67,8 +70,8 @@ def parse_events(raw_events: list[dict], game: str, resolver: StoreResolver) -> 
         # are read as Madrid local time.
         tz = "Europe/Madrid" if (ev.get("country_code") or "ES") == "ES" else ev.get("timezone")
         if tz != ev.get("timezone"):
-            logger.debug("%s: event %s timezone %s overridden to %s",
-                         STORE, ev.get("id"), ev.get("timezone"), tz)
+            logger.debug("Bandai event %s: timezone %s overridden to %s",
+                         ev.get("id"), ev.get("timezone"), tz)
         start = to_madrid_iso(ev.get("start_datetime") or "", tz or "Europe/Madrid")
         name = ev.get("organizer_name")
         title = _MONTH_PREFIX_RE.sub("", ev.get("event_series_title") or "").strip()
@@ -90,21 +93,9 @@ def parse_events(raw_events: list[dict], game: str, resolver: StoreResolver) -> 
     return out
 
 
-def scrape() -> list[dict]:
-    sess = session()
-    resolver = StoreResolver()
-    events: list[dict] = []
-    for game_title_id, game in GAMES.items():
-        raw = _fetch_game(sess, game_title_id)
-        parsed = parse_events(raw, game, resolver)
-        logger.info("%s %s: %d raw → %d events", STORE, game, len(raw), len(parsed))
-        events += parsed
+def scrape_game(game: str, label: str) -> list[dict]:
+    """Events for one game within CITY's radius and the time window."""
+    raw = _fetch_game(session(), GAME_TITLE_IDS[game])
+    events = parse_events(raw, game, StoreResolver())
+    logger.info("%s: %d raw → %d events", label, len(raw), len(events))
     return events
-
-
-if __name__ == "__main__":
-    import json
-    logging.basicConfig(level=logging.INFO)
-    out = scrape()
-    print(json.dumps(out[:5], indent=2, ensure_ascii=False))
-    print(f"\nTotal: {len(out)}")

@@ -60,7 +60,7 @@ for the next `WINDOW_DAYS` (60) days:
 | Module | Locator | Games |
 |---|---|---|
 | `locator_wizards` | Wizards Store & Event Locator (GraphQL `searchEvents`) | Magic |
-| `locator_bandai` | Bandai TCG+ (`api/user/event/list`) | One Piece, Digimon |
+| `locator_bandai_onepiece`, `locator_bandai_digimon` | Bandai TCG+ (`api/user/event/list`); client in `shared/bandai_locator.py` | One Piece; Digimon. There is one module per game, so health and protection work per game |
 | `locator_ravensburger` | Ravensburger Play Hub (hydraproxy `/v2/events/`) | Lorcana |
 | `locator_gem` | GEM (`gem.fabtcg.com/api/v1/locator/events/`) | Flesh and Blood |
 

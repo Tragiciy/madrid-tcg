@@ -1,7 +1,8 @@
 import unittest
 
 from pipeline.reconcile import drop_locator_duplicates, event_key, find_store_name_variants, merge_events
-from scrapers import locator_bandai, locator_ravensburger, locator_wizards
+from scrapers import locator_ravensburger, locator_wizards
+from shared import bandai_locator as locator_bandai
 from shared.locator_common import StoreResolver, to_madrid_iso
 
 NOW = "2026-11-15T12:00:00+01:00"
