@@ -243,7 +243,7 @@ def scrape() -> list[dict]:
         resp.raise_for_status()
     except Exception as exc:
         logger.error("%s: request failed: %s", STORE, exc)
-        return []
+        raise
 
     soup = BeautifulSoup(resp.text, "html.parser")
     week_grids = soup.select(".mc-week-grid-expanded")

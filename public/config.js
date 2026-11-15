@@ -2,7 +2,6 @@ var STORE_ADDRESSES = {
   'Arte 9': 'Calle de Francisco Silvela, 21, 28028 Madrid',
   'Asedio Gaming': 'Calle Soria 5, Bajo Izquierda, Las Rozas, 28231',
   'Generacion X - Elfo': 'Elfo 98, 28027 Madrid',
-  'GenexComics': 'C. de Elfo, 98, Cdad. Lineal, 28027 Madrid',
   'Goblintrader Madrid-Norte': 'C. del Marqués de Lema 7, local 3, 28003 Madrid',
   'Jupiter Juegos': 'Jupiter Madrid',
   'La Guarida Juegos': 'Calle de las Peñuelas, 14, Local 1, 28005 Madrid',
@@ -35,10 +34,6 @@ var STORE_META = {
   'Generacion X - Elfo': {
     address: 'Elfo 98, 28027 Madrid',
     website: 'https://genexcomics.com/',
-  },
-  'GenexComics': {
-    address: 'C. de Elfo, 98, Cdad. Lineal, 28027 Madrid',
-    website: 'https://www.genexcomics.com/',
   },
   'Goblintrader Madrid-Norte': {
     address: 'C. del Marqués de Lema 7, local 3, 28003 Madrid',
@@ -118,7 +113,7 @@ var STORE_META = {
     website: 'https://gladiusgames.net/',
   },
   'Mundicomics': {
-    address: 'Calle de Atocha, 65, 28012 Madrid',
+    address: 'Calle Ramón y Cajal, 3, Local 1, 28850 Torrejón de Ardoz',
     website: 'https://www.mundicomics.com/',
   },
 };

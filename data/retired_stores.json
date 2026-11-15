@@ -1,0 +1,4 @@
+{
+  "_comment": "Store names whose events are dropped from events.json on load. Use when a store entry turns out to duplicate another one, or the shop closed. Value = reason.",
+  "GenexComics": "Duplicate of 'Generacion X - Elfo' (same shop at Elfo 98, same genexcomics.com site); all 62 events duplicated Generacion X. See #91."
+}

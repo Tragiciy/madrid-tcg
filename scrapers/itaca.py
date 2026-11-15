@@ -168,10 +168,9 @@ def scrape() -> list:
         resp = requests.get(BASE_URL, headers=HEADERS, timeout=10)
     except Exception as exc:
         logger.error("%s: request failed: %s", STORE, exc)
-        return []
+        raise
     if resp.status_code != 200:
-        logger.error("%s: HTTP %d", STORE, resp.status_code)
-        return []
+        raise RuntimeError(f"{STORE}: HTTP {resp.status_code}")
 
     soup = BeautifulSoup(resp.text, "html.parser")
 

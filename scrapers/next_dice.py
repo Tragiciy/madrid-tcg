@@ -140,7 +140,7 @@ def scrape() -> list[dict]:
         raw_events = _fetch_raw_events(days_ahead=90)
     except Exception as exc:
         logger.error("%s: event API fetch failed: %s", STORE, exc)
-        return []
+        raise
 
     events: list[dict] = []
     for raw in raw_events:
