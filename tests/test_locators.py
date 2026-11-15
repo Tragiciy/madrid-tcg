@@ -164,6 +164,53 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(view["New Place"], {"id": "new-place", "address": "Calle Y, 28002", "lat": 40.0, "lng": -3.0})
 
 
+class RegistryReviewTests(unittest.TestCase):
+    def test_two_spellings_of_a_new_store_in_one_run_make_one_record(self):
+        reg = _registry()
+        fresh = [dict(_ev("Dragon Den TCG", "Lorcana", "2026-11-20T19:00:00+01:00", "scrapers.locator_a"),
+                      store_hint=store_hint("a", 1, "Dragon Den TCG", "C/ Z 3, 28005")),
+                 dict(_ev("DRAGON DEN TCG", "One Piece", "2026-11-21T19:00:00+01:00", "scrapers.locator_b"),
+                      store_hint=store_hint("b", 2, "DRAGON DEN TCG", "C/ Z 3, 28005"))]
+        self.assertEqual(attach_store_ids(fresh, [], reg), 1)
+        self.assertEqual({e["store_id"] for e in fresh}, {"dragon-den-tcg"})
+        self.assertEqual({e["store"] for e in fresh}, {"Dragon Den TCG"})
+        self.assertEqual(sorted(reg.find("Dragon Den TCG")["aliases"]["external"]), ["a:1", "b:2"])
+
+    def test_unconfirmed_match_is_used_but_not_persisted(self):
+        reg = _registry()
+        rec = reg.learn("Jupiter Juegos", store_hint("wizards", 999, "Jupiter Juegos Sur", ""))
+        self.assertEqual(rec["id"], "jupiter-juegos")
+        self.assertEqual(rec["aliases"], {"names": ["Júpiter Central"], "external": []})
+
+    def test_same_spelling_other_postcode_is_a_separate_store(self):
+        reg = _registry()
+        rec = reg.learn("JUPITER JUEGOS", store_hint("bandai", 354, "JUPITER JUEGOS", "x, 28100"))
+        self.assertNotEqual(rec["id"], "jupiter-juegos")
+
+    def test_missing_registry_file_raises(self):
+        import pathlib, tempfile
+        from shared.store_registry import RegistryMissing
+        with self.assertRaises(RegistryMissing):
+            StoreRegistry.load(pathlib.Path(tempfile.mkdtemp()) / "stores.json")
+
+
+class RealRegistryTests(unittest.TestCase):
+    """Validates the committed data/stores.json — catches bad hand edits in PRs."""
+
+    def test_registry_is_consistent(self):
+        import collections, re
+        from shared.store_matching import normalize_name
+        reg = StoreRegistry.load()
+        ids = [s["id"] for s in reg.stores]
+        self.assertEqual(len(ids), len(set(ids)), "duplicate ids")
+        self.assertTrue(all(re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", i) for i in ids), "bad id slug")
+        names = collections.Counter(normalize_name(s["name"]) for s in reg.stores)
+        self.assertEqual([n for n, c in names.items() if c > 1], [], "duplicate display names")
+        ext = collections.Counter(x for s in reg.stores for x in s["aliases"]["external"])
+        self.assertEqual([x for x, c in ext.items() if c > 1], [], "external id on two stores")
+        self.assertTrue(all(s.get("city") for s in reg.stores))
+
+
 class NameVariantTests(unittest.TestCase):
     def test_variants_are_reported_not_renamed(self):
         fresh = [_ev("MEDUSA COMICS", "Lorcana", "2026-11-20T19:00:00+01:00", "a"),

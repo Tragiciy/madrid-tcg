@@ -102,6 +102,13 @@ a single process, then:
 - writes both files.
 
 An alias is never added if that spelling already names a different store.
+`learn()` looks a store up by exact name, then by normalized spelling, so two
+spellings of a new store in one run become a single record. It only records
+an alias (external id or spelling) when the hint's postcode confirms the
+record's. A match made without that evidence is used for the current run but
+not persisted. To undo a wrong alias, delete it from `aliases` in
+`data/stores.json`. `StoreRegistry.load()` raises if the file is missing.
+A test validates the committed registry: unique ids, names and external ids.
 
 How the aggregator treats locator events:
 - **Source tag.** Every fresh event gets `source` (its scraper module).

@@ -37,6 +37,18 @@ PUBLIC_FILE = pathlib.Path("public/stores.json")
 DEFAULT_CITY = "madrid"
 
 
+_POSTCODE_RE = re.compile(r"\b(\d{5})\b")
+
+
+def postcode(address: Optional[str]) -> Optional[str]:
+    m = _POSTCODE_RE.search(address or "")
+    return m.group(1) if m else None
+
+
+class RegistryMissing(RuntimeError):
+    """data/stores.json is absent: never silently start from an empty registry."""
+
+
 def slugify(name: str) -> str:
     text = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "store"
@@ -52,9 +64,12 @@ class StoreRegistry:
     # ── loading / saving ──────────────────────────────────────────────
     @classmethod
     def load(cls, path: Optional[pathlib.Path] = None) -> "StoreRegistry":
+        """Raises RegistryMissing if the file is absent and ValueError if it is
+        not valid JSON: an empty registry would re-create every store as
+        "auto" and lose the curated addresses, websites and notes."""
         path = path or REGISTRY_FILE
         if not path.exists():
-            return cls()
+            raise RegistryMissing(f"{path} not found")
         return cls(json.loads(path.read_text(encoding="utf-8")))
 
     def to_json(self) -> dict:
@@ -135,12 +150,35 @@ class StoreRegistry:
         Record for `store_name`, creating it (origin "auto") if unknown, and
         absorbing what a locator told us: its external id, its spelling of
         the name, and address/coordinates where ours are missing.
+
+        Lookup is by exact name, then by normalized spelling — so a new
+        store listed as "Dragon Den TCG" by one locator and "DRAGON DEN TCG"
+        by another in the same run becomes one record — unless the two
+        addresses carry different postcodes (chain branches).
+
+        Aliases (external id, spelling) are only recorded when the hint's
+        postcode confirms the record's. A match made without that evidence
+        (no address, fuzzy name) is used for this run but never persisted,
+        so it is re-decided next run instead of being glued on for good.
+        To undo a wrong alias, delete it from `aliases` in data/stores.json.
         """
         hint = hint or {}
-        record = self.by_name.get(store_name) or self.add(
-            store_name, origin="auto", address=hint.get("address"),
-            lat=hint.get("lat"), lng=hint.get("lng"), today=today,
-        )
+        theirs = postcode(hint.get("address"))
+        record = self.by_name.get(store_name)
+        if record is None:
+            near = self.by_norm.get(normalize_name(store_name))
+            ours = postcode(near.get("address")) if near else None
+            if near is not None and not (theirs and ours and theirs != ours):
+                record = near
+        if record is None:
+            record = self.add(
+                store_name, origin="auto", address=hint.get("address"),
+                lat=hint.get("lat"), lng=hint.get("lng"), today=today,
+            )
+        ours = postcode(record.get("address"))
+        confirmed = bool(theirs) and (ours is None or ours == theirs)
+        if not confirmed:
+            return record
         changed = False
         ext = hint.get("external")
         if ext and ext not in record["aliases"]["external"] and ext not in self.by_external:

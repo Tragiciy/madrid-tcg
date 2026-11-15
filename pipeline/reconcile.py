@@ -300,10 +300,14 @@ def attach_store_ids(fresh: list[dict], existing: list[dict], registry) -> int:
     for e in fresh:
         record = registry.learn(e["store"], e.pop("store_hint", None))
         e["store_id"] = record["id"]
+        if is_locator(e.get("source")):
+            # One display name per registry record. Only for locator events:
+            # their keys are namespaced ids, while a scraper event's key
+            # contains its store name and must not change.
+            e["store"] = record["name"]
     for e in existing:
         e.pop("store_hint", None)
-        if not e.get("store_id"):
-            record = registry.find(e.get("store") or "")
-            if record is not None:
-                e["store_id"] = record["id"]
+        record = registry.find(e.get("store") or "")
+        if record is not None:
+            e["store_id"] = record["id"]
     return len(registry.stores) - before
