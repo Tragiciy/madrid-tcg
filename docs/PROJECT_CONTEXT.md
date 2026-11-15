@@ -29,6 +29,49 @@ Current scrapers (20): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
 `the_big_bang_games`, `panda_games`, `metamorfo`, `collectorage`, `topdeck`,
 `gladius_games`, `madakiba`, `mundicomics`, `padis`.
 
+### 1a′. Official locator sources
+
+`scrapers/locator_*.py` are multi-store sources. They read the official
+publisher event locators for every store within `CITY["radius_km"]` (50 km),
+for the next `WINDOW_DAYS` (60) days:
+
+| Module | Locator | Games |
+|---|---|---|
+| `locator_wizards` | Wizards Store & Event Locator (GraphQL `searchEvents`) | Magic |
+| `locator_bandai` | Bandai TCG+ (`api/user/event/list`) | One Piece, Digimon |
+| `locator_ravensburger` | Ravensburger Play Hub (hydraproxy `/v2/events/`) | Lorcana |
+
+`shared/locator_common.py` holds the parts they share:
+- the search area and time window;
+- an HTTP session with an honest User-Agent, timeouts and retries;
+- `make_event()`;
+- `StoreResolver`, which maps locator store names to canonical store names.
+
+`StoreResolver` tries, in order:
+1. a manual override in `data/locator_store_overrides.json`;
+2. a confident match against `STORE_META`;
+3. the locator's own name.
+
+How the aggregator treats locator events:
+- **Source tag.** Every fresh event gets `source` (its scraper module).
+  Legacy events without one are backfilled from the store's scraper.
+- **Store-scraper priority.** A locator event is dropped when the same
+  store's own scraper has an event for the same game (or an unknown game) on
+  the same day, starting within `DUPLICATE_WINDOW_MIN` (90) minutes. Existing
+  upcoming scraper events count too, so a scraper that failed today does not
+  let duplicates in.
+- **Name variants.** Spellings that normalize to the same name
+  ("MEDUSA COMICS" / "Medusa Cómics") are unified to one stable name, and a
+  warning asks for a new override. The store name is part of the event key,
+  so it must not change between runs.
+- **Game.** Locator events keep the locator's game. Title heuristics in
+  `_normalize_game` are skipped for them.
+- **Protection.** It works per source. A failed or `suspect_zero` locator
+  protects only its own events.
+
+Locator stores without a `STORE_META` entry are allowed. They carry
+`store_address`, which the frontend `storeAddress(e)` helper falls back to.
+
 ### 1b. Shared utilities
 
 `shared/` is for reusable backend/scraper utilities only. Files in `shared/`
@@ -828,6 +871,13 @@ The frontend reads these fields from each event:
   `datetime_end` (nullable; not currently displayed)
 - `language` (currently unused by the frontend, but present on every event)
 - `source_url`
+- `source` — the scraper module that produced the event (`scrapers.itaca`,
+  `scrapers.locator_wizards`). Set by the aggregator, and used for
+  protection and deduplication.
+- `source_event_id` (nullable) — a stable upstream id. When present, it makes
+  the event key `{store}|id:{source_event_id}`.
+- `store_address` (nullable) — set by locator sources. It is the frontend's
+  fallback when the store has no `STORE_META` address.
 - `scraped_at`, `first_seen_at`, `last_seen_at`, `is_active` (read by
   `aggregator.py`'s merge logic; the frontend doesn't use them, but the
   schema must keep them consistent across runs)

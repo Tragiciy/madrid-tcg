@@ -8,7 +8,7 @@ import aggregator
 from aggregator import (
     CorruptEventsFile,
     build_stats,
-    find_suspect_zero_stores,
+    find_suspect_zero_sources,
     load_existing,
     merge_events,
     write_json_atomic,
@@ -43,8 +43,10 @@ def _scraper_stats(store, valid, error=None):
 class SuspectZeroTests(unittest.TestCase):
     def setUp(self):
         self.existing = [
-            _event("Alpha", "Modern Weekly", "2026-11-20T19:00:00+01:00"),
-            _event("Beta", "Old Event", "2026-11-01T19:00:00+01:00"),
+            _event("Alpha", "Modern Weekly", "2026-11-20T19:00:00+01:00",
+                   source="scrapers.alpha"),
+            _event("Beta", "Old Event", "2026-11-01T19:00:00+01:00",
+                   source="scrapers.beta"),
         ]
 
     def test_zero_events_with_upcoming_history_is_suspect(self):
@@ -54,17 +56,17 @@ class SuspectZeroTests(unittest.TestCase):
         }
         # Beta only has past events, so a zero there is plausible.
         self.assertEqual(
-            find_suspect_zero_stores(stats, self.existing, NOW), {"Alpha"}
+            find_suspect_zero_sources(stats, self.existing, NOW), {"scrapers.alpha"}
         )
 
     def test_failed_scraper_is_not_double_counted(self):
         stats = {"scrapers.alpha": _scraper_stats("Alpha", 0, error="boom")}
-        self.assertEqual(find_suspect_zero_stores(stats, self.existing, NOW), set())
+        self.assertEqual(find_suspect_zero_sources(stats, self.existing, NOW), set())
 
     def test_suspect_zero_store_keeps_upcoming_events_across_runs(self):
         events = self.existing
         for _ in range(5):
-            events = merge_events(events, [], NOW, failed_stores={"Alpha"})
+            events = merge_events(events, [], NOW, protected_sources={"scrapers.alpha"})
         alpha = [e for e in events if e["store"] == "Alpha"]
         self.assertEqual(len(alpha), 1)
         self.assertTrue(alpha[0]["is_active"])
@@ -81,7 +83,7 @@ class SuspectZeroTests(unittest.TestCase):
             {"scrapers.alpha": _scraper_stats("Alpha", 0)},
             [],
             NOW,
-            suspect_zero_stores={"Alpha"},
+            suspect_zero_sources={"scrapers.alpha"},
         )
         self.assertEqual(stats["by_store"]["Alpha"]["anomaly"], "suspect_zero")
         self.assertEqual(stats["scrapers"]["scrapers.alpha"]["anomaly"], "suspect_zero")

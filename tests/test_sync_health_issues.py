@@ -53,6 +53,13 @@ class SyncHealthIssuesTests(unittest.TestCase):
             ("close", 11),
         })
 
+    def test_locator_suspect_zero_lives_on_scraper_entry(self):
+        stats = _stats()
+        stats["scrapers"]["scrapers.locator_x"] = {
+            "store": "X Locator", "raw": 0, "valid": 0, "error": None, "anomaly": "suspect_zero",
+        }
+        self.assertEqual(unhealthy_stores(stats)["X Locator"]["reason"], "suspect_zero")
+
     def test_error_text_is_in_body(self):
         create = next(a for a in plan_actions(_stats(), []) if a["op"] == "create" and "Alpha" in a["title"])
         self.assertIn("HTTP 404", create["body"])

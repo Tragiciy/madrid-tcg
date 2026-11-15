@@ -80,7 +80,7 @@ function buildGoogleCalendarUrl(e) {
   const endText = googleCalendarDate(end);
   if (!startText || !endText) return null;
 
-  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+  const location = storeAddress(e) || e.store || '';
   const params = [
     ['action', 'TEMPLATE'],
     ['text', calendarTitle(e)],
@@ -108,7 +108,7 @@ function buildOutlookUrl(e, base) {
     end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
   }
 
-  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+  const location = storeAddress(e) || e.store || '';
 
   const params = [
     ['subject', calendarTitle(e)],
@@ -151,7 +151,7 @@ function buildIcsContent(e) {
     end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
   }
 
-  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+  const location = storeAddress(e) || e.store || '';
   const uidBase = eventKey(e).replace(/[^a-zA-Z0-9]/g, '-');
   const uid = `${uidBase}@madrid-tcg-events`;
 
@@ -190,6 +190,15 @@ function downloadIcs(e) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// Address for an event's store: curated STORE_META first, then the legacy
+// STORE_ADDRESSES map, then the address an official locator supplied.
+function storeAddress(e) {
+  return (STORE_META[e.store] && STORE_META[e.store].address)
+    || STORE_ADDRESSES[e.store]
+    || e.store_address
+    || '';
 }
 
 function eventKey(e) {
@@ -1211,7 +1220,7 @@ function app() {
         lines.push(`${date} at ${time}`);
       }
       lines.push(e.store || 'Unknown store');
-      const address = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store];
+      const address = storeAddress(e);
       if (address) lines.push(address);
       if (e.source_url) lines.push(e.source_url);
       return lines.join('\n');
@@ -1395,7 +1404,7 @@ function app() {
         lines.push(`${date} at ${time}`);
       }
       lines.push(e.store || 'Unknown store');
-      const address = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store];
+      const address = storeAddress(e);
       if (address) lines.push(address);
       if (e.source_url) lines.push(e.source_url);
       return lines.join('\n');

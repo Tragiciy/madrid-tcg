@@ -1,0 +1,35 @@
+{
+  "_comment": "Maps store names from official locators to one canonical store name. Keys under by_name are compared after shared.store_matching.normalize_name (case, accents and punctuation are ignored). by_id keys are '<source>:<external id>'. A null value drops the store. Names already in STORE_META are matched automatically; list only variants that do not match on their own, or that must stay identical across locators so event keys stay stable.",
+  "by_id": {},
+  "by_name": {
+    "Jupiter Central": "Jupiter Juegos",
+    "Júpiter Juegos Madrid": "Jupiter Juegos",
+    "Júpiter Madrid Norte": "Júpiter Madrid Norte",
+    "Genex Comics": "Generacion X - Elfo",
+    "Metamorfo (Santiago Palacios)": "Metamorfo",
+
+    "ALCALA COMICS": "Alcalá Cómics",
+    "Crisis Alcorcon Juegos": "Crisis Alcorcón Juegos",
+    "GALLEGOS DE LA TORRE S.L. (CRISIS ALCORCÓN JUEGOS)": "Crisis Alcorcón Juegos",
+    "Dark Ritual TCG S.L.": "Dark Ritual TCG",
+    "EL TURNO EXTRA": "El Turno Extra",
+    "Factory Cards.": "Factory Cards",
+    "Galaxy-comics": "Galaxy Comics",
+    "Hobby Shop Wargames S.L": "Hobby Shop Wargames",
+    "ISEKAI": "Isekai TCG Store",
+    "Isekai TCG Store": "Isekai TCG Store",
+    "Libertalia": "Libertalia Juegos",
+    "Libertalia Juegos": "Libertalia Juegos",
+    "LUDOTECA MALDITA": "Ludoteca Maldita",
+    "Medusa Comics": "Medusa Cómics",
+    "REBELLION": "Rebellion",
+    "TABLERUM": "Tablerum",
+    "TE JUEGO MUCHO": "Te Juego Mucho",
+    "Titan games": "Titan Games",
+    "ZIAL TCG STORE": "Zial TCG Store",
+    "ZACATRUS PIRAMIDES": "Zacatrus Pirámides",
+    "Piramides Zacatrus": "Zacatrus Pirámides",
+    "Zacatrus Chamberi": "Zacatrus Chamberí",
+    "Zacatrus! Madrid Chamberí": "Zacatrus Chamberí"
+  }
+}

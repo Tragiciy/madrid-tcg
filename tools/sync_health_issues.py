@@ -44,6 +44,19 @@ def unhealthy_stores(stats: dict) -> dict[str, dict]:
                 "active": row.get("active", 0),
             }
 
+    # Multi-store sources (official locators) have no by_store row of their
+    # own, so their suspect_zero flag lives only on the scraper entry.
+    for name, ms in (stats.get("scrapers") or {}).items():
+        store = ms.get("store") or name
+        if store not in out and ms.get("anomaly") == "suspect_zero":
+            out[store] = {
+                "reason": "suspect_zero",
+                "module": name,
+                "error": None,
+                "raw": ms.get("raw", 0),
+                "active": 0,
+            }
+
     for store, row in (stats.get("by_store") or {}).items():
         if store in out or row.get("anomaly") not in ("suspect_zero", "stale"):
             continue

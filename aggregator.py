@@ -336,6 +336,7 @@ def merge_events(
     fresh: list[dict],
     now_iso: str,
     failed_stores: Optional[set[str]] = None,
+    protected_sources: Optional[set[str]] = None,
 ) -> list[dict]:
     """
     Upsert fresh events onto existing with reschedule detection and deferred cleanup.
@@ -354,7 +355,8 @@ def merge_events(
       preserved.
 
     Failed scraper handling:
-      If a store's scraper failed in this run, existing events for that store
+      If a source (scraper module) failed in this run, existing events from
+      that source (protected_sources) — or for that store (failed_stores) —
       are left untouched. A temporary upstream timeout should not hide or
       delete future events as if the site had intentionally removed them.
 
@@ -364,6 +366,7 @@ def merge_events(
     """
     MISSING_RUNS_BEFORE_DELETE = 3
     failed_stores = failed_stores or set()
+    protected_sources = protected_sources or set()
 
     now_dt = datetime.fromisoformat(now_iso)
     by_key: dict = {event_key(e): e for e in existing}
@@ -402,7 +405,7 @@ def merge_events(
         if k in fresh_keys:
             continue
         e = by_key[k]
-        if e.get("store") in failed_stores:
+        if e.get("store") in failed_stores or e.get("source") in protected_sources:
             continue
         dt_str = e.get("datetime_start") or ""
         try:
@@ -426,34 +429,142 @@ def merge_events(
     return list(by_key.values())
 
 
-def stores_with_upcoming_events(events: list[dict], now_iso: str) -> set[str]:
-    """Stores that have at least one active event starting after now."""
+def _upcoming_active(events: list[dict], now_iso: str):
     now_dt = datetime.fromisoformat(now_iso)
-    stores: set[str] = set()
     for e in events:
         if not e.get("is_active", True):
             continue
         try:
             if datetime.fromisoformat(e.get("datetime_start") or "") > now_dt:
-                stores.add(e.get("store"))
+                yield e
         except (ValueError, TypeError):
             continue
-    return stores
 
 
-def find_suspect_zero_stores(scraper_stats: dict, existing: list[dict], now_iso: str) -> set[str]:
+def sources_with_upcoming_events(events: list[dict], now_iso: str) -> set[str]:
+    """Sources (scraper modules) that have at least one active upcoming event."""
+    return {e.get("source") for e in _upcoming_active(events, now_iso) if e.get("source")}
+
+
+def find_suspect_zero_sources(scraper_stats: dict, existing: list[dict], now_iso: str) -> set[str]:
     """
-    Stores whose scraper "succeeded" with zero valid events while we still
-    hold upcoming events for them. Treated like a failed scraper: a site that
+    Scraper modules that "succeeded" with zero valid events while we still
+    hold upcoming events from them. Treated like a failed scraper: a site that
     silently stopped rendering its calendar must not look like a store that
     cancelled everything.
     """
     zero = {
-        ms["store"]
-        for ms in scraper_stats.values()
+        name for name, ms in scraper_stats.items()
         if not ms.get("error") and ms.get("valid", 0) == 0
     }
-    return zero & stores_with_upcoming_events(existing, now_iso)
+    return zero & sources_with_upcoming_events(existing, now_iso)
+
+
+# ---------------------------------------------------------------------------
+# Sources: per-store scrapers vs official locators
+# ---------------------------------------------------------------------------
+
+LOCATOR_PREFIX = "scrapers.locator_"
+# A locator event duplicates a store-scraper event when both are for the
+# same store and game (or the scraper's game is unknown) on the same day,
+# starting within this many minutes of each other.
+DUPLICATE_WINDOW_MIN = 90
+
+
+def is_locator(module_name: Optional[str]) -> bool:
+    return bool(module_name) and module_name.startswith(LOCATOR_PREFIX)
+
+
+def backfill_sources(events: list[dict], store_to_module: dict[str, str]) -> int:
+    """Tag legacy events (no `source`) with their store's scraper module."""
+    n = 0
+    for e in events:
+        if not e.get("source") and e.get("store") in store_to_module:
+            e["source"] = store_to_module[e["store"]]
+            n += 1
+    return n
+
+
+def unify_store_names(fresh: list[dict], existing: list[dict],
+                      known_names: set[str]) -> dict[str, str]:
+    """
+    Collapse spelling variants of one store ("MEDUSA COMICS" / "Medusa
+    Cómics") to a single, stable name, in place. Returns {variant: canonical}.
+
+    Preference: a STORE_META name, then a name already on record (keeps
+    event keys stable across runs), then not-all-caps, then more accented
+    characters, then alphabetical.
+    """
+    from shared.store_matching import normalize_name
+
+    on_record = {e.get("store") for e in existing}
+    groups: dict[str, set[str]] = {}
+    for e in fresh:
+        groups.setdefault(normalize_name(e["store"]), set()).add(e["store"])
+
+    def rank(name: str):
+        return (
+            name not in known_names,
+            name not in on_record,
+            name.isupper(),
+            -sum(1 for ch in name if ord(ch) > 127),
+            name,
+        )
+
+    mapping: dict[str, str] = {}
+    for names in groups.values():
+        if len(names) < 2:
+            continue
+        canonical = min(names, key=rank)
+        for n in names - {canonical}:
+            mapping[n] = canonical
+    for e in fresh:
+        e["store"] = mapping.get(e["store"], e["store"])
+    if mapping:
+        logger.warning(
+            "Unified store name variants (add to data/locator_store_overrides.json): %s",
+            mapping,
+        )
+    return mapping
+
+
+def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
+                            now_iso: str) -> tuple[list[dict], int]:
+    """
+    Remove locator events that duplicate an event from a store's own
+    scraper. The store's own listing wins. Existing upcoming scraper events
+    count too, so a scraper that failed today (its events protected) does
+    not let the locator copy slip in as a duplicate.
+    """
+    claims: dict[tuple, list[tuple]] = {}
+
+    def claim(e):
+        dt = _parse_dt(e.get("datetime_start") or "")
+        if dt is not None:
+            claims.setdefault((e.get("store"), dt.date()), []).append((dt, e.get("game")))
+
+    for e in fresh:
+        if not is_locator(e.get("source")):
+            claim(e)
+    for e in _upcoming_active(existing, now_iso):
+        if e.get("source") and not is_locator(e.get("source")):
+            claim(e)
+
+    kept: list[dict] = []
+    dropped = 0
+    for e in fresh:
+        if is_locator(e.get("source")):
+            dt = _parse_dt(e.get("datetime_start") or "")
+            rivals = claims.get((e.get("store"), dt.date()), []) if dt else []
+            if any(
+                abs((dt - rdt).total_seconds()) <= DUPLICATE_WINDOW_MIN * 60
+                and (rgame is None or rgame == e.get("game"))
+                for rdt, rgame in rivals
+            ):
+                dropped += 1
+                continue
+        kept.append(e)
+    return kept, dropped
 
 
 # ---------------------------------------------------------------------------
@@ -668,7 +779,7 @@ def build_stats(events: list[dict],
                 failed_scrapers: list[str],
                 generated_at: str,
                 previous_stats: Optional[dict] = None,
-                suspect_zero_stores: Optional[set[str]] = None) -> dict:
+                suspect_zero_sources: Optional[set[str]] = None) -> dict:
     """
     Build the stats document. by_store is a nested per-store breakdown
     including this-run scraper observability (raw/valid/dropped + reason
@@ -676,15 +787,27 @@ def build_stats(events: list[dict],
     events are still held) or "sharp_drop" (raw below the prior run's).
     """
     previous_stats = previous_stats or {}
-    suspect_zero_stores = suspect_zero_stores or set()
+    suspect_zero_sources = suspect_zero_sources or set()
+    suspect_zero_stores = {
+        scraper_stats[m]["store"] for m in suspect_zero_sources if m in scraper_stats
+    }
 
     by_store_total = Counter(e["store"] for e in events)
     by_store_active = Counter(e["store"] for e in events if e.get("is_active"))
+    # Last sighting per store *by its own scraper*: locator coverage of a
+    # store must not hide that the store's scraper has gone quiet.
+    store_modules: dict[str, set[str]] = {}
+    for name, ms in scraper_stats.items():
+        store_modules.setdefault(ms["store"], set()).add(name)
     last_seen: dict[str, str] = {}
     for e in events:
+        store = e["store"]
+        src = e.get("source")
+        if src and store in store_modules and src not in store_modules[store]:
+            continue
         ls = e.get("last_seen_at") or ""
-        if ls > last_seen.get(e["store"], ""):
-            last_seen[e["store"]] = ls
+        if ls > last_seen.get(store, ""):
+            last_seen[store] = ls
     by_game = Counter(e.get("game") or "Unknown" for e in events)
 
     # Aggregate per-scraper observability into per-store rows. A store
@@ -739,10 +862,10 @@ def build_stats(events: list[dict],
 
     # Propagate anomaly + previous_raw back into the per-scraper map so
     # the console block can print module-name-anchored [WARN] lines.
-    for ms in scraper_stats.values():
+    for name, ms in scraper_stats.items():
         info = by_store.get(ms["store"]) or {}
         ms["previous_raw"] = info.get("previous_raw")
-        ms["anomaly"] = info.get("anomaly")
+        ms["anomaly"] = "suspect_zero" if name in suspect_zero_sources else info.get("anomaly")
 
     total_scrapers = len(scraper_stats)
     failed_count = len(failed_scrapers)
@@ -854,11 +977,13 @@ def main() -> None:
         # store; fall back to the first raw event; finally the module
         # name itself if the scraper produced nothing.
         store_name = (
-            (valid[0].get("store") if valid else None)
+            store_constant
+            or (valid[0].get("store") if valid else None)
             or (events[0].get("store") if events else None)
-            or store_constant
             or module_name
         )
+        for e in valid:
+            e["source"] = module_name
 
         scraper_stats[module_name] = {
             "store": store_name,
@@ -883,7 +1008,10 @@ def main() -> None:
     # 3. Normalize game.
     by_game_before = Counter(e.get("game") or "Unknown" for e in fresh)
     for e in fresh:
-        e["game"] = _normalize_game(e.get("game"), e.get("title", ""))
+        # Official locators know the game for certain; title heuristics
+        # would only add errors (e.g. MTG "Final Fantasy" prereleases).
+        if not is_locator(e.get("source")):
+            e["game"] = _normalize_game(e.get("game"), e.get("title", ""))
         # A prerelease marker in the title is more reliable than a stale
         # source/default format. This also backfills events that were first
         # scraped before a new prerelease name was added to a scraper.
@@ -895,23 +1023,32 @@ def main() -> None:
             e["format_official"] = None
     by_game_after = Counter(e.get("game") or "Unknown" for e in fresh)
 
-    # 4. Merge into the persistent record. For failed stores, preserve
+    # 4. Attribute legacy events to their scraper, unify store spellings
+    #    across locators, and let a store's own scraper win over locator
+    #    copies of the same event.
+    store_to_module = {
+        ms["store"]: name for name, ms in scraper_stats.items() if not is_locator(name)
+    }
+    backfilled = backfill_sources(existing, store_to_module)
+    if backfilled:
+        logger.info("Backfilled source on %d existing events", backfilled)
+    from shared.store_matching import load_existing_stores
+    unify_store_names(fresh, existing, {s["name"] for s in load_existing_stores()})
+    fresh, dup_count = drop_locator_duplicates(fresh, existing, now_iso)
+    logger.info("Dropped %d locator events already covered by store scrapers", dup_count)
+
+    # 5. Merge into the persistent record. For failed sources, preserve
     #    existing events instead of treating the absence of fresh events as
     #    cancellations.
-    failed_stores = {
-        scraper_stats[name]["store"]
-        for name in failed_scrapers
-        if name in scraper_stats
-    }
-    suspect_zero_stores = find_suspect_zero_stores(scraper_stats, existing, now_iso)
-    if suspect_zero_stores:
+    suspect_zero_sources = find_suspect_zero_sources(scraper_stats, existing, now_iso)
+    if suspect_zero_sources:
         logger.warning(
-            "Suspect-zero stores (0 events, upcoming events kept): %s",
-            sorted(suspect_zero_stores),
+            "Suspect-zero sources (0 events, upcoming events kept): %s",
+            sorted(suspect_zero_sources),
         )
     merged = merge_events(
         existing, fresh, now_iso,
-        failed_stores=failed_stores | suspect_zero_stores,
+        protected_sources=set(failed_scrapers) | suspect_zero_sources,
     )
     new_count = len(merged) - len(existing)
     logger.info(
@@ -936,7 +1073,7 @@ def main() -> None:
     #    then print both blocks.
     stats = build_stats(
         merged, scraper_stats, failed_scrapers, now_iso, previous_stats,
-        suspect_zero_stores=suspect_zero_stores,
+        suspect_zero_sources=suspect_zero_sources,
     )
     report = validate_events(merged, existing)
     print_report(report)
