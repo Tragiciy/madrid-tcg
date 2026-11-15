@@ -274,7 +274,7 @@
                   <span class="seg-header-count" x-text="'· ' + seg.count"></span>
                   <span class="seg-range" x-text="seg.shortRange"></span>
                 </div>
-                <template x-for="e in seg.events" :key="e.source_url + e.datetime_start">
+                <template x-for="e in seg.events" :key="eventKey(e)">
                   <div class="ev-card"
                        :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '', isFavorite(e) ? 'is-favorite' : '' ]"
                        @click="openEvent(e)">
