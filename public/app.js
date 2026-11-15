@@ -196,6 +196,7 @@ function downloadIcs(e) {
 // it is the venue of that very event (chains have several branches), then
 // curated STORE_META, then the legacy STORE_ADDRESSES map.
 function storeAddress(e) {
+  if (!e) return '';
   return e.store_address
     || (STORE_META[e.store] && STORE_META[e.store].address)
     || STORE_ADDRESSES[e.store]
@@ -1291,10 +1292,6 @@ function app() {
       } catch {
         return url;
       }
-    },
-
-    storeMeta(storeName) {
-      return STORE_META[storeName] || null;
     },
 
     formatDateLong(iso) {
