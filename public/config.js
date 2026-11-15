@@ -22,6 +22,10 @@ var SEGMENTS = [
 ];
 
 var STORE_META = {
+  'Wargen Wargames': {
+    address: 'Avenida de las Águilas, 2B, Local 2, 28044 Madrid',
+    website: 'https://wargenwargames.com/',
+  },
   'Arte 9': {
     address: 'Calle de Francisco Silvela, 21, 28028 Madrid',
     website: 'https://arte9.es',

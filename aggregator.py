@@ -200,6 +200,7 @@ GAME_CANONICAL: dict = {
     "star wars": "Star Wars: Unlimited",
     "star wars unlimited": "Star Wars: Unlimited",
     "swu": "Star Wars: Unlimited",
+    "sw unlimited": "Star Wars: Unlimited",
     # Yu-Gi-Oh
     "yu-gi-oh": "Yu-Gi-Oh!",
     "yugioh": "Yu-Gi-Oh!",
