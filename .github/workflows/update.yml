@@ -2,24 +2,31 @@ name: Update events
 
 on:
   schedule:
-    # Daily at 06:00 UTC (08:00 Madrid in summer, 07:00 in winter)
-    - cron: "0 6 * * *"
+    # Daily, off the top of the hour: GitHub delays top-of-hour cron jobs by
+    # hours under load. 04:37 UTC = 05:37 Madrid (winter) / 06:37 (summer).
+    - cron: "37 4 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
+
+# Overlapping runs (manual + scheduled) would race on the rebase/push.
+concurrency:
+  group: update-events
+  cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -29,8 +36,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
       - name: Install Playwright Chromium
-        run: python -m playwright install chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run tests
+        run: python -m unittest discover -s tests
 
       - name: Run aggregator
         run: python aggregator.py
@@ -50,3 +66,8 @@ jobs:
           git fetch origin main
           git rebase origin/main
           git push
+
+      - name: Sync scraper health issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m tools.sync_health_issues

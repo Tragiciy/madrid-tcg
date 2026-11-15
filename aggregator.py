@@ -28,7 +28,11 @@ import json
 import logging
 import os
 import pathlib
+import re
+import subprocess
 import sys
+import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from collections import Counter
 from datetime import datetime
 from typing import Optional
@@ -52,6 +56,16 @@ COUNT_DROP_THRESHOLD = 0.7
 # triggers a "sharp_drop" flag. Same threshold, separate constant so the
 # two policies can drift later if needed.
 SHARP_DROP_THRESHOLD = 0.7
+
+# A store whose scraper keeps returning 0 events with no upcoming events left
+# on record is flagged "stale" once its last sighting is this old. Nothing is
+# protected (there is nothing left to delete), it only raises an alert.
+STALE_AFTER_DAYS = 14
+
+# Each scraper runs in its own subprocess with this wall-clock budget.
+SCRAPER_TIMEOUT_S = int(os.environ.get("SCRAPER_TIMEOUT_S", "120"))
+# Scrapers are I/O bound and hit different hosts, so run several at once.
+SCRAPER_WORKERS = int(os.environ.get("SCRAPER_WORKERS", "6"))
 
 
 # ---------------------------------------------------------------------------
@@ -86,6 +100,60 @@ def _run_scraper(module_name: str) -> tuple[list[dict], Optional[str], Optional[
         msg = f"{type(exc).__name__}: {exc}"
         logger.error("Scraper %s failed: %s", module_name, msg)
         return [], msg, store
+
+
+_STORE_RE = re.compile(r'^STORE\s*=\s*["\'](.+?)["\']', re.MULTILINE)
+
+
+def _store_from_source(module_name: str) -> Optional[str]:
+    """Read the STORE constant without importing (for crashed/timed-out runs)."""
+    path = SCRAPERS_DIR / f"{module_name.rsplit('.', 1)[-1]}.py"
+    try:
+        m = _STORE_RE.search(path.read_text(encoding="utf-8"))
+    except OSError:
+        return None
+    return m.group(1) if m else None
+
+
+def _run_scraper_isolated(
+    module_name: str, timeout_s: int = SCRAPER_TIMEOUT_S,
+) -> tuple[list[dict], Optional[str], Optional[str]]:
+    """
+    Run one scraper via tools.run_scraper in a child process.
+
+    Same return shape as _run_scraper. A timeout, crash or unreadable result
+    becomes an error, so the store is protected from deletion like any other
+    failed scraper.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        out = pathlib.Path(tmp) / "result.json"
+        try:
+            proc = subprocess.run(
+                [sys.executable, "-m", "tools.run_scraper", module_name, str(out)],
+                timeout=timeout_s,
+                stdout=subprocess.DEVNULL,
+            )
+        except subprocess.TimeoutExpired:
+            msg = f"TimeoutError: no result after {timeout_s}s"
+            logger.error("Scraper %s failed: %s", module_name, msg)
+            return [], msg, _store_from_source(module_name)
+        try:
+            result = json.loads(out.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            msg = f"ChildProcessError: exit {proc.returncode}, no result ({exc})"
+            logger.error("Scraper %s failed: %s", module_name, msg)
+            return [], msg, _store_from_source(module_name)
+    return (
+        result.get("events") or [],
+        result.get("error"),
+        result.get("store") or _store_from_source(module_name),
+    )
+
+
+def run_all_scrapers(module_names: list[str]) -> list[tuple]:
+    """Run scrapers concurrently; results come back in input order."""
+    with ThreadPoolExecutor(max_workers=SCRAPER_WORKERS) as pool:
+        return list(pool.map(_run_scraper_isolated, module_names))
 
 
 # ---------------------------------------------------------------------------
@@ -586,6 +654,15 @@ def print_report(r: dict) -> None:
 # Stats — written to public/events_stats.json (consumed by frontend)
 # ---------------------------------------------------------------------------
 
+def _days_between(earlier_iso: Optional[str], later_iso: str) -> float:
+    """Days from earlier to later; 0 when earlier is missing or unparsable."""
+    try:
+        delta = datetime.fromisoformat(later_iso) - datetime.fromisoformat(earlier_iso or "")
+    except (ValueError, TypeError):
+        return 0.0
+    return delta.total_seconds() / 86400
+
+
 def build_stats(events: list[dict],
                 scraper_stats: dict,
                 failed_scrapers: list[str],
@@ -603,6 +680,11 @@ def build_stats(events: list[dict],
 
     by_store_total = Counter(e["store"] for e in events)
     by_store_active = Counter(e["store"] for e in events if e.get("is_active"))
+    last_seen: dict[str, str] = {}
+    for e in events:
+        ls = e.get("last_seen_at") or ""
+        if ls > last_seen.get(e["store"], ""):
+            last_seen[e["store"]] = ls
     by_game = Counter(e.get("game") or "Unknown" for e in events)
 
     # Aggregate per-scraper observability into per-store rows. A store
@@ -635,6 +717,10 @@ def build_stats(events: list[dict],
         anomaly: Optional[str] = None
         if store in suspect_zero_stores:
             anomaly = "suspect_zero"
+        elif raw_now == 0 and not info.get("scraper_failed") and _days_between(
+            last_seen.get(store), generated_at,
+        ) >= STALE_AFTER_DAYS:
+            anomaly = "stale"
         elif prev_raw is not None and prev_raw > 0 and raw_now < prev_raw * SHARP_DROP_THRESHOLD:
             anomaly = "sharp_drop"
 
@@ -647,6 +733,7 @@ def build_stats(events: list[dict],
             "drop_reasons":     info.get("drop_reasons",
                                          {"missing_fields": 0, "bad_datetime": 0}),
             "scraper_failed":   info.get("scraper_failed", False),
+            "last_seen_at":     last_seen.get(store),
             "anomaly":          anomaly,
         }
 
@@ -689,6 +776,8 @@ def print_scraper_health(scraper_stats: dict) -> None:
             print(f"  [WARN] {name} raw dropped from {prev} → {s['raw']}")
         elif s.get("anomaly") == "suspect_zero":
             print(f"  [WARN] {name} returned 0 events but upcoming events exist — kept as-is")
+        elif s.get("anomaly") == "stale":
+            print(f"  [WARN] {name} has returned 0 events for {STALE_AFTER_DAYS}+ days")
 
     name_w = max(len(name) for name in scraper_stats) + 2
     for name in sorted(scraper_stats):
@@ -744,8 +833,9 @@ def main() -> None:
     failed_scrapers: list[str] = []
     raw_total = 0
 
-    for module_name in _discover_scrapers():
-        events, error, store_constant = _run_scraper(module_name)
+    module_names = _discover_scrapers()
+    results = run_all_scrapers(module_names)
+    for module_name, (events, error, store_constant) in zip(module_names, results):
         if error:
             failed_scrapers.append(module_name)
 
