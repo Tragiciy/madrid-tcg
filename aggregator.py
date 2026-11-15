@@ -33,7 +33,10 @@ from datetime import datetime
 from typing import Optional
 from zoneinfo import ZoneInfo
 
-from shared.scraper_keywords import extract_format_for_event
+from shared.scraper_keywords import (
+    extract_format_for_event,
+    extract_game_from_patterns,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -184,6 +187,10 @@ def _normalize_game(game: Optional[str], title: str = "") -> Optional[str]:
         if keyword in lower_title:
             canonical = GAME_CANONICAL[keyword]
             return canonical if canonical in ALLOWED_GAMES else None
+
+    canonical = extract_game_from_patterns(title)
+    if canonical:
+        return canonical if canonical in ALLOWED_GAMES else None
 
     if game:
         canonical = GAME_CANONICAL.get(game.lower())
