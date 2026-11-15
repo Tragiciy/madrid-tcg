@@ -1,63 +1,146 @@
-# Madrid TCG Events — Product Plan
+# TCG Events: Product Plan
 
-## Project Purpose
+## Purpose
 
-City-level event aggregator for trading card games (TCGs).
-Core user question: **"What can I play this week in my city?"**
+This is a city-level calendar of trading card game (TCG) events. It started
+with Madrid and aims to cover many cities and countries.
 
----
+It answers one question for players: **"What can I play this week (tonight,
+this weekend) near me?"** The answer covers every game and every store,
+including events that never appear in the official publisher locators.
 
-## Current State (as of 2026-05-14)
-
-### Data coverage
-- **20 scrapers** — Arte 9, Ítaca, Jupiter Juegos, Micelion Games,
-  La Guarida Juegos, Metropolis Center, Asedio Gaming,
-  Generacion X - Elfo, Goblintrader Madrid-Norte, Goblintrader Central,
-  Kamikaze Freak Shop, The Big Bang Games, Panda Games, Metamorfo,
-  Collectorage, TopDeck, Gladius Games, MADAKIBA, Mundicomics, Padis
-- **~1,200 events** in `events.json` (~660 active; updated daily)
-- **13 games** — Magic, Pokémon, One Piece, Digimon, Lorcana, Star Wars:
-  Unlimited, Yu-Gi-Oh!, Flesh and Blood, Weiß Schwarz, Riftbound,
-  Final Fantasy TCG, Naruto Mythos, plus Unknown
-- **0 `scrape_now` targets** remaining in `data/scraper_targets.json`
-
-### Frontend
-- Alpine.js SPA split across 4 files: `index.html`, `styles.css`,
-  `app.js`, `config.js`
-- Horizontal grid + vertical list views; `viewMode` persisted
-- Faceted filters: game, store, format; filter state bookmarkable via URL
-  - Store filter lists all stores from the full dataset regardless of
-    current week; selecting a store with zero events this week is allowed
-  - Selected store is never dropped by week navigation
-  - Game / format filters remain week-scoped
-- Saved filter presets via `localStorage` (`tcg-presets-v1`)
-- Event Detail Panel: title, game, format, store address, Google Maps link
-- Calendar export: Google Calendar, iCalendar (.ics), Outlook
-- Event sharing: `navigator.share()` + clipboard fallback; `?event=` deep-link
-- Scraper health dashboard at `/health`, backed by `events_stats.json`
-- Time-segment chips (Morning / Afternoon / Evening / Late)
-- Responsive: horizontal scroll on mobile, auto-switch to vertical on
-  first visit on narrow screens
-
-### Backend pipeline
-- `aggregator.py` auto-discovers and runs all `scrapers/*.py`
-- Merge model: full historical record, lifecycle fields per event
-  (`first_seen_at`, `last_seen_at`, `is_active`)
-- Shared keyword classification: `shared/scraper_keywords.py`
-  (`GAME_KEYWORDS`, `FORMAT_KEYWORDS`)
-- `shared/store_matching.py`: store name/address normalization + fuzzy matching
-- Scraper stats + anomaly detection → `public/events_stats.json`
-- Discovery pipeline: `tools/discover_stores.py` → `tools/audit_store_event_pages.py`
-  → `tools/build_scraper_targets.py` → `data/scraper_targets.json`
-  - Discoverers currently include Wizards Store Locator, Disney Lorcana /
-    Ravensburger Play Store Locator, Riftbound Play Network, Star Wars:
-    Unlimited Organized Play Calendar, Bandai TCG+ One Piece event locator,
-    and Konami Yu-Gi-Oh! OTS Locator
-- GitHub Actions: daily `update.yml` cron (06:00 UTC)
+Value hypothesis, the things official locators don't offer:
+1. **All games in one place.** Each locator covers one publisher and one game.
+2. **Off-locator events.** Many stores post only on their own sites or on
+   Instagram and WhatsApp.
+3. **Time and place first.** Players can ask "tonight near me" instead of
+   searching game by game.
+4. **Calendar subscription.** ICS feeds work per filter.
 
 ---
 
-## Completed milestones
+## Decisions (2026-11-15 review)
+
+| Topic | Decision |
+|---|---|
+| Ambition | Multi-city and multinational. This is unproven, so a week-12 gate (below) decides. |
+| Horizon | Deeper Madrid coverage **and** a data-chosen pilot city. |
+| Constraints | The old rules (no build, no backend, four-file frontend) are lifted. |
+| Order | Reliability first, then the new stack, then distribution, then the pilot city. |
+| Data | Official locators are the base layer (Wizards, Bandai TCG+, Ravensburger, GEM, plus public Google Calendar ICS). About 10 own-site scrapers fill the gaps. Store self-submission covers the rest. |
+| Off-locator gap | A "forward us your poster" bot (LLM vision, one-tap human confirm) plus a "Is this your store?" form. |
+| Stack | Next.js + Postgres/PostGIS (Neon or Supabase) on Vercel with ISR. The Python pipeline stays in GitHub Actions and writes to Postgres. |
+| Accounts | None. Favorites stay in `localStorage`, and ICS feeds handle subscriptions. |
+| Languages | English is the code and translation base. Public city pages are indexed in the city's language (`/madrid` in Spanish, `/en/madrid`), with `hreflang`. |
+| Monetization | None for now. Store "claim" flows are built later as a funnel. |
+| Validation | Passive only: privacy analytics, Search Console, "vote for your city", in-card feedback, ICS subscription counts. |
+| Brand/domain | Deferred until the gate passes. Then a neutral name, an own domain, and `/city` paths. |
+| Capacity | Solo plus AI agents, 10–20 h/week. |
+
+---
+
+## Current state (verified 2026-11-15)
+
+- **25 scrapers. 14 return 0 events, and only 1 of those is flagged.**
+  Scrapers swallow request errors and return `[]`. The aggregator treats that
+  as "no events" and hard-deletes the store's future events after 3 runs.
+- `public/events.json` is 5,035 events (1,077 active) and **2.8 MB**. The
+  frontend fetches it with `no-store` on every visit (190 KB gzip). 79% of it
+  is past events.
+- Official locators list **~730 Madrid events in 14 days** against our 253.
+  41 of 43 surveyed stores appear in at least one locator.
+- GenexComics and Generacion X - Elfo are the same shop, and all 62 GenexComics
+  events are duplicates.
+- The frontend `eventKey` (`source_url + datetime_start`) collides for 419
+  events, which breaks favorites and `?event=` links.
+- The reschedule logic in `merge_events` can re-key past events.
+- Week and "today" in the frontend use the browser timezone, not Madrid's.
+- CI never runs tests and sends no alerts. The cron is set to 06:00 UTC, but
+  runs actually land at 11:00–15:00 UTC.
+
+---
+
+## Roadmap
+
+### Phase 0: Reliability and coverage on the current site (weeks 1–2)
+
+1. Make scrapers fail loudly instead of returning `[]` on errors. Treat
+   `suspect_zero` (0 events while N are active in history) as a failed store
+   and do not delete its events.
+2. Write JSON atomically. Refuse to write when existing data fails to parse.
+   Block the commit when the event count drops more than 30%.
+3. Isolate each scraper (timeout, import inside `try`). Auto-open or update one
+   GitHub issue per broken store. Add CI `concurrency` and a pytest step.
+4. Bug fixes:
+   - reschedule matching only against future events;
+   - frontend uses the backend event key;
+   - naive datetimes are rejected at validation;
+   - merge GenexComics into Generacion X;
+   - drop `no-store` from the `events.json` fetch.
+5. Locator adapters: Wizards `searchEvents`, Bandai TCG+ (One Piece, Digimon),
+   Ravensburger `/v2/events/`, GEM, plus the public Google Calendar ICS feeds
+   (Wargen, Padis). Deduplicate by store, time and game. Delete the scrapers the
+   locators fully cover.
+
+### Phase 1: New stack (weeks 3–6)
+
+6. Next.js + Postgres/PostGIS on Vercel. Tables:
+   - `stores`: `city`, `lat/lng`, `platform`, sources;
+   - `events`: stable `source_event_id`;
+   - `sources`: health time series.
+7. The pipeline writes to Postgres. Full history lives there.
+8. ISR pages: `/madrid`, `/madrid/hoy`, `/madrid/fin-de-semana`,
+   `/madrid/[game]`, `/madrid/[store]`, `/event/[id]`. Each has JSON-LD `Event`,
+   Open Graph and `hreflang`.
+9. Interactive calendar as a client component: filters, `localStorage`
+   favorites, Today/Weekend/Near-me chips, distance sort.
+10. ICS feeds per filter, with a subscription counter. Cookieless analytics
+    and Search Console.
+11. Cut over: `madrid-tcg.pages.dev` returns 301 to the new site.
+
+### Phase 2: Distribution (weeks 6–9)
+
+| Channel | What | Metric |
+|---|---|---|
+| Google Events and SEO | JSON-LD on every event, sitemap, ~30 long-tail pages | Search Console impressions and clicks |
+| WhatsApp/Telegram sharing | Dynamic OG images (game, date, store), a "send to friends" button | `?ref=share` visits |
+| Digest bot | Weekly "This weekend in Madrid" auto-post to a Telegram channel and Bluesky | Subscribers, clicks |
+| Stores as distributors | Embeddable "our events" widget, printable QR poster, one automated email | Widget installs, QR visits |
+| Demand signals | "Vote for your city", "Event wrong?" button, "Is this your store?" form | Votes per city, submissions |
+| Launch | One optional post (e.g. r/MagicTCG_ES) | Traffic spike, returning share |
+
+### Phase 3: Pilot city and store-sourced events (weeks 9–12)
+
+12. Pilot city chosen from locator density, search demand and city votes
+    (likely Barcelona). With locators this is mostly configuration.
+13. "Forward us your poster" bot (Telegram or email): LLM vision extraction,
+    one-tap confirm, then publish.
+
+### Week-12 gate
+
+The target is **≥300 weekly unique visitors** and **≥1 inbound store contact**.
+- **Passed:** brand and domain, more cities, then store-side monetization.
+- **Missed:** stay a strong Madrid product with no further scale investment.
+
+---
+
+## Principles
+
+- Data reliability before UI. A beautiful calendar with missing stores is
+  worse than an ugly complete one.
+- Prefer sources that scale to every city (official locators) over per-store
+  code.
+- Every source must fail loudly. Silent zeros are bugs.
+- Validate demand with product signals before spending on brand or new cities.
+
+---
+
+## History
+
+The pre-2026-11 plan (PWA, payload trimming, store metadata, discoverers) has
+been folded into the roadmap above. It remains in git history.
+
+### Completed milestones (through 2026-05)
 
 | # | Feature | Notes |
 |---|---|---|
@@ -90,188 +173,3 @@ Core user question: **"What can I play this week in my city?"**
 | ✅ | TopDeck + Collectorage scrapers | WordPress batch via `shared/wordpress_events.py`; 2 new stores; 0 WordPress targets remaining (#61) |
 | ✅ | 5 unknown-platform scrapers | Padis (PrestaShop), MADAKIBA, Goblintrader Central, Gladius Games, Mundicomics; 0 `scrape_now` targets remaining (#62) |
 | ✅ | Scraper health dashboard | Static `/health` page fetches `events_stats.json`, shows last run, per-store raw/active/dropped counts, anomaly badges, failed scraper alerts, and is linked from the footer |
-
----
-
-## Completed sprint
-
-Both tracks closed as of 2026-05-14.
-
-- **Track A** — all `scrape_now` targets shipped: WordPress batch (Collectorage,
-  TopDeck) in #61; unknown-platform stores (Padis, MADAKIBA, Goblintrader Central,
-  Gladius Games, Mundicomics) in #62. 20 active scrapers, 0 remaining targets.
-- **Track B** — Favorites implemented: `tcg-favorites-v1` localStorage,
-  star buttons in vertical + horizontal views and detail panel, "Show saved"
-  toggle in filter bar, gold highlight.
-
----
-
-## Upcoming priorities
-
-These are confirmed-valuable items that follow the active sprint. Order roughly
-by impact-to-effort ratio.
-
-### P2 — Progressive Web App (PWA)
-
-**Goal:** Mobile users can install the site to their home screen; basic
-offline fallback when the network is unavailable.
-
-**Implementation:**
-- `public/manifest.json` — name, icons, theme color, `display: standalone`.
-- `public/sw.js` — service worker:
-  - Cache-first for `styles.css`, `app.js`, `config.js`, `index.html`.
-  - Network-first with stale-while-revalidate for `events.json`.
-  - Offline fallback: serve stale `events.json` from cache if network fails.
-- Add `<link rel="manifest">` and SW registration to `index.html`.
-
-**Effort:** Small–Medium (1–2 days). **Impact:** Medium — significantly
-improves the mobile experience for repeat users.
-
-**Constraints:** SW must be served from the same origin — Cloudflare Pages
-supports this out of the box. The `events.json` cache strategy means users
-see slightly stale data at worst — acceptable for this use case.
-
-### P3 — `events.json` payload management
-
-**Goal:** Prevent `events.json` from growing unbounded as historical events
-accumulate across months and years.
-
-**Current state:** 1,099 events / 15,387 lines. At current growth rate the
-file will exceed 5,000 events within a year.
-
-**Implementation options (pick one):**
-
-**Option A — Trim on write (simpler):**
-`aggregator.py` keeps the full historical record internally but writes only
-events from the last 90 days + all future events to `public/events.json`.
-A separate `public/events_archive.json` gets the rest (committed monthly,
-not daily). Frontend only fetches the main file.
-
-**Option B — Year-split (cleaner for archiving):**
-`aggregator.py` writes `public/events_<year>.json`; a `public/events_index.json`
-lists available years. The frontend fetches the current year + optionally
-prior years on demand.
-
-**Recommendation:** Option A is the simpler change. Implement when the file
-exceeds ~3,000 events or 500 KB.
-
-### P4 — Store metadata expansion
-
-**Goal:** Richer per-store information in the Event Detail Panel and
-potentially a "Browse stores" section.
-
-**Implementation:**
-- Extend `STORE_META` entries in `config.js` to include:
-  - `website` (already optional, ensure all stores have it)
-  - `instagram` / `twitter` — social links
-  - `hours` — opening hours string, displayed in the panel
-  - `games` — array of games the store primarily runs
-- Update the panel `<div class="panel-store">` section to render `website`
-  and social links if present.
-- No backend or new files needed — this is purely a `config.js` content
-  improvement.
-
-**Effort:** Small per store (data gathering is the bottleneck).
-
-### P5 — Additional game discoverers
-
-**Goal:** Find stores the Wizards locator misses (e.g. Pokémon-only or
-One Piece–only stores).
-
-**New discoverer modules:**
-- ✅ `discoverers/lorcana_locator.py` — Ravensburger Play / Disney Lorcana
-  locator, filtered to Madrid-area stores
-- ✅ `discoverers/swu_calendar.py` — Star Wars: Unlimited Organized Play
-  Calendar, filtered to Spain/Madrid entries
-- ✅ `discoverers/riftbound_locator.py` — Riftbound Play Network locator,
-  filtered to Madrid-area stores
-- ✅ `discoverers/yugioh_locator.py` — Konami EU Official Tournament Store
-  locator, filtered to stores within 50 km of Madrid
-- ✅ `discoverers/one_piece_events.py` — Bandai TCG+ One Piece event locator,
-  filtered to upcoming events within 50 km of Madrid
-- `discoverers/pokemon_locator.py` — Pokémon Play locator API
-  (`op.pokemon-card.com` or the Play! Pokémon store finder)
-- ✅ `discoverers/fab_locator.py` — Flesh and Blood / Carde Play Network store
-  locator, filtered to game-approved establishments within 50 km of Madrid
-
-Each follows the same `discover() -> list[dict]` interface as the existing
-`wizards_locator.py`. `tools/discover_stores.py` auto-discovers them.
-
-**Effort:** Medium (researching each API takes time). Run after A1 is done
-to maximize value from new stores found.
-
----
-
-## Future / long-term
-
-### Geographic expansion
-
-| Phase | Scope | New fields / changes |
-|---|---|---|
-| Phase 2 | Spain — major cities | Add `city` field to events; city facet filter; city selector in header |
-| Phase 3 | Multi-city UI | Separate routes or city selector; per-city `events_<city>.json` |
-
-**Cities for Phase 2:** Barcelona, Valencia, Sevilla, Málaga, Bilbao.
-**Trigger:** Madrid coverage is stable (> 20 scrapers, < 5 % unknown-store events).
-
-### Backend migration
-
-Introduce a backend only when **any** of the following is true:
-- 20+ active scrapers ← **reached (20 scrapers as of 2026-05-14)**
-- Multiple cities active
-- User accounts needed (notifications, cross-device favorites)
-- Events.json payload management becomes untenable even with Option A/B
-
-Target stack when the time comes:
-```
-scrapers → normalize → PostgreSQL → REST API → frontend
-```
-Tables: `stores`, `events`, `scraper_runs`, `anomalies`, `candidate_stores`.
-
-### Notifications (post-backend)
-
-- "Notify me when a new event is posted for [game] at [store]" — requires
-  user accounts + Web Push or email.
-- Not viable on a static site; schedule for after backend migration.
-
-### Community / self-service store submissions
-
-- Form for store owners to submit or correct event data.
-- Requires a submission queue and human review step.
-- Not viable until the data pipeline is stable and a maintainer can process
-  submissions regularly.
-
----
-
-## Development timeline
-
-| Horizon | Work |
-|---|---|
-| **Now** | A2 discovery automation |
-| **Next 2–4 weeks** | P2 PWA; P4 store metadata expansion |
-| **Mid-term** | P3 payload management; P5 new game discoverers |
-| **Long-term** | Phase 2 geographic expansion; backend migration |
-
----
-
-## What NOT to do
-
-- Do not migrate to backend prematurely (static-site constraints force good
-  habits; the backend adds ops overhead).
-- Do not over-engineer the UI before data coverage is solid — data first.
-- Do not run fully automatic scraping without a review step for new stores.
-- Do not expand globally before Spain coverage is stable.
-- Do not sync favorites to a server — they are personal and offline-local;
-  URL sharing (`?event=`) handles the "share this with someone" case.
-- Do not add helper modules to `scrapers/` — `shared/` is the place.
-- Do not modify `aggregator.py` to register new scrapers — auto-discovery
-  handles it.
-
----
-
-## Core Strategy
-
-> **Data → Coverage → Reliability → Scale**
-
-Not the reverse. The most impactful next action is always expanding data
-coverage, not improving architecture or UI.
