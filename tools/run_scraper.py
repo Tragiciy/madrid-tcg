@@ -14,7 +14,7 @@ import json
 import logging
 import sys
 
-from aggregator import _run_scraper
+from pipeline.runner import _run_scraper
 
 
 def main(argv: list[str]) -> int:
