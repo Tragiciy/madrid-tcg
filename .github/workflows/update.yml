@@ -56,18 +56,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet -- public/events.json public/events_stats.json; then
+          if git diff --quiet -- public/events.json public/events_stats.json \
+             && git diff --quiet -- data/source_runs.jsonl \
+             && [ -z "$(git ls-files --others --exclude-standard data/source_runs.jsonl)" ]; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git add public/events.json public/events_stats.json
+          git add public/events.json public/events_stats.json data/source_runs.jsonl
           git commit -m "chore: update events.json ($(date -u +'%Y-%m-%d %H:%M UTC'))"
           git fetch origin main
           git rebase origin/main
           git push
 
+      # Runs even when an earlier step failed: a failed run opens a
+      # "[health] pipeline" issue instead of failing silently.
       - name: Sync scraper health issues
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python -m tools.sync_health_issues
+        run: python -m tools.sync_health_issues --pipeline-status "${{ job.status }}"

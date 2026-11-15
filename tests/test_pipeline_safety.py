@@ -7,8 +7,11 @@ from unittest import mock
 import aggregator
 from aggregator import (
     CorruptEventsFile,
+    _shape_drop_reason,
+    append_source_runs,
+    drop_retired_stores,
     build_stats,
-    find_suspect_zero_stores,
+    find_suspect_zero_sources,
     load_existing,
     merge_events,
     write_json_atomic,
@@ -43,8 +46,10 @@ def _scraper_stats(store, valid, error=None):
 class SuspectZeroTests(unittest.TestCase):
     def setUp(self):
         self.existing = [
-            _event("Alpha", "Modern Weekly", "2026-11-20T19:00:00+01:00"),
-            _event("Beta", "Old Event", "2026-11-01T19:00:00+01:00"),
+            _event("Alpha", "Modern Weekly", "2026-11-20T19:00:00+01:00",
+                   source="scrapers.alpha"),
+            _event("Beta", "Old Event", "2026-11-01T19:00:00+01:00",
+                   source="scrapers.beta"),
         ]
 
     def test_zero_events_with_upcoming_history_is_suspect(self):
@@ -54,17 +59,17 @@ class SuspectZeroTests(unittest.TestCase):
         }
         # Beta only has past events, so a zero there is plausible.
         self.assertEqual(
-            find_suspect_zero_stores(stats, self.existing, NOW), {"Alpha"}
+            find_suspect_zero_sources(stats, self.existing, NOW), {"scrapers.alpha"}
         )
 
     def test_failed_scraper_is_not_double_counted(self):
         stats = {"scrapers.alpha": _scraper_stats("Alpha", 0, error="boom")}
-        self.assertEqual(find_suspect_zero_stores(stats, self.existing, NOW), set())
+        self.assertEqual(find_suspect_zero_sources(stats, self.existing, NOW), set())
 
     def test_suspect_zero_store_keeps_upcoming_events_across_runs(self):
         events = self.existing
         for _ in range(5):
-            events = merge_events(events, [], NOW, failed_stores={"Alpha"})
+            events = merge_events(events, [], NOW, protected_sources={"scrapers.alpha"})
         alpha = [e for e in events if e["store"] == "Alpha"]
         self.assertEqual(len(alpha), 1)
         self.assertTrue(alpha[0]["is_active"])
@@ -81,7 +86,7 @@ class SuspectZeroTests(unittest.TestCase):
             {"scrapers.alpha": _scraper_stats("Alpha", 0)},
             [],
             NOW,
-            suspect_zero_stores={"Alpha"},
+            suspect_zero_sources={"scrapers.alpha"},
         )
         self.assertEqual(stats["by_store"]["Alpha"]["anomaly"], "suspect_zero")
         self.assertEqual(stats["scrapers"]["scrapers.alpha"]["anomaly"], "suspect_zero")
@@ -98,9 +103,69 @@ class StaleStoreTests(unittest.TestCase):
         self.assertEqual(row["anomaly"], "stale")
         self.assertEqual(row["last_seen_at"], "2026-10-01T07:00:00+02:00")
 
+    def test_scraper_that_never_produced_is_stale_even_if_locator_covers_store(self):
+        events = [_event("Gone", "W", "2026-11-20T19:00:00+01:00",
+                         last_seen_at=NOW, source="scrapers.locator_w")]
+        stats = build_stats(events, {"scrapers.gone": _scraper_stats("Gone", 0),
+                                     "scrapers.locator_w": _scraper_stats("W Locator", 5)}, [], NOW)
+        self.assertEqual(stats["by_store"]["Gone"]["anomaly"], "stale")
+
+    def test_locator_only_store_is_never_stale(self):
+        events = [_event("Locator Only", "W", "2026-09-01T19:00:00+02:00", is_active=False,
+                         last_seen_at="2026-09-01T07:00:00+02:00", source="scrapers.locator_w")]
+        stats = build_stats(events, {"scrapers.locator_w": _scraper_stats("W Locator", 5)}, [], NOW)
+        self.assertIsNone(stats["by_store"]["Locator Only"]["anomaly"])
+
     def test_recently_seen_store_is_not_stale(self):
         row = self._stats("2026-11-10T07:00:00+01:00")["by_store"]["Gone"]
         self.assertIsNone(row["anomaly"])
+
+
+class RescheduleTests(unittest.TestCase):
+    def test_new_week_does_not_swallow_past_occurrence(self):
+        past = _event("Alpha", "Modern Weekly", "2026-11-10T19:00:00+01:00", is_active=False)
+        fresh = [_event("Alpha", "Modern Weekly", "2026-11-17T19:00:00+01:00")]
+        merged = merge_events([past], fresh, NOW)
+        self.assertEqual(sorted(e["datetime_start"] for e in merged),
+                         ["2026-11-10T19:00:00+01:00", "2026-11-17T19:00:00+01:00"])
+
+    def test_future_record_moved_is_a_reschedule(self):
+        old = _event("Alpha", "Modern Weekly", "2026-11-17T19:00:00+01:00",
+                     first_seen_at="2026-11-01T00:00:00+01:00")
+        fresh = [_event("Alpha", "Modern Weekly", "2026-11-18T19:00:00+01:00")]
+        [e] = merge_events([old], fresh, NOW)
+        self.assertEqual(e["first_seen_at"], "2026-11-01T00:00:00+01:00")
+
+    def test_record_still_listed_is_not_taken_as_reschedule(self):
+        a = _event("Alpha", "Weekly", "2026-11-17T19:00:00+01:00", first_seen_at="2026-11-01T00:00:00+01:00")
+        fresh = [_event("Alpha", "Weekly", "2026-11-24T19:00:00+01:00"),
+                 _event("Alpha", "Weekly", "2026-11-17T19:00:00+01:00")]
+        merged = {e["datetime_start"]: e for e in merge_events([a], fresh, NOW)}
+        self.assertEqual(merged["2026-11-17T19:00:00+01:00"]["first_seen_at"], "2026-11-01T00:00:00+01:00")
+        self.assertEqual(merged["2026-11-24T19:00:00+01:00"]["first_seen_at"], NOW)
+
+    def test_naive_datetime_is_rejected_by_shape_check(self):
+        e = _event("Alpha", "X", "2026-11-17T19:00:00")
+        self.assertEqual(_shape_drop_reason(e), "bad_datetime")
+
+
+class RetiredAndRunLogTests(unittest.TestCase):
+    def test_retired_store_events_are_dropped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "retired.json"
+            path.write_text('{"_comment": "x", "Gone": "dup"}', encoding="utf-8")
+            events = [_event("Gone", "A", NOW), _event("Kept", "B", NOW)]
+            self.assertEqual([e["store"] for e in drop_retired_stores(events, path)], ["Kept"])
+
+    def test_source_runs_appends_one_line_per_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "runs.jsonl"
+            stats = {"scrapers.b": _scraper_stats("B", 2), "scrapers.locator_w": _scraper_stats("W", 9)}
+            append_source_runs(stats, NOW, path)
+            append_source_runs(stats, NOW, path)
+            rows = [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines()]
+            self.assertEqual(len(rows), 4)
+            self.assertEqual(rows[1]["kind"], "locator")
 
 
 class PersistenceSafetyTests(unittest.TestCase):
