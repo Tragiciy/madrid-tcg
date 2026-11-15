@@ -1,6 +1,6 @@
 import unittest
 
-from aggregator import drop_locator_duplicates, merge_events, unify_store_names
+from aggregator import drop_locator_duplicates, event_key, find_store_name_variants, merge_events
 from scrapers import locator_bandai, locator_ravensburger, locator_wizards
 from shared.locator_common import StoreResolver, to_madrid_iso
 
@@ -74,6 +74,24 @@ class ParseTests(unittest.TestCase):
 
 
 class DedupTests(unittest.TestCase):
+    def test_one_scraper_event_absorbs_only_one_locator_event(self):
+        fresh = [
+            _ev("Ítaca", "Magic: The Gathering", "2026-11-20T18:00:00+01:00", "scrapers.itaca", "Commander"),
+            _ev("Ítaca", "Magic: The Gathering", "2026-11-20T18:00:00+01:00", "scrapers.locator_wizards", "Commander"),
+            _ev("Ítaca", "Magic: The Gathering", "2026-11-20T18:00:00+01:00", "scrapers.locator_wizards", "Modern"),
+        ]
+        kept, dropped = drop_locator_duplicates(fresh, [], NOW)
+        self.assertEqual(dropped, 1)
+        self.assertEqual(len(kept), 2)
+
+    def test_scraper_event_on_disk_and_fresh_claims_once(self):
+        e = _ev("Ítaca", "Magic: The Gathering", "2026-11-20T18:00:00+01:00", "scrapers.itaca")
+        fresh = [dict(e),
+                 _ev("Ítaca", "Magic: The Gathering", "2026-11-20T18:00:00+01:00", "scrapers.locator_wizards", "A"),
+                 _ev("Ítaca", "Magic: The Gathering", "2026-11-20T18:30:00+01:00", "scrapers.locator_wizards", "B")]
+        kept, dropped = drop_locator_duplicates(fresh, [dict(e)], NOW)
+        self.assertEqual(dropped, 1)
+
     def test_store_scraper_wins_over_locator_copy(self):
         fresh = [
             _ev("Ítaca", "Magic: The Gathering", "2026-11-20T19:00:00+01:00", "scrapers.itaca"),
@@ -100,21 +118,33 @@ class DedupTests(unittest.TestCase):
         self.assertEqual(len(events), 1)
 
 
-class UnifyNamesTests(unittest.TestCase):
-    def test_variants_collapse_to_stable_name(self):
+class NameVariantTests(unittest.TestCase):
+    def test_variants_are_reported_not_renamed(self):
         fresh = [_ev("MEDUSA COMICS", "Lorcana", "2026-11-20T19:00:00+01:00", "a"),
-                 _ev("Medusa Cómics", "Magic: The Gathering", "2026-11-21T19:00:00+01:00", "b"),
-                 _ev("Medusa Comics", "One Piece", "2026-11-22T19:00:00+01:00", "c")]
-        mapping = unify_store_names(fresh, [], set())
-        self.assertEqual({e["store"] for e in fresh}, {"Medusa Cómics"})
-        self.assertEqual(set(mapping), {"MEDUSA COMICS", "Medusa Comics"})
+                 _ev("Medusa Cómics", "Magic: The Gathering", "2026-11-21T19:00:00+01:00", "b")]
+        self.assertEqual(find_store_name_variants(fresh), [["MEDUSA COMICS", "Medusa Cómics"]])
+        self.assertEqual({e["store"] for e in fresh}, {"MEDUSA COMICS", "Medusa Cómics"})
 
-    def test_name_on_record_wins(self):
-        existing = [{"store": "Medusa Comics"}]
-        fresh = [_ev("Medusa Cómics", "Lorcana", "2026-11-20T19:00:00+01:00", "a"),
-                 _ev("Medusa Comics", "One Piece", "2026-11-22T19:00:00+01:00", "c")]
-        unify_store_names(fresh, existing, set())
-        self.assertEqual({e["store"] for e in fresh}, {"Medusa Comics"})
+
+class BranchTests(unittest.TestCase):
+    def test_same_brand_other_postcode_is_a_separate_store(self):
+        r = _resolver()
+        self.assertEqual(
+            r.resolve("bandai", 354, "Júpiter Juegos", "Calle Marques de la Valdavia 95, 28100, ALCOBENDAS"),
+            "Júpiter Juegos (28100)",
+        )
+        self.assertEqual(
+            r.resolve("bandai", 1, "Jupiter Juegos", "Calle de la Cruz 10, 28012, Madrid"),
+            "Jupiter Juegos",
+        )
+
+
+class KeyTests(unittest.TestCase):
+    def test_namespaced_ids_ignore_store_name(self):
+        a = {"store": "Medusa Comics", "source_event_id": "wizards:1"}
+        b = {"store": "Medusa Cómics", "source_event_id": "wizards:1"}
+        self.assertEqual(event_key(a), event_key(b))
+        self.assertEqual(event_key({"store": "X", "source_event_id": "77"}), "X|id:77")
 
 
 if __name__ == "__main__":

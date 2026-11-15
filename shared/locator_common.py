@@ -99,13 +99,22 @@ def to_madrid_iso(value: str, assume_tz: Optional[str] = None) -> Optional[str]:
 # Store resolution
 # ---------------------------------------------------------------------------
 
+_POSTCODE_RE = re.compile(r"\b(\d{5})\b")
+
+
+def _postcode(address: str) -> Optional[str]:
+    m = _POSTCODE_RE.search(address or "")
+    return m.group(1) if m else None
+
+
 class StoreResolver:
     """
     Resolve a locator store to our canonical store name.
 
     Order: manual override by "<source>:<external_id>" or by normalized
-    name → confident match against STORE_META (name or address) → the
-    locator's own name, unchanged. An override value of null skips the
+    name → confident match against STORE_META (name or address) whose
+    postcode does not contradict the locator's → the locator's own name
+    (suffixed with its postcode if it would collide with a known store). An override value of null skips the
     store entirely (e.g. online-only organizers).
     """
 
@@ -121,6 +130,7 @@ class StoreResolver:
             )
         self.by_id = overrides.get("by_id", {})
         self.by_name = {normalize_name(k): v for k, v in overrides.get("by_name", {}).items()}
+        self.address_of = {s["name"]: s.get("address") or "" for s in self.known}
 
     def resolve(self, source: str, external_id, name: str, address: str = ""):
         """Canonical store name, or StoreResolver.SKIP."""
@@ -130,10 +140,26 @@ class StoreResolver:
         norm = normalize_name(name or "")
         if norm in self.by_name:
             return self.by_name[norm] if self.by_name[norm] is not None else self.SKIP
-        match = match_existing_store({"name": name or "", "address": address or ""}, self.known)
+        own = (name or "").strip()
+        if not own:
+            return self.SKIP
+        match = match_existing_store({"name": own, "address": address or ""}, self.known)
         if match["status"] == "matched_existing_store" and match["confidence"] >= 0.8:
-            return match["matched_existing_store"]
-        return (name or "").strip() or self.SKIP
+            target = match["matched_existing_store"]
+            if self._same_postcode(address, target):
+                return target
+            # Same brand, different branch ("Júpiter Juegos" in Alcobendas vs
+            # our Calle de la Cruz store): keep it separate, and make sure it
+            # cannot collide with the known store's name.
+            if normalize_name(own) == normalize_name(target):
+                return f"{own} ({_postcode(address)})"
+        return own
+
+    def _same_postcode(self, address: str, store_name: str) -> bool:
+        """False only when both addresses carry postcodes and they differ."""
+        theirs = _postcode(address)
+        ours = _postcode(self.address_of.get(store_name, ""))
+        return not (theirs and ours and theirs != ours)
 
 
 # ---------------------------------------------------------------------------

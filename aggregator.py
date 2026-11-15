@@ -32,6 +32,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 from concurrent.futures import ThreadPoolExecutor
 from collections import Counter
 from datetime import datetime
@@ -62,8 +63,17 @@ SHARP_DROP_THRESHOLD = 0.7
 # protected (there is nothing left to delete), it only raises an alert.
 STALE_AFTER_DAYS = 14
 
+# Append-only per-source run log: one JSON line per scraper per run. The
+# baseline for source health over time (and the future `source_runs` table).
+SOURCE_RUNS_FILE = pathlib.Path("data/source_runs.jsonl")
+RETIRED_STORES_FILE = pathlib.Path("data/retired_stores.json")
+# Abort if upcoming active events fall below this share of the previous
+# run's: history-inclusive totals hide losing every future event.
+UPCOMING_DROP_THRESHOLD = 0.5
+UPCOMING_GUARD_MIN = 50
+
 # Each scraper runs in its own subprocess with this wall-clock budget.
-SCRAPER_TIMEOUT_S = int(os.environ.get("SCRAPER_TIMEOUT_S", "120"))
+SCRAPER_TIMEOUT_S = int(os.environ.get("SCRAPER_TIMEOUT_S", "300"))
 # Scrapers are I/O bound and hit different hosts, so run several at once.
 SCRAPER_WORKERS = int(os.environ.get("SCRAPER_WORKERS", "6"))
 
@@ -151,9 +161,17 @@ def _run_scraper_isolated(
 
 
 def run_all_scrapers(module_names: list[str]) -> list[tuple]:
-    """Run scrapers concurrently; results come back in input order."""
+    """
+    Run scrapers concurrently. Returns (events, error, store, duration_s)
+    per module, in input order.
+    """
+    def timed(module_name: str) -> tuple:
+        t0 = time.monotonic()
+        events, error, store = _run_scraper_isolated(module_name)
+        return events, error, store, round(time.monotonic() - t0, 1)
+
     with ThreadPoolExecutor(max_workers=SCRAPER_WORKERS) as pool:
-        return list(pool.map(_run_scraper_isolated, module_names))
+        return list(pool.map(timed, module_names))
 
 
 # ---------------------------------------------------------------------------
@@ -290,12 +308,17 @@ def _shape_drop_reason(event: dict) -> Optional[str]:
     Return the reason this event must be dropped, or None if it passes
     the basic shape check. Reasons are buckets, not free-text:
       - 'missing_fields': required field empty/absent
-      - 'bad_datetime':   datetime_start present but unparseable
+      - 'bad_datetime':   datetime_start unparseable or without a UTC offset
+                          (naive values would crash aware comparisons in merge)
     """
     for field in ("store", "title", "datetime_start"):
         if not event.get(field):
             return "missing_fields"
-    if _parse_dt(event["datetime_start"]) is None:
+    try:
+        has_offset = datetime.fromisoformat(event["datetime_start"]).tzinfo is not None
+    except (TypeError, ValueError):
+        has_offset = False
+    if not has_offset:
         logger.warning(
             "Drop: bad datetime_start — %s / %s",
             event.get("title"), event.get("datetime_start"),
@@ -321,6 +344,10 @@ def event_key(event: dict) -> str:
     """
     src = event.get("store") or ""
     sid = event.get("source_event_id")
+    if sid and ":" in str(sid):
+        # Namespaced ids ("wizards:123") are globally unique; leaving the
+        # store name out means a store rename never re-keys the event.
+        return f"id:{sid}"
     if sid:
         return f"{src}|id:{sid}"
     return "|".join([
@@ -335,7 +362,6 @@ def merge_events(
     existing: list[dict],
     fresh: list[dict],
     now_iso: str,
-    failed_stores: Optional[set[str]] = None,
     protected_sources: Optional[set[str]] = None,
 ) -> list[dict]:
     """
@@ -356,8 +382,7 @@ def merge_events(
 
     Failed scraper handling:
       If a source (scraper module) failed in this run, existing events from
-      that source (protected_sources) — or for that store (failed_stores) —
-      are left untouched. A temporary upstream timeout should not hide or
+      that source (protected_sources) are left untouched. A temporary upstream timeout should not hide or
       delete future events as if the site had intentionally removed them.
 
     Deferred cleanup:
@@ -365,7 +390,6 @@ def merge_events(
       are hard-deleted. Past events are kept indefinitely as history.
     """
     MISSING_RUNS_BEFORE_DELETE = 3
-    failed_stores = failed_stores or set()
     protected_sources = protected_sources or set()
 
     now_dt = datetime.fromisoformat(now_iso)
@@ -378,15 +402,27 @@ def merge_events(
         fuzzy_index.setdefault(fk, []).append(k)
 
     fresh_keys: set = set()
+    all_fresh_keys = {event_key(fe) for fe in fresh}
+
+    def _is_future(key: str) -> bool:
+        dt = _parse_dt(by_key[key].get("datetime_start") or "")
+        return dt is not None and dt.tzinfo is not None and dt > now_dt
 
     for fe in fresh:
         k = event_key(fe)
         prev = by_key.get(k)
 
         # Reschedule: no exact match, but exactly one candidate by store|title|location
-        if prev is None:
+        if prev is None and not fe.get("source_event_id"):
             fk = "|".join([fe.get("store") or "", fe.get("title") or "", fe.get("location") or ""])
-            candidates = [c for c in fuzzy_index.get(fk, []) if c not in fresh_keys]
+            # Only a still-upcoming record can have been rescheduled; a past
+            # occurrence of a weekly event is history, and a record that is
+            # itself in this run's results is not missing.
+            candidates = [
+                c for c in fuzzy_index.get(fk, [])
+                if c in by_key and c not in all_fresh_keys and _is_future(c)
+                and by_key[c].get("source") in (None, fe.get("source"))
+            ]
             if len(candidates) == 1:
                 old_key = candidates[0]
                 prev = by_key.pop(old_key)
@@ -405,7 +441,7 @@ def merge_events(
         if k in fresh_keys:
             continue
         e = by_key[k]
-        if e.get("store") in failed_stores or e.get("source") in protected_sources:
+        if e.get("source") in protected_sources:
             continue
         dt_str = e.get("datetime_start") or ""
         try:
@@ -485,63 +521,53 @@ def backfill_sources(events: list[dict], store_to_module: dict[str, str]) -> int
     return n
 
 
-def unify_store_names(fresh: list[dict], existing: list[dict],
-                      known_names: set[str]) -> dict[str, str]:
+def find_store_name_variants(fresh: list[dict]) -> list[list[str]]:
     """
-    Collapse spelling variants of one store ("MEDUSA COMICS" / "Medusa
-    Cómics") to a single, stable name, in place. Returns {variant: canonical}.
-
-    Preference: a STORE_META name, then a name already on record (keeps
-    event keys stable across runs), then not-all-caps, then more accented
-    characters, then alphabetical.
+    Report spelling variants of one store ("MEDUSA COMICS" / "Medusa
+    Cómics") among this run's events. Detection only: renaming here would
+    depend on which sources happened to list the store today and make names
+    flip between runs. data/locator_store_overrides.json is the single
+    place that decides canonical names.
     """
     from shared.store_matching import normalize_name
 
-    on_record = {e.get("store") for e in existing}
     groups: dict[str, set[str]] = {}
     for e in fresh:
         groups.setdefault(normalize_name(e["store"]), set()).add(e["store"])
-
-    def rank(name: str):
-        return (
-            name not in known_names,
-            name not in on_record,
-            name.isupper(),
-            -sum(1 for ch in name if ord(ch) > 127),
-            name,
-        )
-
-    mapping: dict[str, str] = {}
-    for names in groups.values():
-        if len(names) < 2:
-            continue
-        canonical = min(names, key=rank)
-        for n in names - {canonical}:
-            mapping[n] = canonical
-    for e in fresh:
-        e["store"] = mapping.get(e["store"], e["store"])
-    if mapping:
+    variants = sorted(sorted(names) for names in groups.values() if len(names) > 1)
+    if variants:
         logger.warning(
-            "Unified store name variants (add to data/locator_store_overrides.json): %s",
-            mapping,
+            "Store name variants — add them to data/locator_store_overrides.json: %s",
+            variants,
         )
-    return mapping
+    return variants
 
 
 def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
                             now_iso: str) -> tuple[list[dict], int]:
     """
     Remove locator events that duplicate an event from a store's own
-    scraper. The store's own listing wins. Existing upcoming scraper events
-    count too, so a scraper that failed today (its events protected) does
-    not let the locator copy slip in as a duplicate.
+    scraper; the store's own listing wins.
+
+    Matching is one-to-one: each scraper event absorbs at most one locator
+    event — the closest in time on the same store and day, within
+    DUPLICATE_WINDOW_MIN, same game preferred over an unknown game. So a
+    store listing only its Commander night does not hide the locator's
+    Modern event at the same hour. Upcoming scraper events already on disk
+    count too (once), so a scraper that failed today — its events protected
+    — does not let locator copies slip in.
     """
-    claims: dict[tuple, list[tuple]] = {}
+    claims: list[tuple] = []  # (store, date, dt, game)
+    seen_keys: set[str] = set()
 
     def claim(e):
+        k = event_key(e)
+        if k in seen_keys:
+            return
+        seen_keys.add(k)
         dt = _parse_dt(e.get("datetime_start") or "")
         if dt is not None:
-            claims.setdefault((e.get("store"), dt.date()), []).append((dt, e.get("game")))
+            claims.append((e.get("store"), dt.date(), dt, e.get("game")))
 
     for e in fresh:
         if not is_locator(e.get("source")):
@@ -550,21 +576,33 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
         if e.get("source") and not is_locator(e.get("source")):
             claim(e)
 
-    kept: list[dict] = []
-    dropped = 0
-    for e in fresh:
-        if is_locator(e.get("source")):
-            dt = _parse_dt(e.get("datetime_start") or "")
-            rivals = claims.get((e.get("store"), dt.date()), []) if dt else []
-            if any(
-                abs((dt - rdt).total_seconds()) <= DUPLICATE_WINDOW_MIN * 60
-                and (rgame is None or rgame == e.get("game"))
-                for rdt, rgame in rivals
-            ):
-                dropped += 1
-                continue
-        kept.append(e)
-    return kept, dropped
+    by_day: dict[tuple, list[int]] = {}
+    for ci, (store, day, _dt, _g) in enumerate(claims):
+        by_day.setdefault((store, day), []).append(ci)
+
+    pairs: list[tuple] = []  # (unknown_game, seconds_apart, locator_idx, claim_idx)
+    for li, e in enumerate(fresh):
+        if not is_locator(e.get("source")):
+            continue
+        dt = _parse_dt(e.get("datetime_start") or "")
+        if dt is None:
+            continue
+        for ci in by_day.get((e.get("store"), dt.date()), []):
+            _s, _d, cdt, cgame = claims[ci]
+            gap = abs((dt - cdt).total_seconds())
+            if gap <= DUPLICATE_WINDOW_MIN * 60 and (cgame is None or cgame == e.get("game")):
+                pairs.append((cgame is None, gap, li, ci))
+
+    dropped_idx: set[int] = set()
+    used_claims: set[int] = set()
+    for _unknown, _gap, li, ci in sorted(pairs):
+        if li in dropped_idx or ci in used_claims:
+            continue
+        dropped_idx.add(li)
+        used_claims.add(ci)
+
+    kept = [e for i, e in enumerate(fresh) if i not in dropped_idx]
+    return kept, len(dropped_idx)
 
 
 # ---------------------------------------------------------------------------
@@ -602,6 +640,19 @@ def load_existing() -> list[dict]:
     return data
 
 
+def drop_retired_stores(events: list[dict],
+                        path: Optional[pathlib.Path] = None) -> list[dict]:
+    """Remove events of stores listed in data/retired_stores.json."""
+    path = path or RETIRED_STORES_FILE
+    if not path.exists():
+        return events
+    retired = {k for k in json.loads(path.read_text(encoding="utf-8")) if not k.startswith("_")}
+    kept = [e for e in events if e.get("store") not in retired]
+    if len(kept) != len(events):
+        logger.info("Dropped %d events of retired stores %s", len(events) - len(kept), sorted(retired))
+    return kept
+
+
 def write_json_atomic(path: pathlib.Path, data) -> None:
     """Write JSON to a temp file in the same directory, then rename over path."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -613,6 +664,28 @@ def write_json_atomic(path: pathlib.Path, data) -> None:
 def write_events(events: list[dict]) -> None:
     write_json_atomic(EVENTS_FILE, events)
     logger.info("Wrote: %s (%d events)", EVENTS_FILE, len(events))
+
+
+def append_source_runs(scraper_stats: dict, run_at: str,
+                       path: Optional[pathlib.Path] = None) -> None:
+    """Append one line per source for this run to SOURCE_RUNS_FILE."""
+    path = path or SOURCE_RUNS_FILE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        for name in sorted(scraper_stats):
+            ms = scraper_stats[name]
+            fh.write(json.dumps({
+                "run_at": run_at,
+                "source": name,
+                "kind": "locator" if is_locator(name) else "store_site",
+                "store": ms.get("store"),
+                "raw": ms.get("raw"),
+                "valid": ms.get("valid"),
+                "dropped": ms.get("dropped"),
+                "duration_s": ms.get("duration_s"),
+                "error": ms.get("error"),
+                "anomaly": ms.get("anomaly"),
+            }, ensure_ascii=False) + "\n")
 
 
 def load_previous_stats() -> dict:
@@ -840,9 +913,10 @@ def build_stats(events: list[dict],
         anomaly: Optional[str] = None
         if store in suspect_zero_stores:
             anomaly = "suspect_zero"
-        elif raw_now == 0 and not info.get("scraper_failed") and _days_between(
-            last_seen.get(store), generated_at,
-        ) >= STALE_AFTER_DAYS:
+        elif store in store_modules and raw_now == 0 and not info.get("scraper_failed") and (
+            last_seen.get(store) is None  # own scraper never produced an event
+            or _days_between(last_seen.get(store), generated_at) >= STALE_AFTER_DAYS
+        ):
             anomaly = "stale"
         elif prev_raw is not None and prev_raw > 0 and raw_now < prev_raw * SHARP_DROP_THRESHOLD:
             anomaly = "sharp_drop"
@@ -942,6 +1016,7 @@ def main() -> None:
     except CorruptEventsFile as exc:
         logger.error("%s — aborting without writing anything", exc)
         sys.exit(1)
+    existing = drop_retired_stores(existing)
     previous_stats = load_previous_stats()
     logger.info(
         "Existing events on disk: %d  (previous stats run at %s)",
@@ -958,7 +1033,7 @@ def main() -> None:
 
     module_names = _discover_scrapers()
     results = run_all_scrapers(module_names)
-    for module_name, (events, error, store_constant) in zip(module_names, results):
+    for module_name, (events, error, store_constant, duration_s) in zip(module_names, results):
         if error:
             failed_scrapers.append(module_name)
 
@@ -992,6 +1067,7 @@ def main() -> None:
             "dropped": raw_n - len(valid),
             "drop_reasons": drops,
             "error": error,
+            "duration_s": duration_s,
         }
         logger.info(
             "%s: raw=%d valid=%d dropped=%d (missing=%d, bad_dt=%d)",
@@ -1032,8 +1108,7 @@ def main() -> None:
     backfilled = backfill_sources(existing, store_to_module)
     if backfilled:
         logger.info("Backfilled source on %d existing events", backfilled)
-    from shared.store_matching import load_existing_stores
-    unify_store_names(fresh, existing, {s["name"] for s in load_existing_stores()})
+    find_store_name_variants(fresh)
     fresh, dup_count = drop_locator_duplicates(fresh, existing, now_iso)
     logger.info("Dropped %d locator events already covered by store scrapers", dup_count)
 
@@ -1065,6 +1140,15 @@ def main() -> None:
         )
         sys.exit(1)
 
+    upcoming_before = sum(1 for _ in _upcoming_active(existing, now_iso))
+    upcoming_after = sum(1 for _ in _upcoming_active(merged, now_iso))
+    if upcoming_before >= UPCOMING_GUARD_MIN and upcoming_after < upcoming_before * UPCOMING_DROP_THRESHOLD:
+        logger.error(
+            "Upcoming active events fell from %d to %d (<%.0f%%) — aborting without writing",
+            upcoming_before, upcoming_after, UPCOMING_DROP_THRESHOLD * 100,
+        )
+        sys.exit(1)
+
     # 5. Sort and persist.
     merged.sort(key=lambda e: (e["datetime_start"], e.get("store", ""), e.get("title", "")))
     write_events(merged)
@@ -1080,6 +1164,7 @@ def main() -> None:
     print_scraper_health(scraper_stats)
     write_json_atomic(STATS_FILE, stats)
     logger.info("Wrote: %s", STATS_FILE)
+    append_source_runs(scraper_stats, now_iso)
 
     # 9. Console summary
     print(f"\nMerged events: {len(merged)} (active={report['active']})")

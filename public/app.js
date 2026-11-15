@@ -192,12 +192,13 @@ function downloadIcs(e) {
   URL.revokeObjectURL(url);
 }
 
-// Address for an event's store: curated STORE_META first, then the legacy
-// STORE_ADDRESSES map, then the address an official locator supplied.
+// Address for an event's store. The locator-supplied address comes first:
+// it is the venue of that very event (chains have several branches), then
+// curated STORE_META, then the legacy STORE_ADDRESSES map.
 function storeAddress(e) {
-  return (STORE_META[e.store] && STORE_META[e.store].address)
+  return e.store_address
+    || (STORE_META[e.store] && STORE_META[e.store].address)
     || STORE_ADDRESSES[e.store]
-    || e.store_address
     || '';
 }
 

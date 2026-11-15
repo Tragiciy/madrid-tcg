@@ -62,7 +62,14 @@ def parse_events(raw_events: list[dict], game: str, resolver: StoreResolver) -> 
     for ev in raw_events:
         if ev.get("is_canceled") or str(ev.get("online_flag")) == "1":
             continue
-        start = to_madrid_iso(ev.get("start_datetime") or "", ev.get("timezone") or "Europe/Madrid")
+        # Bandai's `timezone` is the organizer account's setting, not the
+        # venue's: Madrid shops show up as America/Chicago. Venues in Spain
+        # are read as Madrid local time.
+        tz = "Europe/Madrid" if (ev.get("country_code") or "ES") == "ES" else ev.get("timezone")
+        if tz != ev.get("timezone"):
+            logger.debug("%s: event %s timezone %s overridden to %s",
+                         STORE, ev.get("id"), ev.get("timezone"), tz)
+        start = to_madrid_iso(ev.get("start_datetime") or "", tz or "Europe/Madrid")
         name = ev.get("organizer_name")
         title = _MONTH_PREFIX_RE.sub("", ev.get("event_series_title") or "").strip()
         if not start or not name or not title:

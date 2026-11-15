@@ -1,13 +1,14 @@
 {
-  "_comment": "Maps store names from official locators to one canonical store name. Keys under by_name are compared after shared.store_matching.normalize_name (case, accents and punctuation are ignored). by_id keys are '<source>:<external id>'. A null value drops the store. Names already in STORE_META are matched automatically; list only variants that do not match on their own, or that must stay identical across locators so event keys stay stable.",
-  "by_id": {},
+  "_comment": "Maps store names from official locators to one canonical store name. Keys under by_name are compared after shared.store_matching.normalize_name (case, accents and punctuation are ignored). by_id keys are '<source>:<external id>'. A null value drops the store. Names already in STORE_META are matched automatically; list only variants that do not match on their own, or that must stay identical across locators so event keys stay stable. Branches of a chain are separate stores: our 'Jupiter Juegos' scraper covers only Calle de la Cruz 10; 'Genex Comics' (Santa Casilda 3) is not 'Generacion X - Elfo' (Elfo 98, whose Bandai name is 'GenexComics'). StoreResolver also refuses a STORE_META match when postcodes differ.",
+  "by_id": {
+    "bandai:354": "Júpiter Madrid Norte"
+  },
   "by_name": {
-    "Jupiter Central": "Jupiter Juegos",
-    "Júpiter Juegos Madrid": "Jupiter Juegos",
+    "Jupiter Central": "Júpiter Central",
+    "Júpiter Juegos Madrid": "Júpiter Central",
+    "GenexComics": "Generacion X - Elfo",
     "Júpiter Madrid Norte": "Júpiter Madrid Norte",
-    "Genex Comics": "Generacion X - Elfo",
     "Metamorfo (Santiago Palacios)": "Metamorfo",
-
     "ALCALA COMICS": "Alcalá Cómics",
     "Crisis Alcorcon Juegos": "Crisis Alcorcón Juegos",
     "GALLEGOS DE LA TORRE S.L. (CRISIS ALCORCÓN JUEGOS)": "Crisis Alcorcón Juegos",

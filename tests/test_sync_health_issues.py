@@ -42,6 +42,7 @@ class SyncHealthIssuesTests(unittest.TestCase):
             {"number": 10, "title": "[health] Beta"},
             {"number": 11, "title": "[health] Gamma"},
             {"number": 12, "title": "[health] Removed Store"},
+            {"number": 13, "title": "Unrelated issue"},
         ]
         actions = plan_actions(_stats(), open_issues)
         ops = {(a["op"], a.get("title") or a["number"]) for a in actions}
@@ -51,6 +52,7 @@ class SyncHealthIssuesTests(unittest.TestCase):
             ("create", "[health] Zeta"),
             ("update", 10),
             ("close", 11),
+            ("close", 12),
         })
 
     def test_locator_suspect_zero_lives_on_scraper_entry(self):
@@ -59,6 +61,36 @@ class SyncHealthIssuesTests(unittest.TestCase):
             "store": "X Locator", "raw": 0, "valid": 0, "error": None, "anomaly": "suspect_zero",
         }
         self.assertEqual(unhealthy_stores(stats)["X Locator"]["reason"], "suspect_zero")
+
+    def test_closed_issue_is_reopened_not_duplicated(self):
+        issues = [{"number": 5, "title": "[health] Alpha", "state": "CLOSED"}]
+        ops = {(a["op"], a.get("number")) for a in plan_actions(_stats(), issues)}
+        self.assertIn(("reopen", 5), ops)
+        self.assertNotIn(("create", None), {(a["op"], None) for a in plan_actions(_stats(), issues)
+                                            if a.get("title") == "[health] Alpha"})
+
+    def test_failed_pipeline_only_touches_pipeline_issue(self):
+        issues = [{"number": 10, "title": "[health] Beta", "state": "OPEN"}]
+        actions = plan_actions({}, issues, pipeline_status="failure", run_url="u")
+        self.assertEqual([(a["op"], a.get("title")) for a in actions], [("create", "[health] pipeline")])
+
+    def test_successful_pipeline_closes_pipeline_issue(self):
+        issues = [{"number": 9, "title": "[health] pipeline", "state": "OPEN"}]
+        self.assertIn(("close", 9), {(a["op"], a.get("number")) for a in plan_actions(_stats(), issues)})
+
+    def test_gh_failure_is_reported_and_others_continue(self):
+        import subprocess
+        from tools.sync_health_issues import apply_actions
+        calls = []
+
+        def gh(args):
+            calls.append(args[1])
+            if args[1] == "create":
+                raise subprocess.CalledProcessError(1, "gh", stderr="boom")
+            return ""
+        failures = apply_actions([{"op": "create", "title": "t", "body": "b"},
+                                  {"op": "close", "number": 1, "comment": "c"}], gh)
+        self.assertEqual((failures, calls), (1, ["create", "close"]))
 
     def test_error_text_is_in_body(self):
         create = next(a for a in plan_actions(_stats(), []) if a["op"] == "create" and "Alpha" in a["title"])
