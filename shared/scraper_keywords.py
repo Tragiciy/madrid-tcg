@@ -49,6 +49,8 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     ("yu-gi-oh!",                           "Yu-Gi-Oh!"),
     ("yu-gi-oh",                            "Yu-Gi-Oh!"),
     ("one piece",                           "One Piece"),
+    # "Nakama" (crew) names One Piece weeklies, e.g. "Nakama Weekly OP".
+    ("nakama",                              "One Piece"),
     ("weiss",                               "Weiß Schwarz"),
     ("pokémon",                             "Pokémon"),
     ("pokemon",                             "Pokémon"),

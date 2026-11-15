@@ -192,6 +192,7 @@ GAME_CANONICAL: dict = {
     "pokémon": "Pokémon",
     # One Piece
     "one piece": "One Piece",
+    "nakama": "One Piece",
     # Digimon
     "digimon": "Digimon",
     # Lorcana

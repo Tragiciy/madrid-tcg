@@ -51,8 +51,9 @@ def parse_events(ics_text: str, now: datetime) -> list[dict]:
             "datetime_end": ev.end.astimezone(TZ).isoformat() if ev.end else None,
             "language": "es",
             "source_url": ev.url or CALENDAR_PAGE,
-            # One id per occurrence: recurring series share a UID.
-            "source_event_id": f"wargen-ics:{ev.uid}:{start.isoformat()}",
+            # One id per occurrence (series share a UID), keyed by the
+            # scheduled start so moving one occurrence keeps its id.
+            "source_event_id": f"wargen-ics:{ev.uid}:{(ev.occurrence_of or ev.start).astimezone(TZ).isoformat()}",
             "scraped_at": scraped_at,
         })
     return out
