@@ -11,7 +11,8 @@ scraper for.
 import logging
 
 from shared.locator_common import (
-    CITY, StoreResolver, make_event, request_json, session, to_madrid_iso, window,
+    CITY, StoreResolver, make_event, request_json, session, store_hint, to_madrid_iso,
+    window,
 )
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ STORES_QUERY = """
 query($lat: Float!, $lng: Float!, $m: Int!, $page: Int, $size: Int) {
   storesByLocation(input: {latitude: $lat, longitude: $lng, maxMeters: $m,
                            page: $page, pageSize: $size}) {
-    stores { id name postalAddress }
+    stores { id name postalAddress latitude longitude }
     pageInfo { totalResults }
   }
 }
@@ -58,13 +59,14 @@ def _graphql(sess, query: str, variables: dict) -> dict:
     return data["data"]
 
 
-def _fetch_store_addresses(sess) -> dict[str, str]:
+def _fetch_store_addresses(sess) -> dict[str, dict]:
     data = _graphql(sess, STORES_QUERY, {
         "lat": CITY["lat"], "lng": CITY["lng"], "m": CITY["radius_km"] * 1000,
         "page": 0, "size": 200,
     })
     return {
-        str(s["id"]): s.get("postalAddress") or ""
+        str(s["id"]): {"address": s.get("postalAddress") or "",
+                       "lat": s.get("latitude"), "lng": s.get("longitude")}
         for s in data["storesByLocation"]["stores"]
     }
 
@@ -84,7 +86,7 @@ def _fetch_events(sess) -> list[dict]:
     return events
 
 
-def parse_events(raw_events: list[dict], addresses: dict[str, str],
+def parse_events(raw_events: list[dict], addresses: dict,
                  resolver: StoreResolver) -> list[dict]:
     out: list[dict] = []
     for ev in raw_events:
@@ -92,7 +94,10 @@ def parse_events(raw_events: list[dict], addresses: dict[str, str],
         start = to_madrid_iso(ev.get("scheduledStartTime") or "")
         if not org.get("name") or not start or not ev.get("title"):
             continue
-        address = addresses.get(str(org.get("id")), "")
+        info = addresses.get(str(org.get("id"))) or {}
+        if isinstance(info, str):
+            info = {"address": info}
+        address = info.get("address") or ""
         store = resolver.resolve(SOURCE, org.get("id"), org["name"], address)
         if store is StoreResolver.SKIP:
             continue
@@ -105,6 +110,7 @@ def parse_events(raw_events: list[dict], addresses: dict[str, str],
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=f"https://locator.wizards.com/event/{ev['id']}",
             format_hint=(ev.get("eventFormat") or {}).get("name") or "",
+            hint=store_hint(SOURCE, org.get("id"), org["name"], address, info.get("lat"), info.get("lng")),
         ))
     return out
 

@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 from scrapers import locator_gem, wargen_wargames
 from shared.ics import parse_ics
 from shared.locator_common import StoreResolver
+from shared.store_registry import StoreRegistry
 
 MAD = ZoneInfo("Europe/Madrid")
 W0 = datetime(2026, 11, 15, tzinfo=MAD)
@@ -132,7 +133,7 @@ class GemTests(unittest.TestCase):
         start = datetime.now(MAD).replace(hour=17, minute=0, second=0, microsecond=0)
         near = dict(base, id=1, lat=40.43, lon=-3.67, start_time=start.strftime("%Y-%m-%dT%H:%M:%S") + "+13:00")
         far = dict(base, id=2, lat=41.39, lon=2.17, start_time=near["start_time"])  # Barcelona
-        resolver = StoreResolver(known_stores=[], overrides={})
+        resolver = StoreResolver(StoreRegistry())
         [e] = locator_gem.parse_events([near, far], resolver)
         self.assertTrue(e["datetime_start"].startswith(start.strftime("%Y-%m-%dT17:00:00")))
         self.assertEqual(e["title"], "Armory Event – Silver Age")

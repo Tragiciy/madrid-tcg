@@ -14,7 +14,7 @@ import math
 from datetime import datetime
 
 from shared.locator_common import (
-    CITY, StoreResolver, TZ, make_event, request_json, session, window,
+    CITY, StoreResolver, TZ, make_event, request_json, store_hint, session, window,
 )
 
 logger = logging.getLogger(__name__)
@@ -88,6 +88,8 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver) -> list[dict]:
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=ev.get("event_link") or LOCATOR_PAGE,
             format_hint=f"{kind} {fmt}",
+            hint=store_hint(SOURCE, ev.get("organiser_store_slug") or name, name, address,
+                            ev.get("lat"), ev.get("lon")),
         ))
     return out
 

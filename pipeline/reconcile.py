@@ -210,7 +210,7 @@ def find_store_name_variants(fresh: list[dict]) -> list[list[str]]:
     Report spelling variants of one store ("MEDUSA COMICS" / "Medusa
     Cómics") among this run's events. Detection only: renaming here would
     depend on which sources happened to list the store today and make names
-    flip between runs. data/locator_store_overrides.json is the single
+    flip between runs. Aliases in data/stores.json are the single
     place that decides canonical names.
     """
     from shared.store_matching import normalize_name
@@ -221,7 +221,7 @@ def find_store_name_variants(fresh: list[dict]) -> list[list[str]]:
     variants = sorted(sorted(names) for names in groups.values() if len(names) > 1)
     if variants:
         logger.warning(
-            "Store name variants — add them to data/locator_store_overrides.json: %s",
+            "Store name variants — add aliases in data/stores.json: %s",
             variants,
         )
     return variants
@@ -287,3 +287,23 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
 
     kept = [e for i, e in enumerate(fresh) if i not in dropped_idx]
     return kept, len(dropped_idx)
+
+
+def attach_store_ids(fresh: list[dict], existing: list[dict], registry) -> int:
+    """
+    Give every event its registry `store_id`. Fresh events' `store_hint`
+    (what a locator told us about the store) is absorbed into the registry
+    via learn() — new stores and aliases — and removed from the event.
+    Returns the number of stores the registry did not know before.
+    """
+    before = len(registry.stores)
+    for e in fresh:
+        record = registry.learn(e["store"], e.pop("store_hint", None))
+        e["store_id"] = record["id"]
+    for e in existing:
+        e.pop("store_hint", None)
+        if not e.get("store_id"):
+            record = registry.find(e.get("store") or "")
+            if record is not None:
+                e["store_id"] = record["id"]
+    return len(registry.stores) - before

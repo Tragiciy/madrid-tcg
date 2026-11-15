@@ -3,17 +3,26 @@ import unittest
 from pipeline.reconcile import drop_locator_duplicates, event_key, find_store_name_variants, merge_events
 from scrapers import locator_ravensburger, locator_wizards
 from shared import bandai_locator as locator_bandai
-from shared.locator_common import StoreResolver, to_madrid_iso
+from pipeline.reconcile import attach_store_ids
+from shared.locator_common import StoreResolver, store_hint, to_madrid_iso
+from shared.store_registry import StoreRegistry, slugify
 
 NOW = "2026-11-15T12:00:00+01:00"
-KNOWN = [{"name": "Jupiter Juegos", "address": "Calle de la Cruz, 10, 28012 Madrid"},
-         {"name": "Ítaca", "address": ""}]
+def _registry():
+    return StoreRegistry({
+        "ignore": {"names": ["Online Shop"], "external": []},
+        "stores": [
+            {"id": "jupiter-juegos", "name": "Jupiter Juegos", "city": "madrid",
+             "address": "Calle de la Cruz, 10, 28012 Madrid",
+             "aliases": {"names": ["Júpiter Central"], "external": []}},
+            {"id": "itaca", "name": "Ítaca", "city": "madrid", "address": "",
+             "aliases": {"names": [], "external": ["wizards:8422"]}},
+        ],
+    })
 
 
 def _resolver():
-    return StoreResolver(known_stores=KNOWN, overrides={
-        "by_name": {"Júpiter Central": "Jupiter Juegos", "Online Shop": None},
-    })
+    return StoreResolver(_registry())
 
 
 def _ev(store, game, start, source, title="Event"):
@@ -41,6 +50,7 @@ class ResolverTests(unittest.TestCase):
         self.assertEqual(r.resolve("wizards", 2, "Itaca"), "Ítaca")
         self.assertEqual(r.resolve("wizards", 3, "Brand New Store"), "Brand New Store")
         self.assertIs(r.resolve("wizards", 4, "Online Shop"), StoreResolver.SKIP)
+        self.assertEqual(r.resolve("wizards", 8422, "Totally Different Name"), "Ítaca")  # by external id
 
 
 class ParseTests(unittest.TestCase):
@@ -117,6 +127,41 @@ class DedupTests(unittest.TestCase):
         for _ in range(4):
             events = merge_events(events, [], NOW, protected_sources={"scrapers.locator_ravensburger"})
         self.assertEqual(len(events), 1)
+
+
+class RegistryTests(unittest.TestCase):
+    def test_learn_adds_store_alias_external_and_coordinates(self):
+        reg = _registry()
+        rec = reg.learn("Medusa Cómics", store_hint("wizards", 7, "MEDUSA COMICS", "C/ X 1, 28001", 40.1, -3.1),
+                        today="2026-11-15")
+        self.assertEqual((rec["id"], rec["origin"], rec["lat"]), ("medusa-comics", "auto", 40.1))
+        self.assertEqual(rec["aliases"], {"names": ["MEDUSA COMICS"], "external": ["wizards:7"]})
+        self.assertIs(reg.find(external="wizards:7"), rec)
+        # learning again is idempotent
+        reg.learn("Medusa Cómics", store_hint("wizards", 7, "MEDUSA COMICS"))
+        self.assertEqual(len(reg.stores), 3)
+
+    def test_spelling_of_another_store_is_not_added_as_alias(self):
+        reg = _registry()
+        branch = reg.learn("Júpiter Madrid Norte", store_hint("bandai", 354, "Jupiter Juegos", "x, 28100"))
+        self.assertEqual(branch["aliases"]["names"], [])
+        self.assertEqual(reg.find("Jupiter Juegos")["id"], "jupiter-juegos")
+
+    def test_ids_are_stable_slugs_without_collisions(self):
+        reg = _registry()
+        a = reg.add("Ítaca", origin="auto")  # same slug as the existing record
+        self.assertEqual((slugify("Zacatrus! Madrid Chamberí"), a["id"]), ("zacatrus-madrid-chamberi", "itaca-2"))
+
+    def test_attach_store_ids_and_public_view(self):
+        reg = _registry()
+        fresh = [dict(_ev("Ítaca", "Lorcana", "2026-11-20T19:00:00+01:00", "scrapers.itaca")),
+                 dict(_ev("New Place", "Lorcana", "2026-11-20T19:00:00+01:00", "scrapers.locator_x"),
+                      store_hint=store_hint("x", 1, "New Place", "Calle Y, 28002", 40.0, -3.0))]
+        self.assertEqual(attach_store_ids(fresh, [], reg), 1)
+        self.assertEqual([e["store_id"] for e in fresh], ["itaca", "new-place"])
+        self.assertNotIn("store_hint", fresh[1])
+        view = reg.public_view()
+        self.assertEqual(view["New Place"], {"id": "new-place", "address": "Calle Y, 28002", "lat": 40.0, "lng": -3.0})
 
 
 class NameVariantTests(unittest.TestCase):

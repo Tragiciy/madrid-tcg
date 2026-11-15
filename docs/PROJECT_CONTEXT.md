@@ -48,7 +48,7 @@ Current per-store scrapers (21): `arte9`, `asedio_gaming`, `generacion_x_elfo`,
 
 Removed in 2026-11 because the official locators fully cover them, and their
 own sites had changed or blocked scraping: `collectorage`, `kamikaze_freak_shop`,
-`metamorfo`, `next_dice`. Their `STORE_META` entries stay for the locator
+`metamorfo`, `next_dice`. Their registry records stay for the locator
 events. `genexcomics` was retired as a duplicate of Generacion X - Elfo.
 
 ### 1a′. Official locator sources
@@ -74,13 +74,34 @@ bogus `+13:00` offset, which the adapter drops.
 - `make_event()`;
 - `StoreResolver`, which maps locator store names to canonical store names.
 
-`StoreResolver` tries, in order:
-1. a manual override in `data/locator_store_overrides.json`, by
-   `<source>:<external id>` or by normalized name;
-2. a confident match against `STORE_META`, rejected when the postcodes
-   differ, because chain branches are separate stores;
-3. the locator's own name, suffixed with its postcode if it would collide
+**Store registry (`data/stores.json`, `shared/store_registry.py`).** There is
+one record per physical store. Its `id` is a stable slug that is never changed
+once assigned. Each record also holds a display `name`, `city`, `address`,
+`lat`/`lng`, `website` and `notes`, plus `aliases`:
+- `names`: other spellings of the store;
+- `external`: upstream ids such as `wizards:8420` or `bandai:354`.
+
+A top-level `ignore` lists names or ids to drop. The aggregator writes
+`public/stores.json` from the registry, keyed by display name, and the frontend
+loads it into `STORE_META`.
+
+`StoreResolver` reads the registry only. It tries, in order:
+1. an external-id alias;
+2. a name alias;
+3. a confident name/address match. Both 2 and 3 are rejected when the
+   postcodes differ, because chain branches are separate stores;
+4. the locator's own name, suffixed with its postcode if it would collide
    with a known store.
+
+Scraper subprocesses never write the registry. Locator events carry a
+`store_hint` (external id, raw name, address, coordinates). The aggregator,
+a single process, then:
+- absorbs each hint through `StoreRegistry.learn()`, which adds new stores
+  (`origin: "auto"`) and new aliases, and fills in missing coordinates;
+- sets `store_id` on every event;
+- writes both files.
+
+An alias is never added if that spelling already names a different store.
 
 How the aggregator treats locator events:
 - **Source tag.** Every fresh event gets `source` (its scraper module).
@@ -92,9 +113,9 @@ How the aggregator treats locator events:
   locator event. Existing upcoming scraper events count too, once, so a
   scraper that failed today does not let duplicates in.
 - **Name variants.** Spellings that normalize to the same name
-  ("MEDUSA COMICS" / "Medusa Cómics") are only reported. A warning asks for
-  an override; nothing is renamed automatically, so names never flip between
-  runs. The overrides file is the single place that decides canonical names.
+  ("MEDUSA COMICS" / "Medusa Cómics") but resolved to different stores are
+  only reported. A warning asks for an alias in `data/stores.json`. Nothing is
+  renamed automatically, so names never flip between runs.
 - **Event key.** Namespaced ids (`wizards:123`) are keyed as `id:<sid>`,
   without the store name. A store rename therefore never re-keys a locator
   event.
@@ -103,8 +124,8 @@ How the aggregator treats locator events:
 - **Protection.** It works per source. A failed or `suspect_zero` locator
   protects only its own events.
 
-Locator stores without a `STORE_META` entry are allowed. They carry
-`store_address`, which the frontend `storeAddress(e)` helper falls back to.
+Every event also carries `store_address` from its own venue, and the frontend
+`storeAddress(e)` prefers it over the registry address.
 
 ### 1b. Shared utilities
 
@@ -332,7 +353,7 @@ The pipeline for finding and onboarding new stores follows these steps:
    - `not_ready` — reachable website but no event signals detected.
 
 4. **Scraper development** — for each store in `scrape_now`, create
-   `scrapers/<name>.py` and add the store to `STORE_META` in `config.js`.
+   `scrapers/<name>.py` and add the store to `data/stores.json`.
 
 `data/scraper_targets.json` is the canonical queue of stores awaiting scraper
 development. It is updated by re-running steps 2–3 after sites change.
@@ -413,14 +434,10 @@ initialisation. See §7.
 `config.js` exposes four `var` globals (deliberately `var`, not `const`/`let`
 — see §7):
 
-- **`STORE_META`** — primary per-store metadata object. Each key is a store
-  display name; each value is an object with at minimum an `address` field,
-  and optionally `notes`, `website`, etc. Used by the Event Detail Panel to
-  show the store card and address, and by calendar URL builders for the
-  `location` field. **Every new scraper store must have an entry here.**
-- **`STORE_ADDRESSES`** (`config.js:1`) — legacy fallback map of store display
-  name → address string. Used only when `STORE_META` has no entry for a store.
-  Do not add new stores here; use `STORE_META` instead.
+- **`STORE_META`** — an empty object in `config.js`. `init()` fills it from
+  `public/stores.json`, which the pipeline generates from the store registry.
+  The panel's store card and the calendar `location` field use it. Edit
+  stores in `data/stores.json`, not here.
 - **`SEGMENTS`** (`config.js:10`) — array of 4 time-bucket definitions, each
   with a `key`, hour range, `label`, and `shortRange`.
 - **`GAME_CLASS_MAP`** (`config.js:42`) — maps canonical game name → CSS class
@@ -958,12 +975,12 @@ Anything without `scrape()` belongs in `shared/` or another package.
 This ensures `aggregator.py`'s auto-discovery never picks up non-scraper
 modules. Do not modify `aggregator.py` to register new scrapers.
 
-### STORE_META is required for every scraper store
+### Every scraper store belongs in the store registry
 
-Any store name that appears in `public/events.json` but is absent from
-`STORE_META` in `public/config.js` will render without an address or Maps
-link in the Event Detail Panel. Add the entry to `STORE_META` — not to the
-legacy `STORE_ADDRESSES` — before or at the same time as shipping the scraper.
+The aggregator adds unknown stores to `data/stores.json` automatically
+(`origin: "auto"`), but they have no address until a locator or a human
+fills one in. When shipping a scraper, add the store's registry record
+(`name` equal to the scraper's `STORE`, plus `address`).
 
 ---
 
@@ -978,8 +995,7 @@ legacy `STORE_ADDRESSES` — before or at the same time as shipping the scraper.
    `__init__.py`) — no registration required and no changes to `aggregator.py`.
 3. Prefer importing `GAME_KEYWORDS` / `FORMAT_KEYWORDS` from
    `shared.scraper_keywords` and extending locally if needed.
-4. Add an entry to `STORE_META` in `public/config.js` with at least an
-   `address` field. This populates the store card in the Event Detail Panel
+4. Add an entry to the store registry `data/stores.json` (`name`, `address`; the `id` is a stable slug). This populates the store card in the Event Detail Panel
    and the `location` field in calendar links.
 5. Run `python aggregator.py` once and verify the new store appears under
    `by_store` in `public/events_stats.json`.
@@ -1046,7 +1062,7 @@ branch in `cleanupFilters` — do not repurpose `allStores`.
 
 **Adding a store:**
 - [ ] `scrapers/<name>.py` with `scrape()` returning valid events
-- [ ] Entry in `STORE_META` in `public/config.js` with `address`
+- [ ] Record in `data/stores.json` with `name` = `STORE` and `address`
 - [ ] Run `python aggregator.py` and verify in `events_stats.json`
 
 **Adding a game:**

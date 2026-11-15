@@ -143,3 +143,11 @@ def _previous_raw_for_store(prev_stats: dict, store: str) -> Optional[int]:
     if isinstance(row, int):
         return row
     return None
+
+
+def save_store_registry(registry) -> None:
+    """data/stores.json (full registry) + public/stores.json (frontend view)."""
+    from shared.store_registry import PUBLIC_FILE, REGISTRY_FILE
+    write_json_atomic(REGISTRY_FILE, registry.to_json())
+    write_json_atomic(PUBLIC_FILE, registry.public_view())
+    logger.info("Wrote: %s (%d stores), %s", REGISTRY_FILE, len(registry.stores), PUBLIC_FILE)

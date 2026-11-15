@@ -6,7 +6,7 @@ Play Hub (the hydraproxy API behind tcg.ravensburgerplay.com).
 import logging
 
 from shared.locator_common import (
-    CITY, StoreResolver, make_event, request_json, session, to_madrid_iso, window,
+    CITY, StoreResolver, make_event, request_json, store_hint, session, to_madrid_iso, window,
 )
 
 logger = logging.getLogger(__name__)
@@ -66,6 +66,8 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver) -> list[dict]:
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=f"https://tcg.ravensburgerplay.com/events/{ev['id']}",
             format_hint=(ev.get("gameplay_format") or {}).get("name") or "",
+            hint=store_hint(SOURCE, store_info.get("id"), store_info["name"], address,
+                            store_info.get("latitude"), store_info.get("longitude")),
         ))
     return out
 
