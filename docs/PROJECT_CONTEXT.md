@@ -23,11 +23,17 @@ must live outside this directory (currently in `shared/`). Do not modify
 `aggregator.py` merely to register a new scraper; place the scraper file in
 `scrapers/` and it is picked up automatically.
 
-Current scrapers (20): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
-`metropolis_center`, `micelion_games`, `asedio_gaming`, `generacion_x_elfo`,
-`goblintrader_madrid_norte`, `goblintrader_central`, `kamikaze_freak_shop`,
-`the_big_bang_games`, `panda_games`, `metamorfo`, `collectorage`, `topdeck`,
-`gladius_games`, `madakiba`, `mundicomics`, `padis`.
+Current per-store scrapers (21): `arte9`, `asedio_gaming`, `generacion_x_elfo`,
+`gladius_games`, `goblintrader_central`, `goblintrader_madrid_norte`, `itaca`,
+`jupiter_juegos`, `la_guarida_juegos`, `madakiba`, `metropolis_center`,
+`micelion_games`, `mundicomics`, `oz_juegos`, `padis`, `panda_games`,
+`replay_boardgame_cafe`, `the_big_bang_games`, `three_stones_games`, `topdeck`,
+`wargen_wargames` (public Google Calendar via `shared/ics.py`).
+
+Removed in 2026-11 because the official locators fully cover them, and their
+own sites had changed or blocked scraping: `collectorage`, `kamikaze_freak_shop`,
+`metamorfo`, `next_dice`. Their `STORE_META` entries stay for the locator
+events. `genexcomics` was retired as a duplicate of Generacion X - Elfo.
 
 ### 1a′. Official locator sources
 
@@ -40,6 +46,11 @@ for the next `WINDOW_DAYS` (60) days:
 | `locator_wizards` | Wizards Store & Event Locator (GraphQL `searchEvents`) | Magic |
 | `locator_bandai` | Bandai TCG+ (`api/user/event/list`) | One Piece, Digimon |
 | `locator_ravensburger` | Ravensburger Play Hub (hydraproxy `/v2/events/`) | Lorcana |
+| `locator_gem` | GEM (`gem.fabtcg.com/api/v1/locator/events/`) | Flesh and Blood |
+
+GEM ignores its lat/lon parameters, so the adapter searches by city name and
+filters by distance itself. GEM also stamps local wall-clock times with a
+bogus `+13:00` offset, which the adapter drops.
 
 `shared/locator_common.py` holds the parts they share:
 - the search area and time window;
@@ -114,37 +125,16 @@ fuzzy matching. Used by discovery tooling (`tools/discover_stores.py`,
 Carde/Hydra-style store locators, currently used by the Lorcana and Riftbound
 discoverers.
 
-#### Shared keyword migration status
+All per-store scrapers use the shared `GAME_KEYWORDS` / `FORMAT_KEYWORDS`
+helpers from `shared/scraper_keywords.py`. `arte9` and `metropolis_center`
+derive the game from API category fields first.
 
-| Scraper | Uses shared GAME_KEYWORDS | Uses shared FORMAT_KEYWORDS |
-| --- | --- | --- |
-| `arte9` | — (not used) | Yes |
-| `itaca` | Yes | Yes |
-| `jupiter_juegos` | Yes | Yes |
-| `la_guarida_juegos` | Yes | Yes |
-| `metropolis_center` | — (not used) | Yes |
-| `micelion_games` | Yes | Yes |
-| `asedio_gaming` | Yes | Yes |
-| `generacion_x_elfo` | Yes | Yes |
-| `goblintrader_madrid_norte` | Yes | Yes |
-| `kamikaze_freak_shop` | Yes | Yes |
-| `the_big_bang_games` | Yes | Yes |
-| `panda_games` | Yes | Yes |
-| `metamorfo` | Yes | Yes |
-| `goblintrader_central` | Yes | Yes |
-| `collectorage` | Yes | Yes |
-| `topdeck` | Yes | Yes |
-| `gladius_games` | Yes | Yes |
-| `madakiba` | Yes | Yes |
-| `mundicomics` | Yes | Yes |
-| `padis` | Yes | Yes |
+`shared/wordpress_events.py` fetches The Events Calendar / Modern Events
+Calendar feeds (used by `the_big_bang_games`).
 
-Stores with `—` derive game from API category fields, not keyword matching.
-
-The six WordPress-based scrapers (`kamikaze_freak_shop`, `the_big_bang_games`,
-`panda_games`, `metamorfo`, `collectorage`, `topdeck`) share a helper at
-`shared/wordpress_events.py` that fetches events from The Events Calendar /
-Modern Events Calendar plugins.
+`shared/ics.py` reads public iCalendar feeds. It handles RRULE expansion,
+EXDATE, RECURRENCE-ID overrides and cancelled occurrences, and skips all-day
+events.
 
 ### 1c. Scraper stats and anomaly detection
 

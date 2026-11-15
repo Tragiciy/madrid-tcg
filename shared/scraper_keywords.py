@@ -44,10 +44,13 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     ("unleashed",                           "Riftbound"),
     ("final fantasy",                       "Final Fantasy TCG"),
     ("star wars",                           "Star Wars: Unlimited"),
+    ("sw unlimited",                        "Star Wars: Unlimited"),
     ("naruto mythos",                       "Naruto Mythos"),
     ("yu-gi-oh!",                           "Yu-Gi-Oh!"),
     ("yu-gi-oh",                            "Yu-Gi-Oh!"),
     ("one piece",                           "One Piece"),
+    # "Nakama" (crew) names One Piece weeklies, e.g. "Nakama Weekly OP".
+    ("nakama",                              "One Piece"),
     ("weiss",                               "Weiß Schwarz"),
     ("pokémon",                             "Pokémon"),
     ("pokemon",                             "Pokémon"),
