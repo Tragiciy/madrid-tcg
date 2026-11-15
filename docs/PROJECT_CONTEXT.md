@@ -29,6 +29,56 @@ Current scrapers (20): `arte9`, `itaca`, `jupiter_juegos`, `la_guarida_juegos`,
 `the_big_bang_games`, `panda_games`, `metamorfo`, `collectorage`, `topdeck`,
 `gladius_games`, `madakiba`, `mundicomics`, `padis`.
 
+### 1a′. Official locator sources
+
+`scrapers/locator_*.py` are multi-store sources. They read the official
+publisher event locators for every store within `CITY["radius_km"]` (50 km),
+for the next `WINDOW_DAYS` (60) days:
+
+| Module | Locator | Games |
+|---|---|---|
+| `locator_wizards` | Wizards Store & Event Locator (GraphQL `searchEvents`) | Magic |
+| `locator_bandai` | Bandai TCG+ (`api/user/event/list`) | One Piece, Digimon |
+| `locator_ravensburger` | Ravensburger Play Hub (hydraproxy `/v2/events/`) | Lorcana |
+
+`shared/locator_common.py` holds the parts they share:
+- the search area and time window;
+- an HTTP session with an honest User-Agent, timeouts and retries;
+- `make_event()`;
+- `StoreResolver`, which maps locator store names to canonical store names.
+
+`StoreResolver` tries, in order:
+1. a manual override in `data/locator_store_overrides.json`, by
+   `<source>:<external id>` or by normalized name;
+2. a confident match against `STORE_META`, rejected when the postcodes
+   differ, because chain branches are separate stores;
+3. the locator's own name, suffixed with its postcode if it would collide
+   with a known store.
+
+How the aggregator treats locator events:
+- **Source tag.** Every fresh event gets `source` (its scraper module).
+  Legacy events without one are backfilled from the store's scraper.
+- **Store-scraper priority.** A locator event is dropped when it duplicates
+  one of the same store's own scraper events: same game (or an unknown game),
+  same day, starting within `DUPLICATE_WINDOW_MIN` (90) minutes. Matching is
+  one-to-one and nearest-first, so one scraper event absorbs at most one
+  locator event. Existing upcoming scraper events count too, once, so a
+  scraper that failed today does not let duplicates in.
+- **Name variants.** Spellings that normalize to the same name
+  ("MEDUSA COMICS" / "Medusa Cómics") are only reported. A warning asks for
+  an override; nothing is renamed automatically, so names never flip between
+  runs. The overrides file is the single place that decides canonical names.
+- **Event key.** Namespaced ids (`wizards:123`) are keyed as `id:<sid>`,
+  without the store name. A store rename therefore never re-keys a locator
+  event.
+- **Game.** Locator events keep the locator's game. Title heuristics in
+  `_normalize_game` are skipped for them.
+- **Protection.** It works per source. A failed or `suspect_zero` locator
+  protects only its own events.
+
+Locator stores without a `STORE_META` entry are allowed. They carry
+`store_address`, which the frontend `storeAddress(e)` helper falls back to.
+
 ### 1b. Shared utilities
 
 `shared/` is for reusable backend/scraper utilities only. Files in `shared/`
@@ -104,7 +154,7 @@ per-store breakdown. Each store entry contains:
 - `raw_this_run` — events fetched by the scraper this run, before validation drops
 - `previous_raw` — the same counter from the immediately preceding run's stats file
 - `dropped_this_run`, `drop_reasons` — validation drop counts per failure category
-- `anomaly` — `"sharp_drop"` if the raw count fell sharply, or `null`
+- `anomaly` — `"suspect_zero"`, `"sharp_drop"`, or `null`
 
 **Anomaly detection logic** (`aggregator.py:49`, `aggregator.py:484`): the
 previous run's stats file is loaded at startup, before being overwritten. For
@@ -116,6 +166,33 @@ returns 0 events — due to a site-structure change, for example — triggers th
 flag even if the merged events store still contains historical data from prior
 runs. When there is no previous stats file to compare against, `previous_raw`
 is `null` and no anomaly is flagged.
+
+**Suspect zero** (`find_suspect_zero_stores`): a scraper that finishes
+without raising but yields 0 valid events, for a store that still has
+upcoming active events on disk, is flagged `"suspect_zero"` and treated like a
+failed scraper: its existing events are left untouched instead of counting
+towards deletion. Unlike `sharp_drop`, it keeps firing on every run until the
+scraper returns events again. Scrapers should still raise on fetch errors
+rather than return `[]`, so the failure reason shows up in `error`.
+
+**Write safety**: the run aborts (exit 1) without writing in any of these
+cases:
+- `public/events.json` exists but cannot be parsed;
+- the merged total is below `COUNT_DROP_THRESHOLD` (70%) of the existing
+  total;
+- upcoming active events fall below `UPCOMING_DROP_THRESHOLD` (50%) of the
+  previous run's, once there are at least 50. The history-inclusive total
+  alone would hide the loss of every future event.
+
+**Retired stores**: events of stores listed in `data/retired_stores.json`
+are dropped on load, for example a store entry that turned out to duplicate
+another one.
+
+**Run log**: every run appends one line per source to
+`data/source_runs.jsonl`: raw, valid, dropped, duration, error and anomaly.
+It is the history behind source health, and the future `source_runs` table. Both JSON files are written atomically (temp file + `os.replace`).
+Import errors in a scraper module are caught per scraper and never abort the
+run.
 
 ### 1d. Event identity and merge
 
@@ -136,6 +213,21 @@ hard-deleted (treated as cancelled). Every event carries lifecycle fields:
 python -m scrapers.<name>    # run a single scraper in isolation
 python aggregator.py          # full pipeline (all scrapers + merge + stats)
 ```
+
+`aggregator.py` runs every scraper in its own subprocess through
+`python -m tools.run_scraper <module> <out.json>`. Up to `SCRAPER_WORKERS`
+(default 6) run in parallel, each with a `SCRAPER_TIMEOUT_S` (default 300 s)
+wall-clock limit. Both are overridable through environment variables. A
+timeout, a hard crash or a missing result counts as a failed scraper, so that
+store's events are preserved. For a scraper that timed out or crashed, the
+store name is read from the `STORE = "..."` literal in its source file.
+
+`build_stats` also flags `"stale"`: the scraper returned 0 events, it did not
+error, and the newest `last_seen_at` among the events from the store's own
+scraper is `STALE_AFTER_DAYS` (14) or more days old. Only stores with their
+own scraper can be stale. Locator coverage of a store does not hide a dead
+scraper. No events are protected by this flag (none are left upcoming). It
+only raises an alert.
 
 ---
 
@@ -249,11 +341,24 @@ Cloudflare Pages serves `public/` directly as static files at
 environment variables. A push to `main` triggers an automatic redeploy.
 
 `aggregator.py` runs in GitHub Actions on a cron schedule defined in
-`.github/workflows/update.yml` — daily at 06:00 UTC (08:00 Madrid summer,
-07:00 Madrid winter). The workflow runs `python aggregator.py`, then commits
-any changes to `public/events.json` and `public/events_stats.json` back to
-`main`, which in turn triggers a Cloudflare Pages redeploy. The workflow also
-supports `workflow_dispatch` for manual runs.
+`.github/workflows/update.yml`. It is scheduled daily at 04:37 UTC (05:37 Madrid
+winter, 06:37 summer). The minute is off the hour on purpose: GitHub delays
+top-of-hour cron jobs. A `concurrency` group stops runs from overlapping.
+
+The workflow runs these steps:
+1. `python -m unittest discover -s tests`.
+2. `python aggregator.py`.
+3. Commit any changes to `public/events.json` and `public/events_stats.json`
+   back to `main`. The push triggers a Cloudflare Pages redeploy.
+4. `python -m tools.sync_health_issues`. This opens or updates one GitHub issue
+   (label `scraper-health`, title `[health] <store>`) per store that failed,
+   is `suspect_zero` or `stale`, or has never produced an event. It closes the
+   issue when the store recovers, and reopens the same issue if the store
+   breaks again. The step runs with `if: always()`. If an earlier step failed,
+   it only opens or updates `[health] pipeline`, which closes after the next
+   successful run.
+
+The workflow also supports `workflow_dispatch` for manual runs.
 
 ---
 
@@ -790,6 +895,13 @@ The frontend reads these fields from each event:
   `datetime_end` (nullable; not currently displayed)
 - `language` (currently unused by the frontend, but present on every event)
 - `source_url`
+- `source` — the scraper module that produced the event (`scrapers.itaca`,
+  `scrapers.locator_wizards`). Set by the aggregator, and used for
+  protection and deduplication.
+- `source_event_id` (nullable) — a stable upstream id. When present, it makes
+  the event key `{store}|id:{source_event_id}`.
+- `store_address` (nullable) — set by locator sources. It is the frontend's
+  fallback when the store has no `STORE_META` address.
 - `scraped_at`, `first_seen_at`, `last_seen_at`, `is_active` (read by
   `aggregator.py`'s merge logic; the frontend doesn't use them, but the
   schema must keep them consistent across runs)

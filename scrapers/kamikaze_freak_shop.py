@@ -130,7 +130,7 @@ def scrape() -> list[dict]:
         resp.raise_for_status()
     except Exception as exc:
         logger.error("%s: listing fetch failed: %s", STORE, exc)
-        return []
+        raise
 
     page_text = BeautifulSoup(resp.text, "html.parser").get_text(" ", strip=True)
     for anchor in _REQUIRED_ANCHORS:

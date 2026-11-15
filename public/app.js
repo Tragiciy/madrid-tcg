@@ -80,7 +80,7 @@ function buildGoogleCalendarUrl(e) {
   const endText = googleCalendarDate(end);
   if (!startText || !endText) return null;
 
-  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+  const location = storeAddress(e) || e.store || '';
   const params = [
     ['action', 'TEMPLATE'],
     ['text', calendarTitle(e)],
@@ -108,7 +108,7 @@ function buildOutlookUrl(e, base) {
     end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
   }
 
-  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+  const location = storeAddress(e) || e.store || '';
 
   const params = [
     ['subject', calendarTitle(e)],
@@ -151,7 +151,7 @@ function buildIcsContent(e) {
     end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
   }
 
-  const location = (STORE_META[e.store] && STORE_META[e.store].address) || STORE_ADDRESSES[e.store] || e.store || '';
+  const location = storeAddress(e) || e.store || '';
   const uidBase = eventKey(e).replace(/[^a-zA-Z0-9]/g, '-');
   const uid = `${uidBase}@madrid-tcg-events`;
 
@@ -190,6 +190,16 @@ function downloadIcs(e) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// Address for an event's store. The locator-supplied address comes first:
+// it is the venue of that very event (chains have several branches), then
+// curated STORE_META, then the legacy STORE_ADDRESSES map.
+function storeAddress(e) {
+  return e.store_address
+    || (STORE_META[e.store] && STORE_META[e.store].address)
+    || STORE_ADDRESSES[e.store]
+    || '';
 }
 
 // Stable event identity. Mirrors aggregator.event_key() exactly, which is
@@ -271,6 +281,7 @@ function app() {
   return {
     events:       [],
     loading:      true,
+    loadError:    null,
     weekStart:    weekMonday(madridToday()),
     filters:      { search: '', game: [], store: [], format: [] },
     filterSearch: { game: '', store: '', format: '' },
@@ -340,7 +351,12 @@ function app() {
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
       
       try {
-        const res = await fetch(`events.json?v=${Date.now()}`, { cache: 'no-store' });
+        // Plain fetch: Cloudflare Pages serves events.json with
+        // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
+        // every visit and gets a cheap 304 when the data hasn't changed.
+        // Must match the <link rel="preload"> in index.html to reuse it.
+        const res = await fetch('events.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         this.events = await res.json();
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
@@ -364,6 +380,7 @@ function app() {
         }
       } catch (err) {
         console.error('Failed to load events.json', err);
+        this.loadError = 'Could not load events. Check your connection and try again.';
       } finally {
         this.loading = false;
       }

@@ -178,7 +178,7 @@ def scrape() -> list[dict]:
         resp.raise_for_status()
     except Exception as exc:
         logger.error("%s: listing fetch failed: %s", STORE, exc)
-        return []
+        raise
 
     soup = BeautifulSoup(resp.text, "html.parser")
     products = soup.select("ul.products li.product")

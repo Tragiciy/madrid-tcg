@@ -134,10 +134,10 @@ The site is hosted on **Cloudflare Pages**, serving `public/` as static assets
 with no build step.
 
 Data updates flow through GitHub Actions: the
-[`update.yml`](.github/workflows/update.yml) workflow runs daily at 06:00 UTC,
-re-runs every scraper, and commits a refreshed `public/events.json` (and
+[`update.yml`](.github/workflows/update.yml) workflow runs daily at 04:37 UTC,
+runs the tests, re-runs every scraper (isolated, in parallel), and commits a refreshed `public/events.json` (and
 `public/events_stats.json`) to `main`, which triggers a Cloudflare Pages
-redeploy.
+redeploy. Broken scrapers are reported as `scraper-health` GitHub issues.
 
 ## Constraints
 
