@@ -4,17 +4,17 @@ import tempfile
 import unittest
 from unittest import mock
 
-import aggregator
-from aggregator import (
+import pipeline.repository as repository
+from pipeline.runner import _run_scraper
+from pipeline.health import build_stats
+from pipeline.normalize import _shape_drop_reason
+from pipeline.reconcile import find_suspect_zero_sources, merge_events
+from pipeline.repository import (
     CorruptEventsFile,
-    _shape_drop_reason,
     append_source_runs,
     apply_store_renames,
     drop_retired_stores,
-    build_stats,
-    find_suspect_zero_sources,
     load_existing,
-    merge_events,
     write_json_atomic,
 )
 
@@ -180,7 +180,7 @@ class PersistenceSafetyTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.path = pathlib.Path(self.tmp.name) / "events.json"
-        patcher = mock.patch.object(aggregator, "EVENTS_FILE", self.path)
+        patcher = mock.patch.object(repository, "EVENTS_FILE", self.path)
         patcher.start()
         self.addCleanup(patcher.stop)
         self.addCleanup(self.tmp.cleanup)
@@ -207,7 +207,7 @@ class PersistenceSafetyTests(unittest.TestCase):
 
 class RunScraperTests(unittest.TestCase):
     def test_import_error_is_reported_not_raised(self):
-        events, error, store = aggregator._run_scraper("scrapers.does_not_exist")
+        events, error, store = _run_scraper("scrapers.does_not_exist")
         self.assertEqual(events, [])
         self.assertIn("ModuleNotFoundError", error)
         self.assertIsNone(store)

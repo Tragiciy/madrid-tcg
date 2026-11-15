@@ -1,6 +1,6 @@
 import unittest
 
-from aggregator import drop_locator_duplicates, event_key, find_store_name_variants, merge_events
+from pipeline.reconcile import drop_locator_duplicates, event_key, find_store_name_variants, merge_events
 from scrapers import locator_bandai, locator_ravensburger, locator_wizards
 from shared.locator_common import StoreResolver, to_madrid_iso
 

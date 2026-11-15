@@ -1,6 +1,6 @@
 import unittest
 
-from aggregator import _normalize_game
+from pipeline.normalize import _normalize_game
 from scrapers.itaca import _extract_game
 from shared.scraper_keywords import (
     GAME_KEYWORDS,

@@ -14,6 +14,22 @@ The project has two halves that meet at one file:
 
 ## 1. Backend pipeline
 
+### 1·. Pipeline module layout
+
+`aggregator.py` holds only `main()`, the orchestration of one run. Each stage
+lives in `pipeline/`:
+
+| Module | Responsibility |
+|---|---|
+| `pipeline/config.py` | Paths, timezone and thresholds |
+| `pipeline/runner.py` | Discover `scrapers/*.py` and run each in a subprocess (`tools/run_scraper.py`), in parallel |
+| `pipeline/normalize.py` | Game/format vocabulary, `_normalize_game` and the per-event shape check |
+| `pipeline/reconcile.py` | `event_key`, `merge_events`, source protection (`suspect_zero`), locator dedup and name-variant detection. Pure, with no I/O |
+| `pipeline/repository.py` | Load and save `events.json`, the stats file, the run log and the `data/*.json` maps (retired stores, renames) |
+| `pipeline/health.py` | Validation report, `build_stats` anomalies and console health output |
+
+The JSON-backed `repository` is the seam the Postgres move will replace (#98).
+
 ### 1a. Scraper discovery
 
 `aggregator.py` auto-discovers every `*.py` file in `scrapers/` (except
