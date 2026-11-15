@@ -15,6 +15,7 @@ No network requests and no file reads on import.
 """
 
 import json
+import logging
 import pathlib
 import re
 import time
@@ -26,6 +27,8 @@ import requests
 
 from shared.scraper_keywords import extract_best_of, extract_format_for_event
 from shared.store_matching import load_existing_stores, match_existing_store, normalize_name
+
+logger = logging.getLogger(__name__)
 
 TZ = ZoneInfo("Europe/Madrid")
 
@@ -151,6 +154,12 @@ class StoreResolver:
             # Same brand, different branch ("Júpiter Juegos" in Alcobendas vs
             # our Calle de la Cruz store): keep it separate, and make sure it
             # cannot collide with the known store's name.
+            logger.warning(
+                "%s:%s '%s' matches '%s' but postcode %s != %s — treated as another "
+                "branch. If STORE_META's address is outdated, fix it in public/config.js.",
+                source, external_id, own, target, _postcode(address),
+                _postcode(self.address_of.get(target, "")),
+            )
             if normalize_name(own) == normalize_name(target):
                 return f"{own} ({_postcode(address)})"
         return own

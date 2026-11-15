@@ -9,6 +9,7 @@ from aggregator import (
     CorruptEventsFile,
     _shape_drop_reason,
     append_source_runs,
+    apply_store_renames,
     drop_retired_stores,
     build_stats,
     find_suspect_zero_sources,
@@ -156,6 +157,13 @@ class RetiredAndRunLogTests(unittest.TestCase):
             path.write_text('{"_comment": "x", "Gone": "dup"}', encoding="utf-8")
             events = [_event("Gone", "A", NOW), _event("Kept", "B", NOW)]
             self.assertEqual([e["store"] for e in drop_retired_stores(events, path)], ["Kept"])
+
+    def test_store_renames_apply_to_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "renames.json"
+            path.write_text('{"_comment": "x", "Itaca (28015)": "Ítaca"}', encoding="utf-8")
+            events = [_event("Itaca (28015)", "A", NOW), _event("Other", "B", NOW)]
+            self.assertEqual([e["store"] for e in apply_store_renames(events, path)], ["Ítaca", "Other"])
 
     def test_source_runs_appends_one_line_per_source(self):
         with tempfile.TemporaryDirectory() as tmp:

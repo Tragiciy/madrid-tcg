@@ -69,11 +69,11 @@ var STORE_META = {
     website: 'https://threestonesgames.com/',
   },
   'Ítaca': {
-    address: 'Calle del Pez, 20, 28004 Madrid',
+    address: 'Calle Blasco de Garay, 15, Local 1, 28015 Madrid',
     notes: 'Malasaña',
   },
   'Kamikaze Freak Shop': {
-    address: 'Calle Ponferrada, entre el 11 y el 15, 28039 Madrid',
+    address: 'Calle Ponferrada, 11, 28029 Madrid',
     website: 'https://kamikazefreakshop.es/',
   },
   'Metamorfo': {
@@ -81,7 +81,7 @@ var STORE_META = {
     website: 'https://metamorfo.es/',
   },
   'Panda Games': {
-    address: 'Paseo de la Castellana 194, 28046 Madrid',
+    address: 'CC X-Madrid, planta alta, Calle Oslo, 53, 28922 Alcorcón',
     website: 'https://pandagames.es/',
   },
   'The Big Bang Games': {
@@ -89,6 +89,7 @@ var STORE_META = {
     website: 'https://www.thebigbanggames.com/',
   },
   'Collectorage': {
+    address: 'Calle Hernani, 19, 28020 Madrid',
     website: 'https://collectorage.com/',
   },
   'TopDeck': {
@@ -97,11 +98,11 @@ var STORE_META = {
     notes: 'Barrio de Prosperidad, near Avenida de América',
   },
   'Padis': {
-    address: 'Calle del Maestro Ángel Llorca, 6, 28003 Madrid',
+    address: 'Calle Blasco de Garay, 36, 28015 Madrid',
     website: 'https://www.padis-store.com/',
   },
   'MADAKIBA': {
-    address: 'Calle de Relatores, 14, 28012 Madrid',
+    address: 'Calle Afrodita, 5, Local 7, 28342 Valdemoro',
     website: 'https://madakiba.com/',
   },
   'Goblintrader Central': {
@@ -109,7 +110,7 @@ var STORE_META = {
     website: 'https://www.goblintrader.es/',
   },
   'Gladius Games': {
-    address: 'Calle Cánovas del Castillo 5, Alcalá de Henares',
+    address: 'Calle Cánovas del Castillo, 5, Local 6, 28807 Alcalá de Henares',
     website: 'https://gladiusgames.net/',
   },
   'Mundicomics': {
