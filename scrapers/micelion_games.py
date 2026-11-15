@@ -171,7 +171,7 @@ def scrape() -> list[dict]:
         raw_events: list[dict] = response.json()
     except Exception as exc:
         logger.error("%s: listing fetch failed: %s", STORE, exc)
-        return []
+        raise
 
     events = []
     for raw in raw_events:

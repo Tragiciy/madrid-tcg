@@ -160,17 +160,16 @@ def scrape() -> list[dict]:
         resp.raise_for_status()
     except Exception as exc:
         logger.error("%s: request failed: %s", STORE, exc)
-        return []
+        raise
 
     try:
         items = resp.json()
     except Exception as exc:
         logger.error("%s: JSON decode failed: %s", STORE, exc)
-        return []
+        raise
 
     if not isinstance(items, list):
-        logger.error("%s: unexpected response type %s", STORE, type(items).__name__)
-        return []
+        raise RuntimeError(f"{STORE}: unexpected response type {type(items).__name__}")
 
     for raw in items:
         try:

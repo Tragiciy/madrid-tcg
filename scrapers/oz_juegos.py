@@ -202,7 +202,7 @@ def scrape() -> list[dict]:
         products = _fetch_products()
     except Exception as exc:
         logger.error("%s: event product fetch failed: %s", STORE, exc)
-        return []
+        raise
 
     events: list[dict] = []
     for product in products:

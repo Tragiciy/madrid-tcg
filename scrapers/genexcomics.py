@@ -233,7 +233,7 @@ def scrape() -> list[dict]:
         links = _collect_event_links()
     except Exception as exc:
         logger.error("%s: event listing fetch failed: %s", STORE, exc)
-        return []
+        raise
 
     events: list[dict] = []
     for url in links:

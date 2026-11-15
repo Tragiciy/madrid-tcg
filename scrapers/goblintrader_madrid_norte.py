@@ -172,7 +172,7 @@ def scrape() -> list[dict]:
         resp.raise_for_status()
     except Exception as exc:
         logger.error("%s: request failed: %s", STORE, exc)
-        return []
+        raise
 
     soup = BeautifulSoup(resp.text, "html.parser")
     event_nodes = soup.select(".caja_evento")
