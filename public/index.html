@@ -437,20 +437,20 @@
       </div>
     </div>
 
-    <div class="panel-store" x-show="selectedEvent?.store && storeMeta(selectedEvent?.store)">
+    <div class="panel-store" x-show="selectedEvent?.store && storeAddress(selectedEvent)">
       <h3>Location</h3>
       <div class="store-name" x-text="selectedEvent?.store"></div>
       <div class="store-address">
         <span class="store-address-indicator">@</span>
-        <span x-text="storeMeta(selectedEvent?.store)?.address"></span>
+        <span x-text="storeAddress(selectedEvent)"></span>
       </div>
       <div class="store-links">
         <a class="btn btn-primary"
-           :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeMeta(selectedEvent?.store)?.address || selectedEvent?.store)"
+           :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeAddress(selectedEvent) || selectedEvent?.store)"
            target="_blank"
            rel="noopener"
            @click.stop
-           x-show="storeMeta(selectedEvent?.store)?.address || selectedEvent?.store">Open in Maps</a>
+           x-show="storeAddress(selectedEvent) || selectedEvent?.store">Open in Maps</a>
       </div>
     </div>
   </div>
