@@ -178,6 +178,10 @@ function renderAlerts(s) {
       const prev = st.previous_raw ?? '?';
       lines.push(`<div class="alert-warn">&#8595; <strong>${esc(storeName)}</strong> — sharp drop in events: ${st.raw_this_run} this run vs ${prev} previous</div>`);
     }
+    if (st.anomaly === 'stale') {
+      const since = st.last_seen_at ? st.last_seen_at.slice(0, 10) : 'unknown';
+      lines.push(`<div class="alert-warn">&#8987; <strong>${esc(storeName)}</strong> — no events from the scraper since ${esc(since)}</div>`);
+    }
     if (st.anomaly === 'suspect_zero') {
       lines.push(`<div class="alert-warn">&#8856; <strong>${esc(storeName)}</strong> — scraper returned 0 events while ${st.active} active events exist; existing events kept</div>`);
     }

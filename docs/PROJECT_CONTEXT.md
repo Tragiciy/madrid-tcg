@@ -152,6 +152,19 @@ python -m scrapers.<name>    # run a single scraper in isolation
 python aggregator.py          # full pipeline (all scrapers + merge + stats)
 ```
 
+`aggregator.py` runs every scraper in its own subprocess through
+`python -m tools.run_scraper <module> <out.json>`. Up to `SCRAPER_WORKERS`
+(default 6) run in parallel, each with a `SCRAPER_TIMEOUT_S` (default 120 s)
+wall-clock limit. Both are overridable through environment variables. A
+timeout, a hard crash or a missing result counts as a failed scraper, so that
+store's events are preserved. For a scraper that timed out or crashed, the
+store name is read from the `STORE = "..."` literal in its source file.
+
+`build_stats` also flags `"stale"`: the scraper returned 0 events, it did not
+error, and the store's newest `last_seen_at` is `STALE_AFTER_DAYS` (14) or more
+days old. No events are protected by this flag (none are left upcoming). It
+only raises an alert.
+
 ---
 
 ## 1f. Store expansion workflow (audit → targets → scrapers)
@@ -264,11 +277,21 @@ Cloudflare Pages serves `public/` directly as static files at
 environment variables. A push to `main` triggers an automatic redeploy.
 
 `aggregator.py` runs in GitHub Actions on a cron schedule defined in
-`.github/workflows/update.yml` — daily at 06:00 UTC (08:00 Madrid summer,
-07:00 Madrid winter). The workflow runs `python aggregator.py`, then commits
-any changes to `public/events.json` and `public/events_stats.json` back to
-`main`, which in turn triggers a Cloudflare Pages redeploy. The workflow also
-supports `workflow_dispatch` for manual runs.
+`.github/workflows/update.yml`. It is scheduled daily at 04:37 UTC (05:37 Madrid
+winter, 06:37 summer). The minute is off the hour on purpose: GitHub delays
+top-of-hour cron jobs. A `concurrency` group stops runs from overlapping.
+
+The workflow runs these steps:
+1. `python -m unittest discover -s tests`.
+2. `python aggregator.py`.
+3. Commit any changes to `public/events.json` and `public/events_stats.json`
+   back to `main`. The push triggers a Cloudflare Pages redeploy.
+4. `python -m tools.sync_health_issues`. This opens or updates one GitHub issue
+   (label `scraper-health`, title `[health] <store>`) per store that failed,
+   is `suspect_zero` or `stale`, or has never produced an event. It closes the
+   issue when the store recovers.
+
+The workflow also supports `workflow_dispatch` for manual runs.
 
 ---
 

@@ -87,6 +87,22 @@ class SuspectZeroTests(unittest.TestCase):
         self.assertEqual(stats["scrapers"]["scrapers.alpha"]["anomaly"], "suspect_zero")
 
 
+class StaleStoreTests(unittest.TestCase):
+    def _stats(self, last_seen):
+        events = [_event("Gone", "Weekly", "2026-09-01T19:00:00+02:00",
+                         is_active=False, last_seen_at=last_seen)]
+        return build_stats(events, {"scrapers.gone": _scraper_stats("Gone", 0)}, [], NOW)
+
+    def test_long_silent_store_is_stale(self):
+        row = self._stats("2026-10-01T07:00:00+02:00")["by_store"]["Gone"]
+        self.assertEqual(row["anomaly"], "stale")
+        self.assertEqual(row["last_seen_at"], "2026-10-01T07:00:00+02:00")
+
+    def test_recently_seen_store_is_not_stale(self):
+        row = self._stats("2026-11-10T07:00:00+01:00")["by_store"]["Gone"]
+        self.assertIsNone(row["anomaly"])
+
+
 class PersistenceSafetyTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
