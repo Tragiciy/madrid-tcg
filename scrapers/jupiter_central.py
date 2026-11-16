@@ -1,7 +1,18 @@
 """
-Jupiter Juegos (Madrid) — https://www.jupiterjuegos.com/tiendas/?tienda=jupiter-madrid
+Júpiter Central (Calle Manuel Silvela 8, Madrid) — https://jupiterjuegos.com/tiendas/madrid/
+
+The chain calls this branch "Júpiter Madrid"; it is the store the official
+locators list as "Júpiter Central", so its events share that name and the
+store's own listing absorbs the locator copies. (Until 2026-11 this
+scraper was labelled "Jupiter Juegos" with a wrong Calle de la Cruz address
+— the chain has no branch there; history renamed via data/store_renames.json.)
 
 The store page renders a static monthly calendar grid, no JS required.
+
+Since mid-2026 each branch has its own path (/tiendas/<slug>/). The old
+`/tiendas/?tienda=jupiter-madrid` URL now serves the branch index with no
+calendar, which is why the scraper silently returned 0 events from July
+2026. A page without a calendar now raises instead of returning [].
 
 Each calendar cell in the rendered HTML follows the shape:
 
@@ -22,7 +33,7 @@ Strategy:
 - Month/year come from a header div ("Abril 2026").
 - We rotate the year/month when day numbers reset (30 → 1 indicates a
   month boundary).
-- Pagination via `?fecha=01-MM-YYYY`. We pull the current month plus the
+- Pagination via `/tiendas/madrid/?fecha=01-MM-YYYY`. We pull the current month plus the
   next two so the ~90-day horizon matches other scrapers.
 
 No Playwright. No price extraction. Output schema matches existing
@@ -44,11 +55,10 @@ from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, e
 
 logger = logging.getLogger(__name__)
 
-STORE = "Jupiter Juegos"
+STORE = "Júpiter Central"
 LANGUAGE = "es"
 TZ = ZoneInfo("Europe/Madrid")
-BASE_URL = "https://www.jupiterjuegos.com/tiendas/"
-TIENDA_PARAM = "jupiter-madrid"
+BASE_URL = "https://jupiterjuegos.com/tiendas/madrid/"
 EXTRA_MONTHS = 2  # current month + 2 → ~90 days, matches the other scrapers
 
 # Spanish month name → number, used to parse the page header.
@@ -195,28 +205,28 @@ def _parse_event_anchor(a, day_iso: str, scraped_at: str) -> Optional[dict]:
     }
 
 
-def _fetch_month(year: int, month: int) -> Optional[BeautifulSoup]:
-    """Fetch the calendar page for a given month. Returns parsed soup or None."""
+def _fetch_month(year: int, month: int) -> BeautifulSoup:
+    """Fetch the calendar page for a given month. Raises on any failure."""
     fecha = f"01-{month:02d}-{year:04d}"
-    try:
-        resp = requests.get(
-            BASE_URL,
-            params={"tienda": TIENDA_PARAM, "fecha": fecha},
-            headers=HEADERS,
-            timeout=10,
-        )
-    except Exception as exc:
-        logger.error("%s: request failed for %s: %s", STORE, fecha, exc)
-        return None
-    if resp.status_code != 200:
-        logger.error("%s: HTTP %d for fecha=%s", STORE, resp.status_code, fecha)
-        return None
+    resp = requests.get(
+        BASE_URL,
+        params={"fecha": fecha},
+        headers=HEADERS,
+        timeout=20,
+    )
+    resp.raise_for_status()
     return BeautifulSoup(resp.text, "html.parser")
 
 
 def _events_for_month(soup: BeautifulSoup, fallback_year: int, fallback_month: int,
                       scraped_at: str) -> list:
-    """Return a list of parsed event dicts for the given month soup."""
+    """Return a list of parsed event dicts for the given month soup.
+
+    Raises ValueError when the page has no calendar grid: that means the
+    site changed again, and must not be reported as "no events".
+    """
+    if not soup.select(".calendario_igualar_alturas"):
+        raise ValueError(f"{STORE}: no calendar grid on page (site structure changed?)")
     header = _parse_header_month(soup)
     if header is None:
         header_year, header_month = fallback_year, fallback_month
@@ -259,8 +269,6 @@ def scrape() -> list:
     all_events: list = []
     for year, month in months_to_fetch:
         soup = _fetch_month(year, month)
-        if soup is None:
-            continue
         evs = _events_for_month(soup, year, month, scraped_at)
         logger.info("%s: %04d-%02d → %d events", STORE, year, month, len(evs))
         all_events.extend(evs)

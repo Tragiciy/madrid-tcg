@@ -73,7 +73,7 @@
       "lat": null,
       "lng": null,
       "website": "https://asediogaming.com/",
-      "notes": null,
+      "notes": "Online shop deactivated (Shopify 402, 2026-11); no event source.",
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
@@ -374,16 +374,16 @@
       }
     },
     {
-      "id": "goblintrader-central",
-      "name": "Goblintrader Central",
+      "id": "goblintrader-central-fuenlabrada",
+      "name": "Goblintrader Central (Fuenlabrada)",
       "city": "madrid",
-      "address": "Calle de la Montera, 12, 28013 Madrid",
+      "address": "Calle Almanzor, 10, Fuenlabrada",
       "lat": null,
       "lng": null,
-      "website": "https://www.goblintrader.es/",
+      "website": "https://goblintrader.es/gb/content/9-central",
       "notes": null,
       "origin": "curated",
-      "added_at": "2026-11-15",
+      "added_at": "2026-11-16",
       "aliases": {
         "names": [],
         "external": []
@@ -402,6 +402,24 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [],
+        "external": []
+      }
+    },
+    {
+      "id": "goblintrader-madrid-sur",
+      "name": "Goblintrader Madrid Sur",
+      "city": "madrid",
+      "address": "Ronda de Toledo, 28, 28005 Madrid",
+      "lat": null,
+      "lng": null,
+      "website": "https://goblintrader.es/gb/content/12-madrid",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Goblintrader Central"
+        ],
         "external": []
       }
     },
@@ -476,9 +494,9 @@
       "address": "C / Manuel Silvela, 8 , Madrid, M, 28010, Spain",
       "lat": 40.42928,
       "lng": -3.6985,
-      "website": null,
+      "website": "https://jupiterjuegos.com/tiendas/madrid/",
       "notes": null,
-      "origin": "auto",
+      "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
@@ -490,22 +508,6 @@
           "ravensburger:2711",
           "wizards:8420"
         ]
-      }
-    },
-    {
-      "id": "jupiter-juegos",
-      "name": "Jupiter Juegos",
-      "city": "madrid",
-      "address": "Calle de la Cruz, 10, 28012 Madrid",
-      "lat": null,
-      "lng": null,
-      "website": null,
-      "notes": "Sol / Gran Vía area",
-      "origin": "curated",
-      "added_at": "2026-11-15",
-      "aliases": {
-        "names": [],
-        "external": []
       }
     },
     {

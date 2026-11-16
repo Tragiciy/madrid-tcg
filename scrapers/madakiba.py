@@ -1,21 +1,33 @@
 """
 MADAKIBA — https://madakiba.com/es/c/eventos
 
-Custom e-commerce platform. Events are product cards at /es/c/eventos.
-Dates and times are embedded in product titles:
-  "TORNEO JONIN NARUTO TCG 23.05 A LAS 17H"
-  "PRESENTACION POKEMON TCG ... 24.05 A LAS 11H"
+Custom e-commerce platform. Events are product cards at /es/c/eventos. The
+card's <h3> text is truncated ("... 21.11 A..."), so the full title is read
+from the card image's alt text.
 
-Date format: DD.MM (day.month, current year inferred).
-Time format: "A LAS HH:MM" or "A LAS HHH" (e.g. "17H" → 17:00).
-Products without a numeric date are skipped (e.g. "CALENDARIO MAYO 2026").
+Two kinds of event product:
+
+  * One-off events, with the date in the title:
+      "ONE PIECE CARD GAME OP18 PRERELEASE 21.11 A LAS 12H"
+    Date is DD.MM (year inferred), time "A LAS HH[:MM]H".
+
+  * Standing weekly leagues, with no date (since late 2026 these are the
+    bulk of the page):
+      "POKEMON LIGA DOMINGOS DE 10:30H A 14H"
+    Expanded into the next RECURRING_WEEKS weeks, with an end time, except
+    for games in NO_PROJECTION_GAMES.
+
+Everything else ("CALENDARIO EVENTOS OCTUBRE 2026", an image only, booster
+boxes) is skipped. Events whose game is not a tracked TCG (e.g. Dragon Ball
+Fusion World) are skipped too: an unknown-game event would swallow a locator
+event in the aggregator's dedup.
 """
 
 import json
 import logging
 import re
 import sys
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -25,22 +37,18 @@ from bs4 import BeautifulSoup
 
 try:
     from shared.scraper_keywords import (
-        FORMAT_KEYWORDS,
         GAME_KEYWORDS,
-        extract_format_from_keywords,
-        extract_game_from_keywords,
-        extract_format_for_event,
         extract_best_of,
+        extract_format_for_event,
+        extract_game_from_keywords,
     )
 except ModuleNotFoundError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from shared.scraper_keywords import (
-        FORMAT_KEYWORDS,
         GAME_KEYWORDS,
-        extract_format_from_keywords,
-        extract_game_from_keywords,
-        extract_format_for_event,
         extract_best_of,
+        extract_format_for_event,
+        extract_game_from_keywords,
     )
 
 logger = logging.getLogger(__name__)
@@ -48,8 +56,17 @@ logger = logging.getLogger(__name__)
 STORE = "MADAKIBA"
 LANGUAGE = "es"
 TZ = ZoneInfo("Europe/Madrid")
-PAGE_URL = "https://madakiba.com/es/c/eventos"
-DEFAULT_GAME = "Star Wars: Unlimited"
+SITE_ROOT = "https://madakiba.com"
+PAGE_URL = f"{SITE_ROOT}/es/c/eventos"
+# The store calls its own calendar "orientativo", so standing leagues are
+# only projected a few weeks ahead; each run re-reads the page.
+RECURRING_WEEKS = 4
+# Games whose standing league is not projected: the official locator already
+# lists every session with its real name and format (MADAKIBA's Friday Magic
+# league is the Wizards locator's "Friday Night Magic COMMANDER"), and a
+# projected copy would replace it in the aggregator's dedup. Dated one-off
+# products are still read for every game.
+NO_PROJECTION_GAMES = {"Magic: The Gathering"}
 
 HEADERS = {
     "User-Agent": "MadridTCGEventsBot/1.0 (+https://github.com/Tragiciy/madrid-tcg)",
@@ -57,113 +74,128 @@ HEADERS = {
     "Accept-Language": "es-ES,es;q=0.9",
 }
 
-# "23.05" → day=23, month=5
-_DATE_RE = re.compile(r'\b(\d{1,2})\.(\d{2})\b')
-# "A LAS 17:30" or "A LAS 17H" or "DE 17H"
-_TIME_RE = re.compile(r'(?:A\s+LAS|DE)\s+(\d{1,2})(?::(\d{2}))?H?', re.IGNORECASE)
+# "21.11" → day=21, month=11
+_DATE_RE = re.compile(r"\b(\d{1,2})\.(\d{2})\b")
+# "A LAS 17:30H", "A LAS 17H"
+_TIME_RE = re.compile(r"A\s+LAS\s+(\d{1,2})(?::(\d{2}))?\s*H?", re.IGNORECASE)
+
+_WEEKDAYS = {
+    "lunes": 0, "martes": 1, "miercoles": 2, "miércoles": 2, "jueves": 3,
+    "viernes": 4, "sabados": 5, "sábados": 5, "sabado": 5, "sábado": 5,
+    "domingos": 6, "domingo": 6,
+}
+_DAY_ALT = "|".join(sorted(_WEEKDAYS, key=len, reverse=True))
+# "LIGA DOMINGOS DE 10:30H A 14H", "LIGA SABADOS DE 17H A 20H"
+_LEAGUE_RE = re.compile(
+    rf"\bLIGA\s+({_DAY_ALT})\s+DE\s+(\d{{1,2}})(?::(\d{{2}}))?\s*H?"
+    rf"\s+A\s+(\d{{1,2}})(?::(\d{{2}}))?\s*H\b",
+    re.IGNORECASE,
+)
 
 
-def _extract_game(text: str) -> Optional[str]:
-    return extract_game_from_keywords(text, GAME_KEYWORDS) or DEFAULT_GAME
+def _card_title(product_el) -> str:
+    img = product_el.select_one("img[alt]")
+    if img and img.get("alt", "").strip():
+        return img["alt"].strip()
+    title_el = product_el.select_one("h3, h2, .product-title")
+    return title_el.get_text(" ", strip=True) if title_el else ""
 
 
-def _parse_datetime(title: str) -> Optional[str]:
+def _card_url(product_el) -> Optional[str]:
+    link = product_el.select_one("a[href*='/p/']")
+    if not link:
+        return None
+    href = link["href"]
+    return href if href.startswith("http") else SITE_ROOT + href
+
+
+def _one_off_start(title: str, now: datetime) -> Optional[datetime]:
     date_m = _DATE_RE.search(title)
     if not date_m:
         return None
-
     day, month = int(date_m.group(1)), int(date_m.group(2))
-    now = datetime.now(tz=TZ)
-    year = now.year
-
     time_m = _TIME_RE.search(title)
     hour = int(time_m.group(1)) if time_m else 12
     minute = int(time_m.group(2)) if (time_m and time_m.group(2)) else 0
-
     try:
-        dt = datetime(year, month, day, hour, minute, tzinfo=TZ)
+        dt = datetime(now.year, month, day, hour, minute, tzinfo=TZ)
         if dt.date() < now.date():
-            dt = datetime(year + 1, month, day, hour, minute, tzinfo=TZ)
-        return dt.isoformat()
+            dt = dt.replace(year=now.year + 1)
     except ValueError:
         return None
+    return dt
 
 
-def _parse_event(product_el, scraped_at: str) -> Optional[dict]:
-    # The title link has text; the image link has empty text — pick the one with content
-    link = None
-    for a in product_el.find_all("a", href=True):
-        if a.get("href", "").startswith("/es/p/") and a.get_text(strip=True):
-            link = a
-            break
-    if not link:
-        # Fallback: any /es/p/ link (img link), grab title from h3/h2
-        link = product_el.select_one("a[href^='/es/p/']")
-    if not link:
-        return None
-
-    title_el = product_el.select_one("h3, h2, .product-title")
-    title = (title_el.get_text(strip=True) if title_el else link.get_text(strip=True)).strip()
-    href = link.get("href", "")
-    if href and not href.startswith("http"):
-        href = "https://madakiba.com" + href
-
-    if not title:
-        return None
-
-    datetime_start = _parse_datetime(title)
-    if not datetime_start:
-        return None
-
-    game = _extract_game(title)
-    fmt, fmt_official = extract_format_for_event(title=title, game=game)
-
-    return {
-        "store": STORE,
-        "game": game,
-        "format": fmt,
-        "format_official": fmt_official,
-        "best_of": extract_best_of(title),
-        "title": title,
-        "datetime_start": datetime_start,
-        "datetime_end": None,
-        "language": LANGUAGE,
-        "source_url": href or PAGE_URL,
-        "scraped_at": scraped_at,
-    }
+def _league_slots(title: str, today: date) -> list[tuple[datetime, datetime]]:
+    m = _LEAGUE_RE.search(title)
+    if not m:
+        return []
+    weekday = _WEEKDAYS[m.group(1).lower()]
+    sh, sm = int(m.group(2)), int(m.group(3) or 0)
+    eh, em = int(m.group(4)), int(m.group(5) or 0)
+    first = today + timedelta(days=(weekday - today.weekday()) % 7)
+    slots = []
+    for week in range(RECURRING_WEEKS):
+        d = first + timedelta(weeks=week)
+        start = datetime(d.year, d.month, d.day, sh, sm, tzinfo=TZ)
+        end = datetime(d.year, d.month, d.day, eh, em, tzinfo=TZ)
+        slots.append((start, end))
+    return slots
 
 
-def scrape() -> list[dict]:
-    scraped_at = datetime.now(tz=TZ).isoformat()
-    events: list[dict] = []
-
-    try:
-        resp = requests.get(PAGE_URL, headers=HEADERS, timeout=10)
-        resp.raise_for_status()
-    except Exception as exc:
-        logger.error("%s: request failed: %s", STORE, exc)
-        raise
-
-    soup = BeautifulSoup(resp.text, "html.parser")
+def parse_page(html: str, now: datetime) -> list[dict]:
+    soup = BeautifulSoup(html, "html.parser")
     products = soup.select("div.product")
     logger.info("%s: found %d product cards", STORE, len(products))
+    scraped_at = now.isoformat()
 
+    events: list[dict] = []
     for product in products:
-        try:
-            parsed = _parse_event(product, scraped_at)
-            if parsed:
-                events.append(parsed)
-        except Exception as exc:
-            logger.warning("%s: skipping product: %s", STORE, exc)
+        title = _card_title(product)
+        if not title:
+            continue
+        game = extract_game_from_keywords(title, GAME_KEYWORDS)
+        if not game:
+            logger.debug("%s: skipping non-TCG product %r", STORE, title)
+            continue
+        slots = _league_slots(title, now.date())
+        if slots and game in NO_PROJECTION_GAMES:
+            logger.debug("%s: league %r left to the official locator", STORE, title)
+            continue
+        if not slots:
+            start = _one_off_start(title, now)
+            slots = [(start, None)] if start else []
+        if not slots:
+            continue
+        fmt, fmt_official = extract_format_for_event(title=title, game=game)
+        url = _card_url(product) or PAGE_URL
+        for start, end in slots:
+            events.append({
+                "store": STORE,
+                "game": game,
+                "format": fmt,
+                "format_official": fmt_official,
+                "best_of": extract_best_of(title),
+                "title": title,
+                "datetime_start": start.isoformat(),
+                "datetime_end": end.isoformat() if end else None,
+                "language": LANGUAGE,
+                "source_url": url,
+                "scraped_at": scraped_at,
+            })
 
     seen: dict = {}
     for ev in events:
-        key = (ev["title"], ev["datetime_start"], ev["store"])
-        seen.setdefault(key, ev)
-    deduped = list(seen.values())
-    deduped.sort(key=lambda e: e["datetime_start"])
-    logger.info("%s: total events returned: %d", STORE, len(deduped))
-    return deduped
+        seen.setdefault((ev["title"], ev["datetime_start"]), ev)
+    return sorted(seen.values(), key=lambda e: e["datetime_start"])
+
+
+def scrape() -> list[dict]:
+    resp = requests.get(PAGE_URL, headers=HEADERS, timeout=15)
+    resp.raise_for_status()
+    events = parse_page(resp.text, datetime.now(tz=TZ))
+    logger.info("%s: total events returned: %d", STORE, len(events))
+    return events
 
 
 if __name__ == "__main__":
