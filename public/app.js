@@ -293,7 +293,9 @@ function readMadridNow() {
 
 // Static read API (docs/api-v1.md). upcoming.json covers the previous week
 // to four weeks ahead; other weeks are fetched when the user navigates there.
-const API_BASE = 'api/v1/madrid';
+// Absolute, so the app also works when served as the offline fallback for
+// another path (the service worker returns the cached shell for any page).
+const API_BASE = '/api/v1/madrid';
 
 // ISO-8601 week id ("2026-W47") of a local-midnight Date.
 function isoWeekOf(d) {
@@ -1007,7 +1009,10 @@ function app() {
     availableOptions(field) {
       const values = new Set();
       for (const e of this.events) {
-        if (this.eventMatches(e, { ignore: field, includeWeek: true, ignoreFavorites: true })) {
+        // Location is a view filter, not a facet: options (and the cleanup of
+        // selected values, which uses this list) ignore it, so turning "Near
+        // me" on never silently drops the user's game/format selections.
+        if (this.eventMatches(e, { ignore: field, includeWeek: true, ignoreFavorites: true, ignoreNearMe: true })) {
           values.add(this.valueFor(field, e));
         }
       }
@@ -1193,7 +1198,7 @@ function app() {
       const s = this.filters.search.toLowerCase().trim();
       if (s && !e.title.toLowerCase().includes(s)) return false;
       if (this.showFavoritesOnly && !opts.ignoreFavorites && !this.isFavorite(e)) return false;
-      if (this.nearMe && this.radiusKm) {
+      if (this.nearMe && this.radiusKm && !opts.ignoreNearMe) {
         const km = this.storeDistanceKm(e.store);
         if (km === null || km > this.radiusKm) return false;
       }

@@ -535,6 +535,25 @@ Key things to note:
   `tcg-*` caches are deleted on activate.
 - **Offline banner:** `offline` tracks `navigator.onLine`, and the banner tells
   the user they are seeing saved data.
+- **Network fallback:** the cache also answers on a 5xx, or when a cached copy
+  exists and the network takes more than 4 s. Only successful responses are
+  cached. Alpine is loaded with SRI and `crossorigin`, so the worker never
+  stores an opaque or error response from the CDN.
+- **Absolute URLs:** the shell uses absolute URLs (`/app.js`,
+  `/api/v1/...`), so offline it also works as the fallback for any page that
+  was never visited.
+- **Kill switch:** deleting `sw.js` does not remove an installed worker, because
+  browsers keep the old one when the update check gets a 404. To retire it,
+  deploy `/sw.js` with this content and remove the `register()` call from
+  `app.js`:
+  ```js
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', (e) => e.waitUntil((async () => {
+    for (const k of await caches.keys()) if (k.startsWith('tcg-')) await caches.delete(k);
+    await self.registration.unregister();
+    for (const c of await self.clients.matchAll()) c.navigate(c.url);
+  })()));
+  ```
 
 ### Near me
 
