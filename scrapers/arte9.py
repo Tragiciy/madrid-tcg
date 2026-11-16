@@ -476,22 +476,44 @@ def _parse_event(raw: dict, scraped_at: str) -> Optional[dict]:
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
+# arte9.com sometimes answers slowly from CI (a page takes ~10 s, and an
+# occasional read times out at 20 s). Retry transient failures with backoff
+# before giving up; a final failure still raises (events stay protected).
+RETRIES = 2
+TIMEOUT_S = 40
+
+
+def _get_page(page: int):
+    for attempt in range(RETRIES + 1):
+        try:
+            resp = requests.get(
+                API_URL,
+                params={"per_page": PER_PAGE, "page": page},
+                headers=HEADERS,
+                timeout=TIMEOUT_S,
+            )
+            if resp.status_code < 500:
+                return resp
+            error: Exception = RuntimeError(f"HTTP {resp.status_code}")
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            error = exc
+        if attempt == RETRIES:
+            logger.error("%s: request failed (page %d) after %d attempts: %s",
+                         STORE, page, RETRIES + 1, error)
+            raise error
+        wait = 5 * (attempt + 1)
+        logger.warning("%s: page %d attempt %d failed (%s); retrying in %ds",
+                       STORE, page, attempt + 1, error, wait)
+        time.sleep(wait)
+
+
 def scrape() -> list[dict]:
     scraped_at = datetime.now(tz=TZ).isoformat()
     events: list[dict] = []
 
     page = 1
     while page <= MAX_PAGES:
-        try:
-            resp = requests.get(
-                API_URL,
-                params={"per_page": PER_PAGE, "page": page},
-                headers=HEADERS,
-                timeout=20,
-            )
-        except Exception as exc:
-            logger.error("%s: request failed (page %d): %s", STORE, page, exc)
-            raise
+        resp = _get_page(page)
         if resp.status_code == 400 and page > 1:
             # Tribe returns 400 once you walk past the last page.
             break
