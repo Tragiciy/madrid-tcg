@@ -4,6 +4,9 @@ const PRESETS_STORAGE_KEY = 'tcg-presets-v1';
 const DEFAULT_PRESET_STORAGE_KEY = 'tcg-default-preset-v1';
 const ONBOARDING_STORAGE_KEY = 'tcg-onboarding-v1';
 const FAVORITES_STORAGE_KEY = 'tcg-favorites-v1';
+// favorite key → ISO week of its event, so favorites of deleted events can
+// be pruned once their week is loaded (events load per week).
+const FAVORITE_WEEKS_STORAGE_KEY = 'tcg-favorite-weeks-v1';
 
 // Returns YYYY-MM-DD string for a Date object, in local time
 function isoDay(d) {
@@ -194,7 +197,7 @@ function downloadIcs(e) {
 
 // Address for an event's store. The locator-supplied address comes first:
 // it is the venue of that very event (chains have several branches), then
-// the store registry (STORE_META, loaded from stores.json).
+// the store registry (STORE_META, loaded from api/v1/madrid/stores.json).
 function storeAddress(e) {
   if (!e) return '';
   return e.store_address
@@ -205,6 +208,7 @@ function storeAddress(e) {
 // Stable event identity. Mirrors aggregator.event_key() exactly, which is
 // unique across events.json by construction (merge is keyed on it).
 function eventKey(e) {
+  if (e.id) return e.id;  // provided by the API (same algorithm as below)
   const store = e.store || '';
   const sid = e.source_event_id;
   // Namespaced ids ("wizards:123") are globally unique: no store prefix, so a
@@ -269,6 +273,25 @@ function readMadridNow() {
   };
 }
 
+// Static read API (docs/api-v1.md). upcoming.json covers the previous week
+// to four weeks ahead; other weeks are fetched when the user navigates there.
+const API_BASE = 'api/v1/madrid';
+
+// ISO-8601 week id ("2026-W47") of a local-midnight Date.
+function isoWeekOf(d) {
+  const t = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  t.setDate(t.getDate() + 3 - ((t.getDay() + 6) % 7));       // Thursday of this week
+  const jan4 = new Date(t.getFullYear(), 0, 4);
+  const week = 1 + Math.round(((t - jan4) / 86400000 - 3 + ((jan4.getDay() + 6) % 7)) / 7);
+  return `${t.getFullYear()}-W${String(week).padStart(2, '0')}`;
+}
+
+// Week id of an ISO datetime string, by its Madrid calendar date.
+function weekOfIso(iso) {
+  const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+  return isoWeekOf(new Date(y, m - 1, d));
+}
+
 // Today's calendar date in Madrid as a local-midnight Date, so week maths
 // matches the Madrid dates in events.json for visitors in any timezone.
 function madridToday() {
@@ -283,6 +306,7 @@ function app() {
     loading:      true,
     loadError:    null,
     weekStart:    weekMonday(madridToday()),
+    weekIndex:    null,   // {"2026-W47": count, …} from the API index
     filters:      { search: '', game: [], store: [], format: [] },
     filterSearch: { game: '', store: '', format: '' },
     savedPresets: [],
@@ -318,6 +342,10 @@ function app() {
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
+      // Alpine 3 calls init() itself; guard against a second call (an extra
+      // x-init="init()" once ran everything — every fetch — twice).
+      if (this._initialized) return;
+      this._initialized = true;
       this.loadFavorites();
       this.loadPresets();
       this.loadDefaultPreset();
@@ -351,18 +379,22 @@ function app() {
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
       
       try {
-        // Plain fetch: Cloudflare Pages serves events.json with
+        // Plain fetches: Cloudflare Pages serves JSON with
         // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
         // every visit and gets a cheap 304 when the data hasn't changed.
-        // Must match the <link rel="preload"> in index.html to reuse it.
-        // Store details are optional: the calendar still works without them.
-        const storesReq = fetch('stores.json')
-          .then(r => (r.ok ? r.json() : {}))
-          .catch(() => ({}));
-        const res = await fetch('events.json');
+        // URLs must match the <link rel="preload"> tags in index.html.
+        // Stores and the week index are optional: the calendar works without.
+        const storesReq = fetch(`${API_BASE}/stores.json`)
+          .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
+        const indexReq = fetch(`${API_BASE}/index.json`)
+          .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
+        const res = await fetch(`${API_BASE}/events/upcoming.json`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        this.events = await res.json();
-        Object.assign(STORE_META, await storesReq);
+        const upcoming = await res.json();
+        this.events = upcoming.events;
+        this.markWeeksLoaded(upcoming.from, upcoming.to);
+        for (const s of (await storesReq).stores || []) STORE_META[s.name] = s;
+        this.weekIndex = (await indexReq).weeks || null;
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
         const hasUrlFilters = ['game', 'store', 'format'].some(f => params.get(f));
@@ -379,8 +411,19 @@ function app() {
         if (rawEventParam) {
           const decoded = decodeEventParam(rawEventParam);
           const eventKey = decoded !== null ? decoded : rawEventParam;
-          const event = this.events.find(ev => this.eventKey(ev) === eventKey)
+          const find = () => this.events.find(ev => this.eventKey(ev) === eventKey)
             || this.events.find(ev => legacyEventKey(ev) === eventKey);
+          let event = find();
+          if (!event) {
+            // Outside upcoming.json: load the event's week (from ?w=, or the
+            // date inside older keys) and look again.
+            const m = eventKey.match(/\d{4}-\d{2}-\d{2}T/);
+            const week = params.get('w') || (m ? weekOfIso(m[0]) : null);
+            if (week) {
+              await this.loadWeek(week);
+              event = find();
+            }
+          }
           if (event) this.openPanel(event);
         }
       } catch (err) {
@@ -433,13 +476,46 @@ function app() {
     },
 
     /* ── Navigation ────────────────────────────────────────────────── */
-    prevWeek() {
+    // Filters are week-scoped, so they are validated only once the week's
+    // events are loaded — otherwise a not-yet-fetched week would wipe them.
+    async prevWeek() {
       this.weekStart = addDays(this.weekStart, -7);
+      await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
     },
-    nextWeek() {
+    async nextWeek() {
       this.weekStart = addDays(this.weekStart, +7);
+      await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
+    },
+
+    // Week ids whose events are already in this.events (not reactive state).
+    markWeeksLoaded(fromIso, toIso) {
+      if (!this._loadedWeeks) this._loadedWeeks = new Set();
+      const [y, m, d] = fromIso.split('-').map(Number);
+      for (let day = new Date(y, m - 1, d); isoDay(day) < toIso; day = addDays(day, 7)) {
+        this._loadedWeeks.add(isoWeekOf(day));
+      }
+    },
+
+    // Fetch one week file and merge its events (deduplicated by id).
+    async loadWeek(week) {
+      if (!this._loadedWeeks) this._loadedWeeks = new Set();
+      if (this._loadedWeeks.has(week)) return;
+      this._loadedWeeks.add(week);
+      if (this.weekIndex && !(week in this.weekIndex)) return;  // no events that week
+      try {
+        const res = await fetch(`${API_BASE}/events/${week}.json`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const have = new Set(this.events.map(e => eventKey(e)));
+        const fresh = data.events.filter(e => !have.has(eventKey(e)));
+        if (fresh.length) this.events = this.events.concat(fresh);
+        this.cleanupFavorites();
+      } catch (err) {
+        this._loadedWeeks.delete(week);  // retry on the next visit to this week
+        console.warn('Failed to load week', week, err);
+      }
     },
     goToday() {
       this.weekStart = weekMonday(madridToday());
@@ -452,7 +528,8 @@ function app() {
 
     /* ── Faceted filter options ─────────────────────────────────────── */
     get allStores() {
-      const values = new Set();
+      // Registry stores plus any store seen in the loaded weeks.
+      const values = new Set(Object.keys(STORE_META));
       for (const e of this.events) {
         const value = this.valueFor('store', e);
         if (value) values.add(value);
@@ -536,6 +613,10 @@ function app() {
 
     loadFavorites() {
       try {
+        const weeks = JSON.parse(localStorage.getItem(FAVORITE_WEEKS_STORAGE_KEY) || '{}');
+        this._favWeeks = (weeks && typeof weeks === 'object') ? weeks : {};
+      } catch { this._favWeeks = {}; }
+      try {
         const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
         if (!raw) return;
         const parsed = JSON.parse(raw);
@@ -546,6 +627,10 @@ function app() {
 
     persistFavorites() {
       try {
+        const weeks = {};
+        for (const k of this.favorites) if (this._favWeeks && this._favWeeks[k]) weeks[k] = this._favWeeks[k];
+        this._favWeeks = weeks;
+        localStorage.setItem(FAVORITE_WEEKS_STORAGE_KEY, JSON.stringify(weeks));
         localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(this.favorites));
       } catch (err) {
         console.warn('Failed to save favorites', err);
@@ -562,6 +647,10 @@ function app() {
       const idx = this.favorites.indexOf(key);
       if (idx >= 0) this.favorites.splice(idx, 1);
       else          this.favorites.push(key);
+      if (typeof keyOrEvent !== 'string' && keyOrEvent.datetime_start) {
+        if (!this._favWeeks) this._favWeeks = {};
+        this._favWeeks[key] = weekOfIso(keyOrEvent.datetime_start);
+      }
       this.persistFavorites();
     },
 
@@ -578,10 +667,30 @@ function app() {
         if (!byLegacy.has(lk)) byLegacy.set(lk, []);
         byLegacy.get(lk).push(eventKey(e));
       }
+      // Events load per week, so a key not found may just be in a week not
+      // loaded yet. A key is dropped only when its week is known and either
+      // loaded (the event is gone) or absent from the index (no events).
+      if (!this._favWeeks) this._favWeeks = {};
+      const loadedWeeks = this._loadedWeeks || new Set();
+      const weekOfKey = (key) => {
+        if (this._favWeeks[key]) return this._favWeeks[key];
+        const m = key.match(/\d{4}-\d{2}-\d{2}T/);
+        return m ? weekOfIso(m[0]) : null;
+      };
       const next = new Set();
       for (const key of this.favorites) {
-        if (allKeys.has(key)) next.add(key);
-        else for (const k of byLegacy.get(key) || []) next.add(k);  // migrate old keys
+        if (allKeys.has(key)) { next.add(key); continue; }
+        if (byLegacy.has(key)) {                              // migrate old keys
+          for (const k of byLegacy.get(key)) next.add(k);
+          continue;
+        }
+        const week = weekOfKey(key);
+        const gone = week && (loadedWeeks.has(week) || (this.weekIndex && !(week in this.weekIndex)));
+        if (!gone) next.add(key);
+      }
+      for (const e of this.events) {                          // remember weeks
+        const k = eventKey(e);
+        if (next.has(k)) this._favWeeks[k] = weekOfIso(e.datetime_start);
       }
       const changed = next.size !== this.favorites.length
         || this.favorites.some(k => !next.has(k));
@@ -912,7 +1021,8 @@ function app() {
 
     applyFiltersFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      const valid = { game: new Set(), store: new Set(), format: new Set() };
+      // Stores: any registry store; games/formats: what the loaded weeks have.
+      const valid = { game: new Set(), store: new Set(this.allStores), format: new Set() };
       for (const e of this.events) {
         valid.game.add(this.valueFor('game', e));
         valid.store.add(this.valueFor('store', e));
@@ -1312,6 +1422,7 @@ function app() {
       if (!e) return '';
       const url = new URL(window.location.href);
       url.searchParams.set('event', encodeEventParam(this.eventKey(e)));
+      url.searchParams.set('w', weekOfIso(e.datetime_start));  // which week file has it
       return url.toString();
     },
 
@@ -1319,12 +1430,14 @@ function app() {
       if (!e) return;
       const url = new URL(window.location.href);
       url.searchParams.set('event', encodeEventParam(this.eventKey(e)));
+      url.searchParams.set('w', weekOfIso(e.datetime_start));
       history.replaceState(null, '', url.toString());
     },
 
     clearEventParam() {
       const url = new URL(window.location.href);
       url.searchParams.delete('event');
+      url.searchParams.delete('w');
       history.replaceState(null, '', url.toString());
     },
 

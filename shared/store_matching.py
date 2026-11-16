@@ -135,7 +135,7 @@ def load_existing_stores() -> list[dict]:
     """
     Load existing store references: the store registry (data/stores.json)
     first, then the legacy public/config.js STORE_META, then the store
-    names in public/events.json.
+    names in data/events.json.
     """
     registry_path = pathlib.Path("data/stores.json")
     if registry_path.exists():
@@ -157,7 +157,7 @@ def load_existing_stores() -> list[dict]:
                     s["address"] = addresses[s["name"]]
             return stores
 
-    events_path = pathlib.Path("public/events.json")
+    events_path = pathlib.Path("data/events.json")
     if events_path.exists():
         try:
             events = json.loads(events_path.read_text(encoding="utf-8"))

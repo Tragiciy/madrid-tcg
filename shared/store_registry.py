@@ -33,7 +33,6 @@ from typing import Optional
 from shared.store_matching import normalize_name
 
 REGISTRY_FILE = pathlib.Path("data/stores.json")
-PUBLIC_FILE = pathlib.Path("public/stores.json")
 DEFAULT_CITY = "madrid"
 
 
@@ -81,14 +80,6 @@ class StoreRegistry:
             "_comment": __doc__.strip().split("\n\n")[1],
             "ignore": self.ignore,
             "stores": stores,
-        }
-
-    def public_view(self) -> dict:
-        """{display name: {id, address, lat, lng, website, notes}} for the frontend."""
-        return {
-            s["name"]: {k: s.get(k) for k in ("id", "address", "lat", "lng", "website", "notes")
-                        if s.get(k) is not None}
-            for s in sorted(self.stores, key=lambda s: s["name"].lower())
         }
 
     # ── lookups ───────────────────────────────────────────────────────

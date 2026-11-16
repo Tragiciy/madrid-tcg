@@ -6,9 +6,10 @@ Describes the project as it currently exists — not as it could be.
 The project has two halves that meet at one file:
 
 1. A **Python data pipeline** (`scrapers/` + `aggregator.py`) that produces
-   `public/events.json`.
+   the full history in `data/events.json` and the static read API in
+   `public/api/v1/` (contract: `docs/api-v1.md`).
 2. A **four-file Alpine.js frontend** (`public/index.html`, `public/styles.css`,
-   `public/app.js`, `public/config.js`) that consumes `public/events.json`.
+   `public/app.js`, `public/config.js`) that consumes `public/api/v1/`.
 
 ---
 
@@ -25,7 +26,8 @@ lives in `pipeline/`:
 | `pipeline/runner.py` | Discover `scrapers/*.py` and run each in a subprocess (`tools/run_scraper.py`), in parallel |
 | `pipeline/normalize.py` | Game/format vocabulary, `_normalize_game` and the per-event shape check |
 | `pipeline/reconcile.py` | `event_key`, `merge_events`, source protection (`suspect_zero`), locator dedup and name-variant detection. Pure, with no I/O |
-| `pipeline/repository.py` | Load and save `events.json`, the stats file, the run log and the `data/*.json` maps (retired stores, renames) |
+| `pipeline/publish.py` | Generate the static read API `public/api/v1/`: cities, per-city index, stores, `upcoming.json` and one file per ISO week (`docs/api-v1.md`) |
+| `pipeline/repository.py` | Load and save `data/events.json` (migrated once from the legacy `public/events.json`), the stats file, the run log and the `data/*.json` maps (retired stores, renames) |
 | `pipeline/health.py` | Validation report, `build_stats` anomalies and console health output |
 
 The JSON-backed `repository` is the seam the Postgres move will replace (#98).
@@ -211,7 +213,7 @@ rather than return `[]`, so the failure reason shows up in `error`.
 
 **Write safety**: the run aborts (exit 1) without writing in any of these
 cases:
-- `public/events.json` exists but cannot be parsed;
+- `data/events.json` exists but cannot be parsed;
 - the merged total is below `COUNT_DROP_THRESHOLD` (70%) of the existing
   total;
 - upcoming active events fall below `UPCOMING_DROP_THRESHOLD` (50%) of the
@@ -382,7 +384,8 @@ top-of-hour cron jobs. A `concurrency` group stops runs from overlapping.
 The workflow runs these steps:
 1. `python -m unittest discover -s tests`.
 2. `python aggregator.py`.
-3. Commit any changes to `public/events.json` and `public/events_stats.json`
+3. Commit everything the pipeline wrote under `data/` and `public/`: history,
+   registry, run log, stats and the API
    back to `main`. The push triggers a Cloudflare Pages redeploy.
 4. `python -m tools.sync_health_issues`. This opens or updates one GitHub issue
    (label `scraper-health`, title `[health] <store>`) per store that failed,
@@ -459,7 +462,7 @@ first file to edit (see §9).
 ## 3. Data flow
 
 ```
-fetch('events.json')
+fetch('api/v1/madrid/events/upcoming.json')  // + stores.json, index.json
         │
         ▼
    this.events  ◀────────────────────────────────────────┐
@@ -508,7 +511,11 @@ Key things to note:
 - `resetFilters()` clears the search/facet filters and also resets all
   `segmentFilter` chips to enabled. Segment filters are part of the user-facing
   filter state, not a separate view preference.
-- The frontend never POSTs anything. The only network call is `fetch('events.json')`.
+- The frontend never POSTs anything. It reads only the static API:
+  `upcoming.json`, `stores.json` and `index.json` at load, then one week file
+  when the user navigates outside the upcoming range (`loadWeek`). Share links
+  carry `&w=<ISO week>`, so the right week file can be fetched for a deep
+  link.
 
 ### localStorage usage
 

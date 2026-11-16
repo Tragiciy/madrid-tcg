@@ -6,8 +6,9 @@ var SEGMENTS = [
 ];
 
 // Store details (address, coordinates, website, notes) keyed by display
-// name. Filled at runtime from public/stores.json, which the pipeline
-// generates from the store registry (data/stores.json) — edit stores there.
+// name. Filled at runtime from api/v1/madrid/stores.json, which the
+// pipeline generates from the store registry (data/stores.json) — edit
+// stores there.
 var STORE_META = {};
 
 var GAME_CLASS_MAP = {

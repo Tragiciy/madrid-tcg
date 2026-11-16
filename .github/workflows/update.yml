@@ -56,14 +56,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet -- public/events.json public/events_stats.json public/stores.json data/stores.json \
-             && git diff --quiet -- data/source_runs.jsonl \
-             && [ -z "$(git ls-files --others --exclude-standard data/source_runs.jsonl)" ]; then
+          # Everything the pipeline writes lives under data/ and public/
+          # (history, registry, run log, stats and the static API).
+          if [ -z "$(git status --porcelain -- data public)" ]; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git add public/events.json public/events_stats.json public/stores.json data/stores.json data/source_runs.jsonl
+          git add -A data public
           git commit -m "chore: update events.json ($(date -u +'%Y-%m-%d %H:%M UTC'))"
           git fetch origin main
           git rebase origin/main

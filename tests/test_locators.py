@@ -152,7 +152,7 @@ class RegistryTests(unittest.TestCase):
         a = reg.add("Ítaca", origin="auto")  # same slug as the existing record
         self.assertEqual((slugify("Zacatrus! Madrid Chamberí"), a["id"]), ("zacatrus-madrid-chamberi", "itaca-2"))
 
-    def test_attach_store_ids_and_public_view(self):
+    def test_attach_store_ids_learns_new_store(self):
         reg = _registry()
         fresh = [dict(_ev("Ítaca", "Lorcana", "2026-11-20T19:00:00+01:00", "scrapers.itaca")),
                  dict(_ev("New Place", "Lorcana", "2026-11-20T19:00:00+01:00", "scrapers.locator_x"),
@@ -160,8 +160,8 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(attach_store_ids(fresh, [], reg), 1)
         self.assertEqual([e["store_id"] for e in fresh], ["itaca", "new-place"])
         self.assertNotIn("store_hint", fresh[1])
-        view = reg.public_view()
-        self.assertEqual(view["New Place"], {"id": "new-place", "address": "Calle Y, 28002", "lat": 40.0, "lng": -3.0})
+        rec = reg.find("New Place")
+        self.assertEqual((rec["address"], rec["lat"], rec["lng"]), ("Calle Y, 28002", 40.0, -3.0))
 
 
 class RegistryReviewTests(unittest.TestCase):

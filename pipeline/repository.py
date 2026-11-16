@@ -7,7 +7,7 @@ import pathlib
 from typing import Optional
 
 from pipeline.config import (
-    EPOCH_ISO, EVENTS_FILE, RETIRED_STORES_FILE, SOURCE_RUNS_FILE, STATS_FILE,
+    EPOCH_ISO, EVENTS_FILE, LEGACY_EVENTS_FILE, RETIRED_STORES_FILE, SOURCE_RUNS_FILE, STATS_FILE,
     STORE_RENAMES_FILE,
 )
 from pipeline.reconcile import is_locator
@@ -30,14 +30,18 @@ def load_existing() -> list[dict]:
     from an empty list would silently replace the full history with only
     this run's events.
     """
-    if not EVENTS_FILE.exists():
+    path = EVENTS_FILE
+    if not path.exists() and LEGACY_EVENTS_FILE.exists():
+        logger.info("Migrating history from %s to %s", LEGACY_EVENTS_FILE, EVENTS_FILE)
+        path = LEGACY_EVENTS_FILE
+    if not path.exists():
         return []
     try:
-        data = json.loads(EVENTS_FILE.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
-        raise CorruptEventsFile(f"Could not read {EVENTS_FILE}: {exc}") from exc
+        raise CorruptEventsFile(f"Could not read {path}: {exc}") from exc
     if not isinstance(data, list):
-        raise CorruptEventsFile(f"{EVENTS_FILE} is not a JSON list")
+        raise CorruptEventsFile(f"{path} is not a JSON list")
 
     for e in data:
         # Pre-refactor records had only scraped_at; use it as a sensible
@@ -92,6 +96,9 @@ def write_json_atomic(path: pathlib.Path, data) -> None:
 def write_events(events: list[dict]) -> None:
     write_json_atomic(EVENTS_FILE, events)
     logger.info("Wrote: %s (%d events)", EVENTS_FILE, len(events))
+    if LEGACY_EVENTS_FILE.exists():  # migration done: stop deploying the history
+        LEGACY_EVENTS_FILE.unlink()
+        logger.info("Removed legacy %s", LEGACY_EVENTS_FILE)
 
 
 def append_source_runs(scraper_stats: dict, run_at: str,
@@ -146,8 +153,7 @@ def _previous_raw_for_store(prev_stats: dict, store: str) -> Optional[int]:
 
 
 def save_store_registry(registry) -> None:
-    """data/stores.json (full registry) + public/stores.json (frontend view)."""
-    from shared.store_registry import PUBLIC_FILE, REGISTRY_FILE
+    """data/stores.json — the full registry. Clients get stores via the API."""
+    from shared.store_registry import REGISTRY_FILE
     write_json_atomic(REGISTRY_FILE, registry.to_json())
-    write_json_atomic(PUBLIC_FILE, registry.public_view())
-    logger.info("Wrote: %s (%d stores), %s", REGISTRY_FILE, len(registry.stores), PUBLIC_FILE)
+    logger.info("Wrote: %s (%d stores)", REGISTRY_FILE, len(registry.stores))
