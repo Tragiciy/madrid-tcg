@@ -1458,6 +1458,9 @@ function app() {
 
     eventUrl(e) {
       if (!e) return '';
+      // Prefer the event's static share page: chat apps can't run JS, so
+      // only that page gives them a real preview (title, date, image).
+      if (e.share) return new URL(e.share, window.location.origin).toString();
       const url = new URL(window.location.href);
       url.searchParams.set('event', encodeEventParam(this.eventKey(e)));
       url.searchParams.set('w', weekOfIso(e.datetime_start));  // which week file has it

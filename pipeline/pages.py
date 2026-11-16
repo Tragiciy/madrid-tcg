@@ -147,7 +147,7 @@ def build_pages(events: list[dict], registry, now_iso: str) -> dict[str, str]:
 
     def render(path: str, *, title: str, h1: str, description: str, evs: list[dict],
                empty: str, intro: Optional[str] = None, store: Optional[dict] = None,
-               calendar_query: str = "") -> None:
+               calendar_query: str = "", og: str = "default") -> None:
         url = f"/{path}"
         pages[f"{path}index.html"] = page_tpl.render(
             title=title, h1=h1, description=description, intro=intro, store=store,
@@ -155,6 +155,7 @@ def build_pages(events: list[dict], registry, now_iso: str) -> dict[str, str]:
             canonical=SITE_URL + url, jsonld=_jsonld(evs, stores_by_id),
             calendar_url="/" + (f"?{calendar_query}" if calendar_query else ""),
             updated=fecha_larga(today), city=CITY_NAME,
+            og_image=f"{SITE_URL}/og/{og}.jpg",
         )
         urls.append(url)
 
@@ -183,7 +184,7 @@ def build_pages(events: list[dict], registry, now_iso: str) -> dict[str, str]:
                description=f"Próximos torneos y eventos de {g} en tiendas de {CITY_NAME}.",
                evs=within(28, lambda e, g=g: e.get("game") == g),
                empty=f"No hay torneos de {g} programados en las próximas 4 semanas.",
-               calendar_query=f"game={g}")
+               calendar_query=f"game={g}", og=game_slug(g))
     for s in stores:
         render(f"{base}tiendas/{s['id']}/", title=f"{s['name']} — torneos de cartas en {CITY_NAME}",
                h1=s["name"],

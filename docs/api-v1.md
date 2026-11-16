@@ -72,6 +72,7 @@ example `2026-W47.json`. It has the same shape as `upcoming.json`, plus
 | `datetime_start` | string | ISO 8601 with the Madrid offset |
 | `datetime_end` | string? | |
 | `source_url` | string | Official event or store page |
+| `share` | string? | Path of the event's share page (`/e/<id>/`). Use it when sharing a link, because it gives chat apps a real preview. It is present for events from 14 days ago to 60 days ahead |
 
 Absent optional fields are omitted, not sent as `null`. Week files include
 past events as history. Future events that disappeared from their source are
