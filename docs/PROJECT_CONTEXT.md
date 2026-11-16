@@ -179,6 +179,11 @@ derive the game from API category fields first.
 `shared/wordpress_events.py` fetches The Events Calendar / Modern Events
 Calendar feeds (used by `the_big_bang_games`).
 
+`shared/goblintrader.py` parses the server-rendered event list on a
+goblintrader.es shop page (`.gts-store-events`). Used by
+`goblintrader_central` and `goblintrader_madrid_norte`; raises if the block
+is missing.
+
 `shared/ics.py` reads public iCalendar feeds. It handles RRULE expansion,
 EXDATE, RECURRENCE-ID overrides and cancelled occurrences, and skips all-day
 events.
