@@ -180,7 +180,15 @@ def scrape() -> list[dict]:
         page = context.new_page()
 
         try:
-            page.goto(BASE_URL, timeout=NAV_TIMEOUT, wait_until="networkidle")
+            resp = page.goto(BASE_URL, timeout=NAV_TIMEOUT, wait_until="networkidle")
+            # Since 2026-11 Shopify answers 402 "Tienda no disponible" (shop
+            # deactivated) to every client. Fail loudly instead of
+            # reporting an empty calendar.
+            if resp is None or resp.status >= 400:
+                raise RuntimeError(
+                    f"{STORE}: HTTP {resp.status if resp else 'no response'} "
+                    f"for {BASE_URL} ({page.title()!r})"
+                )
             page.wait_for_timeout(1_500)
 
             # Dismiss cookie banner if present
