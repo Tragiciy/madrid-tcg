@@ -37,6 +37,12 @@ one click.
   events on today are dimmed (never hidden).
 - **Add to Calendar** — every event card has a calendar button that opens a
   pre-filled Google Calendar, iCalendar (.ics), or Outlook template.
+- **Near me** — one tap asks for the browser location. It filters to stores within 2, 5, 10 or 25 km,
+  using the store registry's coordinates, and shows the distance on each card. The position stays in
+  memory only and is never stored or sent anywhere.
+- **Installable app (PWA)** — a manifest, icons and a service worker (`public/sw.js`). The site can be
+  added to the home screen and opens offline with the last data it saved. The service worker always
+  tries the network first, so it never shows stale data while online.
 - **Event Detail Panel** — click any event for a full-detail slide-in panel
   with store address and Google Maps link.
 

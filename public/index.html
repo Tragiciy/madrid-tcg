@@ -6,6 +6,10 @@
   <title>Madrid TCG Events — tournament calendar</title>
   <meta name="description" content="Weekly calendar of trading card game tournaments in Madrid stores: Magic, Pokémon, One Piece, Lorcana, Digimon, Riftbound and more." />
   <link rel="canonical" href="https://madrid-tcg.pages.dev/" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#5b21b6" />
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
   <link rel="preload" href="api/v1/madrid/events/upcoming.json" as="fetch" crossorigin="anonymous" />
   <link rel="preload" href="api/v1/madrid/stores.json" as="fetch" crossorigin="anonymous" />
@@ -122,6 +126,19 @@
         </div>
       </div>
     </div>
+    <div class="near-me" style="align-self:flex-end">
+      <button class="btn" type="button" :class="{ active: nearMe }" @click="toggleNearMe()"
+              :aria-pressed="!!nearMe" title="Show stores near you (your location stays on this device)">
+        <span x-text="geoStatus === 'locating' ? '📍 Locating…' : '📍 Near me'"></span>
+      </button>
+      <select class="radius" x-show="nearMe" x-model.number="radiusKm" @change="cleanupFilters()" aria-label="Distance">
+        <option value="2">≤ 2 km</option>
+        <option value="5">≤ 5 km</option>
+        <option value="10">≤ 10 km</option>
+        <option value="25">≤ 25 km</option>
+      </select>
+      <span class="geo-error" x-show="geoStatus && geoStatus !== 'locating'" x-text="geoStatus" role="status"></span>
+    </div>
     <button class="btn" style="align-self:flex-end" @click="resetFilters">✕ Clear</button>
     <button class="btn" style="align-self:flex-end" @click="saveCurrentPreset">Save preset</button>
     <button class="btn fav-toggle"
@@ -189,6 +206,8 @@
       </button>
     </template>
   </div>
+
+  <div class="state-msg offline-msg" x-show="offline" role="status">Offline — showing the last saved data.</div>
 
   <!-- Loading -->
   <div class="state-msg" x-show="loading">Loading events…</div>
@@ -288,6 +307,7 @@
                            @click.stop="toggleFilter('store', e.store)"
                            :title="e.store"
                            x-text="e.store"></div>
+                      <div class="ev-distance" x-show="nearMe && storeDistanceLabel(e.store)" x-text="storeDistanceLabel(e.store)"></div>
                     </div>
                     <div class="ev-title" x-text="e.title"></div>
                     <div class="ev-footer">

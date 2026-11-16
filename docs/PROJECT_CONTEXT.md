@@ -518,6 +518,33 @@ Key things to note:
   carry `&w=<ISO week>`, so the right week file can be fetched for a deep
   link.
 
+### PWA and offline
+
+- **Files:** `public/manifest.webmanifest`, `public/icons/` (SVG source plus
+  PNGs rendered from it), and `public/sw.js`, registered from `init()` on
+  https or localhost.
+- **Service worker strategy:**
+  - **Same-origin GET:** network first. Successful responses are cached; the
+    cache answers only when the network fails. Pages are cached by path
+    without the query string, so shared `?event=` links do not grow the
+    cache.
+  - **jsDelivr (Alpine, version-pinned):** cache first.
+  - **Precache:** the app shell plus `upcoming.json`, `stores.json` and
+    `index.json`.
+- **Versioning:** bump `VERSION` in `sw.js` when its logic changes; older
+  `tcg-*` caches are deleted on activate.
+- **Offline banner:** `offline` tracks `navigator.onLine`, and the banner tells
+  the user they are seeing saved data.
+
+### Near me
+
+`toggleNearMe()` asks for `navigator.geolocation`. `nearMe` (`{lat, lng}`)
+lives in memory only and is never persisted or sent anywhere. `radiusKm`
+(2/5/10/25) filters in `eventMatches` through `storeDistanceKm(store)`, a
+haversine distance to `STORE_META[store].lat/lng`. Stores without
+coordinates are excluded while the filter is on. The cards and the vertical
+view show `storeDistanceLabel`. `resetFilters()` clears the filter.
+
 ### localStorage usage
 
 | Key | Type | Purpose |
