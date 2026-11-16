@@ -53,9 +53,24 @@ def week_bounds(week: str) -> tuple[date, date]:
     return monday, monday + timedelta(days=7)
 
 
+def _madrid(value: Optional[str]) -> Optional[str]:
+    """Normalise to the Madrid offset, so the date in the string is always
+    the Madrid calendar date that decides the week file (clients bucket by
+    the string's date)."""
+    if not value:
+        return value
+    try:
+        return datetime.fromisoformat(value).astimezone(TZ).isoformat()
+    except ValueError:
+        return value
+
+
 def _public_event(e: dict) -> dict:
     out = {"id": event_key(e)}
     out.update({k: e[k] for k in EVENT_FIELDS if e.get(k) not in (None, "")})
+    for k in ("datetime_start", "datetime_end"):
+        if k in out:
+            out[k] = _madrid(out[k])
     return out
 
 
@@ -92,8 +107,11 @@ def build_api(events: list[dict], registry, now_iso: str,
     docs: dict[str, dict] = {}
     for week, evs in by_week.items():
         start, end = week_bounds(week)
+        # No updated_at in week files: a past week then stays byte-identical
+        # run to run (same ETag → 304s, no git churn).
         docs[f"{city}/events/{week}.json"] = {
-            **meta, "week": week, "from": start.isoformat(), "to": end.isoformat(), "events": evs,
+            "api_version": API_VERSION, "city": city, "week": week,
+            "from": start.isoformat(), "to": end.isoformat(), "events": evs,
         }
     docs[f"{city}/events/upcoming.json"] = {
         **meta, "from": up_from.isoformat(), "to": up_to.isoformat(), "events": upcoming,
@@ -121,16 +139,24 @@ def write_api(docs: dict[str, dict], api_dir: Optional[pathlib.Path] = None) -> 
     """Write every document; delete week files no longer produced. Returns #files."""
     api_dir = api_dir or API_DIR
     keep = set()
+    written = 0
     for rel, doc in docs.items():
         path = api_dir / rel
         keep.add(path.resolve())
         # Compact: these files are what every visitor downloads.
+        text = json.dumps(doc, ensure_ascii=False, separators=(",", ":"))
+        if path.exists() and path.read_text(encoding="utf-8") == text:
+            continue  # unchanged: keep the file (and its ETag) as is
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_name(path.name + ".tmp")
-        tmp.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        tmp.write_text(text, encoding="utf-8")
         tmp.replace(path)
-    for stale in api_dir.glob("*/events/*.json"):
-        if stale.resolve() not in keep:
-            stale.unlink()
-    logger.info("Wrote API: %s (%d files)", api_dir, len(docs))
-    return len(docs)
+        written += 1
+    # Remove week files no longer produced — only for the cities published here.
+    cities = {rel.split("/", 1)[0] for rel in docs if "/events/" in rel}
+    for city in cities:
+        for stale in (api_dir / city / "events").glob("*.json"):
+            if stale.resolve() not in keep:
+                stale.unlink()
+    logger.info("Wrote API: %s (%d of %d files changed)", api_dir, written, len(docs))
+    return written

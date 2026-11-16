@@ -4,6 +4,9 @@ const PRESETS_STORAGE_KEY = 'tcg-presets-v1';
 const DEFAULT_PRESET_STORAGE_KEY = 'tcg-default-preset-v1';
 const ONBOARDING_STORAGE_KEY = 'tcg-onboarding-v1';
 const FAVORITES_STORAGE_KEY = 'tcg-favorites-v1';
+// favorite key → ISO week of its event, so favorites of deleted events can
+// be pruned once their week is loaded (events load per week).
+const FAVORITE_WEEKS_STORAGE_KEY = 'tcg-favorite-weeks-v1';
 
 // Returns YYYY-MM-DD string for a Date object, in local time
 function isoDay(d) {
@@ -339,6 +342,10 @@ function app() {
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
+      // Alpine 3 calls init() itself; guard against a second call (an extra
+      // x-init="init()" once ran everything — every fetch — twice).
+      if (this._initialized) return;
+      this._initialized = true;
       this.loadFavorites();
       this.loadPresets();
       this.loadDefaultPreset();
@@ -469,14 +476,16 @@ function app() {
     },
 
     /* ── Navigation ────────────────────────────────────────────────── */
-    prevWeek() {
+    // Filters are week-scoped, so they are validated only once the week's
+    // events are loaded — otherwise a not-yet-fetched week would wipe them.
+    async prevWeek() {
       this.weekStart = addDays(this.weekStart, -7);
-      this.loadWeek(isoWeekOf(this.weekStart));
+      await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
     },
-    nextWeek() {
+    async nextWeek() {
       this.weekStart = addDays(this.weekStart, +7);
-      this.loadWeek(isoWeekOf(this.weekStart));
+      await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
     },
 
@@ -497,14 +506,12 @@ function app() {
       if (this.weekIndex && !(week in this.weekIndex)) return;  // no events that week
       try {
         const res = await fetch(`${API_BASE}/events/${week}.json`);
-        if (!res.ok) return;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const have = new Set(this.events.map(e => eventKey(e)));
         const fresh = data.events.filter(e => !have.has(eventKey(e)));
-        if (fresh.length) {
-          this.events = this.events.concat(fresh);
-          this.cleanupFilters({ syncUrl: false });
-        }
+        if (fresh.length) this.events = this.events.concat(fresh);
+        this.cleanupFavorites();
       } catch (err) {
         this._loadedWeeks.delete(week);  // retry on the next visit to this week
         console.warn('Failed to load week', week, err);
@@ -606,6 +613,10 @@ function app() {
 
     loadFavorites() {
       try {
+        const weeks = JSON.parse(localStorage.getItem(FAVORITE_WEEKS_STORAGE_KEY) || '{}');
+        this._favWeeks = (weeks && typeof weeks === 'object') ? weeks : {};
+      } catch { this._favWeeks = {}; }
+      try {
         const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
         if (!raw) return;
         const parsed = JSON.parse(raw);
@@ -616,6 +627,10 @@ function app() {
 
     persistFavorites() {
       try {
+        const weeks = {};
+        for (const k of this.favorites) if (this._favWeeks && this._favWeeks[k]) weeks[k] = this._favWeeks[k];
+        this._favWeeks = weeks;
+        localStorage.setItem(FAVORITE_WEEKS_STORAGE_KEY, JSON.stringify(weeks));
         localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(this.favorites));
       } catch (err) {
         console.warn('Failed to save favorites', err);
@@ -632,6 +647,10 @@ function app() {
       const idx = this.favorites.indexOf(key);
       if (idx >= 0) this.favorites.splice(idx, 1);
       else          this.favorites.push(key);
+      if (typeof keyOrEvent !== 'string' && keyOrEvent.datetime_start) {
+        if (!this._favWeeks) this._favWeeks = {};
+        this._favWeeks[key] = weekOfIso(keyOrEvent.datetime_start);
+      }
       this.persistFavorites();
     },
 
@@ -648,15 +667,30 @@ function app() {
         if (!byLegacy.has(lk)) byLegacy.set(lk, []);
         byLegacy.get(lk).push(eventKey(e));
       }
-      // Only legacy keys are rewritten. Unknown keys are kept: with the
-      // per-week API the event may simply be in a week not loaded yet.
+      // Events load per week, so a key not found may just be in a week not
+      // loaded yet. A key is dropped only when its week is known and either
+      // loaded (the event is gone) or absent from the index (no events).
+      if (!this._favWeeks) this._favWeeks = {};
+      const loadedWeeks = this._loadedWeeks || new Set();
+      const weekOfKey = (key) => {
+        if (this._favWeeks[key]) return this._favWeeks[key];
+        const m = key.match(/\d{4}-\d{2}-\d{2}T/);
+        return m ? weekOfIso(m[0]) : null;
+      };
       const next = new Set();
       for (const key of this.favorites) {
-        if (!allKeys.has(key) && byLegacy.has(key)) {
-          for (const k of byLegacy.get(key)) next.add(k);  // migrate old keys
-        } else {
-          next.add(key);
+        if (allKeys.has(key)) { next.add(key); continue; }
+        if (byLegacy.has(key)) {                              // migrate old keys
+          for (const k of byLegacy.get(key)) next.add(k);
+          continue;
         }
+        const week = weekOfKey(key);
+        const gone = week && (loadedWeeks.has(week) || (this.weekIndex && !(week in this.weekIndex)));
+        if (!gone) next.add(key);
+      }
+      for (const e of this.events) {                          // remember weeks
+        const k = eventKey(e);
+        if (next.has(k)) this._favWeeks[k] = weekOfIso(e.datetime_start);
       }
       const changed = next.size !== this.favorites.length
         || this.favorites.some(k => !next.has(k));
@@ -987,7 +1021,8 @@ function app() {
 
     applyFiltersFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      const valid = { game: new Set(), store: new Set(), format: new Set() };
+      // Stores: any registry store; games/formats: what the loaded weeks have.
+      const valid = { game: new Set(), store: new Set(this.allStores), format: new Set() };
       for (const e of this.events) {
         valid.game.add(this.valueFor('game', e));
         valid.store.add(this.valueFor('store', e));

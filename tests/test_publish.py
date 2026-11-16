@@ -68,6 +68,29 @@ class PublishTests(unittest.TestCase):
             self.assertNotIn("\n", text)
             self.assertEqual(json.loads(text)["api_version"], 1)
 
+    def test_times_are_published_in_madrid_offset(self):
+        docs = build_api([_e("2026-11-15T23:30:00+00:00")], REG, NOW)  # Monday 00:30 in Madrid
+        [e] = docs["madrid/events/2026-W47.json"]["events"]
+        self.assertEqual(e["datetime_start"], "2026-11-16T00:30:00+01:00")
+
+    def test_unchanged_files_are_not_rewritten_and_weeks_have_no_timestamp(self):
+        self.assertNotIn("updated_at", self.docs["madrid/events/2026-W47.json"])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            self.assertEqual(write_api(self.docs, root), len(self.docs))
+            later = build_api(self.events, REG, "2026-11-18T13:00:00+01:00")
+            # only the documents that carry updated_at change
+            self.assertEqual(write_api(later, root), 4)
+
+    def test_other_cities_files_survive_cleanup(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            other = root / "barcelona/events/2026-W47.json"
+            other.parent.mkdir(parents=True)
+            other.write_text("{}")
+            write_api(self.docs, root)
+            self.assertTrue(other.exists())
+
     def test_iso_week_edges(self):
         from datetime import date
         self.assertEqual(iso_week(date(2027, 1, 1)), "2026-W53")
