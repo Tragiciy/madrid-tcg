@@ -374,16 +374,16 @@
       }
     },
     {
-      "id": "goblintrader-central",
-      "name": "Goblintrader Central",
+      "id": "goblintrader-central-fuenlabrada",
+      "name": "Goblintrader Central (Fuenlabrada)",
       "city": "madrid",
-      "address": "Calle de la Montera, 12, 28013 Madrid",
+      "address": "Calle Almanzor, 10, Fuenlabrada",
       "lat": null,
       "lng": null,
-      "website": "https://www.goblintrader.es/",
+      "website": "https://goblintrader.es/gb/content/9-central",
       "notes": null,
       "origin": "curated",
-      "added_at": "2026-11-15",
+      "added_at": "2026-11-16",
       "aliases": {
         "names": [],
         "external": []
@@ -402,6 +402,24 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [],
+        "external": []
+      }
+    },
+    {
+      "id": "goblintrader-madrid-sur",
+      "name": "Goblintrader Madrid Sur",
+      "city": "madrid",
+      "address": "Ronda de Toledo, 28, 28005 Madrid",
+      "lat": null,
+      "lng": null,
+      "website": "https://goblintrader.es/gb/content/12-madrid",
+      "notes": null,
+      "origin": "curated",
+      "added_at": "2026-11-15",
+      "aliases": {
+        "names": [
+          "Goblintrader Central"
+        ],
         "external": []
       }
     },

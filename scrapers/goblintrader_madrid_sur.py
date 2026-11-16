@@ -1,12 +1,13 @@
 """
-Goblintrader Central — https://goblintrader.es/gb/content/12-madrid
+Goblintrader Madrid Sur (Ronda de Toledo 28) —
+https://goblintrader.es/gb/content/12-madrid
 
 goblintrader.es shop page with a server-rendered event list, parsed by
 shared.goblintrader. The old URL /gb/madrid redirects here.
 
-Note: this page is the shop the site calls "Madrid Sur" (Ronda de
-Toledo 28). It is the page this scraper has always read; the site's own
-"Central" shop is in Fuenlabrada (/gb/content/9-central).
+Until 2026-11 this store was mislabelled "Goblintrader Central"; its
+history is renamed via data/store_renames.json. The site's real "Central"
+shop is in Fuenlabrada (scrapers/goblintrader_fuenlabrada.py).
 """
 
 import json
@@ -16,7 +17,7 @@ from shared.goblintrader import scrape_store_page
 
 logger = logging.getLogger(__name__)
 
-STORE = "Goblintrader Central"
+STORE = "Goblintrader Madrid Sur"
 PAGE_URL = "https://goblintrader.es/gb/content/12-madrid"
 
 

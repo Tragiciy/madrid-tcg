@@ -41,8 +41,6 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml",
 }
 
-# The listing gives no start time for some events (ongoing leagues).
-FALLBACK_HOUR = 12
 
 # "16:30 a 20:00", "17:00 - 19:00", "09:00-14:30", "17h"
 _TIME_RE = re.compile(r"(\d{1,2})[:.h](\d{2})(?:\s*(?:a|-|–|hasta)\s*(\d{1,2})[:.h](\d{2}))?")
@@ -64,10 +62,13 @@ def _game(title: str, label: str) -> Optional[str]:
     return game
 
 
-def _parse_times(details: str, day: date) -> tuple[datetime, Optional[datetime]]:
+def _parse_times(details: str, day: date) -> Optional[tuple[datetime, Optional[datetime]]]:
+    """(start, end), or None when the listing gives no start time — such
+    entries (ongoing leagues) are skipped rather than shown at a made-up
+    hour."""
     m = _TIME_RE.search(details)
     if not m:
-        return datetime(day.year, day.month, day.day, FALLBACK_HOUR, tzinfo=TZ), None
+        return None
     sh, sm, eh, em = m.groups()
     start = datetime(day.year, day.month, day.day, int(sh), int(sm), tzinfo=TZ)
     end = None
@@ -112,7 +113,11 @@ def parse_store_page(html: str, store: str, source_url: str, now: datetime) -> l
             li.get_text(" ", strip=True) for li in item.select(".gts-store-events__details li")
         )
 
-        start, end = _parse_times(details, day)
+        times = _parse_times(details, day)
+        if times is None:
+            logger.info("%s: skipping %r on %s — no start time listed", store, title, day)
+            continue
+        start, end = times
         game = _game(title, label)
         fmt, fmt_official = extract_format_for_event(title=title, game=game)
         out.append({

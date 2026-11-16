@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from scrapers import goblintrader_central, goblintrader_madrid_norte
+from scrapers import goblintrader_madrid_norte, goblintrader_madrid_sur
 from shared.goblintrader import parse_store_page
 
 MAD = ZoneInfo("Europe/Madrid")
@@ -21,9 +21,9 @@ def _parse(fixture: str, module) -> list[dict]:
     return parse_store_page(html, module.STORE, module.PAGE_URL, NOW)
 
 
-class GoblintraderCentralTest(unittest.TestCase):
+class GoblintraderMadridSurTest(unittest.TestCase):
     def setUp(self):
-        self.events = _parse("goblintrader_12-madrid.html", goblintrader_central)
+        self.events = _parse("goblintrader_12-madrid.html", goblintrader_madrid_sur)
 
     def test_parses_every_item_with_times(self):
         self.assertEqual(len(self.events), 3)
@@ -40,18 +40,14 @@ class GoblintraderCentralTest(unittest.TestCase):
     def test_schema(self):
         for ev in self.events:
             self.assertEqual(set(ev), SCHEMA)
-            self.assertEqual(ev["store"], "Goblintrader Central")
-            self.assertEqual(ev["source_url"], goblintrader_central.PAGE_URL)
+            self.assertEqual(ev["store"], "Goblintrader Madrid Sur")
+            self.assertEqual(ev["source_url"], goblintrader_madrid_sur.PAGE_URL)
             self.assertEqual(ev["language"], "es")
 
 
 class GoblintraderNorteTest(unittest.TestCase):
-    def test_event_without_time_uses_fallback(self):
-        (ev,) = _parse("goblintrader_11-norte.html", goblintrader_madrid_norte)
-        self.assertEqual(ev["title"], "Liga para Novatos!")
-        self.assertEqual(ev["store"], "Goblintrader Madrid-Norte")
-        self.assertEqual(ev["datetime_start"], "2026-10-04T12:00:00+02:00")
-        self.assertIsNone(ev["datetime_end"])
+    def test_event_without_start_time_is_skipped_not_invented(self):
+        self.assertEqual(_parse("goblintrader_11-norte.html", goblintrader_madrid_norte), [])
 
 
 class GoblintraderParserTest(unittest.TestCase):
@@ -71,6 +67,7 @@ class GoblintraderParserTest(unittest.TestCase):
             <time class="gts-store-events__date" datetime="2026-12-02"></time>
             <p class="gts-store-events__meta"><span>Tournament</span><span>Star Wars Unlimited</span></p>
             <h3 class="gts-store-events__name">Torneo SWU Premier</h3>
+            <ul class="gts-store-events__details"><li>10:00 - 14:00</li></ul>
           </li>
         </ul></div>"""
         armada, swu = parse_store_page(html, "X", "https://x", NOW)

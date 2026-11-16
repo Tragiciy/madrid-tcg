@@ -43,7 +43,8 @@ must live outside this directory (currently in `shared/`). Do not modify
 `scrapers/` and it is picked up automatically.
 
 Current per-store scrapers (21): `arte9`, `asedio_gaming`, `generacion_x_elfo`,
-`gladius_games`, `goblintrader_central`, `goblintrader_madrid_norte`, `itaca`,
+`gladius_games`, `goblintrader_fuenlabrada`, `goblintrader_madrid_norte`,
+`goblintrader_madrid_sur`, `itaca`,
 `jupiter_juegos`, `la_guarida_juegos`, `madakiba`, `metropolis_center`,
 `micelion_games`, `mundicomics`, `oz_juegos`, `padis`, `panda_games`,
 `replay_boardgame_cafe`, `the_big_bang_games`, `three_stones_games`, `topdeck`,
@@ -181,7 +182,8 @@ Calendar feeds (used by `the_big_bang_games`).
 
 `shared/goblintrader.py` parses the server-rendered event list on a
 goblintrader.es shop page (`.gts-store-events`). Used by
-`goblintrader_central` and `goblintrader_madrid_norte`; raises if the block
+`goblintrader_madrid_sur`, `goblintrader_madrid_norte` and
+`goblintrader_fuenlabrada`; entries without a start time are skipped; raises if the block
 is missing.
 
 `shared/ics.py` reads public iCalendar feeds. It handles RRULE expansion,
