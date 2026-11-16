@@ -218,7 +218,8 @@ def write_pages(pages: dict[str, str], public_dir: Optional[pathlib.Path] = None
         tmp.write_text(text, encoding="utf-8")
         tmp.replace(path)
         written += 1
-    for stale in (public_dir / CITY).rglob("index.html"):
+    # list(): never delete while rglob is iterating (fails on Python 3.11).
+    for stale in list((public_dir / CITY).rglob("index.html")):
         if stale.resolve() not in keep:
             stale.unlink()
             try:

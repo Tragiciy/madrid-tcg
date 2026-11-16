@@ -155,7 +155,7 @@ def write_api(docs: dict[str, dict], api_dir: Optional[pathlib.Path] = None) -> 
     # Remove week files no longer produced — only for the cities published here.
     cities = {rel.split("/", 1)[0] for rel in docs if "/events/" in rel}
     for city in cities:
-        for stale in (api_dir / city / "events").glob("*.json"):
+        for stale in list((api_dir / city / "events").glob("*.json")):
             if stale.resolve() not in keep:
                 stale.unlink()
     logger.info("Wrote API: %s (%d of %d files changed)", api_dir, written, len(docs))
