@@ -1297,6 +1297,6 @@ input:focus, select:focus { border-color: var(--accent); }
 .fav-toggle.active:hover { background: #6d28d9; border-color: #6d28d9; }
 
 /* Site footer */
-.site-footer { text-align: center; padding: 24px 0 12px; }
+.site-footer { text-align: center; padding: 24px 0 12px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 .footer-link  { font-size: .75rem; color: var(--text-muted); text-decoration: none; }
 .footer-link:hover { color: var(--accent); }

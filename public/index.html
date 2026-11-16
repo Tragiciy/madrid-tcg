@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Madrid TCG Events</title>
+  <title>Madrid TCG Events — tournament calendar</title>
+  <meta name="description" content="Weekly calendar of trading card game tournaments in Madrid stores: Magic, Pokémon, One Piece, Lorcana, Digimon, Riftbound and more." />
+  <link rel="canonical" href="https://madrid-tcg.pages.dev/" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
   <link rel="preload" href="api/v1/madrid/events/upcoming.json" as="fetch" crossorigin="anonymous" />
   <link rel="preload" href="api/v1/madrid/stores.json" as="fetch" crossorigin="anonymous" />
@@ -427,7 +429,7 @@
             <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'outlook')">Outlook</button>
           </div>
         </div>
-        <a class="btn" :href="selectedEvent?.source_url" target="_blank" rel="noopener" x-show="selectedEvent?.source_url" @click.stop>Open Source</a>
+        <a class="btn" :href="safeUrl(selectedEvent?.source_url)" target="_blank" rel="noopener" x-show="safeUrl(selectedEvent?.source_url)" @click.stop>Open Source</a>
         <button class="btn" type="button" @click.stop="shareEvent(selectedEvent)">Share</button>
         <button class="btn fav-btn-panel"
                 :class="{ 'is-fav': isFavorite(selectedEvent) }"
@@ -510,6 +512,9 @@
 </div>
 
 <div class="site-footer">
+  <a href="/madrid/" class="footer-link">Torneos en Madrid</a>
+  <a href="/madrid/hoy/" class="footer-link">Hoy</a>
+  <a href="/madrid/fin-de-semana/" class="footer-link">Fin de semana</a>
   <a href="/health" class="footer-link">Scraper health</a>
 </div>
 

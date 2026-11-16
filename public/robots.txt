@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /health
+
+Sitemap: https://madrid-tcg.pages.dev/sitemap.xml

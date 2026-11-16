@@ -1,0 +1,23 @@
+/* Static SEO pages (pipeline/pages.py). Kept tiny: no JS, system fonts. */
+:root { --fg: #1f2330; --muted: #646b7d; --line: #e6e8ee; --accent: #6d28d9; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--fg); }
+a { color: var(--accent); }
+header.top { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between;
+  padding: .75rem 1rem; border-bottom: 1px solid var(--line); }
+header.top nav { display: flex; gap: .75rem; flex-wrap: wrap; }
+.brand { font-weight: 700; text-decoration: none; color: var(--fg); }
+.cta { font-weight: 600; }
+main { max-width: 860px; margin: 0 auto; padding: 1rem; }
+h1 { font-size: 1.6rem; margin: .5rem 0; }
+h2 { font-size: 1.05rem; margin: 1.5rem 0 .5rem; color: var(--muted); }
+.lead, .meta, .empty { color: var(--muted); }
+.store p { margin: .25rem 0; }
+.day ul { list-style: none; margin: 0; padding: 0; }
+.ev { display: grid; grid-template-columns: 3.5rem 1fr; gap: .1rem .75rem; padding: .6rem 0; border-top: 1px solid var(--line); }
+.ev time { font-weight: 700; grid-row: span 3; }
+.ev .title a { color: var(--fg); text-decoration: none; font-weight: 600; }
+.ev .store a { color: var(--muted); }
+.tag { display: inline-block; font-size: .8rem; padding: .05rem .45rem; border-radius: 999px; background: #f1edfc; text-decoration: none; margin-right: .25rem; }
+.tag.fmt { background: #eef1f5; color: var(--muted); }
+footer { max-width: 860px; margin: 2rem auto; padding: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
