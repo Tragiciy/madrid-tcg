@@ -677,6 +677,24 @@
       }
     },
     {
+      "id": "la-pisada-del-troll-sl",
+      "name": "LA PISADA DEL TROLL SL",
+      "city": "madrid",
+      "address": "CALLE SORIA Nº 5 LOCAL 1, LAS ROZAS 28231, LAS ROZAS, Madrid, 28231, Spain",
+      "lat": 40.491876,
+      "lng": -3.868966,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-16",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:23940"
+        ]
+      }
+    },
+    {
       "id": "libertalia-juegos",
       "name": "Libertalia Juegos",
       "city": "madrid",
