@@ -509,6 +509,24 @@
       }
     },
     {
+      "id": "jupiter-juegos-alcorcon",
+      "name": "Júpiter Juegos Alcorcón",
+      "city": "madrid",
+      "address": "10, C. Parque Bujaruelo, Alcorcón, MD, 28924, ES",
+      "lat": 40.3478993,
+      "lng": -3.807262100000001,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-16",
+      "aliases": {
+        "names": [],
+        "external": [
+          "ravensburger:2708"
+        ]
+      }
+    },
+    {
       "id": "jupiter-madrid-norte",
       "name": "Júpiter Madrid Norte",
       "city": "madrid",
