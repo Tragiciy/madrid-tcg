@@ -518,6 +518,52 @@ Key things to note:
   carry `&w=<ISO week>`, so the right week file can be fetched for a deep
   link.
 
+### PWA and offline
+
+- **Files:** `public/manifest.webmanifest`, `public/icons/` (SVG source plus
+  PNGs rendered from it), and `public/sw.js`, registered from `init()` on
+  https or localhost.
+- **Service worker strategy:**
+  - **Same-origin GET:** network first. Successful responses are cached; the
+    cache answers only when the network fails. Pages are cached by path
+    without the query string, so shared `?event=` links do not grow the
+    cache.
+  - **jsDelivr (Alpine, version-pinned):** cache first.
+  - **Precache:** the app shell plus `upcoming.json`, `stores.json` and
+    `index.json`.
+- **Versioning:** bump `VERSION` in `sw.js` when its logic changes; older
+  `tcg-*` caches are deleted on activate.
+- **Offline banner:** `offline` tracks `navigator.onLine`, and the banner tells
+  the user they are seeing saved data.
+- **Network fallback:** the cache also answers on a 5xx, or when a cached copy
+  exists and the network takes more than 4 s. Only successful responses are
+  cached. Alpine is loaded with SRI and `crossorigin`, so the worker never
+  stores an opaque or error response from the CDN.
+- **Absolute URLs:** the shell uses absolute URLs (`/app.js`,
+  `/api/v1/...`), so offline it also works as the fallback for any page that
+  was never visited.
+- **Kill switch:** deleting `sw.js` does not remove an installed worker, because
+  browsers keep the old one when the update check gets a 404. To retire it,
+  deploy `/sw.js` with this content and remove the `register()` call from
+  `app.js`:
+  ```js
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', (e) => e.waitUntil((async () => {
+    for (const k of await caches.keys()) if (k.startsWith('tcg-')) await caches.delete(k);
+    await self.registration.unregister();
+    for (const c of await self.clients.matchAll()) c.navigate(c.url);
+  })()));
+  ```
+
+### Near me
+
+`toggleNearMe()` asks for `navigator.geolocation`. `nearMe` (`{lat, lng}`)
+lives in memory only and is never persisted or sent anywhere. `radiusKm`
+(2/5/10/25) filters in `eventMatches` through `storeDistanceKm(store)`, a
+haversine distance to `STORE_META[store].lat/lng`. Stores without
+coordinates are excluded while the filter is on. The cards and the vertical
+view show `storeDistanceLabel`. `resetFilters()` clears the filter.
+
 ### localStorage usage
 
 | Key | Type | Purpose |

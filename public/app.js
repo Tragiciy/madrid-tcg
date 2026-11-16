@@ -195,6 +195,19 @@ function downloadIcs(e) {
   URL.revokeObjectURL(url);
 }
 
+// Great-circle distance in km between two {lat, lng} points.
+function haversineKm(a, b) {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+  const h = Math.sin(dLat / 2) ** 2
+    + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
+
+function formatKm(km) {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${km < 10 ? km.toFixed(1) : Math.round(km)} km`;
+}
+
 // Only http(s) links from scraped data are rendered (never javascript:).
 function safeUrl(url) {
   return (typeof url === 'string' && /^https?:\/\//i.test(url)) ? url : null;
@@ -280,7 +293,9 @@ function readMadridNow() {
 
 // Static read API (docs/api-v1.md). upcoming.json covers the previous week
 // to four weeks ahead; other weeks are fetched when the user navigates there.
-const API_BASE = 'api/v1/madrid';
+// Absolute, so the app also works when served as the offline fallback for
+// another path (the service worker returns the cached shell for any page).
+const API_BASE = '/api/v1/madrid';
 
 // ISO-8601 week id ("2026-W47") of a local-midnight Date.
 function isoWeekOf(d) {
@@ -336,6 +351,12 @@ function app() {
     calendarMenuOpen: false,
     favorites:         [],    // array of eventKey strings
     showFavoritesOnly: false,
+    // "Near me": the visitor's position (kept in memory only — never stored
+    // or sent anywhere) and the radius filter in km.
+    nearMe:       null,
+    radiusKm:     5,
+    geoStatus:    '',      // '', 'locating', or an error message
+    offline:      !navigator.onLine,
     // Reactive Europe/Madrid clock — refreshed every minute. Used to
     // mark past segments and past events on today.
     nowMadrid: readMadridNow(),
@@ -352,6 +373,11 @@ function app() {
       if (this._initialized) return;
       this._initialized = true;
       this.loadFavorites();
+      window.addEventListener('online',  () => { this.offline = false; });
+      window.addEventListener('offline', () => { this.offline = true; });
+      if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW registration failed', err));
+      }
       this.loadPresets();
       this.loadDefaultPreset();
       this.loadOnboardingState();
@@ -983,7 +1009,10 @@ function app() {
     availableOptions(field) {
       const values = new Set();
       for (const e of this.events) {
-        if (this.eventMatches(e, { ignore: field, includeWeek: true, ignoreFavorites: true })) {
+        // Location is a view filter, not a facet: options (and the cleanup of
+        // selected values, which uses this list) ignore it, so turning "Near
+        // me" on never silently drops the user's game/format selections.
+        if (this.eventMatches(e, { ignore: field, includeWeek: true, ignoreFavorites: true, ignoreNearMe: true })) {
           values.add(this.valueFor(field, e));
         }
       }
@@ -1169,6 +1198,10 @@ function app() {
       const s = this.filters.search.toLowerCase().trim();
       if (s && !e.title.toLowerCase().includes(s)) return false;
       if (this.showFavoritesOnly && !opts.ignoreFavorites && !this.isFavorite(e)) return false;
+      if (this.nearMe && this.radiusKm && !opts.ignoreNearMe) {
+        const km = this.storeDistanceKm(e.store);
+        if (km === null || km > this.radiusKm) return false;
+      }
       if (includeWeek && !this.isInCurrentWeek(e)) return false;
       if (includeSegment && !this.segmentFilter[this.segmentOf(e.datetime_start)]) return false;
       for (const field of ['game', 'store', 'format']) {
@@ -1530,6 +1563,8 @@ function app() {
             `<div class="ev-card-top">` +
               `<div class="ev-time">${esc(time)}</div>` +
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
+              (this.nearMe && this.storeDistanceKm(e.store) !== null
+                ? `<div class="ev-distance">${esc(this.storeDistanceLabel(e.store))}</div>` : '') +
             `</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
             `<div class="ev-footer">` +
@@ -1581,7 +1616,45 @@ function app() {
       return GAME_CLASS_MAP[game] || 'game-unknown';
     },
 
+    // Distance from the visitor to a store, or null (no position / no coords).
+    storeDistanceKm(store) {
+      const meta = STORE_META[store];
+      if (!this.nearMe || !meta || meta.lat == null || meta.lng == null) return null;
+      return haversineKm(this.nearMe, { lat: meta.lat, lng: meta.lng });
+    },
+    storeDistanceLabel(store) {
+      const km = this.storeDistanceKm(store);
+      return km === null ? '' : formatKm(km);
+    },
+    toggleNearMe() {
+      if (this.nearMe) {
+        this.nearMe = null;
+        this.geoStatus = '';
+        this.cleanupFilters();
+        return;
+      }
+      if (!navigator.geolocation) {
+        this.geoStatus = 'Location is not available in this browser.';
+        return;
+      }
+      this.geoStatus = 'locating';
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          this.nearMe = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          this.geoStatus = '';
+          this.cleanupFilters();
+        },
+        err => {
+          this.geoStatus = err.code === err.PERMISSION_DENIED
+            ? 'Location permission denied.' : 'Could not get your location.';
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 },
+      );
+    },
+
     resetFilters() {
+      this.nearMe = null;
+      this.geoStatus = '';
       this.filterHistory = [];
       this.filters = { search: '', game: [], store: [], format: [] };
       this.openFacet = null;
