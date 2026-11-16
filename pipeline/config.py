@@ -6,7 +6,11 @@ from zoneinfo import ZoneInfo
 
 TZ = ZoneInfo("Europe/Madrid")
 SCRAPERS_DIR = pathlib.Path("scrapers")
-EVENTS_FILE = pathlib.Path("public/events.json")
+# Full event history: the pipeline's persistent store. Not deployed —
+# clients read the slim per-week files in public/api/v1 (pipeline/publish.py).
+EVENTS_FILE = pathlib.Path("data/events.json")
+# Where the history lived before the static API; read once, then removed.
+LEGACY_EVENTS_FILE = pathlib.Path("public/events.json")
 STATS_FILE = pathlib.Path("public/events_stats.json")
 
 # Sentinel for events that existed before lifecycle fields were added.

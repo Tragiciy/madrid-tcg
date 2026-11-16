@@ -53,16 +53,18 @@ one click.
 - **Alpine.js v3.14.1** (loaded from CDN) — provides reactivity. The whole UI
   is one Alpine component (`x-data="app()"` on the `<html>` element).
 - **Static JSON data** — the frontend's only runtime data source is
-  `public/events.json`. No API, no backend, no database.
+  the static JSON API in `public/api/v1/` (see `docs/api-v1.md`). There is
+  no server and no database.
 - **Python pipeline** — `aggregator.py` plus per-store scrapers under
-  `scrapers/` regenerate `public/events.json` on a daily GitHub Actions cron
+  `scrapers/` regenerate the history (`data/events.json`) and the API on a
+  daily GitHub Actions cron
   (`.github/workflows/update.yml`).
 - **Hosting** — Cloudflare Pages, serving the `public/` directory as static assets.
 
 ## How it works (high level)
 
 ```
-scrapers/*.py  ──▶  aggregator.py  ──▶  public/events.json
+scrapers/*.py  ──▶  aggregator.py  ──▶  data/events.json ──▶ public/api/v1/
                                                 │
                                                 ▼
                                   fetch() in Alpine init()
@@ -77,7 +79,9 @@ scrapers/*.py  ──▶  aggregator.py  ──▶  public/events.json
                        horizontal grid   or   vertical list
 ```
 
-1. The browser fetches `events.json` once at load.
+1. The browser fetches `api/v1/madrid/events/upcoming.json` (the previous
+   week plus the next four weeks, ~60 KB gzip), `stores.json` and `index.json`.
+   Other weeks load on demand.
 2. URL parameters (game, store, format, event) are applied immediately after
    load and override any saved state.
 3. Alpine reactively derives the active week (`weekDays`) from the events plus
@@ -101,7 +105,7 @@ python -m http.server -d public 8000
 open public/index.html
 ```
 
-To regenerate `public/events.json` from the scrapers locally:
+To regenerate the data and the API from the scrapers locally:
 
 ```bash
 python -m venv .venv
@@ -134,15 +138,15 @@ with no build step.
 
 Data updates flow through GitHub Actions: the
 [`update.yml`](.github/workflows/update.yml) workflow runs daily at 04:37 UTC,
-runs the tests, re-runs every scraper (isolated, in parallel), and commits a refreshed `public/events.json` (and
+runs the tests, re-runs every scraper (isolated, in parallel), and commits the refreshed history, registry and API (and
 `public/events_stats.json`) to `main`, which triggers a Cloudflare Pages
 redeploy. Broken scrapers are reported as `scraper-health` GitHub issues.
 
 ## Constraints
 
 - **No build step.** Alpine.js is loaded via CDN; no bundler, no transpiler.
-- **No backend.** The frontend only ever reads `events.json`; it never calls
+- **No backend.** The frontend only ever reads the static `api/v1` files; it never calls
   any API at runtime.
-- **No database.** `events.json` is the entire persistence layer.
+- **No database.** `data/events.json` and `data/stores.json` in git are the entire persistence layer.
 - **Four-file frontend.** HTML, CSS, JS, and config are split into four
   separate files — do not merge them. See `docs/PROJECT_CONTEXT.md` §7 for why.

@@ -180,9 +180,11 @@ class PersistenceSafetyTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.path = pathlib.Path(self.tmp.name) / "events.json"
-        patcher = mock.patch.object(repository, "EVENTS_FILE", self.path)
-        patcher.start()
-        self.addCleanup(patcher.stop)
+        self.legacy = pathlib.Path(self.tmp.name) / "legacy_events.json"
+        for name, value in (("EVENTS_FILE", self.path), ("LEGACY_EVENTS_FILE", self.legacy)):
+            patcher = mock.patch.object(repository, name, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
         self.addCleanup(self.tmp.cleanup)
 
     def test_corrupt_file_raises_instead_of_starting_empty(self):
@@ -194,6 +196,15 @@ class PersistenceSafetyTests(unittest.TestCase):
         self.path.write_text('{"events": []}', encoding="utf-8")
         with self.assertRaises(CorruptEventsFile):
             load_existing()
+
+    def test_legacy_history_is_migrated_then_removed(self):
+        self.legacy.write_text('[{"title": "A", "store": "S", "datetime_start": "%s"}]' % NOW,
+                               encoding="utf-8")
+        events = load_existing()
+        self.assertEqual(len(events), 1)
+        repository.write_events(events)
+        self.assertTrue(self.path.exists())
+        self.assertFalse(self.legacy.exists())
 
     def test_missing_file_is_empty(self):
         self.assertEqual(load_existing(), [])
