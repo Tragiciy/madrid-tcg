@@ -43,6 +43,7 @@ from pipeline.repository import (
     load_existing, load_previous_stats, save_store_registry, write_events,
     write_json_atomic,
 )
+from pipeline.pages import build_pages, write_pages
 from pipeline.publish import build_api, write_api
 from pipeline.runner import _discover_scrapers, run_all_scrapers
 from shared.scraper_keywords import extract_format_for_event
@@ -215,6 +216,7 @@ def main() -> None:
     write_events(merged)
     save_store_registry(registry)
     write_api(build_api(merged, registry, now_iso))
+    write_pages(build_pages(merged, registry, now_iso))
 
     # 6. Build stats first (so anomaly flags propagate into scraper_stats),
     #    then print both blocks.
