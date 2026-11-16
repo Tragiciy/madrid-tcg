@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block meta %}
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ canonical }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:locale" content="es_ES">
+  <script type="application/ld+json">{{ jsonld|safe }}</script>
+{% endblock %}
+{% block main %}
+<h1>{{ h1 }}</h1>
+<p class="lead">{{ description }}</p>
+{% if store %}
+<section class="store">
+  {% if store.address %}<p>📍 {{ store.address }}
+    — <a href="https://www.google.com/maps/search/?api=1&amp;query={{ (store.name ~ ', ' ~ store.address)|urlencode }}" rel="noopener">Ver en el mapa</a></p>{% endif %}
+  {% if store.website|safe_url %}<p><a href="{{ store.website|safe_url }}" rel="noopener">Web de la tienda</a></p>{% endif %}
+  {% if store.notes %}<p>{{ store.notes }}</p>{% endif %}
+</section>
+{% endif %}
+<p class="meta">{{ count }} evento{{ '' if count == 1 else 's' }} · actualizado el {{ updated|lower }} ·
+  <a href="{{ calendar_url }}">Abrir en el calendario interactivo</a></p>
+{% if not days %}
+<p class="empty">{{ empty }}</p>
+{% endif %}
+{% for day, evs in days %}
+<section class="day">
+  <h2>{{ day }}</h2>
+  <ul>
+  {% for e in evs %}
+    <li class="ev">
+      <time datetime="{{ e.datetime_start }}">{{ e.datetime_start[11:16] }}</time>
+      <span class="title">{% if e.source_url|safe_url %}<a href="{{ e.source_url|safe_url }}" rel="noopener nofollow">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</span>
+      <span class="tags">
+        {% if e.game %}<a class="tag" href="/{{ city|lower }}/{{ e.game|game_slug }}/">{{ e.game }}</a>{% endif %}
+        {% if e.format %}<span class="tag fmt">{{ e.format }}</span>{% endif %}
+      </span>
+      <span class="store">{% if e.store_id %}<a href="/{{ city|lower }}/tiendas/{{ e.store_id }}/">{{ e.store }}</a>{% else %}{{ e.store }}{% endif %}</span>
+    </li>
+  {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+{% endblock %}

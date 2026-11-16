@@ -195,6 +195,11 @@ function downloadIcs(e) {
   URL.revokeObjectURL(url);
 }
 
+// Only http(s) links from scraped data are rendered (never javascript:).
+function safeUrl(url) {
+  return (typeof url === 'string' && /^https?:\/\//i.test(url)) ? url : null;
+}
+
 // Address for an event's store. The locator-supplied address comes first:
 // it is the venue of that very event (chains have several branches), then
 // the store registry (STORE_META, loaded from api/v1/madrid/stores.json).
@@ -1505,7 +1510,7 @@ function app() {
         const gameClass = this.getGameClass(e.game);
         const past = this.isEventPast(e);
         const time = this.formatTime(e.datetime_start);
-        const url = e.source_url || '';
+        const url = safeUrl(e.source_url) || '';
         const calendarUrl = buildGoogleCalendarUrl(e);
         const calendarButton = calendarUrl
           ? `<button class="calendar-btn" type="button" data-calendar-url="${esc(calendarUrl)}" title="Add to Google Calendar" aria-label="Add to Google Calendar">` +

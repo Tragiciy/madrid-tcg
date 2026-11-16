@@ -61,6 +61,18 @@ one click.
   (`.github/workflows/update.yml`).
 - **Hosting** — Cloudflare Pages, serving the `public/` directory as static assets.
 
+## Search-engine pages
+
+The pipeline also writes plain HTML pages in Spanish for search engines. They
+need no JavaScript and are generated from the same data:
+- `/madrid/`, `/madrid/hoy/` and `/madrid/fin-de-semana/`;
+- one page per game, such as `/madrid/one-piece/`;
+- one page per store, such as `/madrid/tiendas/arte-9/`;
+- `sitemap.xml`, `robots.txt` and a real `404.html`.
+
+The event lists carry schema.org `Event` data, so they can appear in Google's
+event results.
+
 ## How it works (high level)
 
 ```

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <link rel="stylesheet" href="/pages.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/{{ city|lower }}/">TCG {{ city }}</a>
+  <nav>
+    <a href="/{{ city|lower }}/hoy/">Hoy</a>
+    <a href="/{{ city|lower }}/fin-de-semana/">Fin de semana</a>
+    <a class="cta" href="/">Calendario completo</a>
+  </nav>
+</header>
+<main>
+{% block main %}{% endblock %}
+</main>
+<footer>
+  <p>Juegos:
+  {% for name, slug in nav.games %}<a href="/{{ city|lower }}/{{ slug }}/">{{ name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
+  </p>
+  <p>Datos de las tiendas y de los localizadores oficiales de cada juego, actualizados a diario.</p>
+</footer>
+</body>
+</html>
