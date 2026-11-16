@@ -540,7 +540,9 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "Júpiter Juegos"
+        ],
         "external": [
           "bandai:354",
           "wizards:6154"
