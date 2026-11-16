@@ -73,7 +73,7 @@
       "lat": null,
       "lng": null,
       "website": "https://asediogaming.com/",
-      "notes": null,
+      "notes": "Online shop deactivated (Shopify 402, 2026-11); no event source.",
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
@@ -494,9 +494,9 @@
       "address": "C / Manuel Silvela, 8 , Madrid, M, 28010, Spain",
       "lat": 40.42928,
       "lng": -3.6985,
-      "website": null,
+      "website": "https://jupiterjuegos.com/tiendas/madrid/",
       "notes": null,
-      "origin": "auto",
+      "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
@@ -508,22 +508,6 @@
           "ravensburger:2711",
           "wizards:8420"
         ]
-      }
-    },
-    {
-      "id": "jupiter-juegos",
-      "name": "Jupiter Juegos",
-      "city": "madrid",
-      "address": "Calle de la Cruz, 10, 28012 Madrid",
-      "lat": null,
-      "lng": null,
-      "website": null,
-      "notes": "Sol / Gran Vía area",
-      "origin": "curated",
-      "added_at": "2026-11-15",
-      "aliases": {
-        "names": [],
-        "external": []
       }
     },
     {

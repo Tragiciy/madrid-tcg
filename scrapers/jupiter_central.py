@@ -1,5 +1,11 @@
 """
-Jupiter Juegos (Madrid) — https://jupiterjuegos.com/tiendas/madrid/
+Júpiter Central (Calle Manuel Silvela 8, Madrid) — https://jupiterjuegos.com/tiendas/madrid/
+
+The chain calls this branch "Júpiter Madrid"; it is the store the official
+locators list as "Júpiter Central", so its events share that name and the
+store's own listing absorbs the locator copies. (Until 2026-11 this
+scraper was labelled "Jupiter Juegos" with a wrong Calle de la Cruz address
+— the chain has no branch there; history renamed via data/store_renames.json.)
 
 The store page renders a static monthly calendar grid, no JS required.
 
@@ -49,7 +55,7 @@ from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, e
 
 logger = logging.getLogger(__name__)
 
-STORE = "Jupiter Juegos"
+STORE = "Júpiter Central"
 LANGUAGE = "es"
 TZ = ZoneInfo("Europe/Madrid")
 BASE_URL = "https://jupiterjuegos.com/tiendas/madrid/"

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-from scrapers import jupiter_juegos as jj
+from scrapers import jupiter_central as jj
 
 FIXTURE = Path(__file__).parent / "fixtures" / "scrapers" / "jupiter_madrid_2026-11.html"
 
@@ -25,7 +25,7 @@ class JupiterJuegosParseTests(unittest.TestCase):
 
     def test_event_fields(self):
         rift = next(e for e in self.events if e["title"] == "RIFTBOUND Nexus Night")
-        self.assertEqual(rift["store"], "Jupiter Juegos")
+        self.assertEqual(rift["store"], "Júpiter Central")
         self.assertEqual(rift["game"], "Riftbound")
         self.assertEqual(rift["datetime_start"], "2026-11-01T11:00:00+01:00")
         self.assertTrue(rift["source_url"].startswith("https://jupiterjuegos.com/tiendas/actividad/"))
