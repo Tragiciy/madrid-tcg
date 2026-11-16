@@ -10,7 +10,7 @@ class AggregatorWiringTests(unittest.TestCase):
         src = pathlib.Path("aggregator.py").read_text(encoding="utf-8")
         main = src[src.index("def main()"):]
         for call in ("write_events(", "save_store_registry(", "write_api(build_api(",
-                     "write_pages(build_pages(", "write_json_atomic(STATS_FILE", "append_source_runs("):
+                     "write_pages(build_pages(", "write_share_pages(build_share_pages(", "write_json_atomic(STATS_FILE", "append_source_runs("):
             self.assertIn(call, main, f"aggregator.main() no longer calls {call}")
 
 

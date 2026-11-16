@@ -43,6 +43,8 @@ one click.
 - **Installable app (PWA)** — a manifest, icons and a service worker (`public/sw.js`). The site can be
   added to the home screen and opens offline with the last data it saved. The service worker always
   tries the network first, so it never shows stale data while online.
+- **Link previews** — shared event links (`/e/<id>/`) show the event title, date, store and a
+  game image in WhatsApp, Telegram and social apps, then open the event in the calendar.
 - **Event Detail Panel** — click any event for a full-detail slide-in panel
   with store address and Google Maps link.
 

@@ -23,6 +23,7 @@ from typing import Optional
 
 from pipeline.config import TZ
 from pipeline.reconcile import event_key
+from pipeline.share import share_path
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +84,12 @@ def _visible(e: dict, now: datetime) -> bool:
     return start <= now or e.get("is_active", True)
 
 
+def public_events(events: list[dict], now_iso: str) -> list[dict]:
+    """Visible events in the public schema (what the API and pages show)."""
+    now = datetime.fromisoformat(now_iso)
+    return [_public_event(e) for e in events if _visible(e, now)]
+
+
 def build_api(events: list[dict], registry, now_iso: str,
               city: str = "madrid") -> dict[str, dict]:
     """{relative path: JSON document} for one city."""
@@ -99,6 +106,9 @@ def build_api(events: list[dict], registry, now_iso: str,
             continue
         day = datetime.fromisoformat(e["datetime_start"]).astimezone(TZ).date()
         pe = _public_event(e)
+        path = share_path(pe, today)
+        if path:
+            pe["share"] = path  # static page with a link preview (pipeline/share.py)
         by_week[iso_week(day)].append(pe)
         if up_from <= day < up_to:
             upcoming.append(pe)
