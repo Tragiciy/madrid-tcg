@@ -9,8 +9,9 @@ locators already carry; those locator copies are dropped by the
 aggregator's dedup (store listing wins). The store publishes about two
 weeks ahead, so the current and next month are read.
 
-Events whose game is not a tracked TCG (Dragon Ball Fusion World) are
-skipped: an unknown-game event would swallow a locator event in the dedup.
+Events whose game is not recognised are skipped: an unknown-game event
+would swallow a locator event in the dedup. (Dragon Ball Fusion World is a
+tracked game since 2026-11.)
 """
 
 import logging
@@ -32,8 +33,6 @@ STORE = "El Encuentro"
 LANGUAGE = "es"
 CALENDAR_URL = "https://elencuentro.infrecuentes.es/eventos/"
 MONTHS = 2
-# Card games the store runs that the site does not track as a game.
-_UNTRACKED_RE = re.compile(r"\b(dragon\s*ball|dbfw|fusion\s*world)\b", re.IGNORECASE)
 
 
 def to_events(raw_events, now: datetime) -> list[dict]:
@@ -45,7 +44,7 @@ def to_events(raw_events, now: datetime) -> list[dict]:
     out: list[dict] = []
     seen: set[str] = set()
     for ev in raw_events:
-        if ev.start < since or not ev.title or _UNTRACKED_RE.search(ev.title):
+        if ev.start < since or not ev.title:
             continue
         game = (extract_game_from_keywords(ev.title, GAME_KEYWORDS)
                 or extract_game_from_keywords(ev.description, GAME_KEYWORDS))

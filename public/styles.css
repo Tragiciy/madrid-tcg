@@ -912,6 +912,8 @@ input:focus, select:focus { border-color: var(--accent); }
 .game-naruto    { --card-tint: #f1f5f9; --card-accent: #475569; }   /* muted slate */
 .game-cyberpunk { --card-tint: #f7fee7; --card-accent: #65a30d; }   /* neon lime */
 .game-gundam    { --card-tint: #f0fdfa; --card-accent: #0f766e; }   /* teal */
+.game-dbfw      { --card-tint: #fefbf3; --card-accent: #b45309; }   /* amber-brown */
+.game-dbmasters { --card-tint: #fafaf9; --card-accent: #78350f; }   /* dark brown */
 .game-mlp       { --card-tint: #fdf4ff; --card-accent: #c026d3; }   /* fuchsia */
 .game-palworld  { --card-tint: #f0f9ff; --card-accent: #0284c7; }   /* sky */
 .game-unknown   { --card-tint: #f9fafb; --card-accent: #9ca3af; }   /* gray */

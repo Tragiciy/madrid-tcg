@@ -115,9 +115,9 @@ class ElEncuentroTests(unittest.TestCase):
             ("2026-11-18T18:00:00+01:00", "Gundam Card Game", "Gundam TCG – Store Tournament"),
             ("2026-11-19T18:00:00+01:00", "Yu-Gi-Oh!", "Yu-Gi-Oh! – Formato EDISON"),
             ("2026-11-19T18:00:00+01:00", "Pokémon", "Pokémon League – Standard"),
+            ("2026-11-21T10:30:00+01:00", "Dragon Ball Fusion World", "Dragon Ball Fusion World – Store Tournament"),
         ])
-        # Skipped: the 4 Nov Riftbound night (history) and Dragon Ball
-        # Fusion World (not a tracked game).
+        # Skipped: the 4 Nov Riftbound night (history).
 
     def test_schema(self):
         ev = self.events[0]
@@ -200,16 +200,15 @@ class NikochanArenaTests(unittest.TestCase):
             ("2026-11-20T17:15:00+01:00", "One Piece", "Torneo One Piece"),
             ("2026-11-29T10:00:00+01:00", "Riftbound", "Riftbound – NEXUS NIGHT"),
             ("2026-11-29T17:15:00+01:00", "One Piece", "Torneo One Piece"),
+            ("2026-11-29T17:15:00+01:00", "Dragon Ball Fusion World", "Torneo Dragon Ball"),
             ("2026-12-12T10:00:00+01:00", "Riftbound", "Riftbound – NEXUS NIGHT"),
             ("2027-01-23T10:00:00+01:00", "Yu-Gi-Oh!", "Torneo YuGiOh!"),
             ("2027-01-23T10:00:00+01:00", "Riftbound", "Riftbound – PRE-RIFT LEGACY"),
         ])
 
-    def test_wizards_join_cards_and_untracked_games_are_skipped(self):
-        # Magic cards linking a Wizards join code are the Wizards locator's;
-        # Dragon Ball is not a tracked game.
+    def test_wizards_join_cards_are_skipped(self):
+        # Magic cards linking a Wizards join code are the Wizards locator's.
         self.assertNotIn("Magic: The Gathering", {e["game"] for e in self.events})
-        self.assertFalse(any("Dragon" in e["title"] for e in self.events))
 
     def test_sign_up_link_is_the_source_url(self):
         self.assertEqual(self.events[3]["source_url"], "https://playriftbound.com/events/117468466850407382")

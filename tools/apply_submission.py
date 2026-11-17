@@ -19,7 +19,9 @@ DATA_FILE = pathlib.Path("data/manual_events.json")
 GAMES = {
     "Magic: The Gathering", "Pokémon", "One Piece", "Digimon", "Lorcana",
     "Star Wars: Unlimited", "Yu-Gi-Oh!", "Flesh and Blood", "Riftbound",
-    "Weiß Schwarz", "Final Fantasy TCG", "Naruto Mythos",
+    "Weiß Schwarz", "Final Fantasy TCG", "Naruto Mythos", "Cyberpunk TCG",
+    "Gundam Card Game", "Dragon Ball Fusion World", "Dragon Ball Super Masters",
+    "My Little Pony", "Palworld",
 }
 
 

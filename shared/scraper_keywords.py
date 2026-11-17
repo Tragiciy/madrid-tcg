@@ -51,6 +51,15 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     ("nightcity",                           "Cyberpunk TCG"),
     ("my little pony",                      "My Little Pony"),
     ("gundam",                              "Gundam Card Game"),
+    # Dragon Ball: "Masters" is the paper game, everything else Fusion World
+    # (the current game; Bandai TCG+ titles it "DBSCG FUSION WORLD").
+    ("dragon ball super masters",           "Dragon Ball Super Masters"),
+    ("dbscg masters",                       "Dragon Ball Super Masters"),
+    ("dbs masters",                         "Dragon Ball Super Masters"),
+    ("fusion world",                        "Dragon Ball Fusion World"),
+    ("dbfw",                                "Dragon Ball Fusion World"),
+    ("dragon ball",                         "Dragon Ball Fusion World"),
+    ("dragonball",                          "Dragon Ball Fusion World"),
     ("palworld",                            "Palworld"),
     ("yu-gi-oh!",                           "Yu-Gi-Oh!"),
     ("yu-gi-oh",                            "Yu-Gi-Oh!"),
@@ -189,6 +198,8 @@ DEFAULT_FORMAT_BY_GAME: dict[str, str] = {
     "Weiß Schwarz":         "Standard",
     "Cyberpunk TCG":        "Standard",
     "Gundam Card Game":     "Standard",
+    "Dragon Ball Fusion World":  "Standard",
+    "Dragon Ball Super Masters": "Standard",
     "My Little Pony":       "Standard",
     "Palworld":             "Standard",
     # FAB: liga / unnamed events are always Classic Constructed → Standard.

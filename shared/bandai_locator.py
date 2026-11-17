@@ -31,7 +31,15 @@ HEADERS = {
     "Origin": "https://www.bandai-tcg-plus.com",
     "Referer": "https://www.bandai-tcg-plus.com/",
 }
-GAME_TITLE_IDS = {"One Piece": 4, "Digimon": 2}
+# Bandai TCG+ game_title_id values (probed 2026-11-17; ids it doesn't know
+# are ignored or rejected, so a wrong id shows up as a wrong game_title).
+GAME_TITLE_IDS = {
+    "One Piece": 4,
+    "Digimon": 2,
+    "Dragon Ball Fusion World": 10,
+    "Dragon Ball Super Masters": 1,  # the paper "DBSCG MASTERS" game
+    "Gundam Card Game": 16,
+}
 PAGE_SIZE = 100
 MAX_EVENTS_PER_GAME = 1000
 
@@ -53,6 +61,11 @@ def _fetch_game(sess, game_title_id: int, city: City) -> list[dict]:
         if not isinstance(success, dict):
             raise RuntimeError(f"Bandai TCG+: unexpected response {str(data)[:200]}")
         batch = success.get("event_list") or []
+        # An id Bandai doesn't know can come back as another game's events
+        # (3 returned DBSCG MASTERS): never publish those under our label.
+        wrong = {str(e.get("game_title_id")) for e in batch} - {str(game_title_id)}
+        if wrong:
+            raise RuntimeError(f"Bandai TCG+: asked for game_title_id {game_title_id}, got {sorted(wrong)}")
         events += batch
         offset += PAGE_SIZE
         if not batch or offset >= int(success.get("total") or 0):
