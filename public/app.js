@@ -3,6 +3,8 @@
 const PRESETS_STORAGE_KEY = 'tcg-presets-v1';
 const DEFAULT_PRESET_STORAGE_KEY = 'tcg-default-preset-v1';
 const ONBOARDING_STORAGE_KEY = 'tcg-onboarding-v1';
+// Favorites are per city (Madrid keeps the original key): cleanupFavorites
+// drops keys missing from loaded weeks, which would wipe another city's.
 const FAVORITES_STORAGE_KEY = 'tcg-favorites-v1';
 // favorite key → ISO week of its event, so favorites of deleted events can
 // be pruned once their week is loaded (events load per week).
@@ -270,11 +272,11 @@ function coreBounds(L, points) {
 // Draw one pin per located store. `fitKey` changes when the question changes
 // (week, day, filters, location); only then is the view refitted, so a
 // minute tick or a selection never moves the map under the user's finger.
-function renderStoreMap(L, el, { stores, selected, me, radiusKm, fitKey, onSelect }) {
+function renderStoreMap(L, el, { stores, selected, me, radiusKm, fitKey, onSelect, centre }) {
   if (!MAP.map) {
     // Build everything first and publish MAP.map last: a throw half-way
     // must not leave a map without its layers (later draws would skip setup).
-    const map = L.map(el).setView([MAP_DEFAULT_VIEW.lat, MAP_DEFAULT_VIEW.lng], MAP_DEFAULT_VIEW.zoom);
+    const map = L.map(el).setView([centre.lat, centre.lng], MAP_DEFAULT_VIEW.zoom);
     L.tileLayer(MAP_TILES.url, { attribution: MAP_TILES.attribution, maxZoom: MAP_TILES.maxZoom }).addTo(map);
     const pins = L.markerClusterGroup({
       maxClusterRadius: 40,
@@ -467,11 +469,28 @@ function readMadridNow() {
   };
 }
 
-// Static read API (docs/api-v1.md). upcoming.json covers the previous week
-// to four weeks ahead; other weeks are fetched when the user navigates there.
-// Absolute, so the app also works when served as the offline fallback for
-// another path (the service worker returns the cached shell for any page).
-const API_BASE = '/api/v1/madrid';
+// Static read API (docs/api-v1.md), one directory per city. upcoming.json
+// covers the previous week to four weeks ahead; other weeks are fetched when
+// the user navigates there. Absolute, so the app also works when served as
+// the offline fallback for another path (the service worker returns the
+// cached shell for any page).
+const API_ROOT = '/api/v1';
+const DEFAULT_CITY = 'madrid';        // the city the site root shows
+const CITY_STORAGE_KEY = 'tcg-city-v1';
+const CITY_ID_RE = /^[a-z][a-z-]{1,40}$/;
+
+// The city to open: ?city=, else the last one chosen, else the default.
+// index.html runs the same rule inline (to preload the right files) and
+// leaves its answer in window.TCG_START_CITY.
+function startCity() {
+  const fromUrl = new URLSearchParams(window.location.search).get('city');
+  if (fromUrl && CITY_ID_RE.test(fromUrl)) return fromUrl;
+  try {
+    const saved = localStorage.getItem(CITY_STORAGE_KEY);
+    if (saved && CITY_ID_RE.test(saved)) return saved;
+  } catch { /* storage blocked */ }
+  return DEFAULT_CITY;
+}
 
 // ISO-8601 week id ("2026-W47") of a local-midnight Date.
 function isoWeekOf(d) {
@@ -499,6 +518,8 @@ function madridToday() {
 function app() {
   return {
     events:       [],
+    city:         window.TCG_START_CITY || startCity(),
+    cities:       [],     // from api/v1/cities.json; the switcher shows when > 1
     loading:      true,
     loadError:    null,
     weekStart:    weekMonday(madridToday()),
@@ -602,25 +623,12 @@ function app() {
       this.nowMadrid = readMadridNow();
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
       
+      fetch(`${API_ROOT}/cities.json`)
+        .then(r => (r.ok ? r.json() : {})).then(d => { this.cities = d.cities || []; this.syncTitle(); })
+        .catch(() => {});
       try {
-        // Plain fetches: Cloudflare Pages serves JSON with
-        // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
-        // every visit and gets a cheap 304 when the data hasn't changed.
-        // URLs must match the <link rel="preload"> tags in index.html.
-        // Stores and the week index are optional: the calendar works without.
-        const storesReq = fetch(`${API_BASE}/stores.json`)
-          .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
-        const indexReq = fetch(`${API_BASE}/index.json`)
-          .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
-        const res = await fetch(`${API_BASE}/events/upcoming.json`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const upcoming = await res.json();
-        // STORE_META is not reactive: fill it before the events land, so
-        // nothing computed from the events sees stores without coordinates.
-        for (const s of (await storesReq).stores || []) STORE_META[s.name] = s;
-        this.events = upcoming.events;
-        this.markWeeksLoaded(upcoming.from, upcoming.to);
-        this.weekIndex = (await indexReq).weeks || null;
+        await this.loadCityData();
+        this.rememberCity(this.city);  // a ?city= link also becomes the default next time
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
         const hasUrlFilters = ['game', 'store', 'format'].some(f => params.get(f));
@@ -672,6 +680,94 @@ function app() {
       this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
 
       this.$watch('filters.search', () => this.cleanupFilters());
+    },
+
+    get apiBase() {
+      return `${API_ROOT}/${this.city}`;
+    },
+
+    get cityName() {
+      const c = this.cities.find(x => x.id === this.city);
+      if (c) return c.name;
+      return this.city.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+    },
+
+    // Stores, the week index and upcoming events of this.city. An unknown
+    // city (an old link or a city that was removed) falls back to the default.
+    async loadCityData() {
+      // Plain fetches: Cloudflare Pages serves JSON with
+      // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
+      // every visit and gets a cheap 304 when the data hasn't changed.
+      // URLs must match the preloads index.html injects.
+      // Stores and the week index are optional: the calendar works without.
+      const base = this.apiBase;
+      const storesReq = fetch(`${base}/stores.json`)
+        .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
+      const indexReq = fetch(`${base}/index.json`)
+        .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
+      const res = await fetch(`${base}/events/upcoming.json`);
+      if (res.status === 404 && this.city !== DEFAULT_CITY) {
+        this.rememberCity(DEFAULT_CITY);
+        return this.loadCityData();
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const upcoming = await res.json();
+      // STORE_META is not reactive: fill it before the events land, so
+      // nothing computed from the events sees stores without coordinates.
+      for (const k of Object.keys(STORE_META)) delete STORE_META[k];
+      for (const s of (await storesReq).stores || []) STORE_META[s.name] = s;
+      this._loadedWeeks = new Set();
+      this.events = upcoming.events;
+      this.markWeeksLoaded(upcoming.from, upcoming.to);
+      this.weekIndex = (await indexReq).weeks || null;
+    },
+
+    // Record the city in state, storage and the URL (the default city has
+    // no ?city=, so Madrid links stay as they were).
+    rememberCity(id) {
+      this.city = id;
+      try { localStorage.setItem(CITY_STORAGE_KEY, id); } catch { /* storage blocked */ }
+      const url = new URL(window.location.href);
+      if (id === DEFAULT_CITY) url.searchParams.delete('city');
+      else url.searchParams.set('city', id);
+      history.replaceState(null, '', url.toString());
+      this.syncTitle();
+    },
+
+    syncTitle() {
+      document.title = `${this.cityName} TCG Events — tournament calendar`;
+    },
+
+    async setCity(id) {
+      if (id === this.city || !CITY_ID_RE.test(id)) return;
+      this.closePanel();
+      this.rememberCity(id);
+      // Stores are per city; games and formats carry over.
+      this.filters.store = [];
+      this.mapStore = null;
+      this.mapDay = null;
+      this.nearMe = null;
+      MAP.fitKey = null;
+      const c = this.cities.find(x => x.id === id);
+      if (MAP.map && c) MAP.map.setView([c.lat, c.lng], MAP_DEFAULT_VIEW.zoom, { animate: false });
+      this.favorites = [];
+      this.loadFavorites();
+      this.loading = true;
+      this.loadError = null;
+      try {
+        await this.loadCityData();
+        this.cleanupFavorites();
+        this.cleanupFilters({ syncUrl: true });
+      } catch (err) {
+        console.error('Failed to load city', id, err);
+        this.loadError = 'Could not load events. Check your connection and try again.';
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    favoritesKey(base = FAVORITES_STORAGE_KEY) {
+      return this.city === DEFAULT_CITY ? base : `${base}:${this.city}`;
     },
 
     setView(mode) {
@@ -881,7 +977,7 @@ function app() {
       this._loadedWeeks.add(week);
       if (this.weekIndex && !(week in this.weekIndex)) return;  // no events that week
       try {
-        const res = await fetch(`${API_BASE}/events/${week}.json`);
+        const res = await fetch(`${this.apiBase}/events/${week}.json`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const have = new Set(this.events.map(e => eventKey(e)));
@@ -992,11 +1088,11 @@ function app() {
 
     loadFavorites() {
       try {
-        const weeks = JSON.parse(localStorage.getItem(FAVORITE_WEEKS_STORAGE_KEY) || '{}');
+        const weeks = JSON.parse(localStorage.getItem(this.favoritesKey(FAVORITE_WEEKS_STORAGE_KEY)) || '{}');
         this._favWeeks = (weeks && typeof weeks === 'object') ? weeks : {};
       } catch { this._favWeeks = {}; }
       try {
-        const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        const raw = localStorage.getItem(this.favoritesKey());
         if (!raw) return;
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed))
@@ -1009,8 +1105,8 @@ function app() {
         const weeks = {};
         for (const k of this.favorites) if (this._favWeeks && this._favWeeks[k]) weeks[k] = this._favWeeks[k];
         this._favWeeks = weeks;
-        localStorage.setItem(FAVORITE_WEEKS_STORAGE_KEY, JSON.stringify(weeks));
-        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(this.favorites));
+        localStorage.setItem(this.favoritesKey(FAVORITE_WEEKS_STORAGE_KEY), JSON.stringify(weeks));
+        localStorage.setItem(this.favoritesKey(), JSON.stringify(this.favorites));
       } catch (err) {
         console.warn('Failed to save favorites', err);
       }
@@ -1759,7 +1855,7 @@ function app() {
     // Changes only when the question changes; see renderStoreMap.
     get mapFitKey() {
       // events.length: a week fetched after navigation must refit when it lands.
-      return JSON.stringify([isoDay(this.weekStart), this.mapDay, this.filters, this.segmentFilter,
+      return JSON.stringify([this.city, isoDay(this.weekStart), this.mapDay, this.filters, this.segmentFilter,
         this.showFavoritesOnly, this.nearMe, this.radiusKm, this.events.length]);
     },
 
@@ -1774,6 +1870,7 @@ function app() {
         radiusKm: this.radiusKm,
         fitKey: this.mapFitKey,
         onSelect: (name) => { this.mapStore = name; },
+        centre: this.cities.find(c => c.id === this.city) || MAP_DEFAULT_VIEW,
       };
       this.mapAttempt;  // dependency only: Retry re-runs this effect
       const fail = () => {
