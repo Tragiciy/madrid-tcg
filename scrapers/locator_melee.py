@@ -2,7 +2,8 @@
 scrapers/locator_melee.py — tournaments from Melee.gg organizers.
 
 Melee is the official event platform for Cyberpunk TCG and is also used by
-stores for Star Wars: Unlimited (and some Magic). Its global search has no
+stores for Star Wars: Unlimited (only games without an official locator
+are read; see GAMES). Its global search has no
 location filter and stops at 250 results, so we read each Madrid store's
 organizer page instead.
 
@@ -12,6 +13,7 @@ Times come in UTC ("...Z").
 """
 
 import logging
+import re
 from typing import Optional
 
 from shared.locator_common import (
@@ -29,22 +31,26 @@ ORGANIZATIONS_URL = BASE_URL + "/Organization/GetOrganizations"
 PAGE_SIZE = 100
 MAX_PAGES = 10
 
-# Melee's game names → ours. Games we don't list are skipped.
+# Melee's game names → ours. Games we don't list are skipped — including
+# Magic, Lorcana, Pokémon, One Piece and FaB: their official locators already
+# list these events, and drop_locator_duplicates only lets store scrapers
+# claim a slot, so a Melee copy of a locator event would be published twice.
 GAMES = {
     "cyberpunk tcg": "Cyberpunk TCG",
     "cyberpunktcg": "Cyberpunk TCG",
     "star wars: unlimited": "Star Wars: Unlimited",
     "starwarsunlimited": "Star Wars: Unlimited",
-    "magic: the gathering": "Magic: The Gathering",
-    "magicthegathering": "Magic: The Gathering",
     "riftbound": "Riftbound",
-    "disney lorcana": "Lorcana",
-    "lorcana": "Lorcana",
-    "pokemon": "Pokémon",
-    "pokémon": "Pokémon",
-    "one piece": "One Piece",
-    "flesh and blood": "Flesh and Blood",
 }
+
+# Rows whose status mentions any of these are not upcoming events.
+SKIP_STATUSES = ("cancel", "ended", "complete", "finished")
+
+# Organizers sometimes save a tournament with no time: it comes back as
+# exactly midnight UTC (01:00/02:00 in Madrid), which is never a real start
+# here. Such rows are dropped rather than published at 01:00 next to the
+# store's own listing of the same event.
+_PLACEHOLDER_TIME = re.compile(r"T00:00:00(\.0+)?Z?$")
 
 # DataTables form fields Melee's endpoints expect.
 _HEADERS = {"X-Requested-With": "XMLHttpRequest"}
@@ -97,8 +103,15 @@ def parse_tournaments(rows: list[dict], org_id: str, resolver: StoreResolver) ->
     out: list[dict] = []
     for t in rows:
         game = _game(t.get("gameDescription"))
-        start_iso = to_madrid_iso(t.get("startDate") or "")
+        raw_start = t.get("startDate") or ""
+        start_iso = to_madrid_iso(raw_start)
         if not game or not start_iso or not t.get("name") or not t.get("id"):
+            continue
+        status = (t.get("status") or "").lower()
+        if any(word in status for word in SKIP_STATUSES):
+            continue
+        if _PLACEHOLDER_TIME.search(raw_start):
+            logger.info("%s: skipping %s (no start time set: %s)", STORE, t.get("id"), raw_start)
             continue
         if not (start.isoformat() <= start_iso[:10] <= end.isoformat()):
             continue
@@ -126,10 +139,16 @@ def scrape() -> list[dict]:
     sess = session()
     events: list[dict] = []
     org_ids = organization_ids(registry)
+    # A wrong or moved organizer id answers 200 with no rows, exactly like an
+    # organizer with nothing scheduled — list them so a bad alias is visible.
+    empty: list[str] = []
     for org_id in org_ids:
         rows = fetch_scheduled(sess, org_id)
+        if not rows:
+            empty.append(org_id)
         events += parse_tournaments(rows, org_id, resolver)
-    logger.info("%s: %d organizers → %d events", STORE, len(org_ids), len(events))
+    logger.info("%s: %d organizers → %d events; nothing scheduled at %d: %s",
+                STORE, len(org_ids), len(events), len(empty), ", ".join(empty) or "-")
     return events
 
 

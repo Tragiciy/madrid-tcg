@@ -53,9 +53,18 @@ class ParseTests(unittest.TestCase):
 
     def test_game_names(self):
         rows = [_row(id=1, gameDescription="STAR WARS: Unlimited"),
-                _row(id=2, gameDescription="Disney Lorcana"),
-                _row(id=3, gameDescription="Marvel Snap")]
-        self.assertEqual([e["game"] for e in self.parse(rows)], ["Star Wars: Unlimited", "Lorcana"])
+                _row(id=2, gameDescription="Disney Lorcana"),  # its official locator has it
+                _row(id=3, gameDescription="Magic: The Gathering"),
+                _row(id=4, gameDescription="Marvel Snap")]
+        self.assertEqual([e["game"] for e in self.parse(rows)], ["Star Wars: Unlimited"])
+
+    def test_midnight_utc_placeholder_is_skipped(self):
+        rows = [_row(id=1, startDate=_in_days(3, hour_utc=0)), _row(id=2, startDate=_in_days(3, hour_utc=17))]
+        self.assertEqual([e["source_event_id"] for e in self.parse(rows)], ["melee:2"])
+
+    def test_cancelled_and_finished_are_skipped(self):
+        rows = [_row(id=1, status="Registration"), _row(id=2, status="Canceled"), _row(id=3, status="Ended")]
+        self.assertEqual([e["source_event_id"] for e in self.parse(rows)], ["melee:1"])
 
     def test_outside_window_and_incomplete_rows_are_skipped(self):
         rows = [_row(id=1, startDate=_in_days(-2)), _row(id=2, startDate=_in_days(400)),
