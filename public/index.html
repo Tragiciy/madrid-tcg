@@ -277,7 +277,10 @@
 
     <div class="map-box">
       <div class="map-canvas" x-ref="mapEl" role="region" aria-label="Map of stores with events"></div>
-      <div class="map-overlay" x-show="mapStatus" x-text="mapStatus"></div>
+      <div class="map-overlay" x-show="mapStatus">
+        <span x-text="mapStatus"></span>
+        <button type="button" class="btn" x-show="mapFailed" @click="mapAttempt++">Retry</button>
+      </div>
       <div class="map-overlay" x-show="!mapStatus && mapStores.length === 0">No upcoming events match these filters.</div>
     </div>
 

@@ -630,12 +630,17 @@ cluster shows the total of its events.
 - **Loading:** Leaflet 1.9.4 and Leaflet.markercluster 1.5.3 come from
   jsDelivr with SRI, injected by `loadLeaflet()` the first time the map
   opens. The calendar views never load them.
+  Each asset has its own promise, and a failed asset is forgotten, so a
+  retry (the Retry button, or coming back online) reloads only what failed.
+  `window.L` alone does not mean ready: it exists while the plugin is still
+  loading.
 - **Tiles:** OpenStreetMap standard tiles (`MAP_TILES` in `config.js`).
   Swap the URL there if traffic outgrows the OSM tile usage policy.
 - **Reactivity:** `drawMap()` runs from `x-effect` and reads every input
   synchronously. Leaflet objects live in the module-level `MAP`, never in
   Alpine state. The view is refitted only when `mapFitKey` changes (week,
-  day, filters, location), so the minute tick or a selection never moves
+  day, filters, location, plus the loaded event count so a week fetched after
+  navigation refits), so the minute tick or a selection never moves
   the map. Redraws that would change nothing are skipped, because rebuilding
   the pins cancels a running cluster zoom.
 - **Gotchas:**

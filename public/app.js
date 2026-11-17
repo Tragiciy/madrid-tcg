@@ -220,29 +220,36 @@ const LEAFLET = {
   clusterCss:    'https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css',
   clusterCssSri: 'sha384-pmjIAcz2bAn0xukfxADbZIb3t8oRT9Sv0rvO+BR5Csr6Dhqq+nZs59P0pPKQJkEV',
 };
-let leafletPromise = null;
-
-function loadLeaflet() {
-  if (window.L) return Promise.resolve(window.L);
-  if (!leafletPromise) {
-    const load = (tag, attrs) => new Promise((resolve, reject) => {
+// One promise per asset URL; a failed one is forgotten (and its tag removed)
+// so the next open retries just that asset.
+const assetLoads = new Map();
+function loadAsset(tag, attrs) {
+  const url = attrs.href || attrs.src;
+  if (!assetLoads.has(url)) {
+    assetLoads.set(url, new Promise((resolve, reject) => {
       const el = Object.assign(document.createElement(tag), attrs, { crossOrigin: 'anonymous' });
       el.onload = resolve;
-      el.onerror = reject;
+      el.onerror = () => {
+        assetLoads.delete(url);
+        el.remove();
+        reject(new Error(`Could not load ${url}`));
+      };
       document.head.appendChild(el);
-    });
-    leafletPromise = Promise.all([
-      load('link', { rel: 'stylesheet', href: LEAFLET.css, integrity: LEAFLET.cssSri }),
-      load('script', { src: LEAFLET.js, integrity: LEAFLET.jsSri }),
-    ]).then(() => Promise.all([  // the plugin extends window.L: load it second
-      load('link', { rel: 'stylesheet', href: LEAFLET.clusterCss, integrity: LEAFLET.clusterCssSri }),
-      load('script', { src: LEAFLET.clusterJs, integrity: LEAFLET.clusterJsSri }),
-    ])).then(() => window.L).catch((err) => {
-      leafletPromise = null;  // let the next open retry
-      throw err;
-    });
+    }));
   }
-  return leafletPromise;
+  return assetLoads.get(url);
+}
+
+// Resolves once Leaflet AND the cluster plugin (which extends window.L) are
+// ready. `window.L` alone is not enough: it exists while the plugin loads.
+function loadLeaflet() {
+  return Promise.all([
+    loadAsset('link', { rel: 'stylesheet', href: LEAFLET.css, integrity: LEAFLET.cssSri }),
+    loadAsset('script', { src: LEAFLET.js, integrity: LEAFLET.jsSri }),
+  ]).then(() => Promise.all([
+    loadAsset('link', { rel: 'stylesheet', href: LEAFLET.clusterCss, integrity: LEAFLET.clusterCssSri }),
+    loadAsset('script', { src: LEAFLET.clusterJs, integrity: LEAFLET.clusterJsSri }),
+  ])).then(() => window.L);
 }
 
 // focus: a store to bring into view once its pin exists (set by the list).
@@ -265,9 +272,11 @@ function coreBounds(L, points) {
 // minute tick or a selection never moves the map under the user's finger.
 function renderStoreMap(L, el, { stores, selected, me, radiusKm, fitKey, onSelect }) {
   if (!MAP.map) {
-    MAP.map = L.map(el).setView([MAP_DEFAULT_VIEW.lat, MAP_DEFAULT_VIEW.lng], MAP_DEFAULT_VIEW.zoom);
-    L.tileLayer(MAP_TILES.url, { attribution: MAP_TILES.attribution, maxZoom: MAP_TILES.maxZoom }).addTo(MAP.map);
-    MAP.pins = L.markerClusterGroup({
+    // Build everything first and publish MAP.map last: a throw half-way
+    // must not leave a map without its layers (later draws would skip setup).
+    const map = L.map(el).setView([MAP_DEFAULT_VIEW.lat, MAP_DEFAULT_VIEW.lng], MAP_DEFAULT_VIEW.zoom);
+    L.tileLayer(MAP_TILES.url, { attribution: MAP_TILES.attribution, maxZoom: MAP_TILES.maxZoom }).addTo(map);
+    const pins = L.markerClusterGroup({
       maxClusterRadius: 40,
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
@@ -281,10 +290,12 @@ function renderStoreMap(L, el, { stores, selected, me, radiusKm, fitKey, onSelec
           iconAnchor: [19, 19],
         });
       },
-    }).addTo(MAP.map);
-    MAP.me = L.layerGroup().addTo(MAP.map);
-    MAP.map.on('click', () => onSelect(null));
+    }).addTo(map);
+    const me = L.layerGroup().addTo(map);
+    map.on('click', () => MAP.onSelect && MAP.onSelect(null));
+    Object.assign(MAP, { pins, me, map });
   }
+  MAP.onSelect = onSelect;
   MAP.map.invalidateSize();  // the container may have been hidden (x-show)
   // Rebuilding the pins mid-animation cancels a cluster zoom: skip redraws
   // that would change nothing (e.g. the minute tick).
@@ -532,6 +543,8 @@ function app() {
     mapDay:       null,
     mapStore:     null,
     mapStatus:    '',
+    mapFailed:    false,
+    mapAttempt:   0,     // bumped by Retry / coming back online: re-runs drawMap
     offline:      !navigator.onLine,
     // Reactive Europe/Madrid clock — refreshed every minute. Used to
     // mark past segments and past events on today.
@@ -549,7 +562,10 @@ function app() {
       if (this._initialized) return;
       this._initialized = true;
       this.loadFavorites();
-      window.addEventListener('online',  () => { this.offline = false; });
+      window.addEventListener('online',  () => {
+        this.offline = false;
+        if (this.mapFailed) this.mapAttempt++;
+      });
       window.addEventListener('offline', () => { this.offline = true; });
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW registration failed', err));
@@ -1415,6 +1431,8 @@ function app() {
           this.filters[field] = next;
         }
       }
+      // Map: a day chip the filters have emptied falls back to the week.
+      if (this.mapDay && !this.mapEvents.length) this.mapDay = null;
       if (syncUrl) this.syncFiltersToUrl();
     },
 
@@ -1740,8 +1758,9 @@ function app() {
 
     // Changes only when the question changes; see renderStoreMap.
     get mapFitKey() {
+      // events.length: a week fetched after navigation must refit when it lands.
       return JSON.stringify([isoDay(this.weekStart), this.mapDay, this.filters, this.segmentFilter,
-        this.showFavoritesOnly, this.nearMe, this.radiusKm]);
+        this.showFavoritesOnly, this.nearMe, this.radiusKm, this.events.length]);
     },
 
     // Called from x-effect. Every reactive input is read synchronously so the
@@ -1756,13 +1775,25 @@ function app() {
         fitKey: this.mapFitKey,
         onSelect: (name) => { this.mapStore = name; },
       };
-      if (!window.L) this.mapStatus = 'Loading map…';
+      this.mapAttempt;  // dependency only: Retry re-runs this effect
+      const fail = () => {
+        this.mapFailed = true;
+        this.mapStatus = 'Could not load the map. Check your connection.';
+      };
+      if (!MAP.map) this.mapStatus = 'Loading map…';
       loadLeaflet().then((L) => requestAnimationFrame(() => {
         if (this.viewMode !== 'map' || !this.$refs.mapEl) return;
-        this.mapStatus = '';
-        renderStoreMap(L, this.$refs.mapEl, args);
-      })).catch(() => {
-        this.mapStatus = 'Could not load the map. Check your connection and try again.';
+        try {
+          renderStoreMap(L, this.$refs.mapEl, args);
+          this.mapFailed = false;
+          this.mapStatus = '';
+        } catch (err) {
+          console.error('Map render failed', err);
+          fail();
+        }
+      })).catch((err) => {
+        console.warn(err);
+        fail();
       });
     },
 
