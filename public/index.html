@@ -306,6 +306,18 @@
       </template>
     </div>
 
+    <!-- Colour key for the pins; a tap filters by that game (tap again to undo) -->
+    <div class="map-legend" x-show="mapLegend.length > 1 || selectedValues('game').length" role="group" aria-label="Games on the map">
+      <template x-for="g in mapLegend" :key="'lg-' + g.game">
+        <button type="button" class="map-legend-item" :class="{ 'is-active': isSelected('game', g.game) }"
+                @click="toggleFilter('game', g.game)" :aria-pressed="isSelected('game', g.game)">
+          <span class="lg-dot" :style="'background:' + g.color"></span>
+          <span x-text="g.game"></span>
+          <span class="lg-n" x-text="g.n"></span>
+        </button>
+      </template>
+    </div>
+
     <div class="map-box">
       <div class="map-canvas" x-ref="mapEl" role="region" aria-label="Map of stores with events"></div>
       <div class="map-overlay" x-show="mapStatus">
@@ -363,7 +375,7 @@
         <template x-for="s in mapStores" :key="'ml-' + s.name">
           <li>
             <button type="button" class="ml-store" @click="pickMapStore(s)">
-              <span class="map-pin" :class="s.gameClass" x-text="s.count"></span>
+              <span class="map-pin" :style="pinStyle(s.mix)"><span class="map-pin-n" x-text="s.count"></span></span>
               <span class="ml-text">
                 <span class="ml-name" x-text="s.name"></span>
                 <span class="ml-sub">

@@ -1515,19 +1515,48 @@ input:focus, select:focus { border-color: var(--accent); }
 
 .map-pin-wrap { background: none; border: none; }
 .map-pin {
+  /* Ring = game mix (inline conic-gradient background), centre = count. */
   display: flex; align-items: center; justify-content: center;
-  width: 30px; height: 30px;
+  box-sizing: border-box;
+  width: 32px; height: 32px;
+  padding: 5px;
   border-radius: 50%;
-  background: var(--card-accent);
   border: 2px solid #fff;
   box-shadow: 0 1px 4px rgba(15, 23, 42, .35);
-  color: #fff;
-  font-size: .78rem;
+}
+.map-pin-n {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: #fff;
+  color: #111827;
+  font-size: .72rem;
   font-weight: 700;
   line-height: 1;
 }
-.map-pin.game-mixed { background: var(--accent); }
 .map-pin.is-selected { outline: 3px solid #111827; outline-offset: 1px; transform: scale(1.15); }
+
+.map-legend { display: flex; flex-wrap: wrap; gap: .3rem; }
+.map-legend-item {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .2rem .55rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font: inherit;
+  font-size: .74rem;
+  cursor: pointer;
+}
+.map-legend-item.is-active { border-color: var(--accent); background: var(--accent-soft); }
+.lg-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+.lg-n { color: var(--text-muted); }
+/* Phones: one swipeable row, so the key doesn't push the map off screen. */
+@media (max-width: 600px) {
+  .map-legend { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -1rem; padding: 0 1rem; }
+  .map-legend::-webkit-scrollbar { display: none; }
+  .map-legend-item { flex: 0 0 auto; }
+}
 
 .map-list, .map-sheet {
   background: var(--surface);
@@ -1557,7 +1586,8 @@ input:focus, select:focus { border-color: var(--accent); }
 .map-list li:last-child .ml-store,
 .ms-events li:last-child .ms-event { border-bottom: none; }
 .ml-store:hover, .ms-event:hover { background: var(--surface2); }
-.ml-store .map-pin { flex: 0 0 auto; width: 26px; height: 26px; font-size: .72rem; box-shadow: none; }
+.ml-store .map-pin { flex: 0 0 auto; width: 28px; height: 28px; padding: 4px; box-shadow: none; }
+.ml-store .map-pin-n { font-size: .68rem; }
 .ml-text, .ms-what { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .ml-name, .ms-ev-title { font-weight: 600; font-size: .86rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ml-sub, .ms-ev-sub { font-size: .74rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1577,9 +1607,5 @@ input:focus, select:focus { border-color: var(--accent); }
   .map-canvas { height: 52vh; }
   .ms-head { flex-direction: column; gap: .4rem; }
 }
-.map-pin.map-cluster {
-  width: 38px; height: 38px;
-  background: #374151;
-  border-width: 3px;
-  font-size: .82rem;
-}
+.map-pin.map-cluster { width: 40px; height: 40px; padding: 6px; }
+.map-pin.map-cluster .map-pin-n { font-size: .8rem; }
