@@ -27,7 +27,7 @@ lives in `pipeline/`:
 | `pipeline/normalize.py` | Game/format vocabulary, `_normalize_game` and the per-event shape check |
 | `pipeline/reconcile.py` | `event_key`, `merge_events`, event city and store ids (`attach_store_ids`), source protection (`suspect_zero`, per source and per source × city), the per-city upcoming guard (`upcoming_drops`), locator dedup and name-variant detection. Pure, with no I/O |
 | `pipeline/publish.py` | Generate the static read API `public/api/v1/`: `cities.json`, then per city the index, stores, `upcoming.json` and one file per ISO week (`docs/api-v1.md`). Each city gets only its own events (`events_in`) and stores (`stores_in`) |
-| `pipeline/pages.py` | Static SEO pages per city, in Spanish (root: `/<city>/…`, `/<city>/hoy/`, `/<city>/tiendas/<id>/`) and English (`/en/<city>/…`, `/en/<city>/today/`, `/en/<city>/stores/<id>/`), for Madrid and Barcelona alike (Barcelona's copy is Spanish too, no Catalan yet). Every page links its counterpart via `hreflang`, with Spanish as `x-default`, and has a language switch. The copy lives in `LANGS`, and paths come from `page_path(lang, key, city)`. Static SEO pages from the same data (Jinja2 templates in `pipeline/templates/`): `/<city>/` (7 days), `/<city>/hoy/`, `/<city>/fin-de-semana/`, one page per game and per store of that city (28 days), plus the site-wide `sitemap.xml` (all cities), `robots.txt` and `404.html` (links Madrid). Each list embeds schema.org `Event` JSON-LD with the city as `addressLocality`. "Open the calendar" links add `?city=<id>` outside Madrid (`calendar_url`). Only http(s) links from scraped data are rendered |
+| `pipeline/pages.py` | Static SEO pages per city, in Spanish (root: `/<city>/…`, `/<city>/hoy/`, `/<city>/tiendas/<id>/`) and English (`/en/<city>/…`, `/en/<city>/today/`, `/en/<city>/stores/<id>/`), for every city alike (all copy is Spanish or English, no Catalan or Basque yet). Every page links its counterpart via `hreflang`, with Spanish as `x-default`, and has a language switch. The copy lives in `LANGS`, and paths come from `page_path(lang, key, city)`. Static SEO pages from the same data (Jinja2 templates in `pipeline/templates/`): `/<city>/` (7 days), `/<city>/hoy/`, `/<city>/fin-de-semana/`, one page per game and per store of that city (28 days), plus the site-wide `sitemap.xml` (all cities), `robots.txt` and `404.html` (links Madrid). Each list embeds schema.org `Event` JSON-LD with the city as `addressLocality`. "Open the calendar" links add `?city=<id>` outside Madrid (`calendar_url`). Only http(s) links from scraped data are rendered |
 | `pipeline/share.py` | One static share page per event, `/e/<sha1(id)[:10]>/`, for events from 14 days ago to 60 days ahead. Each page has Open Graph tags (title, date, store, a game image from `public/og/`) and redirects to `/?event=…&w=…` (`/?city=<id>&event=…&w=…` outside Madrid). The pages are `noindex`. The API adds `share` to those events, and the app's Share/Copy link uses it, because chat apps can't run JavaScript and would otherwise only see the site-wide preview. Images are rendered once with `python -m tools.render_og_images` and committed |
 | `pipeline/repository.py` | Load and save `data/events.json` (migrated once from the legacy `public/events.json`), the stats file, the run log and the `data/*.json` maps (retired stores, renames) |
 | `pipeline/health.py` | Validation report, `build_stats` anomalies and console health output |
@@ -39,11 +39,14 @@ The JSON-backed `repository` is the seam the Postgres move will replace (#98).
 `shared/cities.py` is the one list of covered cities: `id`, `name`,
 `timezone`, centre `lat`/`lng`, `radius_km`, `country` and the free-text
 `search_terms` for locators that ignore coordinates (GEM). Today that is
-Madrid (50 km) and Barcelona (30 km), both `Europe/Madrid`. Locator
+Madrid (50 km), Barcelona, Valencia, Sevilla, Málaga, Bilbao and Zaragoza
+(30 km each), all `Europe/Madrid`. Ids are plain ASCII slugs (`malaga`);
+display names keep their accents (`Málaga`). Locator
 searches, store and event cities, the published `cities.json`, the API
 folders and the SEO pages all come from it. Adding a city means adding a
 `City` there. Its `id` is a URL segment and never changes. The module refuses
-another timezone, because the pipeline still renders all dates in Madrid
+radii that overlap (a point belongs to at most one city, which the Pokémon
+area split relies on) and another timezone, because the pipeline still renders all dates in Madrid
 time. It is Python rather than JSON because scraper subprocesses import it
 with no file I/O, and clients get the JSON view in `api/v1/cities.json`.
 `DEFAULT_CITY` (Madrid) is the city the site root shows, and the fallback
@@ -53,7 +56,7 @@ How a city is assigned:
 - A locator searches every city in turn (`for_each_city`). The search that
   first finds a store gives a new store its `city` (`store_hint` → `learn()`).
 - A store that is already in the registry keeps its registry `city`, even
-  when another city's search finds it (overlapping radii).
+  when another city's search finds it (a store whose pin moved, say).
 - Every event gets `city` from its store's registry record
   (`attach_store_ids`), re-derived on every run. History events without a
   record keep their city, or get Madrid.
@@ -93,7 +96,7 @@ events. `genexcomics` was retired as a duplicate of Generacion X - Elfo.
 
 `scrapers/locator_*.py` are multi-store sources. They read the official
 publisher event locators for every store within each city's `radius_km`
-(Madrid 50 km, Barcelona 30 km; `shared/cities.py`), for the next
+(Madrid 50 km, the other six cities 30 km; `shared/cities.py`), for the next
 `WINDOW_DAYS` (60) days. Each locator runs one search per city, one city
 after the other (`for_each_city`), and remains one source. An event that an
 earlier city's search already returned is dropped. If any city's search
@@ -158,6 +161,21 @@ no name, so they are titled "Liga Pokémon". The locator has no capacity,
 attendance or per-event page, so `source_url` is the locator. The site sits
 behind Imperva: an interstitial or 403 raises `BlockedError`, and the source
 is then protected like any failed locator.
+
+Imperva blocks the 8th call from one IP (CI probes, 2026-11-17: 7 calls
+went through, the 8th was blocked, also after a 90 s pause), so the Pokémon
+locator spends at most `CALL_BUDGET` = 7 calls: 3 for discovery and one POST
+per search area. `AREA_GROUPS` searches Barcelona+Valencia, Sevilla+Málaga
+and Bilbao+Zaragoza together: one POST over a circle that encloses both
+cities' circles (plus 5 km), whose venues are split between the cities by
+distance (`SearchArea.split`). Madrid is searched alone with the same request
+as before. A plan over budget fails before the first call (`BudgetExceeded`:
+add a new city to a group), and `CallBudget` refuses any call past the
+budget, so a capped response that would need a window split fails the source
+instead of being published truncated. Area sizes on 2026-11-17 (raw events,
+60 days): Madrid 300, Barcelona+Valencia 469, Sevilla+Málaga 321,
+Bilbao+Zaragoza 90. A group near `MAX_RECORDS` (500) is the first thing to
+split when it grows; the server ignores the `MaxRecords` it is sent.
 
 `shared/locator_common.py` holds the parts they share:
 - the time window, and `for_each_city()`, which runs one search per city in
