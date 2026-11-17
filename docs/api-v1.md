@@ -20,11 +20,22 @@ Base path: `/api/v1/`. Files are compact JSON, UTF-8. Responses carry an
 ## Files
 
 ### `cities.json`
+The list of cities. Clients discover cities here instead of hard-coding
+them: every listed `id` has the `<city>/…` files below, even before its
+first event. The order is stable, and the first city is the one the site
+root shows. `stores` is the number of stores in the city's `stores.json`.
 ```json
 {"api_version": 1, "updated_at": "…",
  "cities": [{"id": "madrid", "name": "Madrid", "timezone": "Europe/Madrid",
-             "lat": 40.4168, "lng": -3.7038, "stores": 75}]}
+             "lat": 40.4168, "lng": -3.7038, "stores": 77},
+            {"id": "barcelona", "name": "Barcelona", "timezone": "Europe/Madrid",
+             "lat": 41.3874, "lng": 2.1686, "stores": 77}]}
 ```
+A city `id` is also its URL segment (`/api/v1/barcelona/`, `/barcelona/`)
+and never changes. Each event and store belongs to exactly one city, the
+one recorded for its store in the registry. Events therefore have no `city`
+field: the file they come from is their city. The pipeline's city list
+lives in `shared/cities.py`.
 
 ### `<city>/index.json`
 Lists which weeks have events, with a count per week, and the range
@@ -39,7 +50,9 @@ need to fetch it.
 ### `<city>/events/upcoming.json`
 Holds the previous ISO week through four weeks after the current one
 (`from` inclusive, `to` exclusive, Madrid dates). It is what a client loads
-first.
+first. All current cities use `Europe/Madrid`. Dates and offsets follow the
+city's `timezone`, and the pipeline refuses to publish a city in any other
+zone until that is supported.
 ```json
 {"api_version": 1, "city": "madrid", "updated_at": "…",
  "from": "2026-11-09", "to": "2026-12-21", "events": [Event, …]}
@@ -84,7 +97,15 @@ not listed.
 
 ## Website usage
 The site's flow:
-1. Load `upcoming.json`, `stores.json` and `index.json`.
-2. Fetch a week file when the user navigates outside `upcoming`.
-3. Share links as `?event=<base64url id>&w=<week>`, so the right week file can
-   be fetched directly.
+1. Pick the city: `?city=<id>` if present, else the first city in
+   `cities.json` (Madrid).
+2. Load that city's `upcoming.json`, `stores.json` and `index.json`.
+3. Fetch a week file when the user navigates outside `upcoming`.
+4. Share links as `?event=<base64url id>&w=<week>`, so the right week file can
+   be fetched directly. Links to an event outside the first city also carry
+   `city=<id>`: `?city=barcelona&event=…&w=…`.
+
+The generated pages use the same parameter: the "open the calendar" links on
+`/barcelona/…` pages go to `/?city=barcelona[&game=…|&store=…]`. Share pages
+redirect Barcelona events to `/?city=barcelona&event=…`. Madrid links have
+no `city` parameter, as before.

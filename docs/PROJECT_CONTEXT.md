@@ -25,14 +25,38 @@ lives in `pipeline/`:
 | `pipeline/config.py` | Paths, timezone and thresholds |
 | `pipeline/runner.py` | Discover `scrapers/*.py` and run each in a subprocess (`tools/run_scraper.py`), in parallel |
 | `pipeline/normalize.py` | Game/format vocabulary, `_normalize_game` and the per-event shape check |
-| `pipeline/reconcile.py` | `event_key`, `merge_events`, source protection (`suspect_zero`), locator dedup and name-variant detection. Pure, with no I/O |
-| `pipeline/publish.py` | Generate the static read API `public/api/v1/`: cities, per-city index, stores, `upcoming.json` and one file per ISO week (`docs/api-v1.md`) |
-| `pipeline/pages.py` | Static SEO pages in Spanish (root: `/madrid/…`, `/madrid/hoy/`, `/madrid/tiendas/<id>/`) and English (`/en/madrid/…`, `/en/madrid/today/`, `/en/madrid/stores/<id>/`). Every page links its counterpart via `hreflang`, with Spanish as `x-default`, and has a language switch. The copy lives in `LANGS`, and paths come from `page_path(lang, key)`. Static SEO pages from the same data (Jinja2 templates in `pipeline/templates/`): `/madrid/` (7 days), `/madrid/hoy/`, `/madrid/fin-de-semana/`, one page per game and per store (28 days), plus `sitemap.xml`, `robots.txt` and `404.html`. Each list embeds schema.org `Event` JSON-LD. Only http(s) links from scraped data are rendered |
-| `pipeline/share.py` | One static share page per event, `/e/<sha1(id)[:10]>/`, for events from 14 days ago to 60 days ahead. Each page has Open Graph tags (title, date, store, a game image from `public/og/`) and redirects to `/?event=…&w=…`. The pages are `noindex`. The API adds `share` to those events, and the app's Share/Copy link uses it, because chat apps can't run JavaScript and would otherwise only see the site-wide preview. Images are rendered once with `python -m tools.render_og_images` and committed |
+| `pipeline/reconcile.py` | `event_key`, `merge_events`, event city and store ids (`attach_store_ids`), source protection (`suspect_zero`, per source and per source × city), the per-city upcoming guard (`upcoming_drops`), locator dedup and name-variant detection. Pure, with no I/O |
+| `pipeline/publish.py` | Generate the static read API `public/api/v1/`: `cities.json`, then per city the index, stores, `upcoming.json` and one file per ISO week (`docs/api-v1.md`). Each city gets only its own events (`events_in`) and stores (`stores_in`) |
+| `pipeline/pages.py` | Static SEO pages per city, in Spanish (root: `/<city>/…`, `/<city>/hoy/`, `/<city>/tiendas/<id>/`) and English (`/en/<city>/…`, `/en/<city>/today/`, `/en/<city>/stores/<id>/`), for Madrid and Barcelona alike (Barcelona's copy is Spanish too, no Catalan yet). Every page links its counterpart via `hreflang`, with Spanish as `x-default`, and has a language switch. The copy lives in `LANGS`, and paths come from `page_path(lang, key, city)`. Static SEO pages from the same data (Jinja2 templates in `pipeline/templates/`): `/<city>/` (7 days), `/<city>/hoy/`, `/<city>/fin-de-semana/`, one page per game and per store of that city (28 days), plus the site-wide `sitemap.xml` (all cities), `robots.txt` and `404.html` (links Madrid). Each list embeds schema.org `Event` JSON-LD with the city as `addressLocality`. "Open the calendar" links add `?city=<id>` outside Madrid (`calendar_url`). Only http(s) links from scraped data are rendered |
+| `pipeline/share.py` | One static share page per event, `/e/<sha1(id)[:10]>/`, for events from 14 days ago to 60 days ahead. Each page has Open Graph tags (title, date, store, a game image from `public/og/`) and redirects to `/?event=…&w=…` (`/?city=<id>&event=…&w=…` outside Madrid). The pages are `noindex`. The API adds `share` to those events, and the app's Share/Copy link uses it, because chat apps can't run JavaScript and would otherwise only see the site-wide preview. Images are rendered once with `python -m tools.render_og_images` and committed |
 | `pipeline/repository.py` | Load and save `data/events.json` (migrated once from the legacy `public/events.json`), the stats file, the run log and the `data/*.json` maps (retired stores, renames) |
 | `pipeline/health.py` | Validation report, `build_stats` anomalies and console health output |
 
 The JSON-backed `repository` is the seam the Postgres move will replace (#98).
+
+### 1··. Cities
+
+`shared/cities.py` is the one list of covered cities: `id`, `name`,
+`timezone`, centre `lat`/`lng`, `radius_km`, `country` and the free-text
+`search_terms` for locators that ignore coordinates (GEM). Today that is
+Madrid (50 km) and Barcelona (30 km), both `Europe/Madrid`. Locator
+searches, store and event cities, the published `cities.json`, the API
+folders and the SEO pages all come from it. Adding a city means adding a
+`City` there. Its `id` is a URL segment and never changes. The module refuses
+another timezone, because the pipeline still renders all dates in Madrid
+time. It is Python rather than JSON because scraper subprocesses import it
+with no file I/O, and clients get the JSON view in `api/v1/cities.json`.
+`DEFAULT_CITY` (Madrid) is the city the site root shows, and the fallback
+city for records that predate multi-city support.
+
+How a city is assigned:
+- A locator searches every city in turn (`for_each_city`). The search that
+  first finds a store gives a new store its `city` (`store_hint` → `learn()`).
+- A store that is already in the registry keeps its registry `city`, even
+  when another city's search finds it (overlapping radii).
+- Every event gets `city` from its store's registry record
+  (`attach_store_ids`), re-derived on every run. History events without a
+  record keep their city, or get Madrid.
 
 ### 1a. Scraper discovery
 
@@ -59,8 +83,13 @@ events. `genexcomics` was retired as a duplicate of Generacion X - Elfo.
 ### 1a′. Official locator sources
 
 `scrapers/locator_*.py` are multi-store sources. They read the official
-publisher event locators for every store within `CITY["radius_km"]` (50 km),
-for the next `WINDOW_DAYS` (60) days:
+publisher event locators for every store within each city's `radius_km`
+(Madrid 50 km, Barcelona 30 km; `shared/cities.py`), for the next
+`WINDOW_DAYS` (60) days. Each locator runs one search per city, one city
+after the other (`for_each_city`), and remains one source. An event that an
+earlier city's search already returned is dropped. If any city's search
+fails, the whole source fails, so a partial result never looks like
+cancellations:
 
 | Module | Locator | Games |
 |---|---|---|
@@ -73,16 +102,22 @@ for the next `WINDOW_DAYS` (60) days:
 
 Melee is the official platform for Cyberpunk TCG events. Its global search
 has no location filter and stops at 250 results (a few hours worldwide), so
-`locator_melee` reads the organizers we mapped to Madrid stores instead.
+`locator_melee` reads the organizers we mapped to registry stores instead.
+That makes it city-agnostic: each event takes its store's city.
 `python -m tools.find_melee_organizers` proposes organizers for stores without
 a `melee:` alias (strong match: contact email on the store's website domain);
 add the confirmed ids to the store's `aliases.external`. Times are UTC.
 The official store list at cyberpunktcg.com/stores feeds store discovery
 (`discoverers/cyberpunk_locator.py`); it has no events.
 
-GEM ignores its lat/lon parameters, so the adapter searches by city name and
-filters by distance itself. GEM also stamps local wall-clock times with a
-bogus `+13:00` offset, which the adapter drops.
+GEM ignores its lat/lon parameters, so the adapter searches each city's
+`search_terms` and keeps only events within that city's radius. GEM matches
+the search text against the whole address, so "Barcelona" also finds the
+province's towns. GEM also stamps local wall-clock times with a bogus
+`+13:00` offset, which the adapter drops.
+
+Bandai searches by coordinates on the server. In its `place_geo`, `x` is the
+latitude and `y` the longitude, the reverse of the usual convention.
 
 The Pokémon locator is an OutSystems app. Each run first reads, from the
 page's own public assets, the `moduleVersion` (`moduleservices/moduleinfo`
@@ -98,7 +133,8 @@ behind Imperva: an interstitial or 403 raises `BlockedError`, and the source
 is then protected like any failed locator.
 
 `shared/locator_common.py` holds the parts they share:
-- the search area and time window;
+- the time window, and `for_each_city()`, which runs one search per city in
+  `shared/cities.py`;
 - an HTTP session with an honest User-Agent, timeouts and retries;
 - `make_event()`;
 - `StoreResolver`, which maps locator store names to canonical store names.
@@ -122,12 +158,20 @@ loads it into `STORE_META`.
 4. the locator's own name, suffixed with its postcode if it would collide
    with a known store.
 
+Locators pass the search city. Steps 2 and 3 then only consider stores of
+that city: stores whose registry city it is, plus stores located inside its
+radius. If the name already belongs to a store in another city, step 4 adds
+a suffix (postcode, else city name). A Barcelona "Dragon Den" therefore never
+merges into a Madrid one. External ids (step 1) match in any city.
+
 Scraper subprocesses never write the registry. Locator events carry a
-`store_hint` (external id, raw name, address, coordinates). The aggregator,
-a single process, then:
+`store_hint` (external id, raw name, address, coordinates, search city). The
+aggregator, a single process, then:
 - absorbs each hint through `StoreRegistry.learn()`, which adds new stores
-  (`origin: "auto"`) and new aliases, and fills in missing coordinates;
-- sets `store_id` on every event;
+  (`origin: "auto"`, `city` = the search city) and new aliases, and fills in
+  missing coordinates. Its spelling lookup only matches stores of the hint's
+  city;
+- sets `store_id` and `city` on every event;
 - writes both files.
 
 An alias is never added if that spelling already names a different store.
@@ -158,7 +202,13 @@ How the aggregator treats locator events:
 - **Game.** Locator events keep the locator's game. Title heuristics in
   `_normalize_game` are skipped for them.
 - **Protection.** It works per source. A failed or `suspect_zero` locator
-  protects only its own events.
+  protects only its own events. It also works per city
+  (`find_suspect_zero_cities`). Suppose a locator returns events but none for
+  one city, while that city still has upcoming events from it. That source's
+  events in that city are then protected (`"<module>@<city>"` in the
+  protected set), and the module gets `anomaly: "suspect_zero"` with
+  `suspect_zero_cities`. The health issue names the city. Barcelona's volume
+  therefore cannot hide a silent zero in Madrid, or the other way round.
 
 Every event also carries `store_address` from its own venue, and the frontend
 `storeAddress(e)` prefers it over the registry address.
@@ -249,9 +299,12 @@ cases:
 - `data/events.json` exists but cannot be parsed;
 - the merged total is below `COUNT_DROP_THRESHOLD` (70%) of the existing
   total;
-- upcoming active events fall below `UPCOMING_DROP_THRESHOLD` (50%) of the
-  previous run's, once there are at least 50. The history-inclusive total
-  alone would hide the loss of every future event.
+- a city's upcoming active events fall below `UPCOMING_DROP_THRESHOLD`
+  (50%) of the previous run's, once that city had at least
+  `UPCOMING_GUARD_MIN` (50). The history-inclusive total alone would hide the
+  loss of every future event. The check runs per city (`upcoming_drops`), so
+  one city cannot mask another. A city below 50 upcoming events is not
+  guarded; its sources still have per-source and per-city `suspect_zero`.
 
 **Retired stores**: events of stores listed in `data/retired_stores.json`
 are dropped on load, for example a store entry that turned out to duplicate
@@ -348,6 +401,11 @@ The pipeline for finding and onboarding new stores follows these steps:
    records that need more information; use `backlog` for deferred candidates
    that should remain in discovery data but stay out of immediate onboarding.
    Do not hand-edit generated statuses only in `data/candidate_stores.json`.
+
+   Discovery is still Madrid-only (TODO in `discoverers/__init__.py`). The
+   daily pipeline learns every city's stores from the locators without it.
+   Making discovery multi-city needs a `city` on each candidate and in
+   `tools/discover_stores.py`.
 
    Current discoverers:
 
@@ -493,6 +551,11 @@ first file to edit (see §9).
 ---
 
 ## 3. Data flow
+
+The app still reads Madrid only. The pipeline also publishes Barcelona, and
+any city in `api/v1/cities.json`, under the same contract. Generated pages
+and share links already pass `?city=<id>` for non-Madrid cities (see
+`docs/api-v1.md`, "Website usage").
 
 ```
 fetch('api/v1/madrid/events/upcoming.json')  // + stores.json, index.json
@@ -1117,6 +1180,9 @@ The frontend reads these fields from each event:
   the event key `{store}|id:{source_event_id}`.
 - `store_address` (nullable) — set by locator sources. It is the frontend's
   fallback when the store has no `STORE_META` address.
+- `city` (history only, `data/events.json`) — the city id of the event's
+  store, set by the aggregator. The API leaves it out, because the file path
+  already gives the city.
 - `scraped_at`, `first_seen_at`, `last_seen_at`, `is_active` (read by
   `aggregator.py`'s merge logic; the frontend doesn't use them, but the
   schema must keep them consistent across runs)
