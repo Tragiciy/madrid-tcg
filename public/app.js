@@ -211,6 +211,9 @@ function attendanceBadge(e) {
   if (e.participants) return `${e.participants} played`;
   if (e.full) return 'Full';
   if (e.registered) return e.capacity ? `${e.registered}/${e.capacity}` : `${e.registered} signed up`;
+  // No sign-ups reported yet: the cap alone still tells a player how big
+  // the event is. Only past events with no player count stay blank.
+  if (e.capacity && new Date(e.datetime_start) > Date.now()) return `${e.capacity} spots`;
   return '';
 }
 
@@ -1597,8 +1600,6 @@ function app() {
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
               (this.nearMe && this.storeDistanceKm(e.store) !== null
                 ? `<div class="ev-distance">${esc(this.storeDistanceLabel(e.store))}</div>` : '') +
-              (attendanceBadge(e)
-                ? `<div class="ev-attendance${e.full && !e.participants ? ' is-full' : ''}" title="${esc(attendanceDetail(e))}">👥 ${esc(attendanceBadge(e))}</div>` : '') +
             `</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
             `<div class="ev-footer">` +
@@ -1608,6 +1609,10 @@ function app() {
 
               `</div>` +
               favButton +
+              // After the tags, not in the top row: grid columns are too
+              // narrow there and the store name would shrink to "I…".
+              (attendanceBadge(e)
+                ? `<div class="ev-attendance${e.full && !e.participants ? ' is-full' : ''}" title="${esc(attendanceDetail(e))}">👥 ${esc(attendanceBadge(e))}</div>` : '') +
               calendarButton +
             `</div>` +
           `</div>`
