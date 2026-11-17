@@ -164,6 +164,24 @@ radius. If the name already belongs to a store in another city, step 4 adds
 a suffix (postcode, else city name). A Barcelona "Dragon Den" therefore never
 merges into a Madrid one. External ids (step 1) match in any city.
 
+**Same name, other postcode.** Two listings with the same name are one store
+when their pins are within `SAME_PLACE_KM` (1 km), even if their postcodes
+differ (`same_place`). This covers a mistyped postcode, or a listing that
+kept the old street after a move, as with Geekkaos in Mataró (08302/08304)
+and Homoludicus in Granollers (08402/08401). The rule applies to step 2 and
+to `learn()`, never to fuzzy matches, because the shop next door may have a
+similar name. When the pins confirm the match, `learn()` records the alias,
+so the next run matches by external id. Same-named stores that are farther
+apart and have other postcodes are branches.
+
+`learn()` follows the same rules. A store in another city is never a match,
+not even by exact name. If the name is taken, the new store gets the suffix
+the resolver would give it on the next run, so a rerun creates no stores.
+Stores that are clearly outside a city despite a pin inside it go in
+`ignore.external`. One example is `bandai:2030` (Ragnarok Games): its
+address is in Manresa, but Bandai geocoded the pin to Carrer de Bruc in
+central Barcelona.
+
 Scraper subprocesses never write the registry. Locator events carry a
 `store_hint` (external id, raw name, address, coordinates, search city). The
 aggregator, a single process, then:
@@ -298,13 +316,25 @@ rather than return `[]`, so the failure reason shows up in `error`.
 cases:
 - `data/events.json` exists but cannot be parsed;
 - the merged total is below `COUNT_DROP_THRESHOLD` (70%) of the existing
-  total;
-- a city's upcoming active events fall below `UPCOMING_DROP_THRESHOLD`
-  (50%) of the previous run's, once that city had at least
-  `UPCOMING_GUARD_MIN` (50). The history-inclusive total alone would hide the
-  loss of every future event. The check runs per city (`upcoming_drops`), so
-  one city cannot mask another. A city below 50 upcoming events is not
-  guarded; its sources still have per-source and per-city `suspect_zero`.
+  total.
+
+**City hold** (`merge_holding_cities`). A city's upcoming active events can
+fall below `UPCOMING_DROP_THRESHOLD` (50%) of the previous run's, once that
+city had at least `UPCOMING_GUARD_MIN` (50). The history-inclusive total
+alone would hide the loss of every future event. The run does not abort in
+that case. It holds the city instead: the merge is redone with `"*@<city>"`
+protected, so none of the city's previous events is hidden or deleted, and
+fresh events are still added. The other cities publish normally. The run
+logs an error and writes `held_cities` to the stats file, and
+`tools/sync_health_issues` opens a `[health] city:<id>` issue. That issue
+closes by itself on the first run without a hold.
+
+The check runs per city (`upcoming_drops`), so one city cannot mask another.
+"Before" is counted on a copy of the history taken before merging, because
+`merge_events` marks unseen records inactive in place. The previous
+single-city guard counted after merging and could never fire. A city below
+50 upcoming events is not guarded; its sources still have per-source and
+per-city `suspect_zero`.
 
 **Retired stores**: events of stores listed in `data/retired_stores.json`
 are dropped on load, for example a store entry that turned out to duplicate
