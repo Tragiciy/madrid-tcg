@@ -25,4 +25,7 @@ var GAME_CLASS_MAP = {
   'Weiß Schwarz':         'game-weiss',
   'Naruto Mythos':        'game-naruto',
   'Cyberpunk TCG':        'game-cyberpunk',
+  'Gundam Card Game':     'game-gundam',
+  'My Little Pony':       'game-mlp',
+  'Palworld':             'game-palworld',
 };

@@ -32,7 +32,7 @@ class GoblintraderMadridSurTest(unittest.TestCase):
         self.assertEqual(demo["datetime_start"], "2026-11-28T16:30:00+01:00")
         self.assertEqual(demo["datetime_end"], "2026-11-28T20:00:00+01:00")
         self.assertIsNone(demo["game"])
-        self.assertIsNone(gundam["game"])  # not a supported game
+        self.assertEqual(gundam["game"], "Gundam Card Game")
         self.assertEqual(op["title"], "Torneo One Piece Card Game")
         self.assertEqual(op["game"], "One Piece")
         self.assertEqual(op["datetime_start"], "2026-12-20T11:00:00+01:00")
