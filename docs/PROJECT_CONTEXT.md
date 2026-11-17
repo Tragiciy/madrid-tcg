@@ -526,6 +526,32 @@ Key things to note:
   carry `&w=<ISO week>`, so the right week file can be fetched for a deep
   link.
 
+### Store submissions ("Is this your store?")
+
+The flow has five steps:
+1. **Form.** `public/submit/` is a bilingual form for an event (title, game,
+   date, time, optional weekly-until, link) or a store-info note. The
+   contact is required and is never published.
+2. **Function.** It posts to the Cloudflare Pages Function
+   `functions/api/submit.js`. The function guards against spam with a
+   honeypot field, a 4-second minimum fill time and strict validation. It
+   then creates a GitHub issue labelled `submission`, whose body holds the
+   data in a ```json block. Nothing is stored in Cloudflare.
+3. **Configuration.** Set `GITHUB_TOKEN` in Cloudflare Pages → Settings →
+   Environment variables: a fine-grained token for this repo only, with
+   Issues read & write. Without it the function answers 503 and the form
+   asks the visitor to try later.
+4. **Review.** A maintainer adds the label `approved`.
+   `.github/workflows/submissions.yml` then runs `tools/apply_submission.py`,
+   which validates the data again and appends it to `data/manual_events.json`
+   (idempotent per issue, unsafe links dropped, contact not copied). The
+   workflow commits the file and closes the issue. Store-info requests are
+   handled by hand.
+5. **Publication.** `scrapers/manual_submissions.py` publishes those events
+   and expands weekly ones within the window. It is a store source, so it
+   outranks locator copies. `EMPTY_IS_NORMAL = True`, so having no
+   submissions is not a health alert.
+
 ### PWA and offline
 
 - **Files:** `public/manifest.webmanifest`, `public/icons/` (SVG source plus

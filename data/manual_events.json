@@ -1,0 +1,4 @@
+{
+  "_comment": "Events submitted by stores through /submit/ and approved on GitHub (label `approved` on the submission issue runs tools/apply_submission.py). Read by scrapers/manual_submissions.py. Edit by hand to fix or remove an entry.",
+  "events": []
+}

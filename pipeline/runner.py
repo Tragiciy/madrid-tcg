@@ -53,6 +53,16 @@ def _run_scraper(module_name: str) -> tuple[list[dict], Optional[str], Optional[
 _STORE_RE = re.compile(r'^STORE\s*=\s*["\'](.+?)["\']', re.MULTILINE)
 
 
+def flag_from_source(module_name: str, name: str) -> bool:
+    """True if the scraper module sets `NAME = True` (read without importing)."""
+    path = SCRAPERS_DIR / f"{module_name.rsplit('.', 1)[-1]}.py"
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return re.search(rf"^{name}\s*=\s*True\b", text, re.MULTILINE) is not None
+
+
 def _store_from_source(module_name: str) -> Optional[str]:
     """Read the STORE constant without importing (for crashed/timed-out runs)."""
     path = SCRAPERS_DIR / f"{module_name.rsplit('.', 1)[-1]}.py"

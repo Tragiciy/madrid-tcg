@@ -1,0 +1,54 @@
+name: Apply approved submission
+
+# A maintainer adds the label `approved` to a `submission` issue (filed by
+# the /submit/ form via functions/api/submit.js). This writes the event to
+# data/manual_events.json; the next pipeline run publishes it.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: update-events
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.event.label.name == 'approved' && contains(github.event.issue.labels.*.name, 'submission')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - name: Apply
+        id: apply
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          set +e
+          printf '%s' "$ISSUE_BODY" | python -m tools.apply_submission "${{ github.event.issue.number }}" | tee result.txt
+          echo "code=${PIPESTATUS[1]}" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        if: steps.apply.outputs.code == '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/manual_events.json; then exit 0; fi
+          git add data/manual_events.json
+          git commit -m "data: approved submission #${{ github.event.issue.number }}"
+          git fetch origin main && git rebase origin/main && git push
+      - name: Report on the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ steps.apply.outputs.code }}" = "0" ]; then
+            gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" \
+              --comment "Approved and added — it appears in the calendar after the next daily update."
+          else
+            gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" \
+              --body "Not applied automatically: $(cat result.txt). Please handle it by hand."
+          fi

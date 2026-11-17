@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Es tu tienda? Añade tus torneos — TCG Madrid</title>
+  <meta name="description" content="Tiendas de Madrid: añadid vuestros torneos de juegos de cartas al calendario, gratis. Stores: add your tournaments for free.">
+  <link rel="stylesheet" href="/pages.css">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <style>
+    form { display: grid; gap: .9rem; max-width: 560px; }
+    label { display: grid; gap: .3rem; font-weight: 600; font-size: .95rem; }
+    label small { font-weight: 400; color: var(--muted); }
+    input, select, textarea { font: inherit; padding: .55rem .65rem; border: 1px solid var(--line); border-radius: 8px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .kind { display: flex; gap: 1rem; font-weight: 400; }
+    .hp { position: absolute; left: -9999px; }
+    button { font: inherit; font-weight: 600; padding: .7rem 1rem; border: 0; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; }
+    button[disabled] { opacity: .6; }
+    .msg { padding: .75rem 1rem; border-radius: 8px; }
+    .msg.ok { background: #ecfdf3; color: #05603a; } .msg.err { background: #fef3f2; color: #b42318; }
+  </style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/madrid/">TCG Madrid</a><nav><a class="cta" href="/">Calendario / Calendar</a></nav></header>
+<main>
+  <h1>¿Es tu tienda? Añade tus torneos</h1>
+  <p class="lead">Gratis. Revisamos cada envío y lo publicamos en el calendario.<br>
+    <span lang="en">Is this your store? Add your tournaments for free — we review every submission.</span></p>
+
+  <form id="f" novalidate>
+    <div class="kind">
+      <label><span><input type="radio" name="kind" value="event" checked> Evento / Event</span></label>
+      <label><span><input type="radio" name="kind" value="info"> Datos de la tienda / Store info</span></label>
+    </div>
+    <label>Tienda / Store <input name="store" list="stores" required maxlength="120" autocomplete="organization"></label>
+    <datalist id="stores"></datalist>
+    <div class="event">
+      <label>Título / Title <input name="title" maxlength="160" placeholder="Liga semanal de Lorcana"></label>
+      <div class="row">
+        <label>Juego / Game
+          <select name="game">
+            <option value="">—</option>
+            <option>Magic: The Gathering</option><option>Pokémon</option><option>One Piece</option>
+            <option>Digimon</option><option>Lorcana</option><option>Star Wars: Unlimited</option>
+            <option>Yu-Gi-Oh!</option><option>Flesh and Blood</option><option>Riftbound</option>
+            <option>Weiß Schwarz</option><option>Final Fantasy TCG</option><option>Naruto Mythos</option>
+            <option value="Other">Otro / Other</option>
+          </select>
+        </label>
+        <label>Fecha / Date <input name="date" type="date"></label>
+      </div>
+      <div class="row">
+        <label>Hora / Time <input name="time" type="time"></label>
+        <label>Se repite cada semana hasta… <small>Weekly until (optional)</small><input name="weekly_until" type="date"></label>
+      </div>
+    </div>
+    <label>Enlace / Link <small>opcional / optional</small><input name="link" type="url" maxlength="400" placeholder="https://"></label>
+    <label>Comentarios / Notes <small class="info-only">requerido para datos de la tienda / required for store info</small>
+      <textarea name="notes" rows="3" maxlength="2000"></textarea></label>
+    <label>Contacto / Contact <small>email o Instagram — no se publica / not published</small>
+      <input name="contact" required maxlength="160"></label>
+    <label class="hp" aria-hidden="true">Company <input name="company" tabindex="-1" autocomplete="off"></label>
+    <input type="hidden" name="started_at">
+    <button type="submit">Enviar / Send</button>
+    <div id="msg" class="msg" hidden role="status"></div>
+  </form>
+</main>
+<script>
+(() => {
+  const f = document.getElementById('f'), msg = document.getElementById('msg');
+  f.started_at.value = Date.now();
+  fetch('/api/v1/madrid/stores.json').then(r => r.ok ? r.json() : { stores: [] }).then(d => {
+    const list = document.getElementById('stores');
+    for (const s of d.stores || []) { const o = document.createElement('option'); o.value = s.name; list.append(o); }
+  }).catch(() => {});
+  const syncKind = () => {
+    const isEvent = f.kind.value === 'event';
+    f.querySelector('.event').hidden = !isEvent;
+    for (const n of ['title', 'game', 'date', 'time']) f[n].required = isEvent;
+    f.notes.required = !isEvent;
+  };
+  f.addEventListener('change', e => { if (e.target.name === 'kind') syncKind(); });
+  syncKind();
+  const show = (ok, text) => { msg.hidden = false; msg.className = 'msg ' + (ok ? 'ok' : 'err'); msg.textContent = text; };
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!f.reportValidity()) return;
+    const btn = f.querySelector('button'); btn.disabled = true;
+    try {
+      const res = await fetch('/api/submit', { method: 'POST', headers: { 'content-type': 'application/json' },
+                                               body: JSON.stringify(Object.fromEntries(new FormData(f))) });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok && body.ok) {
+        show(true, '¡Gracias! Lo revisaremos pronto. / Thanks! We will review it soon.');
+        f.reset(); f.started_at.value = Date.now(); syncKind();
+      } else if (body.error === 'invalid') {
+        show(false, 'Revisa los campos: ' + (body.fields || []).join(', ') + ' / Please check the fields.');
+      } else {
+        show(false, 'No se pudo enviar ahora mismo. Inténtalo más tarde. / Could not send right now, please try later.');
+      }
+    } catch {
+      show(false, 'Sin conexión. Inténtalo más tarde. / Offline, please try later.');
+    } finally { btn.disabled = false; }
+  });
+})();
+</script>
+</body>
+</html>
