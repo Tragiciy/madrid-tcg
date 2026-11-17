@@ -204,6 +204,27 @@ function haversineKm(a, b) {
   return 12742 * Math.asin(Math.sqrt(h));
 }
 
+// Short attendance label for a card: "Full", "24 played", "12/24", or ''.
+// Capacity alone is left to the detail panel (it is known for most events).
+function attendanceBadge(e) {
+  if (!e) return '';
+  if (e.participants) return `${e.participants} played`;
+  if (e.full) return 'Full';
+  if (e.registered) return e.capacity ? `${e.registered}/${e.capacity}` : `${e.registered} signed up`;
+  return '';
+}
+
+// Detail-panel line: everything the source reported about attendance.
+function attendanceDetail(e) {
+  if (!e) return '';
+  const parts = [];
+  if (e.participants) parts.push(`${e.participants} players took part`);
+  else if (e.registered) parts.push(`${e.registered} signed up`);
+  if (e.capacity) parts.push(`${e.capacity} spots`);
+  if (e.full && !e.participants) parts.push('full');
+  return parts.join(' · ');
+}
+
 function formatKm(km) {
   return km < 1 ? `${Math.round(km * 1000)} m` : `${km < 10 ? km.toFixed(1) : Math.round(km)} km`;
 }
@@ -1568,6 +1589,8 @@ function app() {
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
               (this.nearMe && this.storeDistanceKm(e.store) !== null
                 ? `<div class="ev-distance">${esc(this.storeDistanceLabel(e.store))}</div>` : '') +
+              (attendanceBadge(e)
+                ? `<div class="ev-attendance${e.full && !e.participants ? ' is-full' : ''}" title="${esc(attendanceDetail(e))}">👥 ${esc(attendanceBadge(e))}</div>` : '') +
             `</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
             `<div class="ev-footer">` +

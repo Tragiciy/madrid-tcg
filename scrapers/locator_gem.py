@@ -88,6 +88,7 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver) -> list[dict]:
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=ev.get("event_link") or LOCATOR_PAGE,
             format_hint=f"{kind} {fmt}",
+            capacity=ev.get("player_cap"),
             hint=store_hint(SOURCE, ev.get("organiser_store_slug") or name, name, address,
                             ev.get("lat"), ev.get("lon")),
         ))

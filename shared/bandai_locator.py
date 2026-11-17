@@ -89,6 +89,8 @@ def parse_events(raw_events: list[dict], game: str, resolver: StoreResolver) -> 
             start_iso=start,
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=f"https://www.bandai-tcg-plus.com/event/{ev['id']}",
+            capacity=None if ev.get("is_capacity_hidden") else ev.get("max_join_count"),
+            full=bool(ev.get("is_over_max_join_count")),
             hint=store_hint(SOURCE, ev.get("organizer_id"), name, address,
                             (ev.get("place_geo") or {}).get("x"), (ev.get("place_geo") or {}).get("y")),
         ))

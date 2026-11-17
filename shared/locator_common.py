@@ -34,8 +34,24 @@ TZ = ZoneInfo("Europe/Madrid")
 # Search area. One city for now; multi-city turns this into a list.
 CITY = {"name": "Madrid", "lat": 40.4168, "lng": -3.7038, "radius_km": 50}
 WINDOW_DAYS = 60
+# Locators that report how many people actually played are also read this
+# many days back, so finished events get their final player count.
+LOOKBACK_DAYS = 7
 
 USER_AGENT = "Mozilla/5.0 (compatible; madrid-tcg-events/1.0; +https://madrid-tcg.pages.dev)"
+
+
+def lookback_start() -> date:
+    return datetime.now(TZ).date() - timedelta(days=LOOKBACK_DAYS)
+
+
+def positive_int(value) -> Optional[int]:
+    """int(value) if it is a positive number, else None (0/None/'' = unknown)."""
+    try:
+        n = int(value)
+    except (TypeError, ValueError):
+        return None
+    return n if n > 0 else None
 
 
 def window() -> tuple[date, date]:
@@ -189,10 +205,23 @@ def store_hint(source: str, external_id, name: str, address: str = "",
 def make_event(*, title: str, store: str, game: str, start_iso: str,
                source_event_id: str, source_url: str,
                store_address: str = "", end_iso: Optional[str] = None,
-               format_hint: str = "", hint: Optional[dict] = None) -> dict:
-    """An event dict in the shared schema (see docs/PROJECT_CONTEXT.md §8)."""
+               format_hint: str = "", hint: Optional[dict] = None,
+               capacity: Optional[int] = None, registered: Optional[int] = None,
+               participants: Optional[int] = None, full: bool = False) -> dict:
+    """
+    An event dict in the shared schema (see docs/PROJECT_CONTEXT.md §8).
+
+    Attendance (all optional, only set when the source reports it):
+    capacity = player cap; registered = sign-ups so far (upcoming events);
+    participants = players who actually played (finished events);
+    full = the source says no spots are left.
+    """
     fmt, fmt_official = extract_format_for_event(title=title, category=format_hint, game=game)
-    return {
+    attendance = {k: v for k, v in (("capacity", positive_int(capacity)),
+                                    ("registered", positive_int(registered)),
+                                    ("participants", positive_int(participants)),
+                                    ("full", True if full else None)) if v is not None}
+    return {**attendance,
         "title": title.strip(),
         "store": store,
         "store_address": store_address or None,

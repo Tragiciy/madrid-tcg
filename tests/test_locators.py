@@ -95,6 +95,13 @@ class DedupTests(unittest.TestCase):
         self.assertEqual(dropped, 1)
         self.assertEqual(len(kept), 2)
 
+    def test_recent_past_scraper_history_blocks_locator_lookback_copies(self):
+        past = _ev("Ítaca", "Lorcana", "2026-11-13T18:00:00+01:00", "scrapers.itaca")
+        past["is_active"] = False                      # finished, kept as history
+        fresh = [_ev("Ítaca", "Lorcana", "2026-11-13T18:00:00+01:00", "scrapers.locator_ravensburger")]
+        kept, dropped = drop_locator_duplicates(fresh, [past], NOW)
+        self.assertEqual((kept, dropped), ([], 1))
+
     def test_scraper_event_on_disk_and_fresh_claims_once(self):
         e = _ev("Ítaca", "Magic: The Gathering", "2026-11-20T18:00:00+01:00", "scrapers.itaca")
         fresh = [dict(e),

@@ -1308,3 +1308,7 @@ input:focus, select:focus { border-color: var(--accent); }
 .geo-error { font-size: .75rem; color: #b42318; }
 .ev-distance { font-size: .7rem; color: var(--text-muted); white-space: nowrap; margin-left: auto; }
 .offline-msg { padding: 6px 12px; background: #fff7e6; color: #8a5a00; font-size: .8rem; }
+
+/* ── Attendance ───────────────────────────────────────────────── */
+.ev-attendance { font-size: .7rem; color: var(--text-muted); white-space: nowrap; }
+.ev-attendance.is-full { color: #b42318; font-weight: 600; }
