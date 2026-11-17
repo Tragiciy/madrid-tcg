@@ -582,10 +582,10 @@ first file to edit (see §9).
 
 ## 3. Data flow
 
-The app still reads Madrid only. The pipeline also publishes Barcelona, and
-any city in `api/v1/cities.json`, under the same contract. Generated pages
-and share links already pass `?city=<id>` for non-Madrid cities (see
-`docs/api-v1.md`, "Website usage").
+The pipeline publishes every city in `api/v1/cities.json` under the same
+contract. Generated pages and share links pass `?city=<id>` for non-Madrid
+cities (see `docs/api-v1.md`, "Website usage"), which the app's city
+selection reads.
 
 ```
 fetch('api/v1/madrid/events/upcoming.json')  // + stores.json, index.json
