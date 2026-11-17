@@ -586,7 +586,8 @@ The flow has five steps:
     cache answers only when the network fails. Pages are cached by path
     without the query string, so shared `?event=` links do not grow the
     cache.
-  - **jsDelivr (Alpine, version-pinned):** cache first.
+  - **jsDelivr (Alpine, Leaflet, Leaflet.markercluster; version-pinned):**
+    cache first. OpenStreetMap tiles are not intercepted (browser HTTP cache).
   - **Precache:** the app shell plus `upcoming.json`, `stores.json` and
     `index.json`.
 - **Versioning:** bump `VERSION` in `sw.js` when its logic changes; older
@@ -622,11 +623,49 @@ haversine distance to `STORE_META[store].lat/lng`. Stores without
 coordinates are excluded while the filter is on. The cards and the vertical
 view show `storeDistanceLabel`. `resetFilters()` clears the filter.
 
+### Map view
+
+The third view (`viewMode === 'map'`) answers "where can I go". It shows this
+week's filtered events that have not started yet, one pin per store with its
+event count. A pin takes a game's colour when that game is more than half of
+the store's events, and is purple otherwise. Nearby pins cluster, and a
+cluster shows the total of its events.
+
+- **Day chips:** `mapDay` (null means the whole week) narrows the week.
+  Week navigation resets it.
+- **Selecting a store:** tapping a pin or a list row sets `mapStore`. The
+  sheet under the map then lists that store's events, and tapping one opens
+  the usual detail panel. Without a selection the list shows every store,
+  busiest first, or nearest first while Near me is on.
+- **Loading:** Leaflet 1.9.4 and Leaflet.markercluster 1.5.3 come from
+  jsDelivr with SRI, injected by `loadLeaflet()` the first time the map
+  opens. The calendar views never load them.
+  Each asset has its own promise, and a failed asset is forgotten, so a
+  retry (the Retry button, or coming back online) reloads only what failed.
+  `window.L` alone does not mean ready: it exists while the plugin is still
+  loading.
+- **Tiles:** OpenStreetMap standard tiles (`MAP_TILES` in `config.js`).
+  Swap the URL there if traffic outgrows the OSM tile usage policy.
+- **Reactivity:** `drawMap()` runs from `x-effect` and reads every input
+  synchronously. Leaflet objects live in the module-level `MAP`, never in
+  Alpine state. The view is refitted only when `mapFitKey` changes (week,
+  day, filters, location, plus the loaded event count so a week fetched after
+  navigation refits), so the minute tick or a selection never moves
+  the map. Redraws that would change nothing are skipped, because rebuilding
+  the pins cancels a running cluster zoom.
+- **Gotchas:**
+  - Read `x-for` row fields before changing state: after `mapStore`
+    changes, `s` can point at another row's data.
+  - `STORE_META` is not reactive, so `init()` fills it before assigning
+    `events`.
+  - A smooth page scroll cancels Leaflet's zoom animation, so list picks
+    scroll instantly.
+
 ### localStorage usage
 
 | Key | Type | Purpose |
 | --- | --- | --- |
-| `tcg-view-v2` | `'horizontal'` \| `'vertical'` | Persisted view mode |
+| `tcg-view-v2` | `'horizontal'` \| `'vertical'` \| `'map'` | Persisted view mode |
 | `tcg-presets-v1` | JSON array | Saved filter presets |
 | `tcg-default-preset-v1` | JSON `{id}` | ID of the preset auto-applied on fresh visits |
 | `tcg-onboarding-v1` | JSON `{completed}` | Whether first-run onboarding has been completed |
