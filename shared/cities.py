@@ -51,6 +51,21 @@ CITIES: tuple[City, ...] = (
     City(id="barcelona", name="Barcelona", timezone="Europe/Madrid",
          lat=41.3874, lng=2.1686, radius_km=30, country="ES",
          search_terms=("Barcelona",)),
+    City(id="valencia", name="Valencia", timezone="Europe/Madrid",
+         lat=39.4699, lng=-0.3763, radius_km=30, country="ES",
+         search_terms=("Valencia",)),
+    City(id="sevilla", name="Sevilla", timezone="Europe/Madrid",
+         lat=37.3891, lng=-5.9845, radius_km=30, country="ES",
+         search_terms=("Sevilla",)),
+    City(id="malaga", name="Málaga", timezone="Europe/Madrid",
+         lat=36.7213, lng=-4.4214, radius_km=30, country="ES",
+         search_terms=("Málaga",)),
+    City(id="bilbao", name="Bilbao", timezone="Europe/Madrid",
+         lat=43.2630, lng=-2.9350, radius_km=30, country="ES",
+         search_terms=("Bilbao",)),
+    City(id="zaragoza", name="Zaragoza", timezone="Europe/Madrid",
+         lat=41.6488, lng=-0.8891, radius_km=30, country="ES",
+         search_terms=("Zaragoza",)),
 )
 
 # The city the site root (/) shows, and the city of records that predate
@@ -94,6 +109,12 @@ def _check(cities: tuple[City, ...]) -> None:
         if c.timezone != SUPPORTED_TIMEZONE:
             raise ValueError(f"{c.id}: timezone {c.timezone} is not supported yet "
                              f"(only {SUPPORTED_TIMEZONE})")
+    # Radii never overlap: a point belongs to at most one city. Locators that
+    # split one wide search between cities (locator_pokemon) rely on it.
+    for i, a in enumerate(cities):
+        for b in cities[i + 1:]:
+            if distance_km(a.lat, a.lng, b.lat, b.lng) <= a.radius_km + b.radius_km:
+                raise ValueError(f"{a.id} and {b.id}: search radii overlap")
 
 
 _check(CITIES)

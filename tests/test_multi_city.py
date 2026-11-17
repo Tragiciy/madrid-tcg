@@ -51,7 +51,9 @@ def _e(start, store="Arte 9", store_id="arte-9", city=None, source="scrapers.x",
 
 class CityConfigTests(unittest.TestCase):
     def test_single_source_of_truth(self):
-        self.assertEqual([c.id for c in CITIES], ["madrid", "barcelona"])
+        self.assertEqual([c.id for c in CITIES],
+                         ["madrid", "barcelona", "valencia", "sevilla", "malaga", "bilbao", "zaragoza"])
+        self.assertEqual(cities.get("malaga").name, "Málaga")  # ASCII id, accented name
         self.assertEqual(cities.default().id, "madrid")
         self.assertEqual(BCN.radius_km, 30)
         self.assertEqual(BCN.location_name, "Barcelona, Spain")
@@ -64,6 +66,12 @@ class CityConfigTests(unittest.TestCase):
                      radius_km=30, country="ES", search_terms=("Lisboa",))
         with self.assertRaises(ValueError):
             cities._check(CITIES + (other,))
+
+    def test_overlapping_radii_are_refused(self):
+        alcala = City(id="alcala", name="Alcalá", timezone="Europe/Madrid", lat=40.48, lng=-3.36,
+                      radius_km=20, country="ES", search_terms=("Alcalá",))
+        with self.assertRaisesRegex(ValueError, "overlap"):
+            cities._check(CITIES + (alcala,))
 
     def test_duplicate_ids_are_refused(self):
         with self.assertRaises(ValueError):
@@ -80,9 +88,9 @@ class ForEachCityTests(unittest.TestCase):
                     {"source_event_id": f"x:{city.id}", "c": city.id}]
 
         out = for_each_city("T", fetch)
-        self.assertEqual(seen, ["madrid", "barcelona"])
+        self.assertEqual(seen, [c.id for c in CITIES])
         self.assertEqual([(e["source_event_id"], e["c"]) for e in out],
-                         [("x:1", "madrid"), ("x:madrid", "madrid"), ("x:barcelona", "barcelona")])
+                         [("x:1", "madrid"), *((f"x:{c.id}", c.id) for c in CITIES)])
 
     def test_one_city_failing_fails_the_source(self):
         def fetch(city):
@@ -285,7 +293,9 @@ class PerCityPublishTests(unittest.TestCase):
         self.assertEqual([s["id"] for s in self.docs["madrid/stores.json"]["stores"]], ["arte-9", "dragon-den"])
         self.assertEqual(
             [(c["id"], c["name"], c["stores"]) for c in self.docs["cities.json"]["cities"]],
-            [("madrid", "Madrid", 2), ("barcelona", "Barcelona", 1)])
+            [("madrid", "Madrid", 2), ("barcelona", "Barcelona", 1), ("valencia", "Valencia", 0),
+             ("sevilla", "Sevilla", 0), ("malaga", "Málaga", 0), ("bilbao", "Bilbao", 0),
+             ("zaragoza", "Zaragoza", 0)])
         bcn = self.docs["cities.json"]["cities"][1]
         self.assertEqual((bcn["lat"], bcn["lng"], bcn["timezone"]), (41.3874, 2.1686, "Europe/Madrid"))
 

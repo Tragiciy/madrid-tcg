@@ -7,6 +7,7 @@ from unittest import mock
 
 from pipeline.reconcile import drop_locator_duplicates, event_key
 from scrapers import locator_riftbound, nikochan_arena
+from shared import cities
 from shared.cities import get as city
 from shared.locator_common import TZ, StoreResolver
 from shared.store_registry import StoreRegistry
@@ -210,8 +211,8 @@ class SearchTests(unittest.TestCase):
              mock.patch.object(locator_riftbound, "StoreResolver"):
             self.assertEqual(locator_riftbound.scrape(), [])
         self.assertEqual(disc.call_count, 1)
-        self.assertEqual(calls, [(locator_riftbound.SEARCH_HASH, "madrid"), ("new", "madrid"),
-                                 ("new", "barcelona")])
+        self.assertEqual(calls, [(locator_riftbound.SEARCH_HASH, "madrid"),
+                                 *(("new", c.id) for c in cities.CITIES)])
 
     def test_graphql_errors_raise(self):
         stale = mock.Mock(status_code=404)
