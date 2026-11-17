@@ -149,7 +149,8 @@ def build_stats(events: list[dict],
                 failed_scrapers: list[str],
                 generated_at: str,
                 previous_stats: Optional[dict] = None,
-                suspect_zero_sources: Optional[set[str]] = None) -> dict:
+                suspect_zero_sources: Optional[set[str]] = None,
+                held_cities: Optional[list[tuple[str, int, int]]] = None) -> dict:
     """
     Build the stats document. by_store is a nested per-store breakdown
     including this-run scraper observability (raw/valid/dropped + reason
@@ -248,7 +249,7 @@ def build_stats(events: list[dict],
     total_scrapers = len(scraper_stats)
     failed_count = len(failed_scrapers)
 
-    return {
+    stats = {
         "total_events":       len(events),
         "active_events":      sum(1 for e in events if e.get("is_active")),
         "total_scrapers":     total_scrapers,
@@ -260,6 +261,12 @@ def build_stats(events: list[dict],
         "failed_scrapers":    failed_scrapers,
         "generated_at":       generated_at,
     }
+    if held_cities:
+        # Cities held by the upcoming-drop guard (reconcile.merge_holding_cities):
+        # their previous events were kept; tools/sync_health_issues opens an issue.
+        stats["held_cities"] = [{"city": c, "upcoming_before": b, "upcoming_after": a}
+                                for c, b, a in held_cities]
+    return stats
 
 
 def print_scraper_health(scraper_stats: dict) -> None:

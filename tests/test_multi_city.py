@@ -13,7 +13,8 @@ from pipeline.health import build_stats
 from pipeline.pages import build_pages, calendar_url, write_pages
 from pipeline.publish import build_api
 from pipeline.reconcile import (
-    attach_store_ids, find_suspect_zero_cities, merge_events, upcoming_drops,
+    attach_store_ids, find_suspect_zero_cities, merge_events, merge_holding_cities,
+    upcoming_drops,
 )
 from pipeline.share import app_url, build_share_pages
 from scrapers import locator_gem
@@ -129,8 +130,78 @@ class LearnCityTests(unittest.TestCase):
 
     def test_known_store_keeps_its_registry_city(self):
         reg = _registry()
+        # By external id, whichever city's search found it.
+        rec = reg.learn("Dragon Den", store_hint("wizards", 1, "Dragon Den", "", city=BCN))
+        self.assertEqual((rec["id"], rec["city"]), ("dragon-den", "madrid"))
+        # Overlapping radii: a Madrid store located inside Barcelona's radius.
+        reg.by_id["arte-9"].update(lat=41.40, lng=2.16)
         rec = reg.learn("Arte 9", store_hint("bandai", 6, "Arte 9", "", city=BCN))
         self.assertEqual((rec["id"], rec["city"]), ("arte-9", "madrid"))
+
+    def test_exact_name_in_another_city_is_never_a_match(self):
+        # Two new stores called "Nexus" in one run, first Madrid then Barcelona.
+        reg = _registry()
+        mad = reg.learn("Nexus", store_hint("bandai", 31, "Nexus", "C/ A 1, 28004 Madrid",
+                                            40.42, -3.70, city=MAD))
+        bcn = reg.learn("Nexus", store_hint("bandai", 32, "Nexus", "C/ B 2, 08005 Barcelona",
+                                            41.40, 2.19, city=BCN))
+        self.assertNotEqual(mad["id"], bcn["id"])
+        self.assertEqual((bcn["name"], bcn["city"]), ("Nexus (08005)", "barcelona"))
+        # The Madrid record is untouched: no Barcelona id, address or pin.
+        self.assertEqual((mad["address"], mad["lat"], mad["aliases"]["external"]),
+                         ("C/ A 1, 28004 Madrid", 40.42, ["bandai:31"]))
+        self.assertEqual(bcn["aliases"]["external"], ["bandai:32"])
+        # Next run the resolver names it the same way, so nothing new is created.
+        r = StoreResolver(reg)
+        self.assertEqual(r.resolve("bandai", 32, "Nexus", "C/ B 2, 08005 Barcelona", city=BCN),
+                         "Nexus (08005)")
+        self.assertEqual(r.resolve("bandai", 99, "NEXUS", "C/ B 2, 08005 Barcelona", city=BCN,
+                                   lat=41.40, lng=2.19), "Nexus (08005)")
+
+    def test_without_postcode_the_city_name_tells_them_apart(self):
+        reg = _registry()
+        rec = reg.learn("Dragon Den", store_hint("gem", "dd", "Dragon Den", "", city=BCN))
+        self.assertEqual((rec["name"], rec["city"]), ("Dragon Den (Barcelona)", "barcelona"))
+        self.assertEqual(StoreResolver(reg).resolve("gem", "dd", "Dragon Den", "", city=BCN),
+                         "Dragon Den (Barcelona)")
+
+
+class SamePlaceTests(unittest.TestCase):
+    """Same name, postcodes disagree: one store if the pins are within 1 km
+    (Geekkaos 08302/08304 in Mataró, Homoludicus 08402/08401 in Granollers)."""
+
+    def _reg(self):
+        return StoreRegistry({"stores": [
+            {"id": "geekkaos", "name": "Geekkaos", "city": "barcelona",
+             "address": "Jaume isern 69, Mataro, barcelona, 08302, Spain",
+             "lat": 41.5405, "lng": 2.4369, "aliases": {"names": [], "external": ["wizards:18404"]}}]})
+
+    def test_close_pins_are_one_store_and_the_alias_sticks(self):
+        reg = self._reg()
+        args = ("ravensburger", 23621, "Geekkaos", "55, Ronda Mossèn Jacint Verdaguer, Mataró, CT, 08304, ES")
+        self.assertEqual(StoreResolver(reg).resolve(*args, city=BCN, lat=41.5444, lng=2.4366), "Geekkaos")
+        # First run: the store was created by another locator in the same run.
+        rec = reg.learn("Geekkaos", store_hint(*args, 41.5444, 2.4366, city=BCN))
+        self.assertEqual(rec["id"], "geekkaos")
+        self.assertIn("ravensburger:23621", rec["aliases"]["external"])
+        # Second run resolves by external id: no "Geekkaos (08304)".
+        self.assertEqual(StoreResolver(reg).resolve(*args, city=BCN), "Geekkaos")
+
+    def test_far_pins_with_other_postcode_are_a_branch(self):
+        reg = self._reg()
+        args = ("ravensburger", 7, "Geekkaos", "C/ Major 1, 08401, Granollers")
+        self.assertEqual(StoreResolver(reg).resolve(*args, city=BCN, lat=41.60, lng=2.29),
+                         "Geekkaos (08401)")
+        rec = reg.learn("Geekkaos", store_hint(*args, 41.60, 2.29, city=BCN))
+        self.assertEqual(rec["name"], "Geekkaos (08401)")
+        self.assertEqual(StoreResolver(reg).resolve(*args, city=BCN, lat=41.60, lng=2.29),
+                         "Geekkaos (08401)")
+
+    def test_known_external_id_is_kept_even_if_the_postcode_changed(self):
+        reg = self._reg()
+        rec = reg.learn("Geekkaos", store_hint("wizards", 18404, "Geekkaos", "C/ Nova 9, 08390, Montgat",
+                                               41.47, 2.28, city=BCN))
+        self.assertEqual(rec["id"], "geekkaos")
 
     def test_spelling_match_is_limited_to_the_hint_city(self):
         reg = _registry()
@@ -280,6 +351,47 @@ class PerCityGuardTests(unittest.TestCase):
         existing = self._upcoming(1000, "madrid") + self._upcoming(60, "barcelona")
         merged = self._upcoming(1000, "madrid")
         self.assertEqual(upcoming_drops(existing, merged, NOW, 0.5, 50), [("barcelona", 60, 0)])
+
+    def test_dropping_city_is_held_and_the_others_publish(self):
+        src = "scrapers.locator_x"
+        existing = self._upcoming(100, "madrid", src) + self._upcoming(100, "barcelona", src)
+        # Madrid: 99 of 100 seen (one ordinary miss). Barcelona: a partial
+        # result, 20 of 100 plus one new event.
+        fresh = [dict(e) for e in existing[:99]] + [dict(e) for e in existing[100:120]] \
+            + [_e("2026-12-05T18:00:00+01:00", city="barcelona", source=src, source_event_id="new:1")]
+        merged, held = merge_holding_cities(existing, fresh, NOW, set(), 0.5, 50)
+        self.assertEqual(held, [("barcelona", 100, 21)])
+        bcn = [e for e in merged if e["city"] == "barcelona"]
+        self.assertEqual(len(bcn), 101)                                  # nothing hidden, new one added
+        self.assertTrue(all(e.get("is_active", True) and "missing_runs" not in e for e in bcn))
+        mad_missing = [e for e in merged if e["city"] == "madrid" and e.get("missing_runs")]
+        self.assertEqual(len(mad_missing), 1)                            # Madrid merged normally
+
+        stats = {src: {"store": "X Locator", "raw": 120, "valid": 120, "dropped": 0,
+                       "drop_reasons": {}, "error": None}}
+        report = build_stats(merged, stats, [], NOW, held_cities=held)
+        self.assertEqual(report["held_cities"],
+                         [{"city": "barcelona", "upcoming_before": 100, "upcoming_after": 21}])
+        info = unhealthy_stores(report)["city:barcelona"]
+        body = issue_body("city:barcelona", info, NOW)
+        self.assertIn("from 100 to 21", body)
+        self.assertIn("kept all of barcelona's previous events", body)
+        self.assertNotIn("held_cities", build_stats(merged, stats, [], NOW))  # only when held
+
+    def test_city_issue_closes_as_recovered(self):
+        from tools.sync_health_issues import plan_actions
+        actions = plan_actions({"generated_at": NOW, "scrapers": {}, "by_store": {}},
+                               [{"number": 7, "title": "[health] city:barcelona", "state": "OPEN"}])
+        self.assertEqual(actions[0]["op"], "close")
+        self.assertIn("Recovered", actions[0]["comment"])
+
+    def test_guard_counts_before_on_the_unmerged_history(self):
+        # merge_events marks unseen records of `existing` inactive in place;
+        # counting "before" afterwards would hide the drop.
+        existing = self._upcoming(100, "madrid")
+        merged, held = merge_holding_cities(existing, [], NOW, set(), 0.5, 50)
+        self.assertEqual(held, [("madrid", 100, 0)])
+        self.assertEqual(sum(1 for e in merged if e.get("is_active", True)), 100)
 
     def test_below_the_floor_is_not_guarded(self):
         existing = self._upcoming(10, "barcelona")

@@ -3,6 +3,7 @@
 Pure functions over lists of event dicts: no file or network I/O.
 """
 
+import copy
 import logging
 from collections import Counter
 from datetime import datetime, timedelta
@@ -71,7 +72,8 @@ def merge_events(
       that source (protected_sources) are left untouched. A temporary upstream timeout should not hide or
       delete future events as if the site had intentionally removed them.
       An entry "<module>@<city>" protects only that source's events in that
-      city (find_suspect_zero_cities).
+      city (find_suspect_zero_cities); "*@<city>" protects every event of
+      the city (a city held by the upcoming-drop guard).
 
     Deferred cleanup:
       Future events missing for MISSING_RUNS_BEFORE_DELETE consecutive runs
@@ -130,7 +132,8 @@ def merge_events(
             continue
         e = by_key[k]
         if (e.get("source") in protected_sources
-                or f"{e.get('source')}@{city_of(e)}" in protected_sources):
+                or f"{e.get('source')}@{city_of(e)}" in protected_sources
+                or f"*@{city_of(e)}" in protected_sources):
             continue
         dt_str = e.get("datetime_start") or ""
         try:
@@ -178,6 +181,33 @@ def upcoming_drops(existing: list[dict], merged: list[dict], now_iso: str,
     after = Counter(city_of(e) for e in _upcoming_active(merged, now_iso))
     return [(city, n, after[city]) for city, n in sorted(before.items())
             if n >= floor and after[city] < n * threshold]
+
+
+def merge_holding_cities(existing: list[dict], fresh: list[dict], now_iso: str,
+                         protected_sources: set[str], threshold: float,
+                         floor: int) -> tuple[list[dict], list[tuple[str, int, int]]]:
+    """
+    merge_events, then the per-city upcoming guard. A city whose upcoming
+    active events fell below `threshold` of the previous run's (upcoming_drops)
+    is *held*: the merge is redone with "*@<city>" protected, so none of its
+    previous events is hidden or deleted (fresh ones are still added), and
+    the other cities are published normally. Returns (merged, held), held
+    being [(city, before, after)] as measured on the unheld merge.
+
+    `before` is measured on a copy taken before merging, because
+    merge_events marks the unseen records of `existing` inactive in place.
+    """
+    snapshot = copy.deepcopy(existing)
+    merged = merge_events(existing, fresh, now_iso, protected_sources=protected_sources)
+    held = upcoming_drops(snapshot, merged, now_iso, threshold, floor)
+    if not held:
+        return merged, held
+    protected = set(protected_sources) | {f"*@{city}" for city, _, _ in held}
+    merged = merge_events(copy.deepcopy(snapshot), fresh, now_iso, protected_sources=protected)
+    still = upcoming_drops(snapshot, merged, now_iso, threshold, floor)
+    if still:  # cannot happen: a held city loses nothing
+        raise RuntimeError(f"upcoming events still dropping after holding {held}: {still}")
+    return merged, held
 
 
 def sources_with_upcoming_events(events: list[dict], now_iso: str) -> set[str]:

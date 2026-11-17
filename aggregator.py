@@ -36,8 +36,7 @@ from pipeline.health import build_stats, print_report, print_scraper_health, val
 from pipeline.normalize import _normalize_game, _shape_drop_reason, is_off_topic
 from pipeline.reconcile import (
     attach_store_ids, backfill_sources, drop_locator_duplicates, find_store_name_variants,
-    find_suspect_zero_cities, find_suspect_zero_sources, is_locator, merge_events,
-    upcoming_drops,
+    find_suspect_zero_cities, find_suspect_zero_sources, is_locator, merge_holding_cities,
 )
 from pipeline.repository import (
     CorruptEventsFile, append_source_runs, apply_store_renames, drop_retired_stores,
@@ -222,10 +221,20 @@ def main() -> None:
             sorted(suspect_zero_cities),
         )
         suspect_zero_sources |= suspect_zero_cities
-    merged = merge_events(
-        existing, fresh, now_iso,
-        protected_sources=set(failed_scrapers) | suspect_zero_sources,
+    # Per city: Barcelona's volume must not hide Madrid losing its future
+    # events, nor the other way round. A city whose upcoming events fell
+    # below UPCOMING_DROP_THRESHOLD is held (previous events kept, nothing
+    # hidden or deleted) and flagged; the other cities publish normally.
+    merged, held_cities = merge_holding_cities(
+        existing, fresh, now_iso, set(failed_scrapers) | suspect_zero_sources,
+        UPCOMING_DROP_THRESHOLD, UPCOMING_GUARD_MIN,
     )
+    for city, before, after in held_cities:
+        logger.error(
+            "%s: upcoming active events would fall from %d to %d (<%.0f%%) — keeping the "
+            "city's previous events this run; other cities are published",
+            city, before, after, UPCOMING_DROP_THRESHOLD * 100,
+        )
     new_count = len(merged) - len(existing)
     logger.info(
         "After merge: %d total (%+d vs. existing %d)",
@@ -239,17 +248,6 @@ def main() -> None:
             "Merged total %d is below %.0f%% of existing %d — aborting without writing",
             len(merged), COUNT_DROP_THRESHOLD * 100, len(existing),
         )
-        sys.exit(1)
-
-    # Per city: Barcelona's volume must not hide Madrid losing every future
-    # event, nor the other way round.
-    drops = upcoming_drops(existing, merged, now_iso, UPCOMING_DROP_THRESHOLD, UPCOMING_GUARD_MIN)
-    for city, before, after in drops:
-        logger.error(
-            "%s: upcoming active events fell from %d to %d (<%.0f%%) — aborting without writing",
-            city, before, after, UPCOMING_DROP_THRESHOLD * 100,
-        )
-    if drops:
         sys.exit(1)
 
     # 5. Sort and persist.
@@ -268,7 +266,7 @@ def main() -> None:
     #    then print both blocks.
     stats = build_stats(
         merged, scraper_stats, failed_scrapers, now_iso, previous_stats,
-        suspect_zero_sources=suspect_zero_sources,
+        suspect_zero_sources=suspect_zero_sources, held_cities=held_cities,
     )
     report = validate_events(merged, existing)
     print_report(report)

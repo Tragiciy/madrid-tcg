@@ -33,10 +33,12 @@ STALE_AFTER_DAYS = 14
 SOURCE_RUNS_FILE = pathlib.Path("data/source_runs.jsonl")
 RETIRED_STORES_FILE = pathlib.Path("data/retired_stores.json")
 STORE_RENAMES_FILE = pathlib.Path("data/store_renames.json")
-# Abort if a city's upcoming active events fall below this share of the
+# Hold a city whose upcoming active events fall below this share of the
 # previous run's: history-inclusive totals hide losing every future event.
-# Checked per city (reconcile.upcoming_drops), once the city had at least
-# UPCOMING_GUARD_MIN, so Barcelona's volume cannot mask Madrid's and vice versa.
+# Checked per city once it had at least UPCOMING_GUARD_MIN, so Barcelona's
+# volume cannot mask Madrid's and vice versa. A held city keeps its previous
+# events and raises a health issue; the other cities still publish
+# (reconcile.merge_holding_cities).
 UPCOMING_DROP_THRESHOLD = 0.5
 UPCOMING_GUARD_MIN = 50
 

@@ -5,6 +5,7 @@ One open issue per unhealthy store, titled "[health] <store>" and labelled
 `scraper-health`:
   - a store whose scraper errored or is flagged suspect_zero / stale gets an issue
     (created if missing, body refreshed if already open);
+  - a city held by the upcoming-drop guard gets "[health] city:<id>";
   - an open issue whose store is healthy again gets a comment and is closed.
 
 Bodies are refreshed in place rather than commented on, so a store that
@@ -84,24 +85,53 @@ def unhealthy_stores(stats: dict) -> dict[str, dict]:
             "raw": 0,
             "active": 0,
         }
+    # A whole city held by the upcoming-drop guard: one issue per city.
+    for held in stats.get("held_cities") or []:
+        out[CITY_PREFIX + held["city"]] = {
+            "reason": "city_held",
+            "module": None,
+            "error": None,
+            "raw": held["upcoming_after"],
+            "active": held["upcoming_before"],
+        }
     return out
 
 
+CITY_PREFIX = "city:"
+
+
 def known_stores(stats: dict) -> set[str]:
+    from shared.cities import CITIES
     stores = {ms.get("store") for ms in (stats.get("scrapers") or {}).values()}
-    return {s for s in stores if s}
+    return {s for s in stores if s} | {CITY_PREFIX + c.id for c in CITIES}
 
 
 def issue_body(store: str, info: dict, generated_at: Optional[str]) -> str:
     reason = {
         "scraper_failed": "the scraper raised an error",
         "suspect_zero": "the scraper returned 0 events while upcoming events are still on record",
+        "city_held": "",
         "stale": "the store's own scraper has returned 0 events for 14+ days, or never (site changed or store stopped posting?)",
         "never_seen": "the scraper has never produced a single event",
     }[info["reason"]]
     if info.get("cities"):
         reason = (f"the scraper returned 0 events for {', '.join(info['cities'])} "
                   "while upcoming events there are still on record")
+    if info["reason"] == "city_held":
+        city = store[len(CITY_PREFIX):]
+        return "\n".join([
+            f"**{city}**: upcoming active events would have fallen from {info['active']} to "
+            f"{info['raw']} (below the per-city drop threshold). The run kept all of "
+            f"{city}'s previous events and did not publish the drop; other cities "
+            "were published normally.",
+            "",
+            "Check which sources lost this city's events (a partial locator result?) "
+            "in the run log and `public/events_stats.json`.",
+            f"- Last checked: {generated_at or 'unknown'}",
+            "",
+            "This issue is updated by the daily `Update events` workflow and closes "
+            "automatically once the city's events no longer drop.",
+        ])
     lines = [
         f"**{store}**: {reason}.",
         "",
