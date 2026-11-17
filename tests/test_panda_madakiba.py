@@ -25,6 +25,7 @@ class PandaGamesCalendarTests(unittest.TestCase):
         got = [(e["datetime_start"], e["game"], e["title"]) for e in self.events]
         self.assertEqual(got, [
             ("2026-11-01T11:00:00+01:00", "Magic: The Gathering", "Magic Academy"),
+            ("2026-11-02T18:30:00+01:00", "My Little Pony", "Torneo semanal My Little Pony"),
             ("2026-11-04T18:30:00+01:00", "Riftbound", "Liga Semanal Riftbound Radiance"),
             ("2026-11-21T11:00:00+01:00", "Lorcana", "Liga Semanal Lorcana"),
             ("2026-11-21T17:00:00+01:00", "Magic: The Gathering", "Liga Commander"),
@@ -34,15 +35,15 @@ class PandaGamesCalendarTests(unittest.TestCase):
         ])
 
     def test_relabelled_slug_is_not_trusted(self):
-        # The "naruto" slug is labelled "My Little Pony" by the store; board
-        # games ("other") are not TCGs. Neither may come out as an event.
+        # The "naruto" slug is labelled "My Little Pony" by the store, so its
+        # event is My Little Pony, never Naruto. Board games ("other") are
+        # not TCGs and may not come out as an event.
         titles = {e["title"] for e in self.events}
-        self.assertNotIn("Torneo semanal My Little Pony", titles)
         self.assertNotIn("Blood on the Clocktower", titles)
         self.assertNotIn("Naruto Mythos", {e["game"] for e in self.events})
 
     def test_schema(self):
-        ev = self.events[3]
+        ev = self.events[4]
         self.assertEqual(ev["store"], panda_games.STORE)
         self.assertEqual(ev["format"], "Commander")
         self.assertTrue(ev["source_url"].startswith("https://pandagames.es/juego/eventos/liga-commander/"))

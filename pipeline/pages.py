@@ -55,6 +55,9 @@ GAME_SLUGS = {
     "Final Fantasy TCG": "final-fantasy",
     "Naruto Mythos": "naruto-mythos",
     "Cyberpunk TCG": "cyberpunk",
+    "Gundam Card Game": "gundam",
+    "My Little Pony": "my-little-pony",
+    "Palworld": "palworld",
 }
 
 

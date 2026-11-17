@@ -71,6 +71,34 @@ GAME_CANONICAL: dict = {
     "cyberpunk": "Cyberpunk TCG",
     "night city": "Cyberpunk TCG",
     "nightcity": "Cyberpunk TCG",
+    # More Riftbound / One Piece / Naruto event names.
+    "noob nexus": "Riftbound",
+    "yonkou": "One Piece",
+    "grand line": "One Piece",
+    "naruto": "Naruto Mythos",
+    "shinobi nights": "Naruto Mythos",
+    "shinobi legends": "Naruto Mythos",
+    # Set names stores use instead of the game (prereleases, leagues).
+    "strixhaven": "Magic: The Gathering",
+    "marvel super heroes": "Magic: The Gathering",
+    "realidad fracturada": "Magic: The Gathering",
+    "reality fracture": "Magic: The Gathering",
+    "el hobbit": "Magic: The Gathering",
+    "star trek": "Magic: The Gathering",
+    "hyperia city": "Lorcana",
+    "cenizas del imperio": "Star Wars: Unlimited",
+    "una época sin ley": "Star Wars: Unlimited",
+    "una epoca sin ley": "Star Wars: Unlimited",
+    "twin suns": "Star Wars: Unlimited",
+    "carbonite": "Star Wars: Unlimited",
+    # Gundam Card Game. Gundam Assemble (a miniatures game) and Gunpla
+    # (model kits) win as longer matches and resolve to no game.
+    "gundam": "Gundam Card Game",
+    "gundam assemble": "Gundam Assemble",
+    "gunpla": "Gunpla",
+    "my little pony": "My Little Pony",
+    "mlp": "My Little Pony",
+    "palworld": "Palworld",
 }
 
 ALLOWED_GAMES: set = {
@@ -87,21 +115,49 @@ ALLOWED_GAMES: set = {
     "Naruto Mythos",
     "Final Fantasy TCG",
     "Cyberpunk TCG",
+    "Gundam Card Game",
+    "My Little Pony",
+    "Palworld",
 }
 
 # Formats only Magic has: an event in one of these with no game is Magic
-# (e.g. "COMMANDER NIGHTS", "Commander Casual B2/B3").
-MAGIC_ONLY_FORMATS: set = {"Commander", "cEDH"}
-_MAGIC_ONLY_TITLE_RE = re.compile(r"\b(commander|c?edh)\b", re.IGNORECASE)
+# (e.g. "COMMANDER NIGHTS", "Commander Casual B2/B3", "TORNEO PAUPER").
+MAGIC_ONLY_FORMATS: set = {"Commander", "cEDH", "Pauper"}
+_MAGIC_ONLY_TITLE_RE = re.compile(r"\b(commander|c?edh|pauper)\b", re.IGNORECASE)
 
-# Events that are not trading-card games at all (board-game nights).
-# Dropped from fresh results and purged from history.
-_OFF_TOPIC_TITLE_RE = re.compile(r"\bjuegos? de mesa\b", re.IGNORECASE)
+# Events that are not trading-card games: board games, wargames and
+# miniatures, painting and modelling, tabletop RPGs. Only applied when no
+# TCG game is detected, so e.g. a Warhammer 40k Commander night stays.
+_OFF_TOPIC_TITLE_RE = re.compile(
+    r"\bjuegos? de mesa\b|blood on the clocktower|partida demostraci[oó]n"
+    r"|warhammer|warhmmer|\bwh\b|\b40k\b|40\.000|kill ?team|age of sigmar|\baos\b|spearhead"
+    r"|old world|underworlds|horus heresy|\bherej[ií]a\b|legiones imperialis|blood bowl"
+    r"|battletech|warcrow|trench crusade|grimdark|\bopr\b|marvel crisis protocol|\bmcp\b"
+    r"|starcraft|mordheim|space gits|hexadome|guerra del anillo|\besdla\b|gundam assemble"
+    r"|\bnarrativ[oa]\b"
+    r"|pintura|pincel|miniaturas|peanas|escenograf|speedpaint|gunpla"
+    r"|\brol\b|d&d|\bdnd\b|dungeons|cthulhu|mausritter|maho shojo|10 candles"
+    r"|imperium maledictum",
+    re.IGNORECASE,
+)
+# Store notices posted as calendar entries ("CERRADO", "Feliz Navidad!!!").
+# Matched on the whole title and dropped whatever the game.
+_NOTICE_TITLE_RE = re.compile(
+    r"^\W*(cerrado|cerramos|estamos cerrad[oa]s|feliz navidad|feliz año nuevo"
+    r"|felices reyes)\W*$",
+    re.IGNORECASE,
+)
 
 
 def is_off_topic(event: dict) -> bool:
     """True for events that are not TCG events and must not be published."""
-    return bool(_OFF_TOPIC_TITLE_RE.search(event.get("title") or ""))
+    title = event.get("title") or ""
+    if _NOTICE_TITLE_RE.search(title):
+        return True
+    if not _OFF_TOPIC_TITLE_RE.search(title):
+        return False
+    return _normalize_game(event.get("game"), title, event.get("format")) is None
+
 
 # Keep in sync with FORMAT_KEYWORDS values in scrapers/*.py.
 ALLOWED_FORMATS: set = {
@@ -135,7 +191,7 @@ def _normalize_game(game: Optional[str], title: str = "",
     """Resolve to a canonical game name, prioritising explicit title signals.
 
     With no game from the title or the source, a Magic-only format
-    (Commander, cEDH) in the title or `fmt` means Magic.
+    (Commander, cEDH, Pauper) in the title or `fmt` means Magic.
     """
     lower_title = title.lower()
     for keyword in sorted(GAME_CANONICAL, key=len, reverse=True):
@@ -147,6 +203,8 @@ def _normalize_game(game: Optional[str], title: str = "",
     if canonical:
         return canonical if canonical in ALLOWED_GAMES else None
 
+    if game in ALLOWED_GAMES:
+        return game
     if game:
         canonical = GAME_CANONICAL.get(game.lower())
         if canonical:

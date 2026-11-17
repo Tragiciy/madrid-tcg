@@ -891,10 +891,11 @@ Defined at the top of `styles.css` (`styles.css:4`):
 
 ### Per-game palette
 
-Thirteen game classes — `.game-mtg`, `.game-starwars`, `.game-riftbound`,
+Sixteen game classes — `.game-mtg`, `.game-starwars`, `.game-riftbound`,
 `.game-onepiece`, `.game-pokemon`, `.game-lorcana`, `.game-digimon`,
 `.game-yugioh`, `.game-fab`, `.game-finalfantasy`, `.game-weiss`,
-`.game-naruto`, `.game-cyberpunk` — plus the fallback `.game-unknown`. Each sets `--card-tint`
+`.game-naruto`, `.game-cyberpunk`, `.game-gundam`, `.game-mlp`,
+`.game-palworld` — plus the fallback `.game-unknown`. Each sets `--card-tint`
 and `--card-accent`. Card backgrounds, the left-border accent, and the game
 chip all read those variables, so changing palette is a one-line change per
 game.

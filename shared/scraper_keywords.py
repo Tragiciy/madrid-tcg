@@ -49,6 +49,9 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     ("night city",                          "Cyberpunk TCG"),
     ("cyberpunk",                           "Cyberpunk TCG"),
     ("nightcity",                           "Cyberpunk TCG"),
+    ("my little pony",                      "My Little Pony"),
+    ("gundam",                              "Gundam Card Game"),
+    ("palworld",                            "Palworld"),
     ("yu-gi-oh!",                           "Yu-Gi-Oh!"),
     ("yu-gi-oh",                            "Yu-Gi-Oh!"),
     ("one piece",                           "One Piece"),
@@ -185,6 +188,9 @@ DEFAULT_FORMAT_BY_GAME: dict[str, str] = {
     "Naruto Mythos":        "Standard",
     "Weiß Schwarz":         "Standard",
     "Cyberpunk TCG":        "Standard",
+    "Gundam Card Game":     "Standard",
+    "My Little Pony":       "Standard",
+    "Palworld":             "Standard",
     # FAB: liga / unnamed events are always Classic Constructed → Standard.
     # Blitz, Living Legend, Sealed, Draft still match via keywords above.
     "Flesh and Blood":      "Standard",
@@ -280,9 +286,12 @@ def extract_format_from_keywords(
 
 # Set codes that unambiguously identify a game even when the title omits
 # the game name (e.g. Ítaca's "PRESENTACION OP18"). Only One Piece's
-# "OPnn" is used: "EBnn"/"STnn" are shared with Gundam and Digimon.
+# "OPnn" and Gundam's "GDnn" are used: "EBnn"/"STnn" are shared with
+# Gundam and Digimon.
 GAME_PATTERNS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"\bop[\s-]?\d{2}\b", re.IGNORECASE), "One Piece"),
+    # Gundam Card Game boosters: "GD 04 PHANTOM ARIA", "GD04-117".
+    (re.compile(r"\bgd[\s-]?\d{2}\b", re.IGNORECASE), "Gundam Card Game"),
 ]
 
 
