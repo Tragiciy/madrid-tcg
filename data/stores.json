@@ -1396,6 +1396,24 @@
       }
     },
     {
+      "id": "3da2juegos",
+      "name": "3da2juegos",
+      "city": "madrid",
+      "address": "Calle Elfo, s/n, 28027, Madrid",
+      "lat": 40.4354478,
+      "lng": -3.6460307,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:11331"
+        ]
+      }
+    },
+    {
       "id": "alcala-comics",
       "name": "Alcalá Cómics",
       "city": "madrid",
