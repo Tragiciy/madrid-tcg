@@ -46,6 +46,9 @@ GAME_KEYWORDS: list[tuple[str, str]] = [
     ("star wars",                           "Star Wars: Unlimited"),
     ("sw unlimited",                        "Star Wars: Unlimited"),
     ("naruto mythos",                       "Naruto Mythos"),
+    ("night city",                          "Cyberpunk TCG"),
+    ("cyberpunk",                           "Cyberpunk TCG"),
+    ("nightcity",                           "Cyberpunk TCG"),
     ("yu-gi-oh!",                           "Yu-Gi-Oh!"),
     ("yu-gi-oh",                            "Yu-Gi-Oh!"),
     ("one piece",                           "One Piece"),
@@ -181,6 +184,7 @@ DEFAULT_FORMAT_BY_GAME: dict[str, str] = {
     "Final Fantasy TCG":    "Standard",
     "Naruto Mythos":        "Standard",
     "Weiß Schwarz":         "Standard",
+    "Cyberpunk TCG":        "Standard",
     # FAB: liga / unnamed events are always Classic Constructed → Standard.
     # Blitz, Living Legend, Sealed, Draft still match via keywords above.
     "Flesh and Blood":      "Standard",

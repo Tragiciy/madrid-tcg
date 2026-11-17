@@ -54,6 +54,7 @@ GAME_SLUGS = {
     "Weiß Schwarz": "weiss-schwarz",
     "Final Fantasy TCG": "final-fantasy",
     "Naruto Mythos": "naruto-mythos",
+    "Cyberpunk TCG": "cyberpunk",
 }
 
 

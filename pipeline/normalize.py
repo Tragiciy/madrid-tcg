@@ -1,6 +1,7 @@
 """Game/format vocabulary, game normalisation and the per-event shape check."""
 
 import logging
+import re
 from datetime import datetime
 from typing import Optional
 
@@ -65,6 +66,11 @@ GAME_CANONICAL: dict = {
     "nexus night": "Riftbound",
     "noob nexus night": "Riftbound",
     "naruto mythos": "Naruto Mythos",
+    # Cyberpunk TCG: titles say "Cyberpunk", "CyberpunkTCG" or name the
+    # "Night City" events (Night City Showdown / Brawl).
+    "cyberpunk": "Cyberpunk TCG",
+    "night city": "Cyberpunk TCG",
+    "nightcity": "Cyberpunk TCG",
 }
 
 ALLOWED_GAMES: set = {
@@ -80,7 +86,22 @@ ALLOWED_GAMES: set = {
     "Riftbound",
     "Naruto Mythos",
     "Final Fantasy TCG",
+    "Cyberpunk TCG",
 }
+
+# Formats only Magic has: an event in one of these with no game is Magic
+# (e.g. "COMMANDER NIGHTS", "Commander Casual B2/B3").
+MAGIC_ONLY_FORMATS: set = {"Commander", "cEDH"}
+_MAGIC_ONLY_TITLE_RE = re.compile(r"\b(commander|c?edh)\b", re.IGNORECASE)
+
+# Events that are not trading-card games at all (board-game nights).
+# Dropped from fresh results and purged from history.
+_OFF_TOPIC_TITLE_RE = re.compile(r"\bjuegos? de mesa\b", re.IGNORECASE)
+
+
+def is_off_topic(event: dict) -> bool:
+    """True for events that are not TCG events and must not be published."""
+    return bool(_OFF_TOPIC_TITLE_RE.search(event.get("title") or ""))
 
 # Keep in sync with FORMAT_KEYWORDS values in scrapers/*.py.
 ALLOWED_FORMATS: set = {
@@ -109,8 +130,13 @@ ALLOWED_FORMATS: set = {
 }
 
 
-def _normalize_game(game: Optional[str], title: str = "") -> Optional[str]:
-    """Resolve to a canonical game name, prioritising explicit title signals."""
+def _normalize_game(game: Optional[str], title: str = "",
+                    fmt: Optional[str] = None) -> Optional[str]:
+    """Resolve to a canonical game name, prioritising explicit title signals.
+
+    With no game from the title or the source, a Magic-only format
+    (Commander, cEDH) in the title or `fmt` means Magic.
+    """
     lower_title = title.lower()
     for keyword in sorted(GAME_CANONICAL, key=len, reverse=True):
         if keyword in lower_title:
@@ -125,6 +151,9 @@ def _normalize_game(game: Optional[str], title: str = "") -> Optional[str]:
         canonical = GAME_CANONICAL.get(game.lower())
         if canonical:
             return canonical if canonical in ALLOWED_GAMES else None
+
+    if fmt in MAGIC_ONLY_FORMATS or _MAGIC_ONLY_TITLE_RE.search(title):
+        return "Magic: The Gathering"
 
     return None
 
