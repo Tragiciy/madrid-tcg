@@ -1499,11 +1499,13 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "DISTRITO ZERO BILBAO",
           "Distrito Zero Bilbao"
         ],
         "external": [
           "bandai:200",
           "playriftbound:019fcc6a-469f-7262-b2ad-f5159e7f4f91",
+          "pokemon:d9e329ac-100f-4fd4-97f5-99435f38ad90",
           "ravensburger:1219",
           "wizards:9024"
         ]
@@ -1522,11 +1524,14 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "DISTRITO ZERO ZENTRO",
           "Distrito Zero - Bilbao Zentro"
         ],
         "external": [
           "bandai:5777",
           "playriftbound:019fb060-9113-799e-9d67-6f009efc89b1",
+          "pokemon:273c09a6-e9cf-4bc7-ba88-1861935aaa1d",
+          "pokemon:c4a7ef85-edb6-40a1-83bd-11480a744385",
           "wizards:15755"
         ]
       }
@@ -1546,6 +1551,24 @@
         "names": [],
         "external": [
           "bandai:6612"
+        ]
+      }
+    },
+    {
+      "id": "el-senor-miyagi",
+      "name": "EL SEÑOR MIYAGI",
+      "city": "bilbao",
+      "address": "ARTECALLE KALEA, 3, 48930 AREETA / LAS ARENAS, BIZKAIA, SPAIN",
+      "lat": 43.32485,
+      "lng": -3.013698,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:7ef50bc9-f7be-4f35-ab6a-bb415b75de5a"
         ]
       }
     },
@@ -1639,10 +1662,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "MANO DEL FRIKI"
+        ],
         "external": [
           "bandai:19718",
           "playriftbound:019fd90d-aeac-7227-aa67-7a3bb035f96d",
+          "pokemon:c0c33301-11c2-48b4-806c-d940580fe19f",
           "ravensburger:3299"
         ]
       }
@@ -3436,10 +3462,14 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "2D6 STORE"
+        ],
         "external": [
           "bandai:20845",
           "playriftbound:01a04231-0873-773f-afb9-f9823b57520c",
+          "pokemon:ce923064-f901-41ea-9372-0088e46adc46",
+          "pokemon:d09df5a3-a82a-4fe4-ad67-3d6bf6a405a1",
           "wizards:18686"
         ]
       }
@@ -3466,6 +3496,24 @@
       }
     },
     {
+      "id": "atheneas",
+      "name": "ATHENEAS",
+      "city": "malaga",
+      "address": "100 C. MARTÍNEZ DE LA ROSA, MÁLAGA, AN 29010, ES",
+      "lat": 36.727506,
+      "lng": -4.441415,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:02125506-ac53-4755-befa-022a29ce6635"
+        ]
+      }
+    },
+    {
       "id": "atheneas-hobby",
       "name": "Atheneas Hobby",
       "city": "malaga",
@@ -3478,11 +3526,13 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "ATHENEAS HOBBY",
           "ATHENEAS HOBBY S.L."
         ],
         "external": [
           "bandai:2120",
           "playriftbound:019fb060-8b21-79a6-87cb-c2ee76d34a55",
+          "pokemon:fed07db3-c7f0-45e4-a25c-9553c1f28628",
           "wizards:14588"
         ]
       }
@@ -3504,6 +3554,42 @@
           "bandai:19643",
           "playriftbound:01a00505-618b-7643-a8f6-0c7ce881e520",
           "ravensburger:675"
+        ]
+      }
+    },
+    {
+      "id": "cardcrack-29639",
+      "name": "CARDCRACK (29639)",
+      "city": "malaga",
+      "address": "27 AV. DE BENALMÁDENA, BENALMÁDENA, AN 29639, ES",
+      "lat": 36.583498,
+      "lng": -4.564664,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:ad646a9c-4326-4c57-8f07-ffefbb1457ab"
+        ]
+      }
+    },
+    {
+      "id": "cardcrack-torremolinos",
+      "name": "CARDCRACK TORREMOLINOS",
+      "city": "malaga",
+      "address": "AV. BENALMÁDENA, 27, LOCAL 2, 29620 TORREMOLINOS, MÁLAGA, SPAIN",
+      "lat": 36.606821,
+      "lng": -4.517059,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:6353ce43-811a-4a9c-8bfc-815a0ff42df4"
         ]
       }
     },
@@ -3568,6 +3654,25 @@
       }
     },
     {
+      "id": "foil",
+      "name": "FOIL",
+      "city": "malaga",
+      "address": "AV. BLAS INFANTE, 31, 59A, 29631 BENALMÁDENA, MÁLAGA, SPAIN",
+      "lat": 36.597118,
+      "lng": -4.536093,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:d4181a03-fedd-4b4e-85de-e975ad6539af",
+          "pokemon:e537dfa2-76ed-49e6-b519-804163afa51b"
+        ]
+      }
+    },
+    {
       "id": "foil-stores",
       "name": "Foil Stores",
       "city": "malaga",
@@ -3615,10 +3720,14 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA CIÉNAGA HOBBY SHOP"
+        ],
         "external": [
           "bandai:2323",
           "playriftbound:019fb060-9000-70ef-ac8c-0c8abb99af3d",
+          "pokemon:3028e6ad-1a59-495d-89da-7460dd50dfd2",
+          "pokemon:b16d20b8-696a-4e36-837a-fa3d841b90cf",
           "ravensburger:2869"
         ]
       }
@@ -3635,11 +3744,14 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA FORJA"
+        ],
         "external": [
           "bandai:17346",
           "gem:la-forja",
           "playriftbound:01a0008c-863d-7423-80cf-e0b17832b26d",
+          "pokemon:696a6402-564e-4e25-aa60-1d2e0320907e",
           "ravensburger:24025",
           "wizards:19661"
         ]
@@ -3657,10 +3769,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA PEQUEÑA VICTORIA"
+        ],
         "external": [
           "bandai:20349",
-          "playriftbound:019fb060-94c6-70a5-af7d-992dd5cab76f"
+          "playriftbound:019fb060-94c6-70a5-af7d-992dd5cab76f",
+          "pokemon:23ae3da2-416b-4844-a047-702e358f0f9f"
         ]
       }
     },
@@ -3740,11 +3855,13 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "SHARK GAMES",
           "Shark games"
         ],
         "external": [
           "bandai:1232",
           "playriftbound:019fb060-950c-73f8-afe7-2278256368df",
+          "pokemon:546439c8-430b-4154-bd09-69bd6325b379",
           "wizards:10723"
         ]
       }
@@ -3761,10 +3878,14 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "SHARK GAMES CENTER"
+        ],
         "external": [
           "bandai:14975",
           "playriftbound:019fb060-8d9e-744e-b7a7-287a82cc6195",
+          "pokemon:80a811cf-cc9e-44ff-b317-baecbbac6bf8",
+          "pokemon:b42e2636-aff5-4e74-891e-7be0f5830dc6",
           "wizards:19019"
         ]
       }
@@ -3781,9 +3902,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "SHARK GAMES VAULT"
+        ],
         "external": [
-          "bandai:25389"
+          "bandai:25389",
+          "pokemon:1407a12c-5b8b-479f-9bcd-14078117b4c0"
         ]
       }
     },
@@ -3804,6 +3928,42 @@
           "bandai:17294",
           "playriftbound:019ffc52-6af1-777f-8de4-1a4e06bfdad2",
           "wizards:21202"
+        ]
+      }
+    },
+    {
+      "id": "tienda-mulligan",
+      "name": "TIENDA MULLIGAN",
+      "city": "malaga",
+      "address": "PARQUE COMERCIAL MÁLAGA NOSTRUM, C. JAÉN, 3, LOCAL 4, CARRETERA DE CÁDIZ, 29004 MÁLAGA, SPAIN",
+      "lat": 36.686298,
+      "lng": -4.471125,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:71a046ed-14ac-41ad-9276-6b1e7f27fb35"
+        ]
+      }
+    },
+    {
+      "id": "tiendamulligan",
+      "name": "TIENDAMULLIGAN",
+      "city": "malaga",
+      "address": "1 C. JAÉN, MÁLAGA, AN 29004, ES",
+      "lat": 36.686111,
+      "lng": -4.470912,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:a43f8040-5b38-41ba-b53c-cd15cad7dc56"
         ]
       }
     },
@@ -3870,6 +4030,24 @@
       }
     },
     {
+      "id": "calle",
+      "name": "CALLE",
+      "city": "sevilla",
+      "address": "C. STA. MARÍA MAGDALENA, 50, 41701 DOS HERMANAS, SEVILLA, SPAIN",
+      "lat": 37.28307,
+      "lng": -5.926102,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:59d36c6e-c253-4bd0-a212-27e955e99068"
+        ]
+      }
+    },
+    {
       "id": "el-liron",
       "name": "El Lirón",
       "city": "sevilla",
@@ -3906,6 +4084,8 @@
         "external": [
           "bandai:295",
           "playriftbound:019fff97-de15-7644-832c-913b659dfe26",
+          "pokemon:73c55450-980b-440a-9e21-af74ce679843",
+          "pokemon:e0244486-ba26-4285-aac3-a3669021b9d7",
           "ravensburger:1453",
           "wizards:5753"
         ]
@@ -3923,10 +4103,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "HOLOPLAZA"
+        ],
         "external": [
           "bandai:16121",
-          "playriftbound:019fc9e0-b064-74c3-bd13-35cb44589b34"
+          "playriftbound:019fc9e0-b064-74c3-bd13-35cb44589b34",
+          "pokemon:5500b4f4-c03b-479c-93e8-db554d2cf4b7"
         ]
       }
     },
@@ -3962,10 +4145,14 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
-          "JUPITER JUEGOS SEVILLA"
+          "JUPITER JUEGOS SEVILLA",
+          "JÚPITER JUEGOS SEVILLA",
+          "JÚPITER SEVILLA"
         ],
         "external": [
           "playriftbound:019fde73-a4ab-73f9-b1b3-6e052c8a8b8b",
+          "pokemon:51072c31-d101-44b0-9836-8d4a949e72b5",
+          "pokemon:e3bc81b2-53aa-4acb-baa0-48eb2d216a97",
           "wizards:5652"
         ]
       }
@@ -3982,9 +4169,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA CARTIÑA"
+        ],
         "external": [
           "bandai:30582",
+          "pokemon:6912c840-452b-4370-9841-2a6fdcf73347",
           "wizards:23871"
         ]
       }
@@ -4097,10 +4287,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "TINI GAMES",
           "Tini games"
         ],
         "external": [
           "bandai:18285",
+          "pokemon:44de9da8-c1d2-493d-a9c4-919c5280c427",
           "wizards:20465"
         ]
       }
@@ -4117,10 +4309,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "UNCHAINED GAMES"
+        ],
         "external": [
           "bandai:21030",
-          "playriftbound:019fb060-920f-79a7-88ba-b0443f15bfb4"
+          "playriftbound:019fb060-920f-79a7-88ba-b0443f15bfb4",
+          "pokemon:743daff0-98cd-4871-a295-e9fa3e12c3cb"
         ]
       }
     },
@@ -4203,6 +4398,8 @@
         "names": [],
         "external": [
           "bandai:30695",
+          "pokemon:075f44e9-de61-4faa-bf44-4601c4058402",
+          "pokemon:16db42d6-78ed-4e36-8296-376f994c748e",
           "wizards:11621"
         ]
       }
@@ -4229,6 +4426,24 @@
       }
     },
     {
+      "id": "el-rinconcito-de-saitama-s-l",
+      "name": "EL RINCONCITO DE SAITAMA S.L.",
+      "city": "valencia",
+      "address": "AV. MURCIA, 4, 46470 CATARROJA, VALENCIA, SPAIN",
+      "lat": 39.406103,
+      "lng": -0.406485,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:3cc88e74-1999-4208-b5fc-2f74c4443dde"
+        ]
+      }
+    },
+    {
       "id": "friki-bunker",
       "name": "FRIKI BUNKER",
       "city": "valencia",
@@ -4242,7 +4457,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:17461"
+          "bandai:17461",
+          "pokemon:5af1ba0d-28d8-4fec-b3cc-5f5323dc72fa"
         ]
       }
     },
@@ -4264,7 +4480,8 @@
         "external": [
           "bandai:732",
           "gem:friki-galaxy",
-          "playriftbound:019fb060-8e8e-712e-8471-1c762599e752"
+          "playriftbound:019fb060-8e8e-712e-8471-1c762599e752",
+          "pokemon:35ec7dff-b026-4783-a4c4-5e4645b45f79"
         ]
       }
     },
@@ -4280,9 +4497,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "GARHIS"
+        ],
         "external": [
           "bandai:18398",
+          "pokemon:dd95926c-557c-4dd5-85d0-ee17667b4e65",
           "ravensburger:2060",
           "wizards:18008"
         ]
@@ -4341,7 +4561,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:920"
+          "bandai:920",
+          "pokemon:3bda8af5-0648-4bdf-b3f5-392b0157f4dc"
         ]
       }
     },
@@ -4416,11 +4637,14 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "HOMOLUDICUS VALENCIA",
           "Homoludicus Valencia"
         ],
         "external": [
           "bandai:25720",
           "playriftbound:019fb060-9505-7030-9691-5ad3b760dab2",
+          "pokemon:58495f14-c958-4ecf-a3d9-c6b9c19a7a30",
+          "pokemon:9b886973-cb42-4e6e-a3fa-45e31160aebf",
           "wizards:16227"
         ]
       }
@@ -4484,10 +4708,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "KINGDOM WARGAMES VALENCIA"
+        ],
         "external": [
           "bandai:21360",
           "playriftbound:019fb060-8dc2-72e6-9d6f-23d8dc71ab88",
+          "pokemon:667f8550-5350-45ae-a4ac-b510fcedbc9d",
           "wizards:20312"
         ]
       }
@@ -4505,11 +4732,14 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "LA BASE REBELDE",
           "la base rebelde"
         ],
         "external": [
           "bandai:20897",
           "playriftbound:019fb060-9354-7960-9617-87228b23d915",
+          "pokemon:35b530d1-6b17-4e5a-b814-b69660035fab",
+          "pokemon:54160a38-e1d5-4e6d-a135-688fd7791243",
           "ravensburger:2849",
           "wizards:17529"
         ]
@@ -4685,10 +4915,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA TORRE KARIN STORE"
+        ],
         "external": [
           "bandai:20906",
           "playriftbound:019fd7aa-53fa-79c3-81d1-7ab01132304c",
+          "pokemon:b3104c4f-d55e-437e-9e2e-36f6b43fdc1f",
           "ravensburger:46395",
           "wizards:21532"
         ]
@@ -4728,6 +4961,7 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "TPK HOBBY & GAMES",
           "TPK HOBBY & GAMES SL",
           "TPK Hobby & Games",
           "TPK Hobby & Games SL"
@@ -4736,6 +4970,7 @@
           "bandai:19748",
           "gem:tpk-hobby-games",
           "playriftbound:01a01e6c-19dd-7814-8ea0-008be8fd59af",
+          "pokemon:a0d77a37-ee9a-48f2-978c-0be9c7143aee",
           "ravensburger:5084",
           "wizards:16637"
         ]
@@ -4759,6 +4994,8 @@
         "external": [
           "bandai:7880",
           "playriftbound:01a00e82-0171-73c5-abaa-3b0c5253fc6b",
+          "pokemon:016eb592-be44-497c-802b-0cdaf5e21ac0",
+          "pokemon:88a864bd-f632-43b3-92dc-0b4f5160822b",
           "ravensburger:5462",
           "wizards:16327"
         ]
