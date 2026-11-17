@@ -48,8 +48,9 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 from zoneinfo import ZoneInfo
 
-import requests
 from bs4 import BeautifulSoup
+
+from shared.http_retry import get_with_retry
 
 from shared.scraper_keywords import FORMAT_KEYWORDS as SHARED_FORMAT_KEYWORDS, extract_format_from_keywords, GAME_KEYWORDS, extract_game_from_keywords, extract_format_for_event, extract_best_of
 
@@ -208,14 +209,21 @@ def _parse_event_anchor(a, day_iso: str, scraped_at: str) -> Optional[dict]:
 def _fetch_month(year: int, month: int) -> BeautifulSoup:
     """Fetch the calendar page for a given month. Raises on any failure."""
     fecha = f"01-{month:02d}-{year:04d}"
-    resp = requests.get(
+    # The site has served a page without the calendar for a minute and then
+    # recovered (2026-11-17): retry that before calling the layout changed.
+    resp = get_with_retry(
         BASE_URL,
         params={"fecha": fecha},
         headers=HEADERS,
         timeout=20,
+        check=_require_calendar,
     )
-    resp.raise_for_status()
     return BeautifulSoup(resp.text, "html.parser")
+
+
+def _require_calendar(resp) -> None:
+    if "calendario_igualar_alturas" not in resp.text:
+        raise ValueError(f"{STORE}: no calendar grid on page (site structure changed?)")
 
 
 def _events_for_month(soup: BeautifulSoup, fallback_year: int, fallback_month: int,

@@ -16,8 +16,9 @@ from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo
 
-import requests
 from bs4 import BeautifulSoup
+
+from shared.http_retry import get_with_retry
 
 try:
     from shared.scraper_keywords import (
@@ -121,8 +122,8 @@ def _parse_time(text: str) -> tuple[int, int]:
 
 
 def _fetch_products() -> list[dict]:
-    resp = requests.get(PRODUCTS_API_URL, headers=HEADERS, timeout=15)
-    resp.raise_for_status()
+    # One 403 from the site's bot protection on 2026-11-17, fine a minute later.
+    resp = get_with_retry(PRODUCTS_API_URL, headers=HEADERS, timeout=15)
     data = resp.json()
     if not isinstance(data, list):
         raise ValueError(f"Unexpected products payload type: {type(data).__name__}")
