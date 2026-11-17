@@ -4,10 +4,12 @@ Pure functions over lists of event dicts: no file or network I/O.
 """
 
 import logging
+from collections import Counter
 from datetime import datetime, timedelta
 from typing import Optional
 
 from pipeline.normalize import _parse_dt
+from shared.cities import DEFAULT_CITY
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +70,8 @@ def merge_events(
       If a source (scraper module) failed in this run, existing events from
       that source (protected_sources) are left untouched. A temporary upstream timeout should not hide or
       delete future events as if the site had intentionally removed them.
+      An entry "<module>@<city>" protects only that source's events in that
+      city (find_suspect_zero_cities).
 
     Deferred cleanup:
       Future events missing for MISSING_RUNS_BEFORE_DELETE consecutive runs
@@ -125,7 +129,8 @@ def merge_events(
         if k in fresh_keys:
             continue
         e = by_key[k]
-        if e.get("source") in protected_sources:
+        if (e.get("source") in protected_sources
+                or f"{e.get('source')}@{city_of(e)}" in protected_sources):
             continue
         dt_str = e.get("datetime_start") or ""
         try:
@@ -159,6 +164,20 @@ def _upcoming_active(events: list[dict], now_iso: str):
                 yield e
         except (ValueError, TypeError):
             continue
+
+
+def upcoming_drops(existing: list[dict], merged: list[dict], now_iso: str,
+                   threshold: float, floor: int) -> list[tuple[str, int, int]]:
+    """
+    (city, before, after) for every city whose upcoming active events fell
+    below `threshold` of the previous run's, once it had at least `floor`.
+    Checked per city: one city's volume must not mask another losing every
+    future event.
+    """
+    before = Counter(city_of(e) for e in _upcoming_active(existing, now_iso))
+    after = Counter(city_of(e) for e in _upcoming_active(merged, now_iso))
+    return [(city, n, after[city]) for city, n in sorted(before.items())
+            if n >= floor and after[city] < n * threshold]
 
 
 def sources_with_upcoming_events(events: list[dict], now_iso: str) -> set[str]:
@@ -307,15 +326,22 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
 
 def attach_store_ids(fresh: list[dict], existing: list[dict], registry) -> int:
     """
-    Give every event its registry `store_id`. Fresh events' `store_hint`
-    (what a locator told us about the store) is absorbed into the registry
-    via learn() — new stores and aliases — and removed from the event.
+    Give every event its registry `store_id` and `city`. Fresh events'
+    `store_hint` (what a locator told us about the store, including the city
+    whose search found it) is absorbed into the registry via learn() — new
+    stores and aliases — and removed from the event.
+
+    An event's city is always its store's registry city, re-derived every
+    run, so correcting a store's city in data/stores.json moves its events.
+    An existing event whose store is not in the registry keeps the city it
+    had, else gets DEFAULT_CITY (history from before multi-city is Madrid's).
     Returns the number of stores the registry did not know before.
     """
     before = len(registry.stores)
     for e in fresh:
         record = registry.learn(e["store"], e.pop("store_hint", None))
         e["store_id"] = record["id"]
+        e["city"] = registry.city_of(record)
         if is_locator(e.get("source")):
             # One display name per registry record. Only for locator events:
             # their keys are namespaced ids, while a scraper event's key
@@ -326,4 +352,34 @@ def attach_store_ids(fresh: list[dict], existing: list[dict], registry) -> int:
         record = registry.find(e.get("store") or "")
         if record is not None:
             e["store_id"] = record["id"]
+            e["city"] = registry.city_of(record)
+        else:
+            e["city"] = e.get("city") or DEFAULT_CITY
     return len(registry.stores) - before
+
+
+def city_of(event: dict) -> str:
+    """The event's city id (set by attach_store_ids; DEFAULT_CITY before)."""
+    return event.get("city") or DEFAULT_CITY
+
+
+def find_suspect_zero_cities(scraper_stats: dict, fresh: list[dict], existing: list[dict],
+                             now_iso: str) -> set[str]:
+    """
+    "<module>@<city>" for each source that returned events this run, but
+    none in a city where we still hold upcoming events from it. A locator
+    searches every city; one city's search silently coming back empty must
+    not be hidden by the others' volume. Protected like a failed source,
+    for that city only (merge_events). Sources that returned nothing at all
+    are find_suspect_zero_sources' job.
+    """
+    returned: set[tuple[str, str]] = {(e.get("source"), city_of(e)) for e in fresh}
+    out: set[str] = set()
+    for e in _upcoming_active(existing, now_iso):
+        src, city = e.get("source"), city_of(e)
+        ms = scraper_stats.get(src)
+        if not ms or ms.get("error") or ms.get("valid", 0) == 0:
+            continue
+        if (src, city) not in returned:
+            out.add(f"{src}@{city}")
+    return out

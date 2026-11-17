@@ -35,8 +35,9 @@ from pipeline.config import (
 from pipeline.health import build_stats, print_report, print_scraper_health, validate_events
 from pipeline.normalize import _normalize_game, _shape_drop_reason, is_off_topic
 from pipeline.reconcile import (
-    _upcoming_active, attach_store_ids, backfill_sources, drop_locator_duplicates,
-    find_store_name_variants, find_suspect_zero_sources, is_locator, merge_events,
+    attach_store_ids, backfill_sources, drop_locator_duplicates, find_store_name_variants,
+    find_suspect_zero_cities, find_suspect_zero_sources, is_locator, merge_events,
+    upcoming_drops,
 )
 from pipeline.repository import (
     CorruptEventsFile, append_source_runs, apply_store_renames, drop_retired_stores,
@@ -44,9 +45,10 @@ from pipeline.repository import (
     write_json_atomic,
 )
 from pipeline.pages import build_pages, write_pages
-from pipeline.publish import build_api, public_events, write_api
+from pipeline.publish import build_api, events_in, public_events, write_api
 from pipeline.runner import _discover_scrapers, flag_from_source, run_all_scrapers
 from pipeline.share import build_share_pages, write_share_pages
+from shared.cities import CITIES
 from shared.scraper_keywords import extract_format_for_event
 from shared.store_registry import StoreRegistry
 
@@ -198,6 +200,9 @@ def main() -> None:
     new_stores = attach_store_ids(fresh, existing, registry)
     if new_stores:
         logger.info("Store registry: %d new store(s) learned from this run", new_stores)
+    # Before dedup: a locator event dropped as a store scraper's duplicate
+    # still shows that the locator's search for its city worked.
+    suspect_zero_cities = find_suspect_zero_cities(scraper_stats, fresh, existing, now_iso)
     fresh, dup_count = drop_locator_duplicates(fresh, existing, now_iso)
     logger.info("Dropped %d locator events already covered by store scrapers", dup_count)
 
@@ -210,6 +215,13 @@ def main() -> None:
             "Suspect-zero sources (0 events, upcoming events kept): %s",
             sorted(suspect_zero_sources),
         )
+    # A multi-city locator that returned events, but none for one city.
+    if suspect_zero_cities:
+        logger.warning(
+            "Suspect-zero source cities (0 events in that city, its upcoming events kept): %s",
+            sorted(suspect_zero_cities),
+        )
+        suspect_zero_sources |= suspect_zero_cities
     merged = merge_events(
         existing, fresh, now_iso,
         protected_sources=set(failed_scrapers) | suspect_zero_sources,
@@ -229,13 +241,15 @@ def main() -> None:
         )
         sys.exit(1)
 
-    upcoming_before = sum(1 for _ in _upcoming_active(existing, now_iso))
-    upcoming_after = sum(1 for _ in _upcoming_active(merged, now_iso))
-    if upcoming_before >= UPCOMING_GUARD_MIN and upcoming_after < upcoming_before * UPCOMING_DROP_THRESHOLD:
+    # Per city: Barcelona's volume must not hide Madrid losing every future
+    # event, nor the other way round.
+    drops = upcoming_drops(existing, merged, now_iso, UPCOMING_DROP_THRESHOLD, UPCOMING_GUARD_MIN)
+    for city, before, after in drops:
         logger.error(
-            "Upcoming active events fell from %d to %d (<%.0f%%) — aborting without writing",
-            upcoming_before, upcoming_after, UPCOMING_DROP_THRESHOLD * 100,
+            "%s: upcoming active events fell from %d to %d (<%.0f%%) — aborting without writing",
+            city, before, after, UPCOMING_DROP_THRESHOLD * 100,
         )
+    if drops:
         sys.exit(1)
 
     # 5. Sort and persist.
@@ -244,7 +258,11 @@ def main() -> None:
     save_store_registry(registry)
     write_api(build_api(merged, registry, now_iso))
     write_pages(build_pages(merged, registry, now_iso))
-    write_share_pages(build_share_pages(public_events(merged, now_iso), now_iso))
+    share_pages: dict[str, str] = {}
+    for city in CITIES:
+        share_pages.update(build_share_pages(
+            public_events(events_in(merged, city.id), now_iso), now_iso, city))
+    write_share_pages(share_pages)
 
     # 6. Build stats first (so anomaly flags propagate into scraper_stats),
     #    then print both blocks.

@@ -236,7 +236,14 @@ def build_stats(events: list[dict],
     for name, ms in scraper_stats.items():
         info = by_store.get(ms["store"]) or {}
         ms["previous_raw"] = info.get("previous_raw")
-        ms["anomaly"] = "suspect_zero" if name in suspect_zero_sources else info.get("anomaly")
+        # "<module>@<city>": the source worked, but returned nothing for one
+        # city (reconcile.find_suspect_zero_cities). Same alert, per city.
+        zero_cities = sorted(s.split("@", 1)[1] for s in suspect_zero_sources
+                             if s.startswith(f"{name}@"))
+        if zero_cities:
+            ms["suspect_zero_cities"] = zero_cities
+        ms["anomaly"] = ("suspect_zero" if name in suspect_zero_sources or zero_cities
+                         else info.get("anomaly"))
 
     total_scrapers = len(scraper_stats)
     failed_count = len(failed_scrapers)

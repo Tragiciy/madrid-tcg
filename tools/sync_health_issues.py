@@ -57,6 +57,8 @@ def unhealthy_stores(stats: dict) -> dict[str, dict]:
                 "raw": ms.get("raw", 0),
                 "active": 0,
             }
+            if ms.get("suspect_zero_cities"):
+                out[store]["cities"] = ms["suspect_zero_cities"]
 
     for store, row in (stats.get("by_store") or {}).items():
         if store in out or row.get("anomaly") not in ("suspect_zero", "stale"):
@@ -97,6 +99,9 @@ def issue_body(store: str, info: dict, generated_at: Optional[str]) -> str:
         "stale": "the store's own scraper has returned 0 events for 14+ days, or never (site changed or store stopped posting?)",
         "never_seen": "the scraper has never produced a single event",
     }[info["reason"]]
+    if info.get("cities"):
+        reason = (f"the scraper returned 0 events for {', '.join(info['cities'])} "
+                  "while upcoming events there are still on record")
     lines = [
         f"**{store}**: {reason}.",
         "",

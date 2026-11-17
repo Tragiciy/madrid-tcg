@@ -5,6 +5,7 @@ import unittest
 
 from pipeline.publish import build_api, iso_week, week_bounds, write_api
 from pipeline.reconcile import event_key
+from shared.cities import CITIES
 from shared.store_registry import StoreRegistry
 
 NOW = "2026-11-18T12:00:00+01:00"  # Wednesday of 2026-W47
@@ -79,13 +80,14 @@ class PublishTests(unittest.TestCase):
             root = pathlib.Path(tmp)
             self.assertEqual(write_api(self.docs, root), len(self.docs))
             later = build_api(self.events, REG, "2026-11-18T13:00:00+01:00")
-            # only the documents that carry updated_at change
-            self.assertEqual(write_api(later, root), 4)
+            # only the documents that carry updated_at change: cities.json
+            # plus index, stores and upcoming of each city
+            self.assertEqual(write_api(later, root), 1 + 3 * len(CITIES))
 
     def test_other_cities_files_survive_cleanup(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = pathlib.Path(tmp)
-            other = root / "barcelona/events/2026-W47.json"
+            other = root / "valencia/events/2026-W47.json"  # not a published city
             other.parent.mkdir(parents=True)
             other.write_text("{}")
             write_api(self.docs, root)

@@ -5,7 +5,7 @@ This is the contract every client reads — the website today, a PWA or a
 native app later. See docs/api-v1.md. Files are plain JSON served from the
 CDN; nothing is computed per request.
 
-    api/v1/cities.json
+    api/v1/cities.json                   every city in shared/cities.py
     api/v1/<city>/index.json             weeks available + upcoming range
     api/v1/<city>/stores.json            store registry for the city
     api/v1/<city>/events/upcoming.json   previous week … +UPCOMING_WEEKS
@@ -22,18 +22,15 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 
 from pipeline.config import TZ
-from pipeline.reconcile import event_key
+from pipeline.reconcile import city_of, event_key
 from pipeline.share import share_path
+from shared.cities import CITIES, City
 
 logger = logging.getLogger(__name__)
 
 API_DIR = pathlib.Path("public/api/v1")
 API_VERSION = 1
 UPCOMING_WEEKS = 4  # weeks after the current one in upcoming.json
-
-CITIES = {
-    "madrid": {"name": "Madrid", "timezone": "Europe/Madrid", "lat": 40.4168, "lng": -3.7038},
-}
 
 # Fields every client gets, in the shared event schema (§8).
 EVENT_FIELDS = (
@@ -91,9 +88,39 @@ def public_events(events: list[dict], now_iso: str) -> list[dict]:
     return [_public_event(e) for e in events if _visible(e, now)]
 
 
+def events_in(events: list[dict], city: str) -> list[dict]:
+    """The events of one city (event `city`, set from the store's registry city)."""
+    return [e for e in events if city_of(e) == city]
+
+
+def stores_in(registry, city: str) -> list[dict]:
+    """The registry stores of one city."""
+    return [s for s in registry.stores if registry.city_of(s) == city]
+
+
 def build_api(events: list[dict], registry, now_iso: str,
-              city: str = "madrid") -> dict[str, dict]:
-    """{relative path: JSON document} for one city."""
+              cities: tuple[City, ...] = CITIES) -> dict[str, dict]:
+    """{relative path: JSON document}: every city's files plus cities.json.
+    A city with no events yet still gets its index, stores and upcoming
+    files, so every city listed in cities.json can be loaded."""
+    docs: dict[str, dict] = {}
+    store_counts: dict[str, int] = {}
+    for c in cities:
+        city_docs = _build_city(events_in(events, c.id), stores_in(registry, c.id), now_iso, c.id)
+        store_counts[c.id] = len(city_docs[f"{c.id}/stores.json"]["stores"])
+        docs.update(city_docs)
+    docs["cities.json"] = {
+        "api_version": API_VERSION, "updated_at": now_iso,
+        "cities": [{"id": c.id, "name": c.name, "timezone": c.timezone,
+                    "lat": c.lat, "lng": c.lng, "stores": store_counts[c.id]}
+                   for c in cities],
+    }
+    return docs
+
+
+def _build_city(events: list[dict], city_stores: list[dict], now_iso: str,
+                city: str) -> dict[str, dict]:
+    """{relative path: JSON document} for one city's events and stores."""
     now = datetime.fromisoformat(now_iso)
     today = now.astimezone(TZ).date()
     this_monday = today - timedelta(days=today.weekday())
@@ -129,19 +156,13 @@ def build_api(events: list[dict], registry, now_iso: str,
     }
     stores = [
         {k: s.get(k) for k in STORE_FIELDS if s.get(k) is not None}
-        for s in sorted(registry.stores, key=lambda s: s["name"].lower())
-        if (s.get("city") or city) == city
+        for s in sorted(city_stores, key=lambda s: s["name"].lower())
     ]
     docs[f"{city}/stores.json"] = {**meta, "stores": stores}
     docs[f"{city}/index.json"] = {
         **meta,
         "upcoming": {"from": up_from.isoformat(), "to": up_to.isoformat(), "events": len(upcoming)},
         "weeks": {w: len(v) for w, v in sorted(by_week.items())},
-    }
-    docs["cities.json"] = {
-        "api_version": API_VERSION, "updated_at": now_iso,
-        "cities": [{"id": cid, **info, "stores": len(stores) if cid == city else None}
-                   for cid, info in CITIES.items()],
     }
     return docs
 
