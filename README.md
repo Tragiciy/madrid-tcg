@@ -71,7 +71,7 @@ one click.
 
 ## Search-engine pages
 
-The pipeline also writes plain HTML pages in Spanish for search engines. They
+The pipeline also writes plain HTML pages for search engines, in Spanish and in English (under `/en/`). They
 need no JavaScript and are generated from the same data:
 - `/madrid/`, `/madrid/hoy/` and `/madrid/fin-de-semana/`;
 - one page per game, such as `/madrid/one-piece/`;

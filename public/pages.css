@@ -21,3 +21,4 @@ h2 { font-size: 1.05rem; margin: 1.5rem 0 .5rem; color: var(--muted); }
 .tag { display: inline-block; font-size: .8rem; padding: .05rem .45rem; border-radius: 999px; background: #f1edfc; text-decoration: none; margin-right: .25rem; }
 .tag.fmt { background: #eef1f5; color: var(--muted); }
 footer { max-width: 860px; margin: 2rem auto; padding: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+.lang { font-size: .85rem; border: 1px solid var(--line); border-radius: 999px; padding: 0 .5rem; text-decoration: none; }

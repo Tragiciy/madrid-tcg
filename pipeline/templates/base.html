@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ t.html_lang }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,21 +12,22 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="/{{ city|lower }}/">TCG {{ city }}</a>
+  <a class="brand" href="{{ nav.base }}">TCG {{ city }}</a>
   <nav>
-    <a href="/{{ city|lower }}/hoy/">Hoy</a>
-    <a href="/{{ city|lower }}/fin-de-semana/">Fin de semana</a>
-    <a class="cta" href="/">Calendario completo</a>
+    <a href="{{ nav.today }}">{{ t.nav_today }}</a>
+    <a href="{{ nav.weekend }}">{{ t.nav_weekend }}</a>
+    <a class="cta" href="/">{{ t.nav_calendar }}</a>
+    {% if switch_url %}<a class="lang" href="{{ switch_url }}" hreflang="{{ t.switch[1] }}" lang="{{ t.switch[1] }}">{{ t.switch[0] }}</a>{% endif %}
   </nav>
 </header>
 <main>
 {% block main %}{% endblock %}
 </main>
 <footer>
-  <p>Juegos:
-  {% for name, slug in nav.games %}<a href="/{{ city|lower }}/{{ slug }}/">{{ name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
+  <p>{{ t.games }}:
+  {% for name, slug in nav.games %}<a href="{{ nav.base }}{{ slug }}/">{{ name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
   </p>
-  <p>Datos de las tiendas y de los localizadores oficiales de cada juego, actualizados a diario.</p>
+  <p>{{ t.footer }}</p>
 </footer>
 </body>
 </html>
