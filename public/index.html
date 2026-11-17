@@ -311,7 +311,7 @@
     <!-- Colour key for the pins; a tap filters by that game (tap again to undo) -->
     <div class="map-legend" x-show="mapLegend.length > 1 || selectedValues('game').length" role="group" aria-label="Games on the map">
       <template x-for="g in mapLegend" :key="'lg-' + g.game">
-        <button type="button" class="map-legend-item" :class="{ 'is-active': isSelected('game', g.game) }"
+        <button type="button" class="map-legend-item" :class="[getGameClass(g.game), { 'is-active': isSelected('game', g.game) }]"
                 @click="toggleFilter('game', g.game)" :aria-pressed="isSelected('game', g.game)">
           <span class="lg-dot" :style="'background:' + g.color"></span>
           <span x-text="g.game"></span>
@@ -355,7 +355,7 @@
                   <span class="ms-what">
                     <span class="ms-ev-title" x-text="e.title"></span>
                     <span class="ms-ev-sub">
-                      <span x-text="e.game"></span><span x-show="e.format" x-text="' · ' + e.format"></span><span x-show="attendanceBadge(e)" x-text="' · 👥 ' + attendanceBadge(e)"></span>
+                      <span class="tag game" x-text="e.game || 'Unknown'"></span><span x-show="e.format" x-text="e.format"></span><span x-show="attendanceBadge(e)" x-text="' · 👥 ' + attendanceBadge(e)"></span>
                     </span>
                   </span>
                   <span class="ms-fav" x-show="isFavorite(e)" aria-label="Saved">★</span>
@@ -400,6 +400,7 @@
     <template x-if="viewMode === 'horizontal'">
     <div class="cal-grid cal-grid-h"
          @click="onGridClick($event)"
+         @keydown="onGridKey($event)"
          :style="`grid-template-rows: auto repeat(${activeSegments.length}, auto)`">
 
       <!-- Day-header row -->
@@ -481,9 +482,11 @@
                   <span class="seg-range" x-text="seg.shortRange"></span>
                 </div>
                 <template x-for="e in (isDaySegCollapsed(day.iso, seg.key) && !focusMode ? [] : seg.events)" :key="eventKey(e)">
-                  <div class="ev-card"
+                  <div class="ev-card" tabindex="0"
                        :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '', isFavorite(e) ? 'is-favorite' : '' ]"
-                       @click="openEvent(e)">
+                       @click="openEvent(e)"
+                       @keydown.enter.self.prevent="openEvent(e)"
+                       @keydown.space.self.prevent="openEvent(e)">
                     <div class="ev-card-top">
                       <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
                       <div class="ev-store-top"
@@ -555,7 +558,7 @@
   x-transition:leave="transition ease-in duration-150"
   x-transition:leave-start="opacity-100"
   x-transition:leave-end="opacity-0"
-  @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+  @click="window.scrollTo({ top: 0, behavior: scrollBehavior() })"
   title="Back to top"
 >↑</button>
 
@@ -703,7 +706,7 @@
         <small>optional, skip to see them all</small></h3>
       <div class="welcome-games">
         <template x-for="g in welcomeGamesShown" :key="'wg-' + g.game">
-          <button type="button" class="welcome-game" :class="{ 'is-active': onboarding.game.includes(g.game) }"
+          <button type="button" class="welcome-game" :class="[getGameClass(g.game), { 'is-active': onboarding.game.includes(g.game) }]"
                   @click="toggleOnboardingValue('game', g.game)" :aria-pressed="onboarding.game.includes(g.game)">
             <span class="lg-dot" :style="'background:' + g.color"></span>
             <span x-text="g.game"></span>

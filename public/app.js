@@ -254,6 +254,17 @@ function loadLeaflet() {
   ])).then(() => window.L);
 }
 
+// A design token from :root (styles.css), with a fallback for old browsers.
+function cssToken(name, fallback) {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+
+// Smooth scrolling, unless the visitor asked for reduced motion.
+function scrollBehavior() {
+  return window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
+
 // A game's colour, read once from the stylesheet (.game-* { --card-accent })
 // so the map, cards and legend share one palette. Only #hex values pass:
 // the result goes into an inline style.
@@ -390,10 +401,10 @@ function drawPins(L, { stores, selected, me, radiusKm, onSelect }) {
   let fitBounds = points.length ? coreBounds(L, points) : null;
   if (me) {
     const circle = L.circle([me.lat, me.lng], {
-      radius: (radiusKm || 0) * 1000, color: '#2563eb', weight: 1, fillOpacity: 0.06, interactive: false,
+      radius: (radiusKm || 0) * 1000, color: cssToken('--c-map-me', '#2563eb'), weight: 1, fillOpacity: 0.06, interactive: false,
     }).addTo(MAP.me);
     L.circleMarker([me.lat, me.lng], {
-      radius: 7, color: '#fff', weight: 2, fillColor: '#2563eb', fillOpacity: 1, interactive: false,
+      radius: 7, color: cssToken('--c-map-me-ring', '#fff'), weight: 2, fillColor: cssToken('--c-map-me', '#2563eb'), fillOpacity: 1, interactive: false,
     }).addTo(MAP.me);
     if (radiusKm) fitBounds = circle.getBounds();
     else if (fitBounds) fitBounds.extend([me.lat, me.lng]);
@@ -894,13 +905,13 @@ function app() {
       const today = document.getElementById('day-' + now.iso);
       if (!today) return;
       const el = today.querySelector(`[data-seg-key="${targetSeg.key}"]`);
-      (el || today).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      (el || today).scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
     },
 
     /* ── Scroll to a day column by ISO date ────────────────────────── */
     scrollToDay(iso) {
       const el = document.getElementById('day-' + iso);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (el) el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
     },
 
     /* ── Phone jump bar ─────────────────────────────────────────────
@@ -918,11 +929,11 @@ function app() {
 
     scrollWindowTo(el) {
       const top = el.getBoundingClientRect().top + window.scrollY - this.jumpOffset();
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      window.scrollTo({ top: Math.max(0, top), behavior: scrollBehavior() });
     },
 
     // Horizontal grid: bring a day's column to the left edge.
-    scrollColumnIntoView(iso, behavior = 'smooth') {
+    scrollColumnIntoView(iso, behavior = scrollBehavior()) {
       const wrap = this.$refs.calWrap;
       const el = document.getElementById('day-' + iso);
       if (!wrap || !el || this.viewMode !== 'horizontal') return;
@@ -2306,7 +2317,7 @@ function app() {
           `title="${isFav ? 'Remove from saved' : 'Save event'}" ` +
           `aria-label="${isFav ? 'Remove from saved' : 'Save event'}">★</button>`;
         out.push(
-          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}${isFav ? ' is-favorite' : ''}" data-event-key="${esc(eventKey(e))}">` +
+          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}${isFav ? ' is-favorite' : ''}" tabindex="0" data-event-key="${esc(eventKey(e))}">` +
             `<div class="ev-card-top">` +
               `<div class="ev-time">${esc(time)}</div>` +
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
@@ -2335,6 +2346,16 @@ function app() {
     /* ── Delegated click on the horizontal grid.
          Chip click → toggle that filter and stop propagation.
          Card click → open detail panel. */
+    // Enter / Space on a focused card behaves like a click on it.
+    onGridKey(ev) {
+      if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList.contains('ev-card')) {
+        ev.preventDefault();
+        this.onGridClick(ev);
+      }
+    },
+
+    scrollBehavior,
+
     onGridClick(ev) {
       const favBtn = ev.target.closest('[data-fav-key]');
       if (favBtn) {
