@@ -98,6 +98,12 @@ GAME_CANONICAL: dict = {
     "gunpla": "Gunpla",
     "my little pony": "My Little Pony",
     "mlp": "My Little Pony",
+    "dragon ball": "Dragon Ball Fusion World",
+    "dragon ball fusion world": "Dragon Ball Fusion World",
+    "fusion world": "Dragon Ball Fusion World",
+    "dbfw": "Dragon Ball Fusion World",
+    "dragon ball super masters": "Dragon Ball Super Masters",
+    "dbscg masters": "Dragon Ball Super Masters",
     "palworld": "Palworld",
 }
 
@@ -116,6 +122,8 @@ ALLOWED_GAMES: set = {
     "Final Fantasy TCG",
     "Cyberpunk TCG",
     "Gundam Card Game",
+    "Dragon Ball Fusion World",
+    "Dragon Ball Super Masters",
     "My Little Pony",
     "Palworld",
 }

@@ -22,8 +22,7 @@ before EARLIEST_HOUR are skipped and logged, so no 05:00 twin is published.
 
 Fails loudly: no day blocks, no cards, no readable card, or most cards
 unreadable (unknown game label, no "Hora:") raises. Only the intended skips
-(history, Wizards-linked Magic, untracked games, placeholder times) are
-silent.
+(history, Wizards-linked Magic, placeholder times) are silent.
 
 The calendar's Riftbound nights are on no locator we read; its One Piece,
 Pokémon and Digimon events are, and those locator copies are dropped by
@@ -31,8 +30,6 @@ the aggregator's dedup. Cards whose sign-up link is a Wizards locator join
 code are skipped: they are Wizards locator events by definition, and the
 two listings sometimes disagree on the time (a Sunday sealed is 12:05 on
 the locator and 17:00 here), which the dedup window would not join.
-Untracked games (Dragon Ball) are skipped: an unknown-game event would
-swallow a locator event in the dedup.
 """
 
 import logging
@@ -59,7 +56,6 @@ PAGE_URL = "https://nikochancomics.net/calendario"
 WIZARDS_JOIN = "locator.wizards.com/join"
 EARLIEST_HOUR = 7
 # Card games the store runs that we don't track (an intended skip).
-_UNTRACKED_RE = re.compile(r"dragon\s*ball|fusion\s*world", re.IGNORECASE)
 _RIFTBOUND_EVENT_RE = re.compile(r"playriftbound\.com/(?:[a-z]{2}-[A-Z]{2}/)?events/(\d+)")
 
 _MONTHS = {m: i for i, m in enumerate(
@@ -118,12 +114,10 @@ def parse_page(page_html: str, now: datetime) -> list[dict]:
             game = extract_game_from_keywords(label, GAME_KEYWORDS)
             info = card.select_one(".torneo-info")
             tm = _TIME_RE.search(info.get_text(" ", strip=True) if info else "")
-            if not tm or not (game or _UNTRACKED_RE.search(label)):
+            if not tm or not game:
                 unreadable.append(f"{day_text}: game={label!r} time={'yes' if tm else 'missing'}")
                 continue
             readable += 1
-            if not game:
-                continue  # untracked game (Dragon Ball)
             hour, minute = int(tm.group(1)), int(tm.group(2) or 0)
             start = datetime(y, mo, d, hour, minute, tzinfo=TZ)
             if start < since:

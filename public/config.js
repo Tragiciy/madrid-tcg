@@ -26,6 +26,8 @@ var GAME_CLASS_MAP = {
   'Naruto Mythos':        'game-naruto',
   'Cyberpunk TCG':        'game-cyberpunk',
   'Gundam Card Game':     'game-gundam',
+  'Dragon Ball Fusion World':  'game-dbfw',
+  'Dragon Ball Super Masters': 'game-dbmasters',
   'My Little Pony':       'game-mlp',
   'Palworld':             'game-palworld',
 };

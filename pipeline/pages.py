@@ -57,6 +57,8 @@ GAME_SLUGS = {
     "Naruto Mythos": "naruto-mythos",
     "Cyberpunk TCG": "cyberpunk",
     "Gundam Card Game": "gundam",
+    "Dragon Ball Fusion World": "dragon-ball-fusion-world",
+    "Dragon Ball Super Masters": "dragon-ball-masters",
     "My Little Pony": "my-little-pony",
     "Palworld": "palworld",
 }

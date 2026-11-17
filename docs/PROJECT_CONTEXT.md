@@ -103,7 +103,7 @@ cancellations:
 | Module | Locator | Games |
 |---|---|---|
 | `locator_wizards` | Wizards Store & Event Locator (GraphQL `searchEvents`) | Magic |
-| `locator_bandai_onepiece`, `locator_bandai_digimon` | Bandai TCG+ (`api/user/event/list`); client in `shared/bandai_locator.py` | One Piece; Digimon. There is one module per game, so health and protection work per game |
+| `locator_bandai_onepiece`, `locator_bandai_digimon`, `locator_bandai_dbfw`, `locator_bandai_dbmasters`, `locator_bandai_gundam` | Bandai TCG+ (`api/user/event/list`); client in `shared/bandai_locator.py` | One Piece (`game_title_id` 4), Digimon (2), Dragon Ball Fusion World (10), Dragon Ball Super Masters (1) and Gundam Card Game (16). There is one module per game, so health and protection work per game. Bandai may answer an unknown id with another game's events, so `_fetch_game` raises when `game_title_id` in the response differs from the one requested |
 | `locator_ravensburger` | Ravensburger Play Hub (hydraproxy `/v2/events/`) | Lorcana |
 | `locator_gem` | GEM (`gem.fabtcg.com/api/v1/locator/events/`) | Flesh and Blood |
 | `locator_pokemon` | Play! Pokémon Event Locator (OutSystems screen action `DataActionGetEventList` on `events.pokemon.com/EventLocator`) | Pokémon (TCG products only) |

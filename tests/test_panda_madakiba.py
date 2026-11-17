@@ -64,9 +64,9 @@ class MadakibaTests(unittest.TestCase):
         self.assertEqual(got, [
             ("2026-11-21T17:00:00+01:00", "2026-11-21T20:00:00+01:00", "One Piece"),
             ("2026-11-22T10:30:00+01:00", "2026-11-22T14:00:00+01:00", "Pokémon"),
-            ("2026-11-28T17:00:00+01:00", "2026-11-28T20:00:00+01:00", "One Piece"),
+            ("2026-11-22T17:00:00+01:00", "2026-11-22T20:00:00+01:00", "Dragon Ball Fusion World"),
         ])
-        self.assertEqual(len(events), 2 * madakiba.RECURRING_WEEKS)
+        self.assertEqual(len(events), 3 * madakiba.RECURRING_WEEKS)
         # Full title comes from the image alt, not the truncated <h3>.
         self.assertEqual(events[1]["title"], "POKEMON LIGA DOMINGOS DE 10:30H A 14H")
         self.assertEqual(events[1]["source_url"],
@@ -74,9 +74,9 @@ class MadakibaTests(unittest.TestCase):
 
     def test_skips_magic_league_unknown_games_and_non_events(self):
         games = {e["game"] for e in madakiba.parse_page(_read("madakiba_eventos.html"), self.NOW)}
-        # Magic is left to the Wizards locator; Dragon Ball Fusion World is
-        # not tracked; the calendar image and booster box are not events.
-        self.assertEqual(games, {"One Piece", "Pokémon"})
+        # Magic is left to the Wizards locator; the calendar image and booster
+        # box are not events. (Dragon Ball Fusion World is tracked since 2026-11.)
+        self.assertEqual(games, {"One Piece", "Pokémon", "Dragon Ball Fusion World"})
 
     def test_dated_one_off_product(self):
         html = (

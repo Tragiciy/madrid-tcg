@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 
 from pipeline.reconcile import drop_locator_duplicates, event_key, find_store_name_variants, merge_events
 from scrapers import locator_ravensburger, locator_wizards
@@ -63,6 +64,16 @@ class ParseTests(unittest.TestCase):
         self.assertEqual(e["datetime_start"], "2026-11-20T19:00:00+01:00")
         self.assertEqual(e["source_event_id"], "wizards:1")
         self.assertEqual(e["store_address"], "Calle de la Cruz, 10")
+
+    def test_bandai_rejects_another_games_events(self):
+        from shared.cities import CITIES
+        page = {"success": {"total": 1, "event_list": [{"id": 1, "game_title_id": "1"}]}}
+        with mock.patch.object(locator_bandai, "request_json", return_value=page):
+            with self.assertRaises(RuntimeError):
+                locator_bandai._fetch_game(None, 10, CITIES[0])
+        page["success"]["event_list"][0]["game_title_id"] = "10"
+        with mock.patch.object(locator_bandai, "request_json", return_value=page):
+            self.assertEqual(len(locator_bandai._fetch_game(None, 10, CITIES[0])), 1)
 
     def test_bandai_strips_month_prefix_and_skips_cancelled(self):
         base = {"organizer_id": 9, "organizer_name": "Brand New Store", "start_datetime": "2026-11-20T17:00:00",
