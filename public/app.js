@@ -612,6 +612,8 @@ function app() {
     geoStatus:    '',      // '', 'locating', or an error message
     // Map view: the chosen day (null = the whole week), the selected store
     // (display name) and a load/error message for the map itself.
+    welcomeAllGames: false,   // welcome screen: "+N more" games opened
+    WELCOME_TOP_GAMES: 8,
     mapDay:       null,
     mapStore:     null,
     mapStatus:    '',
@@ -645,6 +647,10 @@ function app() {
       this.loadPresets();
       this.loadDefaultPreset();
       this.loadOnboardingState();
+      // First visit to the bare site: the welcome screen, shown at once (it
+      // fills in its numbers as the data arrives). Links with parameters
+      // (an event, a filter, a city) go straight to what they point at.
+      if (!window.location.search && this.shouldShowOnboarding(false)) this.openOnboarding();
 
       // Show Back to top after 400px scroll
       window.addEventListener('scroll', () => {
@@ -653,7 +659,9 @@ function app() {
       }, { passive: true });
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          if (this.editingPresetId) {
+          if (this.onboardingOpen) {
+            this.skipOnboarding();
+          } else if (this.editingPresetId) {
             this.cancelEditPreset();
           } else if (this.calendarMenuOpen) {
             this.calendarMenuOpen = false;
@@ -708,9 +716,6 @@ function app() {
           this.applyDefaultPreset();
         }
         this.cleanupFilters({ syncUrl: false });
-        if (this.shouldShowOnboarding(hasUrlFilters)) {
-          this.openOnboarding();
-        }
         const rawEventParam = new URLSearchParams(window.location.search).get('event');
         if (rawEventParam) {
           const decoded = decodeEventParam(rawEventParam);
@@ -1434,7 +1439,45 @@ function app() {
 
     openOnboarding() {
       this.onboardingOpen = true;
-      this.onboarding = { game: [], store: [] };
+      // Reopened from the footer: start from the games already chosen.
+      this.onboarding = { game: this.filters.game.slice(), store: [] };
+    },
+
+    // Welcome screen: the city's games, most events first.
+    get welcomeGames() {
+      const counts = {};
+      for (const e of this.events) {
+        if (e.game && e.game !== 'Unknown' && !this.isEventPast(e)) counts[e.game] = (counts[e.game] || 0) + 1;
+      }
+      return Object.keys(counts).sort((a, b) => counts[b] - counts[a])
+        .map(game => ({ game, n: counts[game], color: gameColor(game) }));
+    },
+
+    // The top games, plus any picked game further down (it stays visible).
+    get welcomeGamesShown() {
+      const all = this.welcomeGames;
+      if (this.welcomeAllGames) return all;
+      return all.filter((g, i) => i < this.WELCOME_TOP_GAMES || this.onboarding.game.includes(g.game));
+    },
+
+    get welcomeStats() {
+      const today = this.nowMadrid.iso;
+      const weekEnd = isoDay(addDays(madridToday(), 7));
+      const next7 = this.events.filter(e => {
+        const d = e.datetime_start.slice(0, 10);
+        return d >= today && d < weekEnd && !this.isEventPast(e);
+      });
+      return {
+        events: next7.length,
+        stores: new Set(this.events.filter(e => !this.isEventPast(e)).map(e => e.store)).size,
+        games: this.welcomeGames.length,
+      };
+    },
+
+    async welcomeCity(id) {
+      if (id === this.city) return;
+      this.onboarding.game = [];  // games differ per city
+      await this.setCity(id);
     },
 
     skipOnboarding() {
@@ -1442,9 +1485,22 @@ function app() {
       this.persistOnboardingComplete();
     },
 
-    completeOnboarding() {
+    // view: 'map' for the map; otherwise the calendar in this device's
+    // usual layout (leaving the map if the screen was reopened from it).
+    completeOnboarding(view) {
+      if (view === 'map') {
+        if (this.viewMode !== 'map') this.setView('map');
+      } else if (this.viewMode === 'map') {
+        this.setView(window.matchMedia('(max-width: 900px)').matches ? 'vertical' : 'horizontal');
+      }
       const hasSelections = this.onboarding.game.length > 0 || this.onboarding.store.length > 0;
       if (!hasSelections) {
+        // No games picked: show everything (and drop an earlier choice when
+        // the screen was reopened from the footer).
+        if (this.defaultPresetActive || this.filters.game.length) {
+          this.filters.game = [];
+          this.cleanupFilters({ syncUrl: false });
+        }
         this.skipOnboarding();
         return;
       }
@@ -1455,17 +1511,20 @@ function app() {
       this.openFacet = null;
       this.cleanupFilters({ syncUrl: false });
 
-      const presetName = this.generateDefaultPresetName();
-      const preset = {
-        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-        name: presetName,
-        filters: {
-          game: this.onboarding.game.slice(),
-          store: this.onboarding.store.slice(),
-          format: [],
-        },
-      };
-      this.savedPresets.push(preset);
+      const filters = { game: this.onboarding.game.slice(), store: this.onboarding.store.slice(), format: [] };
+      // Reopened from the footer: update the default preset, don't pile up
+      // "My default 2", "My default 3", ….
+      let preset = this.savedPresets.find(p => p.id === this.defaultPresetId);
+      if (preset) {
+        preset.filters = filters;
+      } else {
+        preset = {
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+          name: this.generateDefaultPresetName(),
+          filters,
+        };
+        this.savedPresets.push(preset);
+      }
       this.persistPresets();
 
       this.defaultPresetId = preset.id;

@@ -714,8 +714,9 @@ Key things to note:
   starts a 60-second `setInterval` that refreshes `nowMadrid`; fetches
   `events.json`; then either applies filters from URL params or applies the
   default preset (if one is set); calls `cleanupFilters()`; and registers a
-  `$watch` on `filters.search`. If no default preset and no URL params are
-  present on a fresh visit, the first-run onboarding modal opens.
+  `$watch` on `filters.search`. On a first visit to the bare URL (no query
+  string, no default preset, onboarding not completed), the welcome screen
+  opens before the data loads.
 - **URL params take precedence over localStorage.** `applyFiltersFromUrl()` is
   called immediately after events load and overwrites filter state from URL
   params (`game`, `store`, `format`, `event`). localStorage is only consulted
@@ -929,10 +930,20 @@ panels.
 `defaultPresetId` (loaded from `tcg-default-preset-v1`) marks one saved preset
 as default. On fresh visits with no URL filter params, `applyDefaultPreset()`
 applies its filters automatically and sets `defaultPresetActive = true`, which
-enables the "smart-tap" focus mode for chip interactions. The onboarding modal
-(`onboardingOpen`) is shown on the very first visit when no default preset and
-no URL params exist, collecting initial game/store selections; completion is
-recorded under `tcg-onboarding-v1`.
+enables the "smart-tap" focus mode for chip interactions.
+
+The welcome screen (`onboardingOpen`, a full-screen `.welcome` section) is the
+site's front door. It shows a short pitch and live numbers (`welcomeStats`:
+events in the next 7 days, stores, games). It also has the city picker
+(`welcomeCity` → `setCity`) and the games of that city. `welcomeGames` puts the
+most events first; the top `WELCOME_TOP_GAMES`, then "+N more". Two buttons
+follow: "Show my calendar" (this device's usual layout) and "See the map".
+- **When it opens:** only on a first visit to the bare URL. Any query string
+  (an event, a filter, `?city=`) goes straight to its target.
+- **Reopening:** the footer link "About & setup" opens it again. Completing it
+  then updates the existing default preset instead of adding another.
+- **Storage:** picked games become the default preset. Completion or Skip is
+  recorded under `tcg-onboarding-v1`.
 
 ---
 

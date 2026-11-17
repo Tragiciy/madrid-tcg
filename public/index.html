@@ -671,63 +671,73 @@
   </div>
 </div>
 
-<!-- Onboarding Modal -->
-<div class="onboarding-backdrop"
-     x-show="onboardingOpen"
-     x-transition:enter="transition ease-out duration-200"
-     x-transition:enter-start="opacity-0"
-     x-transition:enter-end="opacity-100"
-     x-transition:leave="transition ease-in duration-150"
-     x-transition:leave-start="opacity-100"
-     x-transition:leave-end="opacity-0">
-  <div class="onboarding-modal"
-       x-show="onboardingOpen"
-       @click.stop
-       x-transition:enter="transition ease-out duration-200"
-       x-transition:enter-start="opacity-0 translate-y-2"
-       x-transition:enter-end="opacity-100 translate-y-0"
-       x-transition:leave="transition ease-in duration-150"
-       x-transition:leave-start="opacity-100 translate-y-0"
-       x-transition:leave-end="opacity-0 translate-y-2">
-    <h2>Set up your event feed</h2>
-    <p class="onboarding-desc">Choose the games and stores you care about. We'll save this as your default view.</p>
+<!-- Welcome: the first screen of a first visit (bare URL only), and the
+     "About & setup" footer link. City + games, then the calendar or the map. -->
+<section class="welcome" x-show="onboardingOpen" x-transition.opacity.duration.150ms
+         x-effect="document.documentElement.classList.toggle('welcome-open', onboardingOpen)"
+         role="dialog" aria-modal="true" aria-labelledby="welcome-title" style="display:none">
+  <div class="welcome-inner">
+    <div class="welcome-brand">TCG Events</div>
+    <h2 id="welcome-title" class="welcome-title">Every card game tournament in your city. <span>One calendar.</span></h2>
+    <p class="welcome-lead">Magic, Pokémon, One Piece, Lorcana, Riftbound and more, from official organizers
+      and store websites. Updated every day.</p>
 
-    <div class="onboarding-section">
-      <h3>Games</h3>
-      <div class="onboarding-options">
-        <template x-for="g in onboardingGameOptions" :key="g">
-          <label class="facet-option">
-            <input type="checkbox" :checked="onboarding.game.includes(g)" @change="toggleOnboardingValue('game', g)">
-            <span class="facet-option-label" x-text="g"></span>
-          </label>
+    <div class="welcome-stats" aria-live="polite">
+      <div><strong x-text="loading ? '…' : welcomeStats.events"></strong><span>events in the next 7 days</span></div>
+      <div><strong x-text="loading ? '…' : welcomeStats.stores"></strong><span>stores</span></div>
+      <div><strong x-text="loading ? '…' : welcomeStats.games"></strong><span>games</span></div>
+    </div>
+
+    <div class="welcome-step" x-show="cities.length > 1">
+      <h3><span class="welcome-num">1</span> Your city</h3>
+      <div class="welcome-cities">
+        <template x-for="c in cities" :key="'wc-' + c.id">
+          <button type="button" class="welcome-city" :class="{ 'is-active': c.id === city }"
+                  :disabled="loading" @click="welcomeCity(c.id)" :aria-pressed="c.id === city" x-text="c.name"></button>
         </template>
       </div>
     </div>
 
-    <div class="onboarding-section">
-      <h3>Stores</h3>
-      <div class="onboarding-options">
-        <template x-for="s in storeOptions" :key="s">
-          <label class="facet-option">
-            <input type="checkbox" :checked="onboarding.store.includes(s)" @change="toggleOnboardingValue('store', s)">
-            <span class="facet-option-label" x-text="s"></span>
-          </label>
+    <div class="welcome-step">
+      <h3><span class="welcome-num" x-text="cities.length > 1 ? 2 : 1"></span> Games you play
+        <small>optional, skip to see them all</small></h3>
+      <div class="welcome-games">
+        <template x-for="g in welcomeGamesShown" :key="'wg-' + g.game">
+          <button type="button" class="welcome-game" :class="{ 'is-active': onboarding.game.includes(g.game) }"
+                  @click="toggleOnboardingValue('game', g.game)" :aria-pressed="onboarding.game.includes(g.game)">
+            <span class="lg-dot" :style="'background:' + g.color"></span>
+            <span x-text="g.game"></span>
+          </button>
         </template>
+        <button type="button" class="welcome-game welcome-more" x-show="!welcomeAllGames && welcomeGames.length > WELCOME_TOP_GAMES"
+                @click="welcomeAllGames = true" x-text="'+ ' + (welcomeGames.length - WELCOME_TOP_GAMES) + ' more'"></button>
+        <span class="welcome-loading" x-show="loading">Loading games…</span>
       </div>
     </div>
 
-    <div class="onboarding-actions">
-      <button class="btn" type="button" @click="skipOnboarding">Skip for now</button>
-      <button class="btn btn-primary" type="button" @click="completeOnboarding">Show my events</button>
+    <div class="welcome-actions">
+      <button type="button" class="btn btn-primary welcome-go" :disabled="loading" @click="completeOnboarding()">
+        Show my calendar →
+      </button>
+      <button type="button" class="btn welcome-map" :disabled="loading" @click="completeOnboarding('map')">⌖ See the map</button>
     </div>
+
+    <ul class="welcome-features">
+      <li><b>⌖ Map</b> Every store with its events, and what's near you.</li>
+      <li><b>★ Save</b> Star events, add them to Google, Apple or Outlook calendars.</li>
+      <li><b>📲 App</b> Add it to your home screen: it works like an app, even offline.</li>
+    </ul>
+
+    <button type="button" class="welcome-skip" @click="skipOnboarding">Skip</button>
   </div>
-</div>
+</section>
 
 <div class="site-footer">
   <a href="/en/madrid/" :href="'/en/' + city + '/'" class="footer-link">Tournaments in <span x-text="cityName">Madrid</span></a>
   <a href="/madrid/" :href="'/' + city + '/'" class="footer-link" lang="es">Torneos en <span x-text="cityName">Madrid</span></a>
   <a href="/madrid/hoy/" :href="'/' + city + '/hoy/'" class="footer-link">Hoy</a>
   <a href="/madrid/fin-de-semana/" :href="'/' + city + '/fin-de-semana/'" class="footer-link">Fin de semana</a>
+  <a href="#" class="footer-link" @click.prevent="openOnboarding()">About &amp; setup</a>
   <a href="/submit/" class="footer-link">Is this your store? Add your events</a>
   <a href="/health" class="footer-link">Scraper health</a>
 </div>
