@@ -45,7 +45,7 @@ from pipeline.repository import (
 )
 from pipeline.pages import build_pages, write_pages
 from pipeline.publish import build_api, public_events, write_api
-from pipeline.runner import _discover_scrapers, run_all_scrapers
+from pipeline.runner import _discover_scrapers, flag_from_source, run_all_scrapers
 from pipeline.share import build_share_pages, write_share_pages
 from shared.scraper_keywords import extract_format_for_event
 from shared.store_registry import StoreRegistry
@@ -127,6 +127,8 @@ def main() -> None:
             "drop_reasons": drops,
             "error": error,
             "duration_s": duration_s,
+            # 0 events is normal for this source (e.g. no approved submissions)
+            "empty_ok": flag_from_source(module_name, "EMPTY_IS_NORMAL"),
         }
         logger.info(
             "%s: raw=%d valid=%d dropped=%d (missing=%d, bad_dt=%d)",

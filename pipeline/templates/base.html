@@ -27,7 +27,7 @@
   <p>{{ t.games }}:
   {% for name, slug in nav.games %}<a href="{{ nav.base }}{{ slug }}/">{{ name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
   </p>
-  <p>{{ t.footer }}</p>
+  <p>{{ t.footer }} <a href="/submit/">{{ t.submit }}</a></p>
 </footer>
 </body>
 </html>

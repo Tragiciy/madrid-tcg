@@ -73,7 +73,7 @@ def unhealthy_stores(stats: dict) -> dict[str, dict]:
     # single event since it was added: broken from day one.
     for name, ms in (stats.get("scrapers") or {}).items():
         store = ms.get("store") or name
-        if store in out or store in (stats.get("by_store") or {}) or ms.get("raw"):
+        if store in out or store in (stats.get("by_store") or {}) or ms.get("raw") or ms.get("empty_ok"):
             continue
         out[store] = {
             "reason": "never_seen",

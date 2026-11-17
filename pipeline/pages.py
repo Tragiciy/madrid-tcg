@@ -147,7 +147,7 @@ LANGS = {
         "game_empty": "No hay torneos de {g} programados en las próximas 4 semanas.",
         "store_title": "{s} — torneos de cartas en {c}", "store_desc": "Próximos torneos de juegos de cartas en {s}{a}.",
         "store_empty": "Esta tienda no tiene torneos programados en las próximas 4 semanas.",
-        "jsonld_game": "Juego de cartas",
+        "jsonld_game": "Juego de cartas", "submit": "¿Es tu tienda? Añade tus torneos",
     },
     "en": {
         "prefix": "en/", "html_lang": "en", "og_locale": "en_GB", "date": long_date_en,
@@ -170,7 +170,7 @@ LANGS = {
         "game_empty": "No {g} tournaments scheduled in the next 4 weeks.",
         "store_title": "{s} — card game tournaments in {c}", "store_desc": "Upcoming card game tournaments at {s}{a}.",
         "store_empty": "This store has no tournaments scheduled in the next 4 weeks.",
-        "jsonld_game": "Card game",
+        "jsonld_game": "Card game", "submit": "Is this your store? Add your events",
     },
 }
 
