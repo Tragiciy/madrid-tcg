@@ -1440,3 +1440,126 @@ input:focus, select:focus { border-color: var(--accent); }
     min-width: 32px;
   }
 }
+
+/* ── Map view ─────────────────────────────────────────────────── */
+.map-view { display: flex; flex-direction: column; gap: .6rem; }
+.map-days {
+  display: grid;
+  grid-template-columns: 1.3fr repeat(7, minmax(0, 1fr));
+  gap: .25rem;
+}
+.map-day {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: .3rem 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1.1;
+}
+.map-day .md-dow   { font-size: .62rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+.map-day .md-num   { font-size: .95rem; font-weight: 700; }
+.map-day .md-count { font-size: .62rem; color: var(--text-muted); }
+.map-day-week .md-dow { font-size: .78rem; font-weight: 700; color: var(--text); text-transform: none; letter-spacing: 0; }
+.map-day.is-today  { border-color: var(--accent-dim); }
+.map-day.is-today .md-dow { color: var(--accent); }
+.map-day.is-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.map-day.is-active .md-dow,
+.map-day.is-active .md-count { color: #fff; }
+.map-day:disabled { opacity: .4; cursor: default; }
+
+/* isolation: Leaflet's panes use z-index up to 1000; keep them below the
+   detail panel and other overlays. */
+.map-box {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #e8eaee;
+}
+.map-canvas { height: min(68vh, 620px); }
+.map-overlay {
+  position: absolute; left: 50%; top: 1rem; transform: translateX(-50%);
+  z-index: 1001;
+  padding: .4rem .8rem;
+  background: rgba(255, 255, 255, .95);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: .82rem;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-md);
+}
+
+.map-pin-wrap { background: none; border: none; }
+.map-pin {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--card-accent);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, .35);
+  color: #fff;
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.map-pin.game-mixed { background: var(--accent); }
+.map-pin.is-selected { outline: 3px solid #111827; outline-offset: 1px; transform: scale(1.15); }
+
+.map-list, .map-sheet {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.map-list ul, .ms-events { list-style: none; margin: 0; padding: 0; }
+.ml-head {
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+  padding: .5rem .75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+.ml-store, .ms-event {
+  display: flex; align-items: center; gap: .65rem;
+  width: 100%;
+  padding: .55rem .75rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.map-list li:last-child .ml-store,
+.ms-events li:last-child .ms-event { border-bottom: none; }
+.ml-store:hover, .ms-event:hover { background: var(--surface2); }
+.ml-store .map-pin { flex: 0 0 auto; width: 26px; height: 26px; font-size: .72rem; box-shadow: none; }
+.ml-text, .ms-what { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.ml-name, .ms-ev-title { font-weight: 600; font-size: .86rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ml-sub, .ms-ev-sub { font-size: .74rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ml-next { flex: 0 0 auto; font-size: .74rem; color: var(--text-muted); white-space: nowrap; }
+
+.ms-head { display: flex; align-items: flex-start; gap: .6rem; padding: .65rem .75rem .3rem; }
+.ms-back { flex: 0 0 auto; }
+.ms-title h2 { margin: 0; font-size: 1rem; }
+.ms-meta { display: flex; flex-wrap: wrap; gap: .1rem .6rem; font-size: .76rem; color: var(--text-muted); }
+.ms-actions { display: flex; gap: .4rem; padding: .2rem .75rem .6rem; border-bottom: 1px solid var(--border); }
+.ms-actions .btn { text-decoration: none; }
+.ms-event { border-left: 4px solid var(--card-accent); }
+.ms-when { flex: 0 0 5.6rem; font-size: .76rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+.ms-fav { flex: 0 0 auto; color: #d4a017; }
+
+@media (max-width: 600px) {
+  .map-canvas { height: 52vh; }
+  .ms-head { flex-direction: column; gap: .4rem; }
+}
+.map-pin.map-cluster {
+  width: 38px; height: 38px;
+  background: #374151;
+  border-width: 3px;
+  font-size: .82rem;
+}

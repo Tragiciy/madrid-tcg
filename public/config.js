@@ -29,3 +29,14 @@ var GAME_CLASS_MAP = {
   'My Little Pony':       'game-mlp',
   'Palworld':             'game-palworld',
 };
+
+// Map view (Leaflet, loaded on first open). Tiles are the standard
+// OpenStreetMap ones: free and fine at this site's traffic under the OSM tile
+// usage policy (attribution shown, no prefetching). If traffic grows, point
+// `url` at another raster provider; nothing else needs to change.
+var MAP_TILES = {
+  url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 19,
+};
+var MAP_DEFAULT_VIEW = { lat: 40.4168, lng: -3.7038, zoom: 11 };  // Madrid

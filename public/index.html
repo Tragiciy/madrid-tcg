@@ -47,6 +47,7 @@
     <div class="view-toggle" style="margin-left:auto">
       <button :class="{ active: viewMode === 'horizontal' }" @click="setView('horizontal')">⊞ Horizontal</button>
       <button :class="{ active: viewMode === 'vertical' }"   @click="setView('vertical')">≡ Vertical</button>
+      <button :class="{ active: viewMode === 'map' }"        @click="setView('map')">⌖ Map</button>
     </div>
   </div>
 
@@ -227,7 +228,7 @@
   <!-- Phone jump bar: sticky day + time-of-day shortcuts, so reaching
        "Saturday evening" is two taps instead of a long scroll. Hidden
        on wide screens via CSS. -->
-  <nav class="jump-bar" x-ref="jumpBar" x-show="!loading && !loadError" aria-label="Jump to day and time">
+  <nav class="jump-bar" x-ref="jumpBar" x-show="!loading && !loadError && viewMode !== 'map'" aria-label="Jump to day and time">
     <div class="jump-days">
       <template x-for="day in weekDays" :key="'j-' + day.iso">
         <button type="button" class="jump-day"
@@ -253,8 +254,98 @@
     </div>
   </nav>
 
+  <!-- Map view: one pin per store with events still ahead this week (after
+       the filters). Leaflet loads on first open; see drawMap in app.js. -->
+  <section class="map-view" x-show="viewMode === 'map' && !loading && !loadError"
+           x-effect="viewMode === 'map' && !loading && !loadError && drawMap()">
+    <div class="map-days" role="group" aria-label="Day">
+      <button type="button" class="map-day map-day-week" :class="{ 'is-active': !mapDay }" @click="setMapDay(null)">
+        <span class="md-dow">Week</span>
+        <span class="md-count" x-text="mapDayChips.reduce((n, d) => n + d.count, 0) || '–'"></span>
+      </button>
+      <template x-for="d in mapDayChips" :key="'md-' + d.iso">
+        <button type="button" class="map-day"
+                :class="{ 'is-active': mapDay === d.iso, 'is-today': d.isToday }"
+                :disabled="!d.count" @click="setMapDay(d.iso)"
+                :aria-label="d.dow + ' ' + d.num + ', ' + d.count + ' events'">
+          <span class="md-dow" x-text="d.dow"></span>
+          <span class="md-num" x-text="d.num"></span>
+          <span class="md-count" x-text="d.count || '–'"></span>
+        </button>
+      </template>
+    </div>
+
+    <div class="map-box">
+      <div class="map-canvas" x-ref="mapEl" role="region" aria-label="Map of stores with events"></div>
+      <div class="map-overlay" x-show="mapStatus" x-text="mapStatus"></div>
+      <div class="map-overlay" x-show="!mapStatus && mapStores.length === 0">No upcoming events match these filters.</div>
+    </div>
+
+    <!-- Selected store -->
+    <div class="map-sheet" x-show="mapSelected">
+      <template x-if="mapSelected">
+        <div>
+          <div class="ms-head">
+            <button type="button" class="btn ms-back" @click="mapStore = null">← All stores</button>
+            <div class="ms-title">
+              <h2 x-text="mapSelected.name"></h2>
+              <div class="ms-meta">
+                <span x-show="mapSelected.km !== null" x-text="mapSelected.km !== null ? storeDistanceLabel(mapSelected.name) : ''"></span>
+                <span x-text="mapSelected.address"></span>
+              </div>
+            </div>
+          </div>
+          <div class="ms-actions">
+            <a class="btn" :href="directionsUrl(mapSelected)" target="_blank" rel="noopener">Directions ↗</a>
+            <a class="btn" x-show="mapSelected.website" :href="mapSelected.website" target="_blank" rel="noopener">Website ↗</a>
+          </div>
+          <ul class="ms-events">
+            <template x-for="e in mapSelected.events" :key="eventKey(e)">
+              <li>
+                <button type="button" class="ms-event" :class="getGameClass(e.game)" @click="openPanel(e)">
+                  <span class="ms-when" x-text="formatDayShort(e.datetime_start) + ' · ' + formatTime(e.datetime_start)"></span>
+                  <span class="ms-what">
+                    <span class="ms-ev-title" x-text="e.title"></span>
+                    <span class="ms-ev-sub">
+                      <span x-text="e.game"></span><span x-show="e.format" x-text="' · ' + e.format"></span><span x-show="attendanceBadge(e)" x-text="' · 👥 ' + attendanceBadge(e)"></span>
+                    </span>
+                  </span>
+                  <span class="ms-fav" x-show="isFavorite(e)" aria-label="Saved">★</span>
+                </button>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </template>
+    </div>
+
+    <!-- Store list: the same results as the pins, as text -->
+    <div class="map-list" x-show="!mapSelected && mapStores.length">
+      <div class="ml-head">
+        <span x-text="mapStores.length + (mapStores.length === 1 ? ' store' : ' stores') + (nearMe ? ', nearest first' : ', busiest first')"></span>
+        <button type="button" class="btn" x-show="!nearMe" @click="toggleNearMe()">📍 Near me</button>
+      </div>
+      <ul>
+        <template x-for="s in mapStores" :key="'ml-' + s.name">
+          <li>
+            <button type="button" class="ml-store" @click="pickMapStore(s)">
+              <span class="map-pin" :class="s.gameClass" x-text="s.count"></span>
+              <span class="ml-text">
+                <span class="ml-name" x-text="s.name"></span>
+                <span class="ml-sub">
+                  <span x-show="s.km !== null" x-text="s.km !== null ? storeDistanceLabel(s.name) + ' · ' : ''"></span><span x-text="s.games.join(', ')"></span><span x-show="s.lat === null"> · not on the map</span>
+                </span>
+              </span>
+              <span class="ml-next" x-text="formatDayShort(s.events[0].datetime_start) + ' ' + formatTime(s.events[0].datetime_start)"></span>
+            </button>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </section>
+
   <!-- Calendar grid -->
-  <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading && !loadError"
+  <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading && !loadError && viewMode !== 'map'"
        x-ref="calWrap" @scroll.passive="onScrollSpy()">
 
     <!-- ── HORIZONTAL: global grid; segments aligned across days ── -->

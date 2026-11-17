@@ -204,6 +204,147 @@ function haversineKm(a, b) {
   return 12742 * Math.asin(Math.sqrt(h));
 }
 
+/* ── Map view (Leaflet) ─────────────────────────────────────────────
+   Leaflet is fetched from jsDelivr (version-pinned, SRI) the first time the
+   map opens, so the calendar views never pay for it. Leaflet objects live
+   here, outside Alpine's reactive state: Alpine would wrap them in proxies. */
+const LEAFLET = {
+  js:     'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+  jsSri:  'sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH',
+  css:    'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
+  cssSri: 'sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H',
+  // Leaflet.markercluster: central Madrid has dozens of stores within a
+  // few streets; unclustered, their pins hide each other.
+  clusterJs:     'https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js',
+  clusterJsSri:  'sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr',
+  clusterCss:    'https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css',
+  clusterCssSri: 'sha384-pmjIAcz2bAn0xukfxADbZIb3t8oRT9Sv0rvO+BR5Csr6Dhqq+nZs59P0pPKQJkEV',
+};
+let leafletPromise = null;
+
+function loadLeaflet() {
+  if (window.L) return Promise.resolve(window.L);
+  if (!leafletPromise) {
+    const load = (tag, attrs) => new Promise((resolve, reject) => {
+      const el = Object.assign(document.createElement(tag), attrs, { crossOrigin: 'anonymous' });
+      el.onload = resolve;
+      el.onerror = reject;
+      document.head.appendChild(el);
+    });
+    leafletPromise = Promise.all([
+      load('link', { rel: 'stylesheet', href: LEAFLET.css, integrity: LEAFLET.cssSri }),
+      load('script', { src: LEAFLET.js, integrity: LEAFLET.jsSri }),
+    ]).then(() => Promise.all([  // the plugin extends window.L: load it second
+      load('link', { rel: 'stylesheet', href: LEAFLET.clusterCss, integrity: LEAFLET.clusterCssSri }),
+      load('script', { src: LEAFLET.clusterJs, integrity: LEAFLET.clusterJsSri }),
+    ])).then(() => window.L).catch((err) => {
+      leafletPromise = null;  // let the next open retry
+      throw err;
+    });
+  }
+  return leafletPromise;
+}
+
+// focus: a store to bring into view once its pin exists (set by the list).
+const MAP = { map: null, pins: null, me: null, fitKey: null, fitBounds: null, focus: null, drawn: null, markers: new Map() };
+
+// Bounds for the first view: the stores within CORE_KM of the median store,
+// when they are most of the results. A few far-off towns would otherwise
+// zoom the map out to the whole region; they stay one zoom-out away.
+const CORE_KM = 20;
+function coreBounds(L, points) {
+  if (points.length < 4) return L.latLngBounds(points);
+  const mid = (i) => points.map(p => p[i]).sort((a, b) => a - b)[Math.floor(points.length / 2)];
+  const centre = { lat: mid(0), lng: mid(1) };
+  const core = points.filter(p => haversineKm(centre, { lat: p[0], lng: p[1] }) <= CORE_KM);
+  return L.latLngBounds(core.length >= points.length * 0.7 ? core : points);
+}
+
+// Draw one pin per located store. `fitKey` changes when the question changes
+// (week, day, filters, location); only then is the view refitted, so a
+// minute tick or a selection never moves the map under the user's finger.
+function renderStoreMap(L, el, { stores, selected, me, radiusKm, fitKey, onSelect }) {
+  if (!MAP.map) {
+    MAP.map = L.map(el).setView([MAP_DEFAULT_VIEW.lat, MAP_DEFAULT_VIEW.lng], MAP_DEFAULT_VIEW.zoom);
+    L.tileLayer(MAP_TILES.url, { attribution: MAP_TILES.attribution, maxZoom: MAP_TILES.maxZoom }).addTo(MAP.map);
+    MAP.pins = L.markerClusterGroup({
+      maxClusterRadius: 40,
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+      // A cluster shows its total events (like the pins), not its store count.
+      iconCreateFunction: (cluster) => {
+        const n = cluster.getAllChildMarkers().reduce((sum, m) => sum + (m.options.eventCount || 0), 0);
+        return L.divIcon({
+          className: 'map-pin-wrap',
+          html: `<span class="map-pin map-cluster">${n}</span>`,
+          iconSize: [38, 38],
+          iconAnchor: [19, 19],
+        });
+      },
+    }).addTo(MAP.map);
+    MAP.me = L.layerGroup().addTo(MAP.map);
+    MAP.map.on('click', () => onSelect(null));
+  }
+  MAP.map.invalidateSize();  // the container may have been hidden (x-show)
+  // Rebuilding the pins mid-animation cancels a cluster zoom: skip redraws
+  // that would change nothing (e.g. the minute tick).
+  const drawn = JSON.stringify([stores, selected, me, radiusKm]);
+  if (drawn !== MAP.drawn) {
+    MAP.drawn = drawn;
+    drawPins(L, { stores, selected, me, radiusKm, onSelect });
+  }
+  if (fitKey !== MAP.fitKey) {
+    MAP.fitKey = fitKey;
+    if (MAP.fitBounds) MAP.map.fitBounds(MAP.fitBounds, { padding: [28, 28], maxZoom: 15, animate: false });
+  }
+  const focus = MAP.focus && MAP.markers.get(MAP.focus);
+  MAP.focus = null;
+  if (focus) MAP.pins.zoomToShowLayer(focus);  // opens its cluster if needed
+}
+
+function drawPins(L, { stores, selected, me, radiusKm, onSelect }) {
+  MAP.pins.clearLayers();
+  MAP.me.clearLayers();
+  MAP.markers.clear();
+
+  const points = [];
+  for (const s of stores) {
+    if (s.lat == null || s.lng == null) continue;
+    const isSel = s.name === selected;
+    const icon = L.divIcon({
+      className: 'map-pin-wrap',
+      // Only a number and class names from GAME_CLASS_MAP: no scraped text.
+      html: `<span class="map-pin ${s.gameClass}${isSel ? ' is-selected' : ''}">${Number(s.count)}</span>`,
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+    });
+    const label = document.createElement('span');
+    label.textContent = s.name;  // textContent: store names are data
+    const marker = L.marker([s.lat, s.lng], {
+      icon, zIndexOffset: isSel ? 1000 : s.count, keyboard: true, title: s.name, eventCount: s.count,
+    })
+      .bindTooltip(label, { direction: 'top', offset: [0, -14] })
+      .on('click', (ev) => { L.DomEvent.stopPropagation(ev); onSelect(s.name); });
+    MAP.pins.addLayer(marker);
+    MAP.markers.set(s.name, marker);
+    points.push([s.lat, s.lng]);
+  }
+
+  let fitBounds = points.length ? coreBounds(L, points) : null;
+  if (me) {
+    const circle = L.circle([me.lat, me.lng], {
+      radius: (radiusKm || 0) * 1000, color: '#2563eb', weight: 1, fillOpacity: 0.06, interactive: false,
+    }).addTo(MAP.me);
+    L.circleMarker([me.lat, me.lng], {
+      radius: 7, color: '#fff', weight: 2, fillColor: '#2563eb', fillOpacity: 1, interactive: false,
+    }).addTo(MAP.me);
+    if (radiusKm) fitBounds = circle.getBounds();
+    else if (fitBounds) fitBounds.extend([me.lat, me.lng]);
+  }
+  MAP.fitBounds = fitBounds;
+}
+
+
 // Short attendance label for a card: "Full", "24 played", "12/24", or ''.
 // Capacity alone is left to the detail panel (it is known for most events).
 function attendanceBadge(e) {
@@ -386,6 +527,11 @@ function app() {
     nearMe:       null,
     radiusKm:     5,
     geoStatus:    '',      // '', 'locating', or an error message
+    // Map view: the chosen day (null = the whole week), the selected store
+    // (display name) and a load/error message for the map itself.
+    mapDay:       null,
+    mapStore:     null,
+    mapStatus:    '',
     offline:      !navigator.onLine,
     // Reactive Europe/Madrid clock — refreshed every minute. Used to
     // mark past segments and past events on today.
@@ -453,9 +599,11 @@ function app() {
         const res = await fetch(`${API_BASE}/events/upcoming.json`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const upcoming = await res.json();
+        // STORE_META is not reactive: fill it before the events land, so
+        // nothing computed from the events sees stores without coordinates.
+        for (const s of (await storesReq).stores || []) STORE_META[s.name] = s;
         this.events = upcoming.events;
         this.markWeeksLoaded(upcoming.from, upcoming.to);
-        for (const s of (await storesReq).stores || []) STORE_META[s.name] = s;
         this.weekIndex = (await indexReq).weeks || null;
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
@@ -513,6 +661,10 @@ function app() {
     setView(mode) {
       this.viewMode = mode;
       localStorage.setItem('tcg-view-v2', mode);
+      if (mode === 'map') {
+        MAP.fitKey = null;  // reopening the map shows every result again
+        return;
+      }
       if (mode === 'vertical') {
         this.$nextTick(() => {
           requestAnimationFrame(() => this.scrollToCurrentSegment());
@@ -684,12 +836,14 @@ function app() {
     // events are loaded — otherwise a not-yet-fetched week would wipe them.
     async prevWeek() {
       this.weekStart = addDays(this.weekStart, -7);
+      this.mapDay = null;
       await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
       this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
     },
     async nextWeek() {
       this.weekStart = addDays(this.weekStart, +7);
+      this.mapDay = null;
       await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
       this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
@@ -725,6 +879,7 @@ function app() {
     },
     goToday() {
       this.weekStart = weekMonday(madridToday());
+      this.mapDay = null;
       this.cleanupFilters();
       // In vertical view scroll to today after Alpine re-renders the week
       if (this.viewMode === 'vertical') {
@@ -1527,6 +1682,114 @@ function app() {
         });
       }
       return days;
+    },
+
+    /* ── Map view ─────────────────────────────────────────────────────
+         The map answers "where can I go": this week's filtered events that
+         haven't started yet, grouped by store. */
+    get mapDayChips() {
+      return this.weekDays.map(d => ({
+        iso: d.iso, dow: d.dow, num: d.num, isToday: d.isToday,
+        count: d.events.filter(e => !this.isEventPast(e)).length,
+      }));
+    },
+
+    get mapEvents() {
+      const days = this.weekDays.filter(d => !this.mapDay || d.iso === this.mapDay);
+      return days.flatMap(d => d.events).filter(e => !this.isEventPast(e));
+    },
+
+    get mapStores() {
+      const byStore = new Map();
+      for (const e of this.mapEvents) {
+        if (!byStore.has(e.store)) byStore.set(e.store, []);
+        byStore.get(e.store).push(e);
+      }
+      const stores = [];
+      for (const [name, events] of byStore) {
+        const meta = STORE_META[name] || {};
+        const games = {};
+        for (const e of events) games[e.game] = (games[e.game] || 0) + 1;
+        const ranked = Object.keys(games).sort((a, b) => games[b] - games[a]);
+        stores.push({
+          name,
+          events,
+          count: events.length,
+          games: ranked,
+          // One game dominates → the pin takes its colour; a mix stays neutral.
+          gameClass: ranked.length && games[ranked[0]] * 2 > events.length ? this.getGameClass(ranked[0]) : 'game-mixed',
+          lat: meta.lat ?? null,
+          lng: meta.lng ?? null,
+          address: meta.address || events[0].store_address || '',
+          website: safeUrl(meta.website),
+          km: this.storeDistanceKm(name),
+        });
+      }
+      const byKm = (a, b) => (a.km ?? Infinity) - (b.km ?? Infinity);
+      return stores.sort((a, b) => (this.nearMe ? byKm(a, b) : 0)
+        || b.count - a.count || a.name.localeCompare(b.name));
+    },
+
+    get mapSelected() {
+      return this.mapStore ? this.mapStores.find(s => s.name === this.mapStore) || null : null;
+    },
+
+    get mapUnlocatedCount() {
+      return this.mapStores.filter(s => s.lat == null).reduce((n, s) => n + s.count, 0);
+    },
+
+    // Changes only when the question changes; see renderStoreMap.
+    get mapFitKey() {
+      return JSON.stringify([isoDay(this.weekStart), this.mapDay, this.filters, this.segmentFilter,
+        this.showFavoritesOnly, this.nearMe, this.radiusKm]);
+    },
+
+    // Called from x-effect. Every reactive input is read synchronously so the
+    // effect re-runs when any of them changes; Leaflet work waits a frame so
+    // x-show has made the container visible and measurable.
+    drawMap() {
+      const args = {
+        stores: this.mapStores.map(s => ({ name: s.name, count: s.count, gameClass: s.gameClass, lat: s.lat, lng: s.lng })),
+        selected: this.mapStore,
+        me: this.nearMe ? { lat: this.nearMe.lat, lng: this.nearMe.lng } : null,
+        radiusKm: this.radiusKm,
+        fitKey: this.mapFitKey,
+        onSelect: (name) => { this.mapStore = name; },
+      };
+      if (!window.L) this.mapStatus = 'Loading map…';
+      loadLeaflet().then((L) => requestAnimationFrame(() => {
+        if (this.viewMode !== 'map' || !this.$refs.mapEl) return;
+        this.mapStatus = '';
+        renderStoreMap(L, this.$refs.mapEl, args);
+      })).catch(() => {
+        this.mapStatus = 'Could not load the map. Check your connection and try again.';
+      });
+    },
+
+    setMapDay(iso) {
+      this.mapDay = iso;
+      this.mapStore = null;
+    },
+
+    // From the list under the map: select, centre the pin, show the map.
+    pickMapStore(s) {
+      // Read the row first: setting mapStore re-renders the list, and the
+      // x-for scope `s` can then point at another row's data.
+      const { name, lat } = s;
+      if (lat != null) MAP.focus = name;  // the redraw this triggers shows the pin
+      this.mapStore = name;
+      // Instant: a smooth page scroll cancels Leaflet's zoom animation.
+      if (lat != null && this.$refs.mapEl) this.$refs.mapEl.scrollIntoView({ block: 'start' });
+    },
+
+    directionsUrl(s) {
+      const dest = s.lat != null ? `${s.lat},${s.lng}` : (s.address || s.name);
+      return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(dest);
+    },
+
+    formatDayShort(iso) {
+      const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' });
     },
 
     /* ── Week header label ──────────────────────────────────────────── */
