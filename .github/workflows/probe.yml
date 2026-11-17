@@ -1,0 +1,33 @@
+name: Probe one scraper
+
+# Manual debugging aid: run a single scraper from the CI runner (the
+# network the daily pipeline really uses) and print its output. Read-only:
+# commits nothing. Usage: Actions → Probe one scraper → Run workflow,
+# or `gh workflow run probe.yml --ref <branch> -f module=locator_pokemon`.
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: "Scraper module name in scrapers/ (without .py)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run scraper
+        env:
+          MODULE: ${{ inputs.module }}
+        run: |
+          case "$MODULE" in *[!a-z0-9_]*|"") echo "invalid module name"; exit 1;; esac
+          python -m "scrapers.$MODULE" | tail -40
