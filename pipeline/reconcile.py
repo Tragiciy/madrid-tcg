@@ -293,19 +293,23 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
     count too (once), so a scraper that failed today — its events protected
     — does not let locator copies slip in.
 
-    A locator event with the same event key as a scraper event (a store
-    card linking the locator's event id, e.g. "playriftbound:<id>") is that
-    event whatever the times say, and is dropped first.
+    A locator event with the same event key as a scraper event of the same
+    store (a store card linking the locator's event id, e.g.
+    "playriftbound:<id>") is that event whatever the times say, and is
+    dropped first. A key shared with another store's event is a wrong link
+    on the store's card: it is logged and left to the time-window match.
     """
     claims: list[tuple] = []  # (store, date, dt, game)
     seen_keys: set[str] = set()
     claim_by_key: dict[str, int] = {}
+    store_by_key: dict[str, Optional[str]] = {}
 
     def claim(e):
         k = event_key(e)
         if k in seen_keys:
             return
         seen_keys.add(k)
+        store_by_key[k] = e.get("store")
         dt = _parse_dt(e.get("datetime_start") or "")
         if dt is not None:
             claim_by_key[k] = len(claims)
@@ -339,10 +343,20 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
     used_claims: set[int] = set()
     for li, e in enumerate(fresh):
         k = event_key(e)
-        if is_locator(e.get("source")) and k in seen_keys:
-            dropped_idx.add(li)
-            if k in claim_by_key:
-                used_claims.add(claim_by_key[k])
+        if not is_locator(e.get("source")) or k not in seen_keys:
+            continue
+        if store_by_key.get(k) != e.get("store"):
+            logger.warning("Locator event %s is at %r but a %r card links it; not merged by id",
+                           k, e.get("store"), store_by_key.get(k))
+            continue
+        dropped_idx.add(li)
+        if k in claim_by_key:
+            ci = claim_by_key[k]
+            used_claims.add(ci)
+            dt = _parse_dt(e.get("datetime_start") or "")
+            if dt is not None and abs((dt - claims[ci][2]).total_seconds()) > DUPLICATE_WINDOW_MIN * 60:
+                logger.warning("%s: %s lists %s at %s, the store at %s; keeping the store's time",
+                               e.get("store"), k, e.get("source"), dt.isoformat(), claims[ci][2].isoformat())
 
     pairs: list[tuple] = []  # (unknown_game, seconds_apart, locator_idx, claim_idx)
     for li, e in enumerate(fresh):
