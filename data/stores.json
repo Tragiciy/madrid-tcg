@@ -2,7 +2,9 @@
   "_comment": "One record per physical store, with a stable `id` that never changes once\nassigned:",
   "ignore": {
     "names": [],
-    "external": []
+    "external": [
+      "bandai:2030"
+    ]
   },
   "stores": [
     {
@@ -149,28 +151,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "El Encuentro by Infrecuentes"
+        ],
         "external": [
+          "bandai:8735",
           "ravensburger:25873",
           "wizards:17362"
-        ]
-      }
-    },
-    {
-      "id": "el-encuentro-by-infrecuentes",
-      "name": "El Encuentro by Infrecuentes",
-      "city": "barcelona",
-      "address": "Carrer de les Torres, 44, 08970, Sant Joan Despi",
-      "lat": 41.3690716,
-      "lng": 2.0569575,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "bandai:8735"
         ]
       }
     },
@@ -290,24 +277,6 @@
       }
     },
     {
-      "id": "equilux",
-      "name": "Equilux",
-      "city": "barcelona",
-      "address": "11 Rambla del Fondo, Santa Coloma de Gramenet, CT, 08922, Spain",
-      "lat": 41.4518,
-      "lng": 2.2167857,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "wizards:16153"
-        ]
-      }
-    },
-    {
       "id": "equilux-juegos",
       "name": "Equilux Juegos",
       "city": "barcelona",
@@ -319,10 +288,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Equilux"
+        ],
         "external": [
           "bandai:6151",
-          "ravensburger:1485"
+          "ravensburger:1485",
+          "wizards:16153"
         ]
       }
     },
@@ -395,6 +367,7 @@
       "aliases": {
         "names": [],
         "external": [
+          "ravensburger:23621",
           "wizards:18404"
         ]
       }
@@ -448,27 +421,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Hamelin Games Mataró"
+        ],
         "external": [
+          "ravensburger:2367",
           "wizards:16759"
-        ]
-      }
-    },
-    {
-      "id": "hamelin-games-mataro",
-      "name": "Hamelin Games Mataró",
-      "city": "barcelona",
-      "address": "Riera de Figuera Major, 43, Mataró, CT, 08304, ES",
-      "lat": 41.55343063687146,
-      "lng": 2.4413899461762734,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "ravensburger:2367"
         ]
       }
     },
@@ -484,27 +442,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Homoludicus Granollers"
+        ],
         "external": [
+          "bandai:3136",
+          "ravensburger:2492",
           "wizards:7757"
-        ]
-      }
-    },
-    {
-      "id": "homoludicus-granollers",
-      "name": "Homoludicus Granollers",
-      "city": "barcelona",
-      "address": "Carrer Sant Jaume 73 (local), 08402, Granollers",
-      "lat": 41.6048842,
-      "lng": 2.2857727,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "bandai:3136"
         ]
       }
     },
@@ -523,24 +467,6 @@
         "names": [],
         "external": [
           "bandai:25832"
-        ]
-      }
-    },
-    {
-      "id": "industria-61",
-      "name": "industria 61",
-      "city": "barcelona",
-      "address": "calle de la industria, 61, bajos, 08025, Barcelona",
-      "lat": 41.4047705,
-      "lng": 2.1677621,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "bandai:121"
         ]
       }
     },
@@ -635,8 +561,11 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "KABURI ROL & GAME"
+        ],
         "external": [
+          "bandai:20626",
           "wizards:18249"
         ]
       }
@@ -656,24 +585,6 @@
         "names": [],
         "external": [
           "bandai:23367"
-        ]
-      }
-    },
-    {
-      "id": "kaburi-rol-game",
-      "name": "KABURI ROL & GAME",
-      "city": "barcelona",
-      "address": "PASEO SAN JUAN 11 LOCAL, 08010, BARCELONA",
-      "lat": 41.3924063,
-      "lng": 2.1782156,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "bandai:20626"
         ]
       }
     },
@@ -851,24 +762,6 @@
       }
     },
     {
-      "id": "libreria-ulises",
-      "name": "Librería Ulises",
-      "city": "barcelona",
-      "address": "C/ de Pacífic 34, Barcelona, Barcelona, 08027, Spain",
-      "lat": 41.426087,
-      "lng": 2.18892,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "wizards:21506"
-        ]
-      }
-    },
-    {
       "id": "llibreria-ulises-desconnecta-jugant",
       "name": "Llibreria Ulises & Desconnecta Jugant",
       "city": "barcelona",
@@ -880,10 +773,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Librería Ulises"
+        ],
         "external": [
           "bandai:20994",
-          "ravensburger:46846"
+          "ravensburger:46846",
+          "wizards:21506"
         ]
       }
     },
@@ -899,28 +795,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LorcanosTCG"
+        ],
         "external": [
           "bandai:13596",
+          "ravensburger:3141",
           "wizards:19307"
-        ]
-      }
-    },
-    {
-      "id": "lorcanostcg",
-      "name": "LorcanosTCG",
-      "city": "barcelona",
-      "address": "24 Av. Morera, Badalona, CT, 08915, ES",
-      "lat": 41.448672699999996,
-      "lng": 2.2454826999999997,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "ravensburger:3141"
         ]
       }
     },
@@ -972,8 +853,11 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "industria 61"
+        ],
         "external": [
+          "bandai:121",
           "wizards:11705"
         ]
       }
@@ -1110,24 +994,6 @@
       }
     },
     {
-      "id": "ragnarok-games",
-      "name": "Ragnarok Games",
-      "city": "barcelona",
-      "address": "106 / Bruc, 08242, Manresa",
-      "lat": 41.395632,
-      "lng": 2.167909,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "bandai:2030"
-        ]
-      }
-    },
-    {
       "id": "rincon-del-friki",
       "name": "Rincon del Friki",
       "city": "barcelona",
@@ -1187,24 +1053,6 @@
       }
     },
     {
-      "id": "snafu-battlegrounds",
-      "name": "SNAFU Battlegrounds",
-      "city": "barcelona",
-      "address": "Carretera de Terrassa 76-80, Local, 08201, Sabadell",
-      "lat": 41.5416864,
-      "lng": 2.1066612,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "bandai:4816"
-        ]
-      }
-    },
-    {
       "id": "snafu-store",
       "name": "Snafu Store",
       "city": "barcelona",
@@ -1216,27 +1064,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "SNAFU Battlegrounds"
+        ],
         "external": [
+          "bandai:4816",
           "wizards:20602"
-        ]
-      }
-    },
-    {
-      "id": "spaceship-tcg",
-      "name": "Spaceship TCG",
-      "city": "barcelona",
-      "address": "Calle Navarra 7, 08210, Barbera del Valles",
-      "lat": 41.5221967,
-      "lng": 2.1181999,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
-      "added_at": "2026-11-17",
-      "aliases": {
-        "names": [],
-        "external": [
-          "bandai:28559"
         ]
       }
     },
@@ -1382,9 +1215,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Spaceship TCG"
+        ],
         "external": [
-          "bandai:27540"
+          "bandai:27540",
+          "bandai:28559"
         ]
       }
     },
