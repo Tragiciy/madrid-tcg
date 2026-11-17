@@ -15,7 +15,9 @@ date and time are read as Madrid time instead.
 The calendar has games no locator lists (Riftbound, Star Wars: Unlimited,
 Yu-Gi-Oh!), next to One Piece, Digimon, Pokémon and Lorcana nights that the
 locators also carry; those copies are dropped by the aggregator's dedup.
-Board games (code "board") and any game we don't track are skipped.
+Board games (code "board") and any game we don't track are skipped. A
+missing `games` list, or most non-board events with a code that resolves to
+no game, raises instead of quietly publishing a fraction of the calendar.
 
 robots.txt disallows /api/ only; this reads the public home page.
 """
@@ -42,6 +44,7 @@ LANGUAGE = "es"
 PAGE_URL = "https://www.origenjuegos.com/"
 EVENTS_URL = "https://www.origenjuegos.com/#eventos"
 ISLAND = "EventsCalendar"
+BOARD_CODES = {"board"}  # "Juegos de mesa": not a TCG, an intended skip
 
 
 def _astro(value):
@@ -71,14 +74,24 @@ def calendar_props(page_html: str) -> dict:
 
 def parse_page(page_html: str, now: datetime) -> list[dict]:
     props = calendar_props(page_html)
-    names = {g.get("id"): g.get("name") or "" for g in props.get("games") or []}
+    names = {g.get("id"): g.get("name") or "" for g in props.get("games") or []
+             if isinstance(g, dict) and g.get("id")}
+    if not names:
+        raise RuntimeError(f"{STORE}: the calendar has no games list; game codes can't be resolved")
+    # Codes resolve through props.games only; a bare code is never guessed
+    # ("swu" would match, "rift" or "op" would not, which hides breakage).
+    games = {code: extract_game_from_keywords(name, GAME_KEYWORDS) for code, name in names.items()}
+    tcg = [r for r in props["events"] if r.get("game") not in BOARD_CODES]
+    unresolved = [r.get("game") for r in tcg if not games.get(r.get("game"))]
+    if tcg and len(unresolved) * 2 > len(tcg):
+        raise RuntimeError(f"{STORE}: {len(unresolved)} of {len(tcg)} events have a game code that "
+                           f"resolves to no game: {sorted(set(map(str, unresolved)))}")
     scraped_at = now.astimezone(TZ).isoformat()
     since = (now - timedelta(days=1)).astimezone(TZ)
     out: list[dict] = []
     for raw in props["events"]:
         title = (raw.get("title") or "").strip()
-        code = raw.get("game")
-        game = extract_game_from_keywords(names.get(code) or code or "", GAME_KEYWORDS)
+        game = games.get(raw.get("game"))
         if not title or not game:
             continue  # board games, untracked games
         start = datetime.strptime(f"{raw['date']} {raw['time']}", "%Y-%m-%d %H:%M").replace(tzinfo=TZ)

@@ -6,10 +6,18 @@ EventON renders an empty month grid and fills it with one AJAX call. The
 page carries the calendar's shortcode (`.evo_cal_data[data-sc]`) and two
 nonces (`evo_general_params`); posting them back to
 `/?evo-ajax=eventon_get_events` returns that month's events as JSON, one
-entry per occurrence (repeats expanded), with real UTC epochs in
-`unix_start` / `unix_end`. (`event_start_unix` is the wall-clock time
-written as if it were UTC — not used.) direction "next" returns the
+entry per occurrence (repeats expanded). direction "next" returns the
 following month.
+
+Times: `event_start_unix` / `event_end_unix` are the store's wall-clock
+time written as if it were UTC; they are read as Europe/Madrid wall clock.
+`unix_start` is the UTC epoch EventON derives from it, but possibly with
+the WordPress gmt_offset of the *scrape* day rather than the event's, which
+is an hour off for events across a DST change (an October scrape of
+November events). So it is only a cross-check: wall clock minus
+`unix_start` must be a Madrid offset (CET or CEST — the event day's, or
+the other one in that stale-offset case). Anything else means the site's
+timezone is not Madrid's, and parsing raises.
 
 The WordPress REST route `wp/v2/ajde_events` exists too, but carries no
 dates, so it is no use here.
@@ -24,7 +32,7 @@ import json
 import re
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Callable, Optional
 from urllib.parse import urlsplit
 
@@ -79,6 +87,26 @@ def _permalinks(fragment: str) -> dict[str, tuple[Optional[str], str]]:
     return out
 
 
+# CET and CEST: the only gaps a Madrid site can show between its wall
+# clock and its UTC epoch (see the module docstring).
+_MADRID_OFFSETS = {timedelta(hours=1), timedelta(hours=2)}
+
+
+def _wall_clock(raw: dict, local_key: str, utc_key: str) -> Optional[datetime]:
+    """Madrid datetime from `local_key` (wall clock as UTC epoch), checked
+    against `utc_key` (a real UTC epoch) when both are present."""
+    if not raw.get(local_key):
+        return None
+    local = datetime.fromtimestamp(int(raw[local_key]), timezone.utc).replace(tzinfo=TZ)
+    if raw.get(utc_key):
+        gap = timedelta(seconds=int(raw[local_key]) - int(raw[utc_key]))
+        if gap not in _MADRID_OFFSETS:
+            raise EventonError(
+                f"event {raw.get('ID')}: {local_key} and {utc_key} are {gap} apart, "
+                f"not a Madrid offset; is the site's timezone Europe/Madrid?")
+    return local
+
+
 def parse_events(payload: dict) -> list[EventonEvent]:
     """Events from one eventon_get_events answer. Raises if it is not one."""
     if payload.get("status") != "GOOD" or not isinstance(payload.get("json"), list):
@@ -89,10 +117,12 @@ def parse_events(payload: dict) -> list[EventonEvent]:
         ri = str(raw.get("ri") or "0")
         key = raw.get("_ID") or f"{raw['ID']}_{ri}"
         url, desc = links.get(key, (None, ""))
-        start = datetime.fromtimestamp(int(raw["unix_start"]), timezone.utc).astimezone(TZ)
-        end = None
-        if raw.get("unix_end") and int(raw["unix_end"]) > int(raw["unix_start"]):
-            end = datetime.fromtimestamp(int(raw["unix_end"]), timezone.utc).astimezone(TZ)
+        start = _wall_clock(raw, "event_start_unix", "unix_start")
+        if start is None:
+            raise EventonError(f"event {raw.get('ID')}: no event_start_unix")
+        end = _wall_clock(raw, "event_end_unix", "unix_end")
+        if end is not None and end <= start:
+            end = None
         out.append(EventonEvent(
             id=int(raw["ID"]), ri=ri,
             title=_html.unescape(raw.get("event_title") or "").strip(),

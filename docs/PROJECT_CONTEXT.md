@@ -295,10 +295,12 @@ events.
 `shared/eventon.py` reads a WordPress EventON calendar (used by
 `el_encuentro`). It loads the calendar page for its shortcode and nonces,
 then posts them to `/?evo-ajax=eventon_get_events`, once per month (current,
-then "next"). Times come from `unix_start`, a real UTC epoch;
-`event_start_unix` is wall-clock time written as UTC and is not used. The
-WordPress REST route `wp/v2/ajde_events` has no dates. Any unexpected page or
-answer raises.
+then "next"). Times come from `event_start_unix`, the store's wall-clock
+time written as UTC, which is read as Madrid time. `unix_start` may be
+computed with the scrape day's gmt_offset, which puts it an hour off across
+a DST change, so it is used only as a cross-check: the gap between the two
+must be a Madrid offset (CET or CEST). The WordPress REST route
+`wp/v2/ajde_events` has no dates. Any unexpected page or answer raises.
 
 ### 1c. Scraper stats and anomaly detection
 

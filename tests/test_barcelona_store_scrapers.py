@@ -49,6 +49,38 @@ class EventonTests(unittest.TestCase):
         self.assertEqual(rift.url, "https://elencuentro.infrecuentes.es/evento/riftbound-nexus-nights-4/")
         self.assertIn("Nexus", rift.description)
 
+    @staticmethod
+    def _one(local: str, utc_gap_h: float) -> dict:
+        """An answer with one event at wall clock `local`, whose unix_start
+        is `utc_gap_h` hours before the wall clock written as UTC."""
+        wall = int(datetime.fromisoformat(local + "+00:00").timestamp())
+        gap = int(utc_gap_h * 3600)
+        return {"status": "GOOD", "html": "", "json": [{
+            "ID": 1, "ri": "0", "_ID": "1_0", "event_title": "Riftbound – Nexus Nights",
+            "event_start_unix": wall, "event_end_unix": wall + 3 * 3600,
+            "unix_start": wall - gap, "unix_end": wall + 3 * 3600 - gap}]}
+
+    def test_wall_clock_in_winter_and_summer(self):
+        winter = eventon.parse_events(self._one("2026-11-18T17:30:00", 1))[0]
+        summer = eventon.parse_events(self._one("2027-04-14T17:30:00", 2))[0]
+        self.assertEqual(winter.start.isoformat(), "2026-11-18T17:30:00+01:00")
+        self.assertEqual(summer.start.isoformat(), "2027-04-14T17:30:00+02:00")
+        self.assertEqual(summer.end.isoformat(), "2027-04-14T20:30:00+02:00")
+
+    def test_stale_gmt_offset_across_dst_keeps_the_wall_clock(self):
+        # A March scrape (gmt_offset +1) of an April event: unix_start is
+        # an hour off; the store's wall clock still wins.
+        ev = eventon.parse_events(self._one("2027-04-14T17:30:00", 1))[0]
+        self.assertEqual(ev.start.isoformat(), "2027-04-14T17:30:00+02:00")
+        # An October scrape (+2) of a November event, likewise.
+        ev = eventon.parse_events(self._one("2026-11-18T17:30:00", 2))[0]
+        self.assertEqual(ev.start.isoformat(), "2026-11-18T17:30:00+01:00")
+
+    def test_non_madrid_offset_raises(self):
+        for gap in (0, 5, -1):  # a site set to UTC, to America, …
+            with self.assertRaises(eventon.EventonError):
+                eventon.parse_events(self._one("2026-11-18T17:30:00", gap))
+
     def test_bad_answer_raises(self):
         with self.assertRaises(eventon.EventonError):
             eventon.parse_events({"status": "BAD", "msg": "nonce"})
@@ -133,6 +165,24 @@ class OrigenJuegosTests(unittest.TestCase):
             titles = [e["title"] for e in origen_juegos.parse_page(self.html, NOW)]
         self.assertEqual(len(titles), len(self.events) - 1)  # [0] was already history
 
+    def test_missing_games_list_fails_loudly(self):
+        props = origen_juegos.calendar_props(self.html)
+        for broken in ({k: v for k, v in props.items() if k != "games"},   # prop gone
+                       dict(props, games=[{"slug": g["id"], "label": g["name"]} for g in props["games"]])):  # keys renamed
+            with mock.patch.object(origen_juegos, "calendar_props", return_value=broken):
+                with self.assertRaises(RuntimeError):
+                    origen_juegos.parse_page(self.html, NOW)
+
+    def test_most_codes_unresolved_fails_loudly(self):
+        # Codes renamed ("rift" → "riftbound", …) while the games list keeps
+        # the old ids: only a minority would still resolve.
+        props = origen_juegos.calendar_props(self.html)
+        for ev in props["events"][:6]:
+            ev["game"] = ev["game"] + "-v2"
+        with mock.patch.object(origen_juegos, "calendar_props", return_value=props):
+            with self.assertRaises(RuntimeError):
+                origen_juegos.parse_page(self.html, NOW)
+
     def test_page_without_calendar_fails_loudly(self):
         with self.assertRaises(RuntimeError):
             origen_juegos.parse_page("<html><body><astro-island props='{}'></astro-island></body></html>", NOW)
@@ -150,6 +200,7 @@ class NikochanArenaTests(unittest.TestCase):
             ("2026-11-20T17:15:00+01:00", "One Piece", "Torneo One Piece"),
             ("2026-11-29T10:00:00+01:00", "Riftbound", "Riftbound – NEXUS NIGHT"),
             ("2026-11-29T17:15:00+01:00", "One Piece", "Torneo One Piece"),
+            ("2026-12-12T10:00:00+01:00", "Riftbound", "Riftbound – NEXUS NIGHT"),
             ("2027-01-23T10:00:00+01:00", "Yu-Gi-Oh!", "Torneo YuGiOh!"),
             ("2027-01-23T10:00:00+01:00", "Riftbound", "Riftbound – PRE-RIFT LEGACY"),
         ])
@@ -168,6 +219,47 @@ class NikochanArenaTests(unittest.TestCase):
     def test_page_without_days_fails_loudly(self):
         with self.assertRaises(RuntimeError):
             nikochan_arena.parse_page("<html><body>Error 500</body></html>", NOW)
+
+    def test_placeholder_5am_time_is_skipped_and_logged(self):
+        # 12 Dec "SELLADO - MAGIC PRESENTS: MARVEL DOUBLE ISSUE" says
+        # "Hora: 5:00" (Wizards: 17:00). Its card has no Wizards link yet.
+        html = _read("nikochan_calendario.html")
+        self.assertIn("MARVEL DOUBLE ISSUE", html)
+        with self.assertLogs(nikochan_arena.logger, "WARNING") as logs:
+            events = nikochan_arena.parse_page(html, NOW)
+        self.assertFalse(any(e["datetime_start"][11:13] < "07" for e in events))
+        self.assertFalse(any("MARVEL" in e["title"] for e in events))
+        self.assertTrue(any("placeholder time" in line for line in logs.output))
+
+    def _mangled(self, old: str, new: str) -> str:
+        html = _read("nikochan_calendario.html")
+        self.assertIn(old, html)
+        return html.replace(old, new)
+
+    def test_unreadable_cards_fail_loudly(self):
+        # The time wording changes: day blocks and cards are still there,
+        # but no card has a start time any more.
+        with self.assertRaises(RuntimeError):
+            nikochan_arena.parse_page(self._mangled("<strong>Hora:</strong>", "<strong>Horario:</strong>"), NOW)
+        # The logos' alt texts change: 9 of 13 cards unreadable, while the
+        # 4 Magic cards (h3 label) still parse.
+        html = self._mangled('alt="Digimon"', 'alt="logo"').replace('alt="One Piece"', 'alt="logo"')
+        html = html.replace('alt="Riftbound"', 'alt="logo"').replace('alt="YuGiOh!"', 'alt="logo"')
+        html = html.replace('alt="Dragon Ball"', 'alt="logo"')
+        with self.assertRaises(RuntimeError):
+            nikochan_arena.parse_page(html, NOW)
+
+    def test_ids_survive_renames(self):
+        # A Riftbound card keeps its playriftbound id; other cards are keyed by
+        # their slot, so "[PENDIENTE]" → a real name keeps the same event.
+        by_start = {(e["datetime_start"], e["game"]): e["source_event_id"] for e in self.events}
+        self.assertEqual(by_start[("2026-11-29T10:00:00+01:00", "Riftbound")], "playriftbound:117468466850407382")
+        self.assertEqual(by_start[("2027-01-23T10:00:00+01:00", "Yu-Gi-Oh!")], "nikochan:2027-01-23T10:00:yu-gi-oh")
+        renamed = nikochan_arena.parse_page(self._mangled("[PENDIENTE]", "GENESYS CUP"), NOW)
+        ygo = next(e for e in renamed if e["game"] == "Yu-Gi-Oh!")
+        self.assertEqual(ygo["title"], "YuGiOh! – GENESYS CUP")
+        self.assertEqual(ygo["source_event_id"], "nikochan:2027-01-23T10:00:yu-gi-oh")
+        self.assertEqual(len({e["source_event_id"] for e in self.events}), len(self.events))
 
 
 class BarcelonaWiringTests(unittest.TestCase):

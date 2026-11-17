@@ -8,16 +8,31 @@ Layout: one `section.dia-bloque` per day, its date in the heading
 event. A card names its game in `h3.torneo-juego` or in its logo's alt
 text, its time in `.torneo-info` ("Hora: 17:15h."), and describes the
 event in `.torneo-texto`, whose first line is the event name when the
-store wrote one ("NEXUS NIGHT", "COMMANDER BRACKET 1 - …"). Cards have no
-id of their own.
+store wrote one ("NEXUS NIGHT", "COMMANDER BRACKET 1 - …").
+
+Ids: cards have no id of their own, and their names change ("[PENDIENTE]"
+becomes the real name), so a title-based key would re-create the event on
+every rename. A card that links a playriftbound.com event is keyed by that
+id ("playriftbound:<id>"); any other card by its slot, day + time + game
+("nikochan:2026-11-18T17:15:digimon"), which a rename leaves alone.
+
+Times: "Hora: 5:00" is how the store (and its Bandai listings) mark a time
+not set yet — Wizards has that 12 Dec sealed at 17:00. Cards starting
+before EARLIEST_HOUR are skipped and logged, so no 05:00 twin is published.
+
+Fails loudly: no day blocks, no cards, no readable card, or most cards
+unreadable (unknown game label, no "Hora:") raises. Only the intended skips
+(history, Wizards-linked Magic, untracked games, placeholder times) are
+silent.
 
 The calendar's Riftbound nights are on no locator we read; its One Piece,
 Pokémon and Digimon events are, and those locator copies are dropped by
 the aggregator's dedup. Cards whose sign-up link is a Wizards locator join
 code are skipped: they are Wizards locator events by definition, and the
 two listings sometimes disagree on the time (a Sunday sealed is 12:05 on
-the locator and 17:00 here), which the dedup window would not join. Untracked games (Dragon Ball) are
-skipped: an unknown-game event would swallow a locator event in the dedup.
+the locator and 17:00 here), which the dedup window would not join.
+Untracked games (Dragon Ball) are skipped: an unknown-game event would
+swallow a locator event in the dedup.
 """
 
 import logging
@@ -42,6 +57,10 @@ STORE = "Nikochan Arena"
 LANGUAGE = "es"
 PAGE_URL = "https://nikochancomics.net/calendario"
 WIZARDS_JOIN = "locator.wizards.com/join"
+EARLIEST_HOUR = 7
+# Card games the store runs that we don't track (an intended skip).
+_UNTRACKED_RE = re.compile(r"dragon\s*ball|fusion\s*world", re.IGNORECASE)
+_RIFTBOUND_EVENT_RE = re.compile(r"playriftbound\.com/(?:[a-z]{2}-[A-Z]{2}/)?events/(\d+)")
 
 _MONTHS = {m: i for i, m in enumerate(
     ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
@@ -72,6 +91,10 @@ def _name(text: str) -> str:
     return ""
 
 
+def _slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", _fold(text)).strip("-")
+
+
 def parse_page(page_html: str, now: datetime) -> list[dict]:
     soup = BeautifulSoup(page_html, "html.parser")
     days = soup.select("section.dia-bloque")
@@ -80,26 +103,45 @@ def parse_page(page_html: str, now: datetime) -> list[dict]:
     scraped_at = now.astimezone(TZ).isoformat()
     since = (now - timedelta(days=1)).astimezone(TZ)
     out: list[dict] = []
+    cards = readable = 0
+    unreadable: list[str] = []
+    slots: dict[str, int] = {}
     for block in days:
         heading = block.select_one(".dia-titulo h2")
-        y, mo, d = _day(heading.get_text(" ", strip=True) if heading else "")
+        day_text = heading.get_text(" ", strip=True) if heading else ""
+        y, mo, d = _day(day_text)
         for card in block.select("article.torneo-card"):
+            cards += 1
             label_el = card.select_one(".torneo-juego")
             logo = card.select_one("img.torneo-logo")
             label = label_el.get_text(" ", strip=True) if label_el else (logo.get("alt", "") if logo else "")
             game = extract_game_from_keywords(label, GAME_KEYWORDS)
-            if not game:
-                continue
             info = card.select_one(".torneo-info")
             tm = _TIME_RE.search(info.get_text(" ", strip=True) if info else "")
-            if not tm:
-                continue  # no start time: nothing to put on the calendar
-            start = datetime(y, mo, d, int(tm.group(1)), int(tm.group(2) or 0), tzinfo=TZ)
+            if not tm or not (game or _UNTRACKED_RE.search(label)):
+                unreadable.append(f"{day_text}: game={label!r} time={'yes' if tm else 'missing'}")
+                continue
+            readable += 1
+            if not game:
+                continue  # untracked game (Dragon Ball)
+            hour, minute = int(tm.group(1)), int(tm.group(2) or 0)
+            start = datetime(y, mo, d, hour, minute, tzinfo=TZ)
             if start < since:
                 continue
             link = card.select_one("a.btn-inscripcion[href^=http]")
             if link and WIZARDS_JOIN in link["href"]:
                 continue  # read from the Wizards locator instead
+            if hour < EARLIEST_HOUR:
+                logger.warning("%s: skipping %s %s at %02d:%02d (placeholder time)",
+                               STORE, day_text, label, hour, minute)
+                continue
+            rift = _RIFTBOUND_EVENT_RE.search(link["href"]) if link else None
+            if rift:
+                sid = f"playriftbound:{rift.group(1)}"
+            else:
+                slot = f"nikochan:{start.strftime('%Y-%m-%dT%H:%M')}:{_slug(game)}"
+                slots[slot] = slots.get(slot, 0) + 1
+                sid = slot if slots[slot] == 1 else f"{slot}:{slots[slot]}"
             text_el = card.select_one(".torneo-texto")
             text = text_el.get_text("\n", strip=True) if text_el else ""
             kind_el = card.select_one(".torneo-tipo")
@@ -118,8 +160,15 @@ def parse_page(page_html: str, now: datetime) -> list[dict]:
                 "datetime_end": None,
                 "language": LANGUAGE,
                 "source_url": link["href"] if link else PAGE_URL,
+                "source_event_id": sid,
                 "scraped_at": scraped_at,
             })
+    if unreadable:
+        logger.warning("%s: %d of %d cards unreadable: %s", STORE, len(unreadable), cards, unreadable[:5])
+    if not cards or not readable or len(unreadable) * 2 > cards:
+        raise RuntimeError(
+            f"{STORE}: {cards} cards, {readable} readable, {len(unreadable)} unreadable "
+            f"(page layout changed?): {unreadable[:3]}")
     out.sort(key=lambda e: e["datetime_start"])
     return out
 
