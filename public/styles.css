@@ -53,6 +53,13 @@ body.no-scroll { overflow: hidden; }
 }
 .site-header h1 { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
 .site-header .city-name { color: var(--text); }
+/* The title reopens the welcome screen (About & setup). */
+.site-header .brand {
+  background: none; border: none; padding: 0;
+  font: inherit; color: inherit;
+  cursor: pointer;
+}
+.site-header .brand:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* City switcher: reads as part of the title, still obviously a control. */
 .site-header .city-select {
   font: inherit;

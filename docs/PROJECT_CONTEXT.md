@@ -940,7 +940,7 @@ most events first; the top `WELCOME_TOP_GAMES`, then "+N more". Two buttons
 follow: "Show my calendar" (this device's usual layout) and "See the map".
 - **When it opens:** only on a first visit to the bare URL. Any query string
   (an event, a filter, `?city=`) goes straight to its target.
-- **Reopening:** the footer link "About & setup" opens it again. Completing it
+- **Reopening:** the header title "TCG Events" and the footer link "About & setup" open it again. Completing it
   then updates the existing default preset instead of adding another.
 - **Storage:** picked games become the default preset. Completion or Skip is
   recorded under `tcg-onboarding-v1`.

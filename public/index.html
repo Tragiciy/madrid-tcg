@@ -51,7 +51,7 @@
   <div class="site-header">
     <div>
       <h1>
-        <span class="brand">TCG Events</span>
+        <button type="button" class="brand" @click="openOnboarding()" title="About &amp; setup">TCG Events</button>
         <template x-if="cities.length > 1">
           <select class="city-select" :value="city" :disabled="loading"
                   @change="setCity($event.target.value); $event.target.value = city" aria-label="City">
