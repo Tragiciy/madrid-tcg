@@ -139,6 +139,7 @@
         ],
         "external": [
           "bandai:22970",
+          "ravensburger:54026",
           "wizards:21965"
         ]
       }
@@ -193,7 +194,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:2015"
+          "bandai:2015",
+          "ravensburger:2144"
         ]
       }
     },
@@ -369,6 +371,7 @@
         "names": [],
         "external": [
           "bandai:17396",
+          "ravensburger:16759",
           "wizards:18454"
         ]
       }
@@ -1099,10 +1102,13 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "SIMONV TCG"
+        ],
         "external": [
           "bandai:23060",
-          "ravensburger:54031"
+          "ravensburger:54031",
+          "wizards:22007"
         ]
       }
     },
