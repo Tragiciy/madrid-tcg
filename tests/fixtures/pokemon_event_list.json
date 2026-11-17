@@ -1,0 +1,672 @@
+{
+ "versionInfo": {
+  "hasModuleVersionChanged": false,
+  "hasApiVersionChanged": false
+ },
+ "data": {
+  "EventList": {
+   "List": [
+    {
+     "Events": {
+      "Guid": "c9a60640-8a29-4007-8ff7-beed8f52f005",
+      "Activity_type": "tournament",
+      "Subtype": "",
+      "Name": "CUP ARTE 9 - NOVIEMBRE 26",
+      "Display_id": "26-11-021118",
+      "Products": {
+       "List": [
+        "tcg"
+       ]
+      },
+      "Category": "tcg_std",
+      "Start_date": "2026-11-15T10:30:00Z",
+      "Start_date_utc": "1900-01-01T00:00:00",
+      "Address": {
+       "Guid": "32b3dd36-918e-46a0-b776-5d2f21cdc680",
+       "Name": "ARTE 9",
+       "Full_address": "C/ DE FRANCISCO SILVELA, 21, SALAMANCA, 28028 MADRID, SPAIN",
+       "Latitude": "40.430637",
+       "Longitude": "-3.671215",
+       "Timezone": "Europe/Madrid"
+      },
+      "Event_website": "https://www.arte9.com",
+      "Registration_start": "2026-11-15T10:00:00+00:00",
+      "Registration_end": "2026-11-15T10:30:00Z",
+      "Details": "GRAN CUP DE ARTE 9 DE NOVIEMBRE DE 2026",
+      "Third_party_registration_website": "",
+      "Contact_information": {
+       "Email": "",
+       "Phone": ""
+      },
+      "Admission": "12",
+      "Activity_division_info": {
+       "Juniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Seniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Masters": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       }
+      },
+      "Series": {
+       "Guid": "6562d37e-a29c-5cb8-907a-a88ea41535f8",
+       "Name": "TCG League Cup Season 1",
+       "Tags": {
+        "List": [
+         "championship_series",
+         "league_cup"
+        ]
+       }
+      },
+      "Status": "sanctioned",
+      "Attributes": {
+       "List": [],
+       "EmptyListItem": {
+        "Id": "",
+        "Category": {
+         "Id": "",
+         "Display_name": ""
+        },
+        "Display_name": "",
+        "Featured": false
+       }
+      },
+      "ActivityGroup": {
+       "Guid": "910f0b19-401a-ca4f-f93b-56335bb08ce1",
+       "Group_type": "league",
+       "Owner": {
+        "Guid": "",
+        "Player_id": ""
+       },
+       "Display_name": "ARTE 9 S.L.",
+       "Display_Id": "L6244251"
+      }
+     },
+     "EventBadge": "/OPPlayerApp/img/OPPlayerApp.LeagueCupBadge.png",
+     "EventTypeName": "Cup",
+     "SpecialEventDescription": "",
+     "SpecialEventIcon": ""
+    },
+    {
+     "Events": {
+      "Guid": "a77c9e76-cbc4-46c7-bfec-c70682a26f1d",
+      "Activity_type": "play_session",
+      "Subtype": "",
+      "Name": "",
+      "Display_id": "",
+      "Products": {
+       "List": [
+        "pgo",
+        "tcg",
+        "vg"
+       ]
+      },
+      "Category": "",
+      "Start_date": "2026-11-22T09:30:00Z",
+      "Start_date_utc": "1900-01-01T00:00:00",
+      "Address": {
+       "Guid": "710649ed-7efa-40d0-a744-6aac3d3ba90c",
+       "Name": "MADAKIBA",
+       "Full_address": "C. AFRODITA, 5, LOCAL 7, 28342 VALDEMORO, MADRID, SPAIN",
+       "Latitude": "40.181721",
+       "Longitude": "-3.682290",
+       "Timezone": "Europe/Madrid"
+      },
+      "Event_website": "",
+      "Registration_start": "",
+      "Registration_end": "",
+      "Details": "",
+      "Third_party_registration_website": "",
+      "Contact_information": {
+       "Email": "",
+       "Phone": ""
+      },
+      "Admission": "",
+      "Activity_division_info": {
+       "Juniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Seniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Masters": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       }
+      },
+      "Series": {
+       "Guid": "",
+       "Name": "",
+       "Tags": {
+        "List": [],
+        "EmptyListItem": ""
+       }
+      },
+      "Status": "pending",
+      "Attributes": {
+       "List": [
+        {
+         "Id": "all_skill_levels",
+         "Category": {
+          "Id": "skill_levels",
+          "Display_name": "Skill Levels"
+         },
+         "Display_name": "All Skill Levels",
+         "Featured": false
+        },
+        {
+         "Id": "all_ages",
+         "Category": {
+          "Id": "age_groups",
+          "Display_name": "Age Group Focus"
+         },
+         "Display_name": "All Ages",
+         "Featured": false
+        },
+        {
+         "Id": "coaching",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Coaching",
+         "Featured": false
+        },
+        {
+         "Id": "trading",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Trading",
+         "Featured": false
+        },
+        {
+         "Id": "other_activities",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Other Pokémon Activities",
+         "Featured": false
+        }
+       ]
+      },
+      "ActivityGroup": {
+       "Guid": "31fc3cec-c0b6-25a6-9df8-163a7241d4c7",
+       "Group_type": "league",
+       "Owner": {
+        "Guid": "",
+        "Player_id": ""
+       },
+       "Display_name": "MADAKIBA",
+       "Display_Id": "L6173221"
+      }
+     },
+     "EventBadge": "/OPPlayerApp/img/OPPlayerApp.PlayPokemonBadge.png",
+     "EventTypeName": "League",
+     "SpecialEventDescription": "",
+     "SpecialEventIcon": ""
+    },
+    {
+     "Events": {
+      "Guid": "caf4f018-52bc-4867-892f-91f6733dd04e",
+      "Activity_type": "play_session",
+      "Subtype": "",
+      "Name": "",
+      "Display_id": "",
+      "Products": {
+       "List": [
+        "pgo",
+        "tcg",
+        "vg"
+       ]
+      },
+      "Category": "",
+      "Start_date": "2026-11-18T16:45:00Z",
+      "Start_date_utc": "1900-01-01T00:00:00",
+      "Address": {
+       "Guid": "8452739a-90fe-4527-a99f-8019e2f95775",
+       "Name": "TOPDECK",
+       "Full_address": "17 CALLE DEL CARDENAL SILÍCEO, MADRID, MD 28002, ES",
+       "Latitude": "40.444719",
+       "Longitude": "-3.670494",
+       "Timezone": "Europe/Madrid"
+      },
+      "Event_website": "",
+      "Registration_start": "",
+      "Registration_end": "",
+      "Details": "",
+      "Third_party_registration_website": "",
+      "Contact_information": {
+       "Email": "",
+       "Phone": ""
+      },
+      "Admission": "",
+      "Activity_division_info": {
+       "Juniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Seniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Masters": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       }
+      },
+      "Series": {
+       "Guid": "",
+       "Name": "",
+       "Tags": {
+        "List": [],
+        "EmptyListItem": ""
+       }
+      },
+      "Status": "pending",
+      "Attributes": {
+       "List": [
+        {
+         "Id": "all_skill_levels",
+         "Category": {
+          "Id": "skill_levels",
+          "Display_name": "Skill Levels"
+         },
+         "Display_name": "All Skill Levels",
+         "Featured": false
+        },
+        {
+         "Id": "all_ages",
+         "Category": {
+          "Id": "age_groups",
+          "Display_name": "Age Group Focus"
+         },
+         "Display_name": "All Ages",
+         "Featured": false
+        },
+        {
+         "Id": "coaching",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Coaching",
+         "Featured": false
+        },
+        {
+         "Id": "trading",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Trading",
+         "Featured": false
+        },
+        {
+         "Id": "drafting",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Drafting",
+         "Featured": false
+        },
+        {
+         "Id": "go_raids",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Pokémon GO Raids",
+         "Featured": false
+        },
+        {
+         "Id": "gym_leader_challenge",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Gym Leader Challenge",
+         "Featured": false
+        },
+        {
+         "Id": "other_activities",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Other Pokémon Activities",
+         "Featured": false
+        }
+       ]
+      },
+      "ActivityGroup": {
+       "Guid": "be622616-6a93-9095-511c-37cd62e74fe6",
+       "Group_type": "league",
+       "Owner": {
+        "Guid": "",
+        "Player_id": ""
+       },
+       "Display_name": "TOPDECK",
+       "Display_Id": "L6243188"
+      }
+     },
+     "EventBadge": "/OPPlayerApp/img/OPPlayerApp.PlayPokemonBadge.png",
+     "EventTypeName": "League",
+     "SpecialEventDescription": "",
+     "SpecialEventIcon": ""
+    },
+    {
+     "Events": {
+      "Guid": "fc7df11e-ad58-4d4c-8715-624997d698cf",
+      "Activity_type": "tournament",
+      "Subtype": "",
+      "Name": "[2027] VG League Cup Padis Noviembre",
+      "Display_id": "26-11-013122",
+      "Products": {
+       "List": [
+        "vg"
+       ]
+      },
+      "Category": "vg_mod",
+      "Start_date": "2026-11-15T11:30:00Z",
+      "Start_date_utc": "1900-01-01T00:00:00",
+      "Address": {
+       "Guid": "5d2ba7d8-85d5-4267-adda-4befd0d3b7a4",
+       "Name": "PADIS",
+       "Full_address": "36 C. DE BLASCO DE GARAY, MADRID, MD 28015, ES",
+       "Latitude": "40.432736",
+       "Longitude": "-3.711535",
+       "Timezone": "Europe/Zurich"
+      },
+      "Event_website": "https://www.padis-store.com/es/",
+      "Registration_start": "",
+      "Registration_end": "",
+      "Details": "32 plazas, Regulación M-C\nLista abierta: https://www.pokemon.com/static-assets/content-assets/cms2/pdf/play-pokemon/rules/play-pokemon-vg-team-list.pdf\nInscripciones con pago previo por la web: https://www.padis-store.com/44796-pokemon-vg-cup-challenge-domingo-15-de-noviembre-1115.html",
+      "Third_party_registration_website": "https://www.padis-store.com/44796-pokemon-vg-cup-challenge-domingo-15-de-noviembre-1115.html",
+      "Contact_information": {
+       "Email": "",
+       "Phone": ""
+      },
+      "Admission": "",
+      "Activity_division_info": {
+       "Juniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Seniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Masters": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       }
+      },
+      "Series": {
+       "Guid": "2fd139d6-9e9c-0fff-e412-28e098bfa605",
+       "Name": "VGC League Cup Season 1",
+       "Tags": {
+        "List": [
+         "championship_series",
+         "league_cup"
+        ]
+       }
+      },
+      "Status": "sanctioned",
+      "Attributes": {
+       "List": [],
+       "EmptyListItem": {
+        "Id": "",
+        "Category": {
+         "Id": "",
+         "Display_name": ""
+        },
+        "Display_name": "",
+        "Featured": false
+       }
+      },
+      "ActivityGroup": {
+       "Guid": "03cd1cf2-ab05-b082-ba8d-925367249cc2",
+       "Group_type": "league",
+       "Owner": {
+        "Guid": "",
+        "Player_id": ""
+       },
+       "Display_name": "PADIS",
+       "Display_Id": "L6234631"
+      }
+     },
+     "EventBadge": "/OPPlayerApp/img/OPPlayerApp.LeagueCupBadge.png",
+     "EventTypeName": "Cup",
+     "SpecialEventDescription": "",
+     "SpecialEventIcon": ""
+    },
+    {
+     "Events": {
+      "Guid": "1737e321-6468-446a-8c86-bad1f34ce845",
+      "Activity_type": "play_session",
+      "Subtype": "",
+      "Name": "",
+      "Display_id": "",
+      "Products": {
+       "List": [
+        "pgo"
+       ]
+      },
+      "Category": "",
+      "Start_date": "2026-11-19T16:00:00Z",
+      "Start_date_utc": "1900-01-01T00:00:00",
+      "Address": {
+       "Guid": "9dd4baaa-aa6b-44a7-91d7-5bbf85cf18bd",
+       "Name": "EGO LUDO",
+       "Full_address": "AV. DE CANILLEJAS A VICÁLVARO, 113, SAN BLAS-CANILLEJAS, 28022 MADRID, SPAIN",
+       "Latitude": "40.429326",
+       "Longitude": "-3.610518",
+       "Timezone": "Europe/Madrid"
+      },
+      "Event_website": "",
+      "Registration_start": "",
+      "Registration_end": "",
+      "Details": "",
+      "Third_party_registration_website": "",
+      "Contact_information": {
+       "Email": "",
+       "Phone": ""
+      },
+      "Admission": "",
+      "Activity_division_info": {
+       "Juniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Seniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Masters": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       }
+      },
+      "Series": {
+       "Guid": "",
+       "Name": "",
+       "Tags": {
+        "List": [],
+        "EmptyListItem": ""
+       }
+      },
+      "Status": "pending",
+      "Attributes": {
+       "List": [
+        {
+         "Id": "all_skill_levels",
+         "Category": {
+          "Id": "skill_levels",
+          "Display_name": "Skill Levels"
+         },
+         "Display_name": "All Skill Levels",
+         "Featured": false
+        },
+        {
+         "Id": "all_ages",
+         "Category": {
+          "Id": "age_groups",
+          "Display_name": "Age Group Focus"
+         },
+         "Display_name": "All Ages",
+         "Featured": false
+        },
+        {
+         "Id": "other_activities",
+         "Category": {
+          "Id": "activities",
+          "Display_name": "Activities"
+         },
+         "Display_name": "Other Pokémon Activities",
+         "Featured": false
+        }
+       ]
+      },
+      "ActivityGroup": {
+       "Guid": "3f01ad0f-bb31-0062-6b82-5cd81f25d317",
+       "Group_type": "league",
+       "Owner": {
+        "Guid": "",
+        "Player_id": ""
+       },
+       "Display_name": "EGO LUDO",
+       "Display_Id": "L4293203"
+      }
+     },
+     "EventBadge": "/OPPlayerApp/img/OPPlayerApp.PlayPokemonBadge.png",
+     "EventTypeName": "League",
+     "SpecialEventDescription": "",
+     "SpecialEventIcon": ""
+    },
+    {
+     "Events": {
+      "Guid": "5ddfc226-d508-46a8-a327-e7e5494d2036",
+      "Activity_type": "play_session",
+      "Subtype": "",
+      "Name": "",
+      "Display_id": "",
+      "Products": {
+       "List": [
+        "tcg"
+       ]
+      },
+      "Category": "",
+      "Start_date": "2026-11-16T17:30:00Z",
+      "Start_date_utc": "1900-01-01T00:00:00",
+      "Address": {
+       "Guid": "ae0dc0e2-2db1-487b-a6ae-3de6ab2595f4",
+       "Name": "ALCALÁ CÓMICS",
+       "Full_address": "3 PL. DE ESPAÑA, ALCALÁ DE HENARES, MD 28805, ES",
+       "Latitude": "40.486066",
+       "Longitude": "-3.358897",
+       "Timezone": "Europe/Zurich"
+      },
+      "Event_website": "",
+      "Registration_start": "",
+      "Registration_end": "",
+      "Details": "Liga Semanal de Alcala Comics",
+      "Third_party_registration_website": "",
+      "Contact_information": {
+       "Email": "",
+       "Phone": ""
+      },
+      "Admission": "",
+      "Activity_division_info": {
+       "Juniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Seniors": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       },
+       "Masters": {
+        "Registration_start": "",
+        "Registration_end": "",
+        "Admission": ""
+       }
+      },
+      "Series": {
+       "Guid": "",
+       "Name": "",
+       "Tags": {
+        "List": [],
+        "EmptyListItem": ""
+       }
+      },
+      "Status": "pending",
+      "Attributes": {
+       "List": [
+        {
+         "Id": "all_skill_levels",
+         "Category": {
+          "Id": "skill_levels",
+          "Display_name": "Skill Levels"
+         },
+         "Display_name": "All Skill Levels",
+         "Featured": false
+        },
+        {
+         "Id": "all_ages",
+         "Category": {
+          "Id": "age_groups",
+          "Display_name": "Age Group Focus"
+         },
+         "Display_name": "All Ages",
+         "Featured": false
+        }
+       ]
+      },
+      "ActivityGroup": {
+       "Guid": "fcdcc604-0fd0-13ac-cd70-ffaf60105af6",
+       "Group_type": "league",
+       "Owner": {
+        "Guid": "",
+        "Player_id": ""
+       },
+       "Display_name": "ALCALÁ CÓMICS",
+       "Display_Id": "L6235261"
+      }
+     },
+     "EventBadge": "/OPPlayerApp/img/OPPlayerApp.PlayPokemonBadge.png",
+     "EventTypeName": "League",
+     "SpecialEventDescription": "",
+     "SpecialEventIcon": ""
+    }
+   ]
+  }
+ }
+}

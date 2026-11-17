@@ -68,10 +68,24 @@ for the next `WINDOW_DAYS` (60) days:
 | `locator_bandai_onepiece`, `locator_bandai_digimon` | Bandai TCG+ (`api/user/event/list`); client in `shared/bandai_locator.py` | One Piece; Digimon. There is one module per game, so health and protection work per game |
 | `locator_ravensburger` | Ravensburger Play Hub (hydraproxy `/v2/events/`) | Lorcana |
 | `locator_gem` | GEM (`gem.fabtcg.com/api/v1/locator/events/`) | Flesh and Blood |
+| `locator_pokemon` | Play! Pokémon Event Locator (OutSystems screen action `DataActionGetEventList` on `events.pokemon.com/EventLocator`) | Pokémon (TCG products only) |
 
 GEM ignores its lat/lon parameters, so the adapter searches by city name and
 filters by distance itself. GEM also stamps local wall-clock times with a
 bogus `+13:00` offset, which the adapter drops.
+
+The Pokémon locator is an OutSystems app. Each run first reads, from the
+page's own public assets, the `moduleVersion` (`moduleservices/moduleinfo`
+→ `versionToken`), the action's `apiVersion` (in
+`EventLocator.MainFlow.Home.mvc.js`) and the anonymous CSRF token (in
+`OutSystems.js`, sent as `X-CSRFToken`). The hashes change on every deploy,
+so they are never hard-coded. `Start_date` always ends in `Z`, but only play
+sessions (weekly "League" nights) are UTC; tournaments carry the venue's
+wall-clock time, as in the page's own `FormatDateByLocale`. Play sessions have
+no name, so they are titled "Liga Pokémon". The locator has no capacity,
+attendance or per-event page, so `source_url` is the locator. The site sits
+behind Imperva: an interstitial or 403 raises `BlockedError`, and the source
+is then protected like any failed locator.
 
 `shared/locator_common.py` holds the parts they share:
 - the search area and time window;
