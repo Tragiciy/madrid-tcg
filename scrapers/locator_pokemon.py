@@ -113,8 +113,11 @@ def discover(sess: requests.Session) -> dict:
     """moduleVersion, apiVersion and CSRF token of the deployed app."""
     manifest = _json(_call(sess, "GET", MODULEINFO_URL))["manifest"]
     versions = manifest["urlVersions"]
-    runtime = _call(sess, "GET", HOST + RUNTIME_SCRIPT + versions[RUNTIME_SCRIPT]).text
-    home = _call(sess, "GET", HOST + HOME_SCRIPT + versions[HOME_SCRIPT]).text
+    # The session asks for JSON by default; scripts need a script Accept or
+    # the server answers 406.
+    js = {"Accept": "application/javascript, */*;q=0.8"}
+    runtime = _call(sess, "GET", HOST + RUNTIME_SCRIPT + versions[RUNTIME_SCRIPT], headers=js).text
+    home = _call(sess, "GET", HOST + HOME_SCRIPT + versions[HOME_SCRIPT], headers=js).text
     csrf, api = _CSRF_RE.search(runtime), _API_VERSION_RE.search(home)
     if not (manifest.get("versionToken") and csrf and api):
         raise RuntimeError("Pokémon locator: could not discover moduleVersion/apiVersion/CSRF "
