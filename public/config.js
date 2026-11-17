@@ -24,4 +24,5 @@ var GAME_CLASS_MAP = {
   'Final Fantasy TCG':    'game-finalfantasy',
   'Weiß Schwarz':         'game-weiss',
   'Naruto Mythos':        'game-naruto',
+  'Cyberpunk TCG':        'game-cyberpunk',
 };

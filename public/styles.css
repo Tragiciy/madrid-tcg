@@ -895,6 +895,7 @@ input:focus, select:focus { border-color: var(--accent); }
 .game-finalfantasy { --card-tint: #eef2ff; --card-accent: #4f46e5; } /* indigo */
 .game-weiss     { --card-tint: #f9fafb; --card-accent: #4b5563; }   /* gray */
 .game-naruto    { --card-tint: #f1f5f9; --card-accent: #475569; }   /* muted slate */
+.game-cyberpunk { --card-tint: #f7fee7; --card-accent: #65a30d; }   /* neon lime */
 .game-unknown   { --card-tint: #f9fafb; --card-accent: #9ca3af; }   /* gray */
 
 /* ── Loading / empty ──────────────────────────────────────────── */

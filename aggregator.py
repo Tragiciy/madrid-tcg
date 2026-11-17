@@ -33,7 +33,7 @@ from pipeline.config import (
     COUNT_DROP_THRESHOLD, STATS_FILE, TZ, UPCOMING_DROP_THRESHOLD, UPCOMING_GUARD_MIN,
 )
 from pipeline.health import build_stats, print_report, print_scraper_health, validate_events
-from pipeline.normalize import _normalize_game, _shape_drop_reason
+from pipeline.normalize import _normalize_game, _shape_drop_reason, is_off_topic
 from pipeline.reconcile import (
     _upcoming_active, attach_store_ids, backfill_sources, drop_locator_duplicates,
     find_store_name_variants, find_suspect_zero_sources, is_locator, merge_events,
@@ -51,6 +51,29 @@ from shared.scraper_keywords import extract_format_for_event
 from shared.store_registry import StoreRegistry
 
 logger = logging.getLogger(__name__)
+
+
+def refresh_history(events: list[dict]) -> list[dict]:
+    """Apply today's topic and game rules to stored events.
+
+    Fresh scrapes replace upcoming events, but past ones are history and are
+    never re-scraped: purge the ones that are not TCG events and re-run game
+    detection on the rest, exactly as step 3 does for fresh events.
+    """
+    kept = [e for e in events if not is_off_topic(e)]
+    if len(kept) != len(events):
+        logger.info("Dropped %d stored off-topic events", len(events) - len(kept))
+    changed = 0
+    for e in kept:
+        if is_locator(e.get("source")):
+            continue
+        game = _normalize_game(e.get("game"), e.get("title", ""), e.get("format"))
+        if game != e.get("game"):
+            e["game"] = game
+            changed += 1
+    if changed:
+        logger.info("Re-detected the game of %d stored events", changed)
+    return kept
 
 
 # ---------------------------------------------------------------------------
@@ -76,6 +99,7 @@ def main() -> None:
         logger.error("%s — aborting without writing anything", exc)
         sys.exit(1)
     existing = apply_store_renames(drop_retired_stores(existing))
+    existing = refresh_history(existing)
     previous_stats = load_previous_stats()
     logger.info(
         "Existing events on disk: %d  (previous stats run at %s)",
@@ -98,10 +122,10 @@ def main() -> None:
 
         raw_n = len(events)
         raw_total += raw_n
-        drops = {"missing_fields": 0, "bad_datetime": 0}
+        drops = {"missing_fields": 0, "bad_datetime": 0, "off_topic": 0}
         valid: list[dict] = []
         for e in events:
-            reason = _shape_drop_reason(e)
+            reason = _shape_drop_reason(e) or ("off_topic" if is_off_topic(e) else None)
             if reason is None:
                 valid.append(e)
             else:
@@ -131,9 +155,9 @@ def main() -> None:
             "empty_ok": flag_from_source(module_name, "EMPTY_IS_NORMAL"),
         }
         logger.info(
-            "%s: raw=%d valid=%d dropped=%d (missing=%d, bad_dt=%d)",
+            "%s: raw=%d valid=%d dropped=%d (missing=%d, bad_dt=%d, off_topic=%d)",
             module_name, raw_n, len(valid), raw_n - len(valid),
-            drops["missing_fields"], drops["bad_datetime"],
+            drops["missing_fields"], drops["bad_datetime"], drops["off_topic"],
         )
         fresh.extend(valid)
 
@@ -148,7 +172,7 @@ def main() -> None:
         # Official locators know the game for certain; title heuristics
         # would only add errors (e.g. MTG "Final Fantasy" prereleases).
         if not is_locator(e.get("source")):
-            e["game"] = _normalize_game(e.get("game"), e.get("title", ""))
+            e["game"] = _normalize_game(e.get("game"), e.get("title", ""), e.get("format"))
         # A prerelease marker in the title is more reliable than a stale
         # source/default format. This also backfills events that were first
         # scraped before a new prerelease name was added to a scraper.
