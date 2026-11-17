@@ -60,6 +60,8 @@ def unhealthy_stores(stats: dict) -> dict[str, dict]:
             }
             if ms.get("suspect_zero_cities"):
                 out[store]["cities"] = ms["suspect_zero_cities"]
+            if ms.get("city_errors"):
+                out[store]["city_errors"] = ms["city_errors"]
 
     for store, row in (stats.get("by_store") or {}).items():
         if store in out or row.get("anomaly") not in ("suspect_zero", "stale"):
@@ -117,6 +119,9 @@ def issue_body(store: str, info: dict, generated_at: Optional[str]) -> str:
     if info.get("cities"):
         reason = (f"the scraper returned 0 events for {', '.join(info['cities'])} "
                   "while upcoming events there are still on record")
+        errors = {c: e for c, e in (info.get("city_errors") or {}).items() if c in info["cities"]}
+        if errors:
+            reason += " (search failed: " + "; ".join(f"{c}: {e}" for c, e in sorted(errors.items())) + ")"
     if info["reason"] == "city_held":
         city = store[len(CITY_PREFIX):]
         return "\n".join([

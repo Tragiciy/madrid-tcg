@@ -117,7 +117,8 @@ def main() -> None:
 
     module_names = _discover_scrapers()
     results = run_all_scrapers(module_names)
-    for module_name, (events, error, store_constant, duration_s) in zip(module_names, results):
+    for module_name, (events, error, store_constant, duration_s, *more) in zip(module_names, results):
+        city_errors = more[0] if more else {}
         if error:
             failed_scrapers.append(module_name)
 
@@ -155,6 +156,12 @@ def main() -> None:
             # 0 events is normal for this source (e.g. no approved submissions)
             "empty_ok": flag_from_source(module_name, "EMPTY_IS_NORMAL"),
         }
+        if city_errors:
+            # The source worked, but these cities' searches failed: they got no
+            # events (their existing ones are kept by find_suspect_zero_cities).
+            scraper_stats[module_name]["city_errors"] = city_errors
+            for city, msg in sorted(city_errors.items()):
+                logger.error("%s: %s search failed: %s", module_name, city, msg)
         logger.info(
             "%s: raw=%d valid=%d dropped=%d (missing=%d, bad_dt=%d, off_topic=%d)",
             module_name, raw_n, len(valid), raw_n - len(valid),

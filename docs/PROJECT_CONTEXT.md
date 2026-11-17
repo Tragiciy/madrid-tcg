@@ -99,9 +99,18 @@ publisher event locators for every store within each city's `radius_km`
 (Madrid 50 km, the other six cities 30 km; `shared/cities.py`), for the next
 `WINDOW_DAYS` (60) days. Each locator runs one search per city, one city
 after the other (`for_each_city`), and remains one source. An event that an
-earlier city's search already returned is dropped. If any city's search
-fails, the whole source fails, so a partial result never looks like
-cancellations:
+earlier city's search already returned is dropped. If Madrid's search
+fails (the default city), the whole source fails, as any failed scraper.
+Another city's failure does not stop the others: `for_each_city` logs an
+ERROR naming the source and city, that city gets no events from the source
+this run, and the error is recorded (`CITY_ERRORS`, reported by
+`tools.run_scraper` and kept as `city_errors` in that source's
+`events_stats.json` entry, with a `[WARN]` line in the scraper health
+block). The per-city suspect-zero guard (`find_suspect_zero_cities`) then
+keeps that city's existing events from the source, so a partial result
+never looks like cancellations, and the health issue names the city and
+quotes the search error. A city with no events from the source yet has
+nothing to protect; the ERROR and `city_errors` are its signal:
 
 | Module | Locator | Games |
 |---|---|---|
@@ -184,8 +193,8 @@ cities, so when calls run short the newest cities lose out. Discovery or
 Madrid's search failing fails the whole source, as for any locator (Madrid's
 window may still be split if capped). Any other area failing (capped, HTTP
 error, Imperva block, wider than `MAX_RANGE_KM`, no budget left) logs an
-ERROR naming the area and returns no events for its cities; the rest
-publish. The per-city suspect-zero guard (`find_suspect_zero_cities`) then
+ERROR naming the area and its cities fail through `for_each_city` (no
+events, recorded in `city_errors`); the rest publish. The per-city suspect-zero guard (`find_suspect_zero_cities`) then
 protects those cities' existing Pokémon events
 (`scrapers.locator_pokemon@<city>`) and the health issue names the city. A
 city with no Pokémon history yet has nothing to protect, and the ERROR in
@@ -451,8 +460,10 @@ Every scraper that failed is run once more after `SCRAPER_RETRY_DELAY_S`
 (default 60 s; 0 disables the retry). Only the second result counts, so a
 one-minute blip on a small store's site (a timeout or a 403) no longer marks
 the store failed or opens a health issue. The reported duration covers both
-attempts. For per-request retries inside one scraper, use
-`shared/http_retry.get_with_retry`.
+attempts. A source that sets `NO_RUNNER_RETRY = True` (read from its source
+like `STORE`) is not retried: `locator_pokemon`, whose retry would come from
+the same IP and only spend calls Imperva no longer allows. For per-request
+retries inside one scraper, use `shared/http_retry.get_with_retry`.
 
 `build_stats` also flags `"stale"`: the scraper returned 0 events, it did not
 error, and the newest `last_seen_at` among the events from the store's own

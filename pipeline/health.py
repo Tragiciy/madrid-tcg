@@ -286,6 +286,8 @@ def print_scraper_health(scraper_stats: dict) -> None:
             print(f"  [WARN] {name} returned 0 events but upcoming events exist — kept as-is")
         elif s.get("anomaly") == "stale":
             print(f"  [WARN] {name} has returned 0 events for {STALE_AFTER_DAYS}+ days")
+        for city, msg in sorted((s.get("city_errors") or {}).items()):
+            print(f"  [WARN] {name} search failed for {city} (no events there this run): {msg}")
 
     name_w = max(len(name) for name in scraper_stats) + 2
     for name in sorted(scraper_stats):

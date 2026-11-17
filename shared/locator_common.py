@@ -59,6 +59,12 @@ def window() -> tuple[date, date]:
     return today, today + timedelta(days=WINDOW_DAYS)
 
 
+# Cities whose search failed in this process: {city id: error}. One scraper
+# runs per process (tools.run_scraper), which reports these with its result
+# so the run's health stats show them (scraper_stats[...]["city_errors"]).
+CITY_ERRORS: dict[str, str] = {}
+
+
 def for_each_city(label: str, fetch, cities: tuple[City, ...] = CITIES) -> list[dict]:
     """
     Run one locator search per city, in order (sequential: one host, gently)
@@ -69,13 +75,26 @@ def for_each_city(label: str, fetch, cities: tuple[City, ...] = CITIES) -> list[
     registry `city`, not by the search that found it; the search city only
     seeds the city of a store the registry does not know yet (store_hint).
 
-    Any city's failure raises: a partial result would make the missing
-    city's events look cancelled.
+    The default city's failure raises: the whole source fails, as any failed
+    scraper. Another city's failure is logged as an ERROR and recorded in
+    CITY_ERRORS; that city gets no events this run and the others publish.
+    The pipeline's per-city suspect-zero guard (find_suspect_zero_cities)
+    then keeps the city's existing events from this source, so a partial
+    result never makes them look cancelled.
     """
     seen: set = set()
     out: list[dict] = []
     for city in cities:
-        events = fetch(city)
+        try:
+            events = fetch(city)
+        except Exception as exc:
+            if city.id == default_city().id:
+                raise
+            CITY_ERRORS[city.id] = f"{type(exc).__name__}: {exc}"
+            logger.error("%s: %s failed, no events for %s this run (its existing events are "
+                         "kept by the per-city guard): %s", label, city.id, city.id,
+                         CITY_ERRORS[city.id])
+            continue
         fresh = [e for e in events if e["source_event_id"] not in seen]
         seen.update(e["source_event_id"] for e in fresh)
         logger.info("%s: %s → %d events (%d already seen in another city)",

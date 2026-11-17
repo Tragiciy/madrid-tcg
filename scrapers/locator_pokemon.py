@@ -81,6 +81,9 @@ HOME_SCRIPT = APP + "scripts/EventLocator.MainFlow.Home.mvc.js"
 ACTION_PATH = "screenservices/EventLocator/MainFlow/Home/DataActionGetEventList"
 ACTION_URL = HOST + APP + ACTION_PATH
 MAX_RECORDS = 500  # what the page asks for; a response this big may be capped
+# pipeline.runner must not re-run a failed scrape: the retry comes from the
+# same IP with a fresh CallBudget, so it can only burn calls Imperva won't allow.
+NO_RUNNER_RETRY = True
 CALL_BUDGET = 7  # Imperva blocked the 8th call from one IP (see module docstring)
 DISCOVERY_CALLS = 3
 # Cities searched together in one POST (ids from shared/cities.py). The only
@@ -386,6 +389,7 @@ def scrape() -> list[dict]:
     app = discover(sess)
     resolver = StoreResolver()
     raw_by_city: dict[str, list[dict]] = {}
+    failed_by_city: dict[str, Exception] = {}
     failed: list[str] = []
     for area in areas:
         try:
@@ -397,13 +401,15 @@ def scrape() -> list[dict]:
             logger.error("%s area %s failed; no Pokémon events for %s this run "
                          "(existing ones are kept by the per-city guard): %s",
                          STORE, area.label, ", ".join(c.id for c in area.cities), exc)
-            raw_by_city.update({c.id: [] for c in area.cities})
+            failed_by_city.update({c.id: exc for c in area.cities})
             continue
         raw_by_city.update(area.split(raw))
         logger.info("%s area %s (%d km): %d raw → %s", STORE, area.label, area.radius_km, len(raw),
                     ", ".join(f"{c.id} {len(raw_by_city[c.id])}" for c in area.cities))
 
     def one_city(city: City) -> list[dict]:
+        if city.id in failed_by_city:  # for_each_city records it as this city's error
+            raise failed_by_city[city.id]
         raw = raw_by_city[city.id]
         events = parse_events(raw, resolver, city)
         logger.info("%s %s: %d raw → %d events", STORE, city.id, len(raw), len(events))
