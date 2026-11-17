@@ -1283,6 +1283,14 @@ function app() {
           const events = (day.segmentMap && day.segmentMap[seg.key]) || [];
           out.push({
             key:     seg.key + '-' + day.iso,
+            // x-for key: changes whenever the cell's events do, so Alpine
+            // rebuilds the cell instead of refreshing its scope. A scope
+            // refresh alone can leave the x-html cards stale: Alpine 3's
+            // scheduler won't re-queue an effect that already ran in the
+            // current flush, so when events and filters change in one tick
+            // (startup with ?game=… or a default preset) the cards kept
+            // showing the unfiltered week.
+            renderKey: seg.key + '-' + day.iso + ':' + events.map(e => e.id).join(','),
             seg, day, sIdx: s, dIdx: d,
             events,
             isEmpty: events.length === 0,

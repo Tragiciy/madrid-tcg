@@ -246,7 +246,7 @@
 
       <!-- Segment × day cells, flattened to a single x-for to avoid
            Alpine's triple-nested-template processing quirk. -->
-      <template x-for="cell in cells" :key="cell.key">
+      <template x-for="cell in cells" :key="cell.renderKey">
         <div class="day-cell seg-cell"
              :class="[
                cell.isToday ? 'is-today' : '',
