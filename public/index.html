@@ -20,12 +20,15 @@
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" integrity="sha384-l8f0VcPi/M1iHPv8egOnY/15TDwqgbOR1anMIJWvU6nLRgZVLTLSaNqi/TOoT5Fh" crossorigin="anonymous"></script>
   <!-- Preload the chosen city's data. Same rule as startCity() in app.js:
-       ?city=, else the last city chosen, else Madrid. -->
+       ?city=, else Madrid for an event/filter link, else the last city
+       chosen, else Madrid. -->
   <script>
     (function () {
-      var re = /^[a-z][a-z-]{1,40}$/, city = new URLSearchParams(location.search).get('city');
+      var re = /^[a-z]+(-[a-z]+)*$/, params = new URLSearchParams(location.search);
+      var city = params.get('city');
       if (!re.test(city || '')) {
-        try { city = localStorage.getItem('tcg-city-v1'); } catch (e) { city = null; }
+        var scoped = ['event', 'w', 'game', 'store', 'format'].some(function (p) { return params.has(p); });
+        try { city = scoped ? null : localStorage.getItem('tcg-city-v1'); } catch (e) { city = null; }
         if (!re.test(city || '')) city = 'madrid';
       }
       window.TCG_START_CITY = city;
@@ -48,7 +51,8 @@
       <h1>
         <span class="brand">TCG Events</span>
         <template x-if="cities.length > 1">
-          <select class="city-select" :value="city" @change="setCity($event.target.value)" aria-label="City">
+          <select class="city-select" :value="city" :disabled="loading"
+                  @change="setCity($event.target.value); $event.target.value = city" aria-label="City">
             <template x-for="c in cities" :key="c.id">
               <option :value="c.id" x-text="c.name" :selected="c.id === city"></option>
             </template>
@@ -57,6 +61,7 @@
         <span class="city-name" x-show="cities.length <= 1" x-text="cityName">Madrid</span>
       </h1>
       <div class="subtitle">TCG tournaments and events in <span x-text="cityName">Madrid</span></div>
+      <div class="city-error" role="alert" x-show="cityError" x-text="cityError"></div>
     </div>
   </div>
 

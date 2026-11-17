@@ -477,14 +477,20 @@ function readMadridNow() {
 const API_ROOT = '/api/v1';
 const DEFAULT_CITY = 'madrid';        // the city the site root shows
 const CITY_STORAGE_KEY = 'tcg-city-v1';
-const CITY_ID_RE = /^[a-z][a-z-]{1,40}$/;
+const CITY_ID_RE = /^[a-z]+(-[a-z]+)*$/;
+// Links that point at one event or filter (share pages, SEO pages) carry
+// ?city= for every city but the default; without it they mean Madrid, not
+// whatever city this visitor last chose.
+const CITY_SCOPED_PARAMS = ['event', 'w', 'game', 'store', 'format'];
 
-// The city to open: ?city=, else the last one chosen, else the default.
-// index.html runs the same rule inline (to preload the right files) and
-// leaves its answer in window.TCG_START_CITY.
+// The city to open: ?city=, else Madrid for a city-scoped link, else the
+// last one chosen, else the default. index.html runs the same rule inline
+// (to preload the right files) and leaves its answer in window.TCG_START_CITY.
 function startCity() {
-  const fromUrl = new URLSearchParams(window.location.search).get('city');
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get('city');
   if (fromUrl && CITY_ID_RE.test(fromUrl)) return fromUrl;
+  if (CITY_SCOPED_PARAMS.some(p => params.has(p))) return DEFAULT_CITY;
   try {
     const saved = localStorage.getItem(CITY_STORAGE_KEY);
     if (saved && CITY_ID_RE.test(saved)) return saved;
@@ -520,6 +526,7 @@ function app() {
     events:       [],
     city:         window.TCG_START_CITY || startCity(),
     cities:       [],     // from api/v1/cities.json; the switcher shows when > 1
+    cityError:    '',
     loading:      true,
     loadError:    null,
     weekStart:    weekMonday(madridToday()),
@@ -627,8 +634,27 @@ function app() {
         .then(r => (r.ok ? r.json() : {})).then(d => { this.cities = d.cities || []; this.syncTitle(); })
         .catch(() => {});
       try {
-        await this.loadCityData();
-        this.rememberCity(this.city);  // a ?city= link also becomes the default next time
+        const data = await this.fetchCityData(this.city).catch((err) => {
+          if (err.status === 404 && this.city !== DEFAULT_CITY) return null;  // unknown city
+          throw err;
+        });
+        if (data) {
+          this.applyCityData(data);
+        } else {
+          this.city = DEFAULT_CITY;
+          this.applyCityData(await this.fetchCityData(DEFAULT_CITY));
+          this.rememberCity(DEFAULT_CITY);
+          this.favorites = [];
+          this.loadFavorites();
+        }
+        // A ?city= link also becomes this visitor's city next time. Any city
+        // but the default keeps ?city= in the URL: filter and event links
+        // built from it would otherwise mean Madrid. Plain Madrid visits leave
+        // storage and the URL alone.
+        if (this.city !== DEFAULT_CITY || new URLSearchParams(window.location.search).has('city')) {
+          this.rememberCity(this.city);
+        }
+        this.syncTitle();
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
         const hasUrlFilters = ['game', 'store', 'format'].some(f => params.get(f));
@@ -692,40 +718,41 @@ function app() {
       return this.city.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
     },
 
-    // Stores, the week index and upcoming events of this.city. An unknown
-    // city (an old link or a city that was removed) falls back to the default.
-    async loadCityData() {
+    // Stores, the week index and upcoming events of one city, fetched but
+    // not applied: callers apply them only if that city is still current.
+    async fetchCityData(city) {
       // Plain fetches: Cloudflare Pages serves JSON with
       // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
       // every visit and gets a cheap 304 when the data hasn't changed.
       // URLs must match the preloads index.html injects.
       // Stores and the week index are optional: the calendar works without.
-      const base = this.apiBase;
+      const base = `${API_ROOT}/${city}`;
       const storesReq = fetch(`${base}/stores.json`)
         .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
       const indexReq = fetch(`${base}/index.json`)
         .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
       const res = await fetch(`${base}/events/upcoming.json`);
-      if (res.status === 404 && this.city !== DEFAULT_CITY) {
-        this.rememberCity(DEFAULT_CITY);
-        return this.loadCityData();
-      }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const upcoming = await res.json();
+      if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+      return { upcoming: await res.json(), stores: await storesReq, index: await indexReq };
+    },
+
+    // Swap in a city's data in one step. _dataGen changes with it, so a week
+    // fetch started for the previous data is discarded when it lands.
+    applyCityData({ upcoming, stores, index }) {
+      this._dataGen = (this._dataGen || 0) + 1;
       // STORE_META is not reactive: fill it before the events land, so
       // nothing computed from the events sees stores without coordinates.
       for (const k of Object.keys(STORE_META)) delete STORE_META[k];
-      for (const s of (await storesReq).stores || []) STORE_META[s.name] = s;
+      for (const s of stores.stores || []) STORE_META[s.name] = s;
       this._loadedWeeks = new Set();
       this.events = upcoming.events;
       this.markWeeksLoaded(upcoming.from, upcoming.to);
-      this.weekIndex = (await indexReq).weeks || null;
+      this.weekIndex = index.weeks || null;
     },
 
-    // Record the city in state, storage and the URL (the default city has
-    // no ?city=, so Madrid links stay as they were).
+    // Persist the city and put it in the URL (the default city has no
+    // ?city=, so Madrid links stay as they were).
     rememberCity(id) {
-      this.city = id;
       try { localStorage.setItem(CITY_STORAGE_KEY, id); } catch { /* storage blocked */ }
       const url = new URL(window.location.href);
       if (id === DEFAULT_CITY) url.searchParams.delete('city');
@@ -738,12 +765,34 @@ function app() {
       document.title = `${this.cityName} TCG Events — tournament calendar`;
     },
 
+    // Nothing changes until the new city's data has arrived: on failure the
+    // previous city stays fully in place. The switcher is disabled while
+    // loading, and the request counter drops answers that arrive late.
     async setCity(id) {
-      if (id === this.city || !CITY_ID_RE.test(id)) return;
+      if (id === this.city || !CITY_ID_RE.test(id) || this.loading) return;
+      const request = (this._cityRequest = (this._cityRequest || 0) + 1);
+      this.cityError = '';
+      this.loading = true;
+      let data;
+      try {
+        data = await this.fetchCityData(id);
+      } catch (err) {
+        console.error('Failed to load city', id, err);
+        if (request === this._cityRequest) {
+          this.cityError = 'Could not load that city. Check your connection and try again.';
+          this.loading = false;
+        }
+        return;
+      }
+      if (request !== this._cityRequest) return;
       this.closePanel();
+      this.city = id;
+      this.applyCityData(data);
       this.rememberCity(id);
       // Stores are per city; games and formats carry over.
       this.filters.store = [];
+      this.filterHistory = [];
+      this.defaultPresetActive = false;
       this.mapStore = null;
       this.mapDay = null;
       this.nearMe = null;
@@ -752,18 +801,11 @@ function app() {
       if (MAP.map && c) MAP.map.setView([c.lat, c.lng], MAP_DEFAULT_VIEW.zoom, { animate: false });
       this.favorites = [];
       this.loadFavorites();
-      this.loading = true;
-      this.loadError = null;
-      try {
-        await this.loadCityData();
-        this.cleanupFavorites();
-        this.cleanupFilters({ syncUrl: true });
-      } catch (err) {
-        console.error('Failed to load city', id, err);
-        this.loadError = 'Could not load events. Check your connection and try again.';
-      } finally {
-        this.loading = false;
-      }
+      this.cleanupFavorites();
+      this.cleanupFilters({ syncUrl: true });
+      this.loading = false;
+      // The week on screen may lie outside upcoming.json.
+      await this.loadWeek(isoWeekOf(this.weekStart));
     },
 
     favoritesKey(base = FAVORITES_STORAGE_KEY) {
@@ -976,16 +1018,19 @@ function app() {
       if (this._loadedWeeks.has(week)) return;
       this._loadedWeeks.add(week);
       if (this.weekIndex && !(week in this.weekIndex)) return;  // no events that week
+      const gen = this._dataGen;
+      const loaded = this._loadedWeeks;
       try {
         const res = await fetch(`${this.apiBase}/events/${week}.json`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        if (gen !== this._dataGen) return;  // the city changed meanwhile
         const have = new Set(this.events.map(e => eventKey(e)));
         const fresh = data.events.filter(e => !have.has(eventKey(e)));
         if (fresh.length) this.events = this.events.concat(fresh);
         this.cleanupFavorites();
       } catch (err) {
-        this._loadedWeeks.delete(week);  // retry on the next visit to this week
+        loaded.delete(week);  // retry on the next visit to this week
         console.warn('Failed to load week', week, err);
       }
     },

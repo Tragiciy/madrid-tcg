@@ -66,6 +66,10 @@ body.no-scroll { overflow: hidden; }
   width: auto;
   cursor: pointer;
 }
+.city-error { font-size: .8rem; color: #b42318; margin-top: .2rem; }
+@media (pointer: coarse) {
+  .site-header .city-select { min-height: 40px; }
+}
 .site-header .subtitle {
   font-size: .8rem;
   color: var(--text-muted);
