@@ -752,9 +752,13 @@ The app at the site root serves every city in `/api/v1/cities.json`.
 
 The third view (`viewMode === 'map'`) answers "where can I go". It shows this
 week's filtered events that have not started yet, one pin per store with its
-event count. A pin takes a game's colour when that game is more than half of
-the store's events, and is purple otherwise. Nearby pins cluster, and a
-cluster shows the total of its events.
+event count. Each pin is a ring split by game, sized by each game's share of the store's
+events (`donutBackground`, a conic-gradient), with the count in the centre.
+Nearby pins cluster: a cluster shows the total of its events and the game mix
+of all its stores. Colours come from the stylesheet (`--card-accent` of each
+`.game-*` class, read once by `gameColor`), so the cards, the pins and the
+legend share one palette. The legend above the map lists the games in the
+results and toggles the game filter. On phones it is one swipeable row.
 
 - **Day chips:** `mapDay` (null means the whole week) narrows the week.
   Week navigation resets it.

@@ -254,6 +254,50 @@ function loadLeaflet() {
   ])).then(() => window.L);
 }
 
+// A game's colour, read once from the stylesheet (.game-* { --card-accent })
+// so the map, cards and legend share one palette. Only #hex values pass:
+// the result goes into an inline style.
+const gameColors = new Map();
+function gameColor(game) {
+  if (!gameColors.has(game)) {
+    const probe = document.createElement('span');
+    probe.className = GAME_CLASS_MAP[game] || 'game-unknown';
+    probe.style.display = 'none';
+    document.body.appendChild(probe);
+    const c = getComputedStyle(probe).getPropertyValue('--card-accent').trim();
+    probe.remove();
+    gameColors.set(game, /^#[0-9a-f]{3,8}$/i.test(c) ? c : '#9ca3af');
+  }
+  return gameColors.get(game);
+}
+
+// Pin ring: one slice per game, sized by its share of the events.
+// mix = [{ game, n }], largest first.
+function donutBackground(mix) {
+  const total = mix.reduce((t, p) => t + p.n, 0);
+  if (!total) return gameColor('Unknown');
+  if (mix.length === 1) return gameColor(mix[0].game);
+  let at = 0;
+  const stops = mix.map((p) => {
+    const from = at;
+    at += (p.n / total) * 360;
+    return `${gameColor(p.game)} ${from.toFixed(1)}deg ${at.toFixed(1)}deg`;
+  });
+  return `conic-gradient(${stops.join(', ')})`;
+}
+
+function mergeMixes(mixes) {
+  const sum = new Map();
+  for (const mix of mixes) for (const p of mix) sum.set(p.game, (sum.get(p.game) || 0) + p.n);
+  return [...sum].map(([game, n]) => ({ game, n })).sort((a, b) => b.n - a.n);
+}
+
+function pinHtml(count, mix, extraClass) {
+  // Only a number and #hex colours: no scraped text in this HTML.
+  return `<span class="map-pin${extraClass}" style="background:${donutBackground(mix)}">`
+    + `<span class="map-pin-n">${Number(count)}</span></span>`;
+}
+
 // focus: a store to bring into view once its pin exists (set by the list).
 const MAP = { map: null, pins: null, me: null, fitKey: null, fitBounds: null, focus: null, drawn: null, markers: new Map() };
 
@@ -282,14 +326,15 @@ function renderStoreMap(L, el, { stores, selected, me, radiusKm, fitKey, onSelec
       maxClusterRadius: 40,
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
-      // A cluster shows its total events (like the pins), not its store count.
+      // A cluster shows its total events and the game mix of its stores.
       iconCreateFunction: (cluster) => {
-        const n = cluster.getAllChildMarkers().reduce((sum, m) => sum + (m.options.eventCount || 0), 0);
+        const children = cluster.getAllChildMarkers();
+        const n = children.reduce((sum, m) => sum + (m.options.eventCount || 0), 0);
         return L.divIcon({
           className: 'map-pin-wrap',
-          html: `<span class="map-pin map-cluster">${n}</span>`,
-          iconSize: [38, 38],
-          iconAnchor: [19, 19],
+          html: pinHtml(n, mergeMixes(children.map(m => m.options.mix || [])), ' map-cluster'),
+          iconSize: [40, 40],
+          iconAnchor: [20, 20],
         });
       },
     }).addTo(map);
@@ -326,15 +371,14 @@ function drawPins(L, { stores, selected, me, radiusKm, onSelect }) {
     const isSel = s.name === selected;
     const icon = L.divIcon({
       className: 'map-pin-wrap',
-      // Only a number and class names from GAME_CLASS_MAP: no scraped text.
-      html: `<span class="map-pin ${s.gameClass}${isSel ? ' is-selected' : ''}">${Number(s.count)}</span>`,
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
+      html: pinHtml(s.count, s.mix, isSel ? ' is-selected' : ''),
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
     });
     const label = document.createElement('span');
     label.textContent = s.name;  // textContent: store names are data
     const marker = L.marker([s.lat, s.lng], {
-      icon, zIndexOffset: isSel ? 1000 : s.count, keyboard: true, title: s.name, eventCount: s.count,
+      icon, zIndexOffset: isSel ? 1000 : s.count, keyboard: true, title: s.name, eventCount: s.count, mix: s.mix,
     })
       .bindTooltip(label, { direction: 'top', offset: [0, -14] })
       .on('click', (ev) => { L.DomEvent.stopPropagation(ev); onSelect(s.name); });
@@ -1875,8 +1919,7 @@ function app() {
           events,
           count: events.length,
           games: ranked,
-          // One game dominates → the pin takes its colour; a mix stays neutral.
-          gameClass: ranked.length && games[ranked[0]] * 2 > events.length ? this.getGameClass(ranked[0]) : 'game-mixed',
+          mix: ranked.map(game => ({ game, n: games[game] })),
           lat: meta.lat ?? null,
           lng: meta.lng ?? null,
           address: meta.address || events[0].store_address || '',
@@ -1887,6 +1930,18 @@ function app() {
       const byKm = (a, b) => (a.km ?? Infinity) - (b.km ?? Infinity);
       return stores.sort((a, b) => (this.nearMe ? byKm(a, b) : 0)
         || b.count - a.count || a.name.localeCompare(b.name));
+    },
+
+    // Games in the map's results, most events first: the pin colour key.
+    get mapLegend() {
+      const counts = {};
+      for (const e of this.mapEvents) counts[e.game] = (counts[e.game] || 0) + 1;
+      return Object.keys(counts).sort((a, b) => counts[b] - counts[a])
+        .map(game => ({ game, n: counts[game], color: gameColor(game) }));
+    },
+
+    pinStyle(mix) {
+      return 'background:' + donutBackground(mix);
     },
 
     get mapSelected() {
@@ -1909,7 +1964,7 @@ function app() {
     // x-show has made the container visible and measurable.
     drawMap() {
       const args = {
-        stores: this.mapStores.map(s => ({ name: s.name, count: s.count, gameClass: s.gameClass, lat: s.lat, lng: s.lng })),
+        stores: this.mapStores.map(s => ({ name: s.name, count: s.count, mix: s.mix, lat: s.lat, lng: s.lng })),
         selected: this.mapStore,
         me: this.nearMe ? { lat: this.nearMe.lat, lng: this.nearMe.lng } : null,
         radiusKm: this.radiusKm,
