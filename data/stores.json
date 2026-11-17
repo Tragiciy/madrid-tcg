@@ -18,10 +18,13 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
-          "ALCALA COMICS"
+          "ALCALA COMICS",
+          "ALCALÁ CÓMICS"
         ],
         "external": [
           "bandai:2011",
+          "pokemon:238f382f-8c65-4ab1-8b9d-ca96de9d0aa2",
+          "pokemon:ae0dc0e2-2db1-487b-a6ae-3de6ab2595f4",
           "ravensburger:114"
         ]
       }
@@ -135,10 +138,12 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "DARK RITUAL TCG",
           "Dark Ritual TCG S.L."
         ],
         "external": [
           "bandai:22970",
+          "pokemon:26e01877-9a86-45e7-a168-edb50a8a498a",
           "ravensburger:54026",
           "wizards:21965"
         ]
@@ -192,9 +197,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "EGO LUDO"
+        ],
         "external": [
           "bandai:2015",
+          "pokemon:9dd4baaa-aa6b-44a7-91d7-5bbf85cf18bd",
           "ravensburger:2144"
         ]
       }
@@ -216,6 +224,8 @@
         ],
         "external": [
           "bandai:17657",
+          "pokemon:70f6c81d-0a1c-430e-bb2d-4fefe9473ecd",
+          "pokemon:dfeffeea-d75e-4cd6-91e9-837ab201afed",
           "wizards:20135"
         ]
       }
@@ -233,11 +243,13 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "FACTORY CARDS",
           "Factory Cards."
         ],
         "external": [
           "bandai:18341",
           "bandai:3451",
+          "pokemon:cf5114d3-02cc-480b-9dec-c3f93b8118e0",
           "ravensburger:17290"
         ]
       }
@@ -313,9 +325,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "GENERACIÓN X GETAFE"
+        ],
         "external": [
-          "bandai:5877"
+          "bandai:5877",
+          "pokemon:b9c2651e-6f73-4c2b-8c3e-633a4a836326"
         ]
       }
     },
@@ -368,9 +383,12 @@
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "GLADIUS GAMES"
+        ],
         "external": [
           "bandai:17396",
+          "pokemon:04a61988-c53d-4909-ba59-3b56a459f9a9",
           "ravensburger:16759",
           "wizards:18454"
         ]
@@ -439,10 +457,12 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "HOBBYSHOP WARGAMES",
           "Hobby Shop Wargames S.L"
         ],
         "external": [
           "bandai:16676",
+          "pokemon:bd0b20ad-3877-4b7e-8160-fcbb557aefd1",
           "wizards:19290"
         ]
       }
@@ -464,6 +484,7 @@
         ],
         "external": [
           "bandai:5434",
+          "pokemon:3ba6a4a7-e318-488f-96aa-1a8d30121442",
           "wizards:15520"
         ]
       }
@@ -525,8 +546,11 @@
       "origin": "auto",
       "added_at": "2026-11-16",
       "aliases": {
-        "names": [],
+        "names": [
+          "JÚPITER JUEGOS ALCORCÓN"
+        ],
         "external": [
+          "pokemon:34a99213-a075-42ab-bdf8-d6e35d4a4495",
           "ravensburger:2708"
         ]
       }
@@ -544,10 +568,12 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "JUPITER MADRID NORTE",
           "Júpiter Juegos"
         ],
         "external": [
           "bandai:354",
+          "pokemon:84e20a2c-de41-4729-af7f-8cfa95786591",
           "wizards:6154"
         ]
       }
@@ -600,9 +626,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "KINGDOM WARGAMES"
+        ],
         "external": [
           "bandai:15154",
+          "pokemon:fcffdd28-3a8d-469b-89e9-2f9857635286",
           "ravensburger:2782",
           "wizards:14264"
         ]
@@ -638,9 +667,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA FORJA DE TCG"
+        ],
         "external": [
           "bandai:26417",
+          "pokemon:c806748d-fddc-4a98-9ef2-5930ab10c25a",
           "ravensburger:64123",
           "wizards:22698"
         ]
@@ -758,6 +790,7 @@
         ],
         "external": [
           "bandai:13689",
+          "pokemon:e8d34923-ddc3-499e-80c4-9943be87027d",
           "ravensburger:17400",
           "wizards:21613"
         ]
@@ -797,6 +830,7 @@
         "names": [],
         "external": [
           "bandai:78",
+          "pokemon:710649ed-7efa-40d0-a744-6aac3d3ba90c",
           "wizards:9397"
         ]
       }
@@ -858,10 +892,13 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "METROPOLIS CENTER",
           "Metrópolis Center"
         ],
         "external": [
           "bandai:1014",
+          "pokemon:531ffd06-09ee-409c-99ec-370fa5206de9",
+          "pokemon:bddc338b-3d53-4425-97d7-dc219c6c8f8a",
           "ravensburger:3368",
           "wizards:11202"
         ]
@@ -970,6 +1007,7 @@
         "external": [
           "bandai:2754",
           "gem:oz-juegos",
+          "pokemon:c427beca-6492-4d13-a057-f1977277b46b",
           "ravensburger:3750"
         ]
       }
@@ -986,9 +1024,12 @@
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "PADIS"
+        ],
         "external": [
           "bandai:265",
+          "pokemon:bb755eaa-a9be-42bb-b318-996f4e88bc78",
           "ravensburger:3759"
         ]
       }
@@ -1005,9 +1046,12 @@
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "PANDA GAMES"
+        ],
         "external": [
           "bandai:19083",
+          "pokemon:70e7e289-3ff6-4f97-93da-ea23fa02cd4f",
           "ravensburger:25906",
           "wizards:20210"
         ]
@@ -1113,6 +1157,24 @@
       }
     },
     {
+      "id": "somosjuegos",
+      "name": "SOMOSJUEGOS",
+      "city": "madrid",
+      "address": "CALLE MAR DE BERING 2, C. DE LA LIBERACIÓN, 1, HORTALEZA, 28033 MADRID, SPAIN",
+      "lat": 40.473077,
+      "lng": -3.642822,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:c58ee8b9-6ca4-468b-a1b0-10df422e99b3"
+        ]
+      }
+    },
+    {
       "id": "tablerum",
       "name": "Tablerum",
       "city": "madrid",
@@ -1163,9 +1225,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "TCG BOX"
+        ],
         "external": [
           "bandai:24039",
+          "pokemon:d0887ad1-289f-4cd2-b62d-e36bf956b04d",
           "wizards:22618"
         ]
       }
@@ -1222,9 +1287,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "TEMPEST STORE SL"
+        ],
         "external": [
-          "bandai:19692"
+          "bandai:19692",
+          "pokemon:caacb39d-d268-4028-86ad-c7a3183d9ef1"
         ]
       }
     },
@@ -1298,9 +1366,12 @@
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "TOPDECK"
+        ],
         "external": [
           "bandai:11041",
+          "pokemon:8452739a-90fe-4527-a99f-8019e2f95775",
           "wizards:17593"
         ]
       }
