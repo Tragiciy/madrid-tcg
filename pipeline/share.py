@@ -23,6 +23,7 @@ from typing import Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pipeline.config import TZ
+from shared.cities import DEFAULT_CITY, City, default as default_city
 
 logger = logging.getLogger(__name__)
 
@@ -49,18 +50,23 @@ def share_path(public_event: dict, today: date) -> Optional[str]:
     return f"/{SHARE_DIR}/{share_id(public_event['id'])}/"
 
 
-def app_url(public_event: dict) -> str:
-    """The calendar URL for an event — same encoding as app.js encodeEventParam."""
+def app_url(public_event: dict, city: str = DEFAULT_CITY) -> str:
+    """The calendar URL for an event — same encoding as app.js encodeEventParam.
+    The root shows DEFAULT_CITY; other cities' events add ?city=<id>."""
     from pipeline.publish import iso_week
     token = base64.urlsafe_b64encode(public_event["id"].encode("utf-8")).decode().rstrip("=")
     day = datetime.fromisoformat(public_event["datetime_start"]).astimezone(TZ).date()
-    return f"/?event={token}&w={iso_week(day)}"
+    prefix = f"city={city}&" if city != DEFAULT_CITY else ""
+    return f"/?{prefix}event={token}&w={iso_week(day)}"
 
 
-def build_share_pages(public_events: list[dict], now_iso: str) -> dict[str, str]:
-    """{path relative to public/: html} for events in the share window."""
+def build_share_pages(public_events: list[dict], now_iso: str,
+                      city: Optional[City] = None) -> dict[str, str]:
+    """{path relative to public/: html} for one city's events (default: the
+    default city) in the share window. Share paths are site-wide (/e/<id>/)."""
     from pipeline.pages import SITE_URL, fecha_larga, game_slug
 
+    city = city or default_city()
     today = datetime.fromisoformat(now_iso).astimezone(TZ).date()
     env = Environment(loader=FileSystemLoader(TEMPLATES_DIR), autoescape=select_autoescape(["html"]))
     tpl = env.get_template("share.html")
@@ -76,7 +82,8 @@ def build_share_pages(public_events: list[dict], now_iso: str) -> dict[str, str]
         pages[f"{path.strip('/')}/index.html"] = tpl.render(
             title=e["title"], store=e["store"], game=game or "", when=when,
             description=" · ".join(p for p in (when, e["store"], game) if p),
-            image=image, url=SITE_URL + path, target=app_url(e),
+            image=image, url=SITE_URL + path, target=app_url(e, city.id),
+            site_name=f"TCG {city.name}",
         )
     return pages
 

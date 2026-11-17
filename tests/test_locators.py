@@ -216,6 +216,9 @@ class RealRegistryTests(unittest.TestCase):
         ext = collections.Counter(x for s in reg.stores for x in s["aliases"]["external"])
         self.assertEqual([x for x, c in ext.items() if c > 1], [], "external id on two stores")
         self.assertTrue(all(s.get("city") for s in reg.stores))
+        from shared.cities import BY_ID
+        self.assertEqual({s["id"]: s["city"] for s in reg.stores if s["city"] not in BY_ID}, {},
+                         "store city not in shared/cities.py")
 
 
 class NameVariantTests(unittest.TestCase):

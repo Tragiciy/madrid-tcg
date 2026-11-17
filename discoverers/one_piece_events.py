@@ -10,6 +10,7 @@ from typing import Optional
 
 import requests
 
+from shared.cities import default as default_city
 from shared.store_matching import normalize_address, normalize_name
 
 SOURCE = "one_piece_events"
@@ -18,10 +19,11 @@ API_URL = "https://api.bandai-tcg-plus.com/api/user/event/list"
 LOCATOR_URL = "https://www.bandai-tcg-plus.com/"
 REQUEST_TIMEOUT = 30
 
-# Madrid city centre. Use 50 km to match the existing Wizards locator scope.
-MADRID_LAT = 40.4168
-MADRID_LON = -3.7038
-SEARCH_RADIUS_KM = 50
+# The default city's search area (shared/cities.py).
+# TODO(multi-city): one search per city; see discoverers/__init__.py.
+MADRID_LAT = default_city().lat
+MADRID_LON = default_city().lng
+SEARCH_RADIUS_KM = default_city().radius_km
 PAGE_SIZE = 100
 MAX_PAGES = 5
 ONE_PIECE_GAME_TITLE_ID = 4

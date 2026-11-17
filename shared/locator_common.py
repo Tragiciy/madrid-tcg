@@ -4,7 +4,8 @@ shared/locator_common.py — helpers for official publisher event locators.
 Locator scrapers (scrapers/locator_*.py) return events for many stores at
 once, unlike per-store scrapers. This module owns what they share:
 
-  - the search area (CITY) and time window;
+  - the search areas (shared/cities.py CITIES, one search per city) and the
+    time window; for_each_city() runs a locator once per city;
   - a polite HTTP session (honest User-Agent, timeout, small retry);
   - StoreResolver: maps a locator's store/organizer name to our canonical
     store name (STORE_META), with manual overrides in
@@ -23,16 +24,15 @@ from zoneinfo import ZoneInfo
 
 import requests
 
+from shared.cities import CITIES, City, default as default_city
 from shared.scraper_keywords import extract_best_of, extract_format_for_event
 from shared.store_matching import match_existing_store, normalize_name
-from shared.store_registry import StoreRegistry
+from shared.store_registry import StoreRegistry, same_place
 
 logger = logging.getLogger(__name__)
 
 TZ = ZoneInfo("Europe/Madrid")
 
-# Search area. One city for now; multi-city turns this into a list.
-CITY = {"name": "Madrid", "lat": 40.4168, "lng": -3.7038, "radius_km": 50}
 WINDOW_DAYS = 60
 # Locators that report how many people actually played are also read this
 # many days back, so finished events get their final player count.
@@ -57,6 +57,31 @@ def positive_int(value) -> Optional[int]:
 def window() -> tuple[date, date]:
     today = datetime.now(TZ).date()
     return today, today + timedelta(days=WINDOW_DAYS)
+
+
+def for_each_city(label: str, fetch, cities: tuple[City, ...] = CITIES) -> list[dict]:
+    """
+    Run one locator search per city, in order (sequential: one host, gently)
+    and concatenate the events. `fetch(city)` returns that city's events.
+
+    An event already returned for an earlier city is dropped (overlapping
+    radii). Which city an event belongs to is decided later by its store's
+    registry `city`, not by the search that found it; the search city only
+    seeds the city of a store the registry does not know yet (store_hint).
+
+    Any city's failure raises: a partial result would make the missing
+    city's events look cancelled.
+    """
+    seen: set = set()
+    out: list[dict] = []
+    for city in cities:
+        events = fetch(city)
+        fresh = [e for e in events if e["source_event_id"] not in seen]
+        seen.update(e["source_event_id"] for e in fresh)
+        logger.info("%s: %s → %d events (%d already seen in another city)",
+                    label, city.id, len(fresh), len(events) - len(fresh))
+        out += fresh
+    return out
 
 
 def session() -> requests.Session:
@@ -130,10 +155,18 @@ class StoreResolver:
     registry (data/stores.json) read-only.
 
     Order: registry alias by "<source>:<external_id>" → registry alias by
-    normalized name → confident match against registry stores (name or
-    address) whose postcode does not contradict the locator's → the
-    locator's own name (suffixed with its postcode if it would collide with
-    a known store). Ignored names/ids resolve to SKIP.
+    normalized name, unless the postcodes differ and the pins (`lat`/`lng`)
+    are more than SAME_PLACE_KM apart → confident match against registry
+    stores (name or address) whose postcode does not contradict the
+    locator's → the locator's own name (suffixed with its postcode if it
+    would collide with a known store). Ignored names/ids resolve to SKIP.
+
+    With `city` (the city whose search found the store), name and address
+    matching only considers stores of that city: those whose registry city
+    it is, plus any store located inside its radius (overlapping radii: the
+    store keeps its registry city). An external id matches in any city. A
+    name that already belongs to a store elsewhere gets a suffix, so a new
+    "Dragon Den" in Barcelona never merges into a Madrid "Dragon Den".
 
     New stores and aliases are not written here (this runs inside scraper
     subprocesses); events carry a `store_hint` and the aggregator records
@@ -146,8 +179,21 @@ class StoreResolver:
         self.registry = registry if registry is not None else StoreRegistry.load()
         self.known = self.registry.known_stores()
         self.address_of = {s["name"]: s["address"] for s in self.known}
+        self._scopes: dict[str, set[str]] = {}
 
-    def resolve(self, source: str, external_id, name: str, address: str = ""):
+    def _scope(self, city: City) -> set[str]:
+        """Ids of the registry stores a search for `city` may match by name."""
+        if city.id not in self._scopes:
+            self._scopes[city.id] = {
+                s["id"] for s in self.registry.stores
+                if self.registry.city_of(s) == city.id
+                or (s.get("lat") is not None and s.get("lng") is not None
+                    and city.contains(s["lat"], s["lng"]))
+            }
+        return self._scopes[city.id]
+
+    def resolve(self, source: str, external_id, name: str, address: str = "",
+                city: Optional[City] = None, lat=None, lng=None):
         """Canonical store name, or StoreResolver.SKIP."""
         external = f"{source}:{external_id}" if external_id is not None else None
         own = (name or "").strip()
@@ -155,14 +201,19 @@ class StoreResolver:
             return self.SKIP
         if external and external in self.registry.by_external:
             return self.registry.by_external[external]["name"]
+        scope = self._scope(city) if city is not None else None
         norm = normalize_name(own)
-        if norm in self.registry.by_norm:
-            target = self.registry.by_norm[norm]["name"]
-            if self._same_postcode(address, target):
-                return target
+        for s in self.registry.named(norm):
+            # Same name: one store unless the postcodes differ and the pins
+            # are more than SAME_PLACE_KM apart.
+            if (scope is None or s["id"] in scope) and same_place(s, address, lat, lng):
+                return s["name"]
         if not own:
             return self.SKIP
-        match = match_existing_store({"name": own, "address": address or ""}, self.known)
+        known = self.known if scope is None else [
+            {"name": s["name"], "address": s.get("address") or ""}
+            for s in self.registry.stores if s["id"] in scope]
+        match = match_existing_store({"name": own, "address": address or ""}, known)
         if match["status"] == "matched_existing_store" and match["confidence"] >= 0.8:
             target = match["matched_existing_store"]
             if self._same_postcode(address, target):
@@ -178,6 +229,9 @@ class StoreResolver:
             )
             if normalize_name(own) == normalize_name(target):
                 return f"{own} ({_postcode(address)})"
+        if scope is not None and any(s["id"] not in scope for s in self.registry.named(norm)):
+            # The name already belongs to a store in another city.
+            return f"{own} ({_postcode(address) or city.name})"
         return own
 
     def _same_postcode(self, address: str, store_name: str) -> bool:
@@ -188,14 +242,19 @@ class StoreResolver:
 
 
 def store_hint(source: str, external_id, name: str, address: str = "",
-               lat=None, lng=None) -> dict:
-    """What a locator told us about a store, for StoreRegistry.learn()."""
-    return {
+               lat=None, lng=None, city: Optional[City] = None) -> dict:
+    """What a locator told us about a store, for StoreRegistry.learn().
+    `city` is the city whose search found it: it becomes the store's city
+    if the registry does not know the store yet."""
+    hint = {
         "external": f"{source}:{external_id}" if external_id is not None else None,
         "name": name, "address": address or None,
         "lat": float(lat) if lat not in (None, "") else None,
         "lng": float(lng) if lng not in (None, "") else None,
     }
+    if city is not None:
+        hint["city"] = city.id
+    return hint
 
 
 # ---------------------------------------------------------------------------

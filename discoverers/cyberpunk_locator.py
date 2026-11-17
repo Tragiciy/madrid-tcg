@@ -13,7 +13,11 @@ from typing import Optional
 
 import requests
 
-from shared.locator_common import CITY, USER_AGENT
+from shared.cities import default as default_city
+from shared.locator_common import USER_AGENT
+
+# TODO(multi-city): see discoverers/__init__.py.
+CITY = default_city()
 
 SOURCE = "cyberpunk_locator"
 GAME = "Cyberpunk TCG"
@@ -56,8 +60,8 @@ def _candidate(store: dict) -> Optional[dict]:
 def discover() -> list[dict]:
     try:
         resp = requests.get(API_URL, timeout=REQUEST_TIMEOUT, headers={"User-Agent": USER_AGENT}, params={
-            "lat": CITY["lat"], "lng": CITY["lng"],
-            "radius": round(CITY["radius_km"] / KM_PER_MILE),
+            "lat": CITY.lat, "lng": CITY.lng,
+            "radius": round(CITY.radius_km / KM_PER_MILE),
         })
         resp.raise_for_status()
         stores = resp.json().get("stores") or []

@@ -9,16 +9,19 @@ from typing import Optional
 
 import requests
 
+from shared.cities import default as default_city
+
 SOURCE = "yugioh_locator"
 GAME = "Yu-Gi-Oh!"
 API_URL = "https://www.yugioh-card.com/eu/_store-locator/store-locator-get-info.php"
 LOCATOR_URL = "https://www.yugioh-card.com/eu/play/store-locator/"
 REQUEST_TIMEOUT = 30
 
-# Madrid city centre. Use 50 km to match the existing Wizards locator scope.
-MADRID_LAT = 40.4168
-MADRID_LON = -3.7038
-SEARCH_RADIUS_KM = 50
+# The default city's search area (shared/cities.py).
+# TODO(multi-city): one search per city; see discoverers/__init__.py.
+MADRID_LAT = default_city().lat
+MADRID_LON = default_city().lng
+SEARCH_RADIUS_KM = default_city().radius_km
 STORE_TYPE = "Official Tournament Stores"
 
 

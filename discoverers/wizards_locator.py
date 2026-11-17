@@ -8,6 +8,8 @@ pipeline stays robust.
 
 import requests
 
+from shared.cities import default as default_city
+
 _GRAPHQL_URL = "https://api.tabletop.wizards.com/silverbeak-griffin-service/graphql"
 
 _QUERY = """
@@ -44,10 +46,12 @@ query getStoresByLocation(
 }
 """
 
-# Madrid city centre (Puerta del Sol)
-_MADRID_LAT = 40.4168
-_MADRID_LON = -3.7038
-_SEARCH_RADIUS_METERS = 50_000  # ~50 km covers greater Madrid
+# The default city's search area (shared/cities.py).
+# TODO(multi-city): one search per city; see discoverers/__init__.py.
+_CITY = default_city()
+_MADRID_LAT = _CITY.lat
+_MADRID_LON = _CITY.lng
+_SEARCH_RADIUS_METERS = _CITY.radius_km * 1000
 _PAGE_SIZE = 100
 
 

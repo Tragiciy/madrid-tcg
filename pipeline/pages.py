@@ -1,13 +1,15 @@
 """
 Generate static, crawlable HTML pages for search engines (Spanish), from the
 same data as the API. Plain HTML + one small CSS file; no JavaScript needed.
+One set per city in shared/cities.py (<city> = madrid, barcelona, …), each
+with an English mirror under /en/<city>/:
 
-    /madrid/                      next 7 days, all games
-    /madrid/hoy/                  today
-    /madrid/fin-de-semana/        this Friday–Sunday
-    /madrid/<game>/               next 28 days for one game
-    /madrid/tiendas/<store-id>/   next 28 days at one store
-    /sitemap.xml  /robots.txt  /404.html
+    /<city>/                      next 7 days, all games
+    /<city>/hoy/                  today
+    /<city>/fin-de-semana/        this Friday–Sunday
+    /<city>/<game>/               next 28 days for one game
+    /<city>/tiendas/<store-id>/   next 28 days at one store
+    /sitemap.xml  /robots.txt  /404.html   (site-wide)
 
 Every list embeds schema.org Event JSON-LD so events can appear in Google's
 event results. Pages for games and stores are kept even when nothing is
@@ -25,7 +27,8 @@ from typing import Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pipeline.config import TZ
-from pipeline.publish import _public_event, _visible
+from pipeline.publish import _public_event, _visible, events_in, stores_in
+from shared.cities import CITIES, DEFAULT_CITY, City, default as default_city
 from shared.store_registry import slugify
 
 logger = logging.getLogger(__name__)
@@ -33,8 +36,6 @@ logger = logging.getLogger(__name__)
 PUBLIC_DIR = pathlib.Path("public")
 TEMPLATES_DIR = pathlib.Path(__file__).parent / "templates"
 SITE_URL = "https://madrid-tcg.pages.dev"
-CITY = "madrid"
-CITY_NAME = "Madrid"
 JSONLD_LIMIT = 50  # events embedded per page
 
 DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
@@ -88,14 +89,16 @@ def _env() -> Environment:
     return env
 
 
-def _jsonld(events: list[dict], stores_by_id: dict, game_fallback: str = "Juego de cartas") -> str:
+def _jsonld(events: list[dict], stores_by_id: dict, game_fallback: str = "Juego de cartas",
+            city: Optional[City] = None) -> str:
+    city = city or default_city()
     items = []
     for e in events[:JSONLD_LIMIT]:
         store = stores_by_id.get(e.get("store_id")) or {}
-        address = e.get("store_address") or store.get("address") or CITY_NAME
+        address = e.get("store_address") or store.get("address") or city.name
         place = {"@type": "Place", "name": e["store"],
                  "address": {"@type": "PostalAddress", "streetAddress": address,
-                             "addressLocality": CITY_NAME, "addressCountry": "ES"}}
+                             "addressLocality": city.name, "addressCountry": city.country}}
         if store.get("lat") is not None:
             place["geo"] = {"@type": "GeoCoordinates", "latitude": store["lat"], "longitude": store["lng"]}
         item = {
@@ -179,10 +182,10 @@ LANGS = {
 }
 
 
-def page_path(lang: str, key: tuple) -> str:
-    """Path (relative to public/, ending in '/') of a page in a language."""
+def page_path(lang: str, key: tuple, city: str = DEFAULT_CITY) -> str:
+    """Path (relative to public/, ending in '/') of a city's page in a language."""
     L = LANGS[lang]
-    base = f"{L['prefix']}{CITY}/"
+    base = f"{L['prefix']}{city}/"
     kind = key[0]
     if kind == "city":
         return base
@@ -197,14 +200,50 @@ def page_path(lang: str, key: tuple) -> str:
     raise ValueError(key)
 
 
-def build_pages(events: list[dict], registry, now_iso: str) -> dict[str, str]:
-    """{path relative to public/: file content} — every page in every language."""
+def calendar_url(city: str, query: str = "") -> str:
+    """Link into the interactive calendar. The site root shows DEFAULT_CITY;
+    other cities are selected with ?city=<id>."""
+    params = [p for p in ((f"city={city}" if city != DEFAULT_CITY else ""), query) if p]
+    return "/" + (f"?{'&'.join(params)}" if params else "")
+
+
+def build_pages(events: list[dict], registry, now_iso: str,
+                cities: tuple[City, ...] = CITIES) -> dict[str, str]:
+    """{path relative to public/: file content} — every city's pages in
+    every language, plus the site-wide sitemap, robots.txt and 404."""
     now = datetime.fromisoformat(now_iso).astimezone(TZ)
     today = now.date()
     env = _env()
-    page_tpl, nf_tpl = env.get_template("list.html"), env.get_template("404.html")
+    pages: dict[str, str] = {}
+    urls: list[str] = []
+    for city in cities:
+        city_pages, city_urls = _city_pages(
+            env, events_in(events, city.id), stores_in(registry, city.id), now, city)
+        pages.update(city_pages)
+        urls += city_urls
 
-    stores = [s for s in registry.stores if (s.get("city") or CITY) == CITY]
+    # The 404 page links the default city (the one the site root shows).
+    home = default_city()
+    home_games = sorted({e["game"] for e in events_in(events, home.id) if e.get("game")})
+    es_nav = {"games": [(g, game_slug(g)) for g in home_games], "base": f"/{home.id}/",
+              "today": "/" + page_path("es", ("today",), home.id),
+              "weekend": "/" + page_path("es", ("weekend",), home.id)}
+    pages["404.html"] = env.get_template("404.html").render(
+        t=LANGS["es"], lang="es", nav=es_nav, city=home.name)
+    pages["sitemap.xml"] = env.get_template("sitemap.xml").render(
+        urls=[SITE_URL + "/"] + [SITE_URL + u for u in urls], lastmod=today.isoformat())
+    pages["robots.txt"] = (
+        "User-agent: *\nAllow: /\nDisallow: /health\n\n"
+        f"Sitemap: {SITE_URL}/sitemap.xml\n"
+    )
+    return pages
+
+
+def _city_pages(env: Environment, events: list[dict], stores: list[dict], now: datetime,
+                city: City) -> tuple[dict[str, str], list[str]]:
+    """One city's pages in every language, and their URLs for the sitemap."""
+    today = now.date()
+    page_tpl = env.get_template("list.html")
     stores_by_id = {s["id"]: s for s in stores}
     store_ids_by_name = {s["name"]: s["id"] for s in stores}
 
@@ -240,15 +279,16 @@ def build_pages(events: list[dict], registry, now_iso: str) -> dict[str, str]:
     specs += [(("store", s["id"]), within(28, lambda e, sid=s["id"]: e.get("store_id") == sid), s,
                f"store={s['name']}", "default") for s in stores]
 
+    path_of = lambda lang, key: page_path(lang, key, city.id)  # noqa: E731
     pages: dict[str, str] = {}
     urls: list[str] = []
     for lang, L in LANGS.items():
         date_fmt = L["date"]
         nav = {"games": [(g, game_slug(g)) for g in games],
-               "base": f"/{L['prefix']}{CITY}/", "today": "/" + page_path(lang, ("today",)),
-               "weekend": "/" + page_path(lang, ("weekend",))}
+               "base": f"/{L['prefix']}{city.id}/", "today": "/" + path_of(lang, ("today",)),
+               "weekend": "/" + path_of(lang, ("weekend",))}
         for key, evs, store, query, og in specs:
-            kind, c = key[0], CITY_NAME
+            kind, c = key[0], city.name
             if kind == "game":
                 g = key[2]
                 title, h1 = L["game_title"].format(g=g, c=c), L["game_h1"].format(g=g, c=c)
@@ -261,36 +301,27 @@ def build_pages(events: list[dict], registry, now_iso: str) -> dict[str, str]:
                 title, h1 = L[f"{kind}_title"].format(c=c), L[f"{kind}_h1"].format(c=c)
                 desc = L[f"{kind}_desc"].format(c=c, d=date_fmt(today).lower())
                 empty = L[f"{kind}_empty"]
-            path = page_path(lang, key)
-            alternates = [(lg, SITE_URL + "/" + page_path(lg, key)) for lg in LANGS]
+            path = path_of(lang, key)
+            alternates = [(lg, SITE_URL + "/" + path_of(lg, key)) for lg in LANGS]
             pages[f"{path}index.html"] = page_tpl.render(
                 t=L, lang=lang, title=title, h1=h1, description=desc, store=store,
                 days=[(date_fmt(d), es) for d, es in _days(evs)], count=len(evs), empty=empty,
                 nav=nav, canonical=SITE_URL + "/" + path, alternates=alternates,
-                x_default=SITE_URL + "/" + page_path("es", key),
-                switch_url="/" + page_path(L["switch"][1], key),
-                jsonld=_jsonld(evs, stores_by_id, L["jsonld_game"]),
-                calendar_url="/" + (f"?{query}" if query else ""),
-                updated=date_fmt(today), city=CITY_NAME, og_image=f"{SITE_URL}/og/{og}.jpg",
+                x_default=SITE_URL + "/" + path_of("es", key),
+                switch_url="/" + path_of(L["switch"][1], key),
+                jsonld=_jsonld(evs, stores_by_id, L["jsonld_game"], city),
+                calendar_url=calendar_url(city.id, query),
+                updated=date_fmt(today), city=city.name, og_image=f"{SITE_URL}/og/{og}.jpg",
             )
             urls.append("/" + path)
-
-    es_nav = {"games": [(g, game_slug(g)) for g in games], "base": f"/{CITY}/",
-              "today": "/" + page_path("es", ("today",)), "weekend": "/" + page_path("es", ("weekend",))}
-    pages["404.html"] = nf_tpl.render(t=LANGS["es"], lang="es", nav=es_nav, city=CITY_NAME)
-    pages["sitemap.xml"] = env.get_template("sitemap.xml").render(
-        urls=[SITE_URL + "/"] + [SITE_URL + u for u in urls], lastmod=today.isoformat())
-    pages["robots.txt"] = (
-        "User-agent: *\nAllow: /\nDisallow: /health\n\n"
-        f"Sitemap: {SITE_URL}/sitemap.xml\n"
-    )
-    return pages
+    return pages, urls
 
 
-def write_pages(pages: dict[str, str], public_dir: Optional[pathlib.Path] = None) -> int:
+def write_pages(pages: dict[str, str], public_dir: Optional[pathlib.Path] = None,
+                cities: tuple[City, ...] = CITIES) -> int:
     """Write changed files; remove generated city pages that are no longer
-    produced (only under public/<city>/ and public/<lang>/<city>/).
-    Returns #files written."""
+    produced (only under public/<city>/ and public/<lang>/<city>/ for the
+    configured cities). Returns #files written."""
     public_dir = public_dir or PUBLIC_DIR
     keep, written = set(), 0
     for rel, text in pages.items():
@@ -304,7 +335,7 @@ def write_pages(pages: dict[str, str], public_dir: Optional[pathlib.Path] = None
         tmp.replace(path)
         written += 1
     # list(): never delete while rglob is iterating (fails on Python 3.11).
-    roots = [public_dir / f"{L['prefix']}{CITY}" for L in LANGS.values()]
+    roots = [public_dir / f"{L['prefix']}{c.id}" for c in cities for L in LANGS.values()]
     for stale in [p for root in roots for p in root.rglob("index.html")]:
         if stale.resolve() not in keep:
             stale.unlink()

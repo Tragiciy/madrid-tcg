@@ -18,6 +18,7 @@ GAME = "Star Wars: Unlimited"
 CALENDAR_URL = "https://starwarsunlimited.com/organized-play-calendar"
 REQUEST_TIMEOUT = 30
 
+# TODO(multi-city): Madrid only; see discoverers/__init__.py.
 # Keep scope aligned with the Madrid project. SWU's calendar exposes city,
 # region, country columns; it does not expose street addresses in this HTML.
 TARGET_COUNTRY = "Spain"

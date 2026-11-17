@@ -9,6 +9,7 @@ from typing import Optional
 
 import requests
 
+# TODO(multi-city): Madrid only; see discoverers/__init__.py.
 MADRID_LAT = 40.3907
 MADRID_LON = -3.6997
 SEARCH_RADIUS_MILES = 25
