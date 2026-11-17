@@ -159,6 +159,7 @@ class SearchAreaTests(unittest.TestCase):
         self.assertEqual([a.label for a in areas],
                          ["madrid", "barcelona+valencia", "sevilla+malaga", "bilbao+zaragoza"])
         self.assertLessEqual(locator_pokemon.DISCOVERY_CALLS + len(areas), locator_pokemon.CALL_BUDGET)
+        self.assertLessEqual(max(a.radius_km for a in areas), locator_pokemon.MAX_RANGE_KM)
 
     def test_area_encloses_its_cities(self):
         for area in locator_pokemon.search_areas():
@@ -247,6 +248,14 @@ class ScrapeBudgetTests(unittest.TestCase):
         ungrouped = locator_pokemon.search_areas(CITIES, groups=())  # 3 + 7 calls > 7
         with mock.patch.object(locator_pokemon, "search_areas", lambda: ungrouped):
             with self.assertRaises(locator_pokemon.BudgetExceeded):
+                self._scrape(sess)
+        self.assertEqual(sess.calls, [])
+
+    def test_too_wide_area_fails_before_any_call(self):
+        sess = self._server(lambda body: [])
+        wide = locator_pokemon.search_areas(CITIES, groups=(("madrid", "barcelona"),))
+        with mock.patch.object(locator_pokemon, "search_areas", lambda: wide):
+            with self.assertRaisesRegex(RuntimeError, "wider than"):
                 self._scrape(sess)
         self.assertEqual(sess.calls, [])
 

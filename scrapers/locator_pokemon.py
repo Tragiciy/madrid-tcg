@@ -39,7 +39,8 @@ AREA_GROUPS searches some of them together: one POST over a circle that
 encloses every member city's circle, whose venues are then split between
 the cities by distance (radii never overlap, shared/cities.py). A city in
 no group is searched alone, with the exact request a one-city search
-always made. A plan over budget fails before the first call, and a call
+always made. The server refuses a range past about 200 km (MAX_RANGE_KM).
+A plan over budget or too wide fails before the first call, and a call
 past the budget raises: never a partial or silently truncated result.
 """
 
@@ -79,6 +80,7 @@ DISCOVERY_CALLS = 3
 # bilbao+zaragoza 90; Madrid alone 300.
 AREA_GROUPS = (("barcelona", "valencia"), ("sevilla", "malaga"), ("bilbao", "zaragoza"))
 AREA_MARGIN_KM = 5  # slack between the server's distance and ours
+MAX_RANGE_KM = 200  # 201 km worked, 250 km got "400 Bad Request" (probe 2026-11-17)
 
 _CSRF_RE = re.compile(r'AnonymousCSRFToken\s*=\s*"([^"]+)"')
 _API_VERSION_RE = re.compile(re.escape(f'"{ACTION_PATH}"') + r'\s*,\s*"([^"]+)"')
@@ -356,6 +358,10 @@ def scrape() -> list[dict]:
     """One discovery (3 GETs), then one POST per search area; each area's
     venues are split between its cities. See "Request budget" above."""
     areas = search_areas()
+    too_wide = [f"{a.label} {a.radius_km} km" for a in areas if a.radius_km > MAX_RANGE_KM]
+    if too_wide:
+        raise RuntimeError(f"Pokémon locator: search areas wider than {MAX_RANGE_KM} km: "
+                           f"{', '.join(too_wide)}; regroup AREA_GROUPS")
     planned = DISCOVERY_CALLS + len(areas)
     if planned > CALL_BUDGET:
         raise BudgetExceeded(f"Pokémon locator: {planned} calls planned, budget {CALL_BUDGET}; "

@@ -169,8 +169,10 @@ per search area. `AREA_GROUPS` searches Barcelona+Valencia, Sevilla+Málaga
 and Bilbao+Zaragoza together: one POST over a circle that encloses both
 cities' circles (plus 5 km), whose venues are split between the cities by
 distance (`SearchArea.split`). Madrid is searched alone with the same request
-as before. A plan over budget fails before the first call (`BudgetExceeded`:
-add a new city to a group), and `CallBudget` refuses any call past the
+as before. The server answers "400 Bad Request" past about 200 km
+(`MAX_RANGE_KM`; 201 km worked, 250 km did not). A plan over budget or wider
+than that fails before the first call (`BudgetExceeded`: add a new city to a
+group), and `CallBudget` refuses any call past the
 budget, so a capped response that would need a window split fails the source
 instead of being published truncated. Area sizes on 2026-11-17 (raw events,
 60 days): Madrid 300, Barcelona+Valencia 469, Sevilla+Málaga 321,
