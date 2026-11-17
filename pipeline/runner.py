@@ -12,7 +12,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
-from pipeline.config import SCRAPER_TIMEOUT_S, SCRAPER_WORKERS, SCRAPERS_DIR
+from pipeline.config import SCRAPER_RETRY_DELAY_S, SCRAPER_TIMEOUT_S, SCRAPER_WORKERS, SCRAPERS_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -108,10 +108,14 @@ def _run_scraper_isolated(
     )
 
 
-def run_all_scrapers(module_names: list[str]) -> list[tuple]:
+def run_all_scrapers(module_names: list[str], retry_delay_s: int = SCRAPER_RETRY_DELAY_S,
+                     sleep=time.sleep) -> list[tuple]:
     """
     Run scrapers concurrently. Returns (events, error, store, duration_s)
     per module, in input order.
+
+    Failed scrapers are run once more after retry_delay_s; a success then
+    replaces the failure. A scraper that fails twice reports the second error.
     """
     def timed(module_name: str) -> tuple:
         t0 = time.monotonic()
@@ -119,4 +123,18 @@ def run_all_scrapers(module_names: list[str]) -> list[tuple]:
         return events, error, store, round(time.monotonic() - t0, 1)
 
     with ThreadPoolExecutor(max_workers=SCRAPER_WORKERS) as pool:
-        return list(pool.map(timed, module_names))
+        results = list(pool.map(timed, module_names))
+        failed = [i for i, r in enumerate(results) if r[1]]
+        if failed and retry_delay_s > 0:
+            logger.warning("Retrying %d failed scraper(s) in %ds: %s", len(failed), retry_delay_s,
+                           ", ".join(module_names[i] for i in failed))
+            sleep(retry_delay_s)
+            for i, again in zip(failed, pool.map(timed, [module_names[i] for i in failed])):
+                first_error = results[i][1]
+                if again[1]:
+                    logger.error("%s failed again: %s", module_names[i], again[1])
+                else:
+                    logger.info("%s recovered on retry (first error: %s)", module_names[i], first_error)
+                # Duration covers both attempts, so slow-scraper stats stay honest.
+                results[i] = (*again[:3], round(results[i][3] + again[3], 1))
+    return results

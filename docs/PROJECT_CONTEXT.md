@@ -374,6 +374,13 @@ timeout, a hard crash or a missing result counts as a failed scraper, so that
 store's events are preserved. For a scraper that timed out or crashed, the
 store name is read from the `STORE = "..."` literal in its source file.
 
+Every scraper that failed is run once more after `SCRAPER_RETRY_DELAY_S`
+(default 60 s; 0 disables the retry). Only the second result counts, so a
+one-minute blip on a small store's site (a timeout or a 403) no longer marks
+the store failed or opens a health issue. The reported duration covers both
+attempts. For per-request retries inside one scraper, use
+`shared/http_retry.get_with_retry`.
+
 `build_stats` also flags `"stale"`: the scraper returned 0 events, it did not
 error, and the newest `last_seen_at` among the events from the store's own
 scraper is `STALE_AFTER_DAYS` (14) or more days old. Only stores with their
