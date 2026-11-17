@@ -75,11 +75,12 @@ def _store_from_source(module_name: str) -> Optional[str]:
 
 def _run_scraper_isolated(
     module_name: str, timeout_s: int = SCRAPER_TIMEOUT_S,
-) -> tuple[list[dict], Optional[str], Optional[str]]:
+) -> tuple[list[dict], Optional[str], Optional[str], dict]:
     """
     Run one scraper via tools.run_scraper in a child process.
 
-    Same return shape as _run_scraper. A timeout, crash or unreadable result
+    _run_scraper's shape plus the cities whose search failed ({city id:
+    error}, locators only; the source still succeeded). A timeout, crash or unreadable result
     becomes an error, so the store is protected from deletion like any other
     failed scraper.
     """
@@ -94,37 +95,43 @@ def _run_scraper_isolated(
         except subprocess.TimeoutExpired:
             msg = f"TimeoutError: no result after {timeout_s}s"
             logger.error("Scraper %s failed: %s", module_name, msg)
-            return [], msg, _store_from_source(module_name)
+            return [], msg, _store_from_source(module_name), {}
         try:
             result = json.loads(out.read_text(encoding="utf-8"))
         except (OSError, ValueError) as exc:
             msg = f"ChildProcessError: exit {proc.returncode}, no result ({exc})"
             logger.error("Scraper %s failed: %s", module_name, msg)
-            return [], msg, _store_from_source(module_name)
+            return [], msg, _store_from_source(module_name), {}
     return (
         result.get("events") or [],
         result.get("error"),
         result.get("store") or _store_from_source(module_name),
+        result.get("city_errors") or {},
     )
 
 
 def run_all_scrapers(module_names: list[str], retry_delay_s: int = SCRAPER_RETRY_DELAY_S,
                      sleep=time.sleep) -> list[tuple]:
     """
-    Run scrapers concurrently. Returns (events, error, store, duration_s)
-    per module, in input order.
+    Run scrapers concurrently. Returns (events, error, store, duration_s,
+    city_errors) per module, in input order.
 
     Failed scrapers are run once more after retry_delay_s; a success then
     replaces the failure. A scraper that fails twice reports the second error.
+    A source that sets NO_RUNNER_RETRY = True is not retried: the retry would
+    come from the same IP (Pokémon: the calls Imperva tolerates are spent).
     """
     def timed(module_name: str) -> tuple:
         t0 = time.monotonic()
-        events, error, store = _run_scraper_isolated(module_name)
-        return events, error, store, round(time.monotonic() - t0, 1)
+        res = _run_scraper_isolated(module_name)
+        events, error, store = res[:3]
+        city_errors = res[3] if len(res) > 3 else {}
+        return events, error, store, round(time.monotonic() - t0, 1), city_errors
 
     with ThreadPoolExecutor(max_workers=SCRAPER_WORKERS) as pool:
         results = list(pool.map(timed, module_names))
-        failed = [i for i, r in enumerate(results) if r[1]]
+        failed = [i for i, r in enumerate(results)
+                  if r[1] and not flag_from_source(module_names[i], "NO_RUNNER_RETRY")]
         if failed and retry_delay_s > 0:
             logger.warning("Retrying %d failed scraper(s) in %ds: %s", len(failed), retry_delay_s,
                            ", ".join(module_names[i] for i in failed))
@@ -136,5 +143,5 @@ def run_all_scrapers(module_names: list[str], retry_delay_s: int = SCRAPER_RETRY
                 else:
                     logger.info("%s recovered on retry (first error: %s)", module_names[i], first_error)
                 # Duration covers both attempts, so slow-scraper stats stay honest.
-                results[i] = (*again[:3], round(results[i][3] + again[3], 1))
+                results[i] = (*again[:3], round(results[i][3] + again[3], 1), again[4])
     return results

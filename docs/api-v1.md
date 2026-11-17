@@ -29,10 +29,14 @@ root shows. `stores` is the number of stores in the city's `stores.json`.
  "cities": [{"id": "madrid", "name": "Madrid", "timezone": "Europe/Madrid",
              "lat": 40.4168, "lng": -3.7038, "stores": 77},
             {"id": "barcelona", "name": "Barcelona", "timezone": "Europe/Madrid",
-             "lat": 41.3874, "lng": 2.1686, "stores": 77}]}
+             "lat": 41.3874, "lng": 2.1686, "stores": 77},
+            {"id": "malaga", "name": "Málaga", "timezone": "Europe/Madrid",
+             "lat": 36.7213, "lng": -4.4214, "stores": 21}, …]}
 ```
-A city `id` is also its URL segment (`/api/v1/barcelona/`, `/barcelona/`)
-and never changes. Each event and store belongs to exactly one city, the
+Cities today: `madrid`, `barcelona`, `valencia`, `sevilla`, `malaga`,
+`bilbao`, `zaragoza`. A city `id` is a plain ASCII slug and also its URL
+segment (`/api/v1/malaga/`, `/malaga/`), and never changes; `name` keeps
+the accents (`Málaga`). Each event and store belongs to exactly one city, the
 one recorded for its store in the registry. Events therefore have no `city`
 field: the file they come from is their city. The pipeline's city list
 lives in `shared/cities.py`.

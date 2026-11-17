@@ -87,7 +87,7 @@ class PublishTests(unittest.TestCase):
     def test_other_cities_files_survive_cleanup(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = pathlib.Path(tmp)
-            other = root / "valencia/events/2026-W47.json"  # not a published city
+            other = root / "lisboa/events/2026-W47.json"  # not a published city
             other.parent.mkdir(parents=True)
             other.write_text("{}")
             write_api(self.docs, root)

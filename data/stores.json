@@ -3,7 +3,8 @@
   "ignore": {
     "names": [],
     "external": [
-      "bandai:2030"
+      "bandai:2030",
+      "ravensburger:65315"
     ]
   },
   "stores": [
@@ -1461,6 +1462,206 @@
         "names": [],
         "external": [
           "ravensburger:5447"
+        ]
+      }
+    },
+    {
+      "id": "arratek",
+      "name": "Arratek",
+      "city": "bilbao",
+      "address": "Elexalde Kalea 2, Igorre, BI, 48140, Spain",
+      "lat": 43.16396,
+      "lng": -2.77822,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:9498",
+          "playriftbound:019fb060-941c-7d6d-8bbb-7cbb73f75e1d",
+          "ravensburger:22243",
+          "wizards:7982"
+        ]
+      }
+    },
+    {
+      "id": "distrito-zero-bilbao",
+      "name": "Distrito Zero - Bilbao",
+      "city": "bilbao",
+      "address": "Avenida Lehendakari Aguirre 186 Bajo, Bilbao, BI, 48015, Spain",
+      "lat": 43.28415,
+      "lng": -2.96858,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Distrito Zero Bilbao"
+        ],
+        "external": [
+          "bandai:200",
+          "playriftbound:019fcc6a-469f-7262-b2ad-f5159e7f4f91",
+          "ravensburger:1219",
+          "wizards:9024"
+        ]
+      }
+    },
+    {
+      "id": "distrito-zero-zentro",
+      "name": "Distrito Zero Zentro",
+      "city": "bilbao",
+      "address": "Maria Diaz De Haro 27, 48013, Bilbao",
+      "lat": 43.263617470398,
+      "lng": -2.9451855698852,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Distrito Zero - Bilbao Zentro"
+        ],
+        "external": [
+          "bandai:5777",
+          "playriftbound:019fb060-9113-799e-9d67-6f009efc89b1",
+          "wizards:15755"
+        ]
+      }
+    },
+    {
+      "id": "el-dado-verde",
+      "name": "El Dado Verde",
+      "city": "bilbao",
+      "address": "Laubide 2, 48600, Sopelana",
+      "lat": 43.3807662,
+      "lng": -2.9797446,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:6612"
+        ]
+      }
+    },
+    {
+      "id": "jolasten-eta-ikasten",
+      "name": "Jolasten eta Ikasten",
+      "city": "bilbao",
+      "address": "murrieta nº1, 48010, Barakaldo",
+      "lat": 43.3009137,
+      "lng": -2.9884207,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:5124"
+        ]
+      }
+    },
+    {
+      "id": "kizuna-hub",
+      "name": "Kizuna Hub",
+      "city": "bilbao",
+      "address": "Kale Barria 1, Getxo, Bizkaia, 48930, Spain",
+      "lat": 43.32414546597482,
+      "lng": -3.0148668084359094,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:30652",
+          "ravensburger:65567",
+          "wizards:23942"
+        ]
+      }
+    },
+    {
+      "id": "la-plaza-bilbao",
+      "name": "La Plaza Bilbao",
+      "city": "bilbao",
+      "address": "grupo reverendo Garamendi numero 5  Santutxu, Bilbao, Bizkaia, 48006, Spain",
+      "lat": 43.255459990975844,
+      "lng": -2.919787697827788,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "LaPlaza Bilbao"
+        ],
+        "external": [
+          "bandai:13894",
+          "playriftbound:01a00519-e7f5-709d-9891-b22bc5fe89bd",
+          "wizards:18381"
+        ]
+      }
+    },
+    {
+      "id": "laugh-tale",
+      "name": "Laugh Tale",
+      "city": "bilbao",
+      "address": "Maestro Zubeldia 2, 48920, Portugalete",
+      "lat": 43.3190764,
+      "lng": -3.0186072,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:10274"
+        ]
+      }
+    },
+    {
+      "id": "mano-del-friki",
+      "name": "Mano del Friki",
+      "city": "bilbao",
+      "address": "Calle Elkano 5, 48901, Barakaldo",
+      "lat": 43.2966522,
+      "lng": -2.9872408,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:19718",
+          "playriftbound:019fd90d-aeac-7227-aa67-7a3bb035f96d",
+          "ravensburger:3299"
+        ]
+      }
+    },
+    {
+      "id": "sulaco",
+      "name": "Sulaco",
+      "city": "bilbao",
+      "address": "1, 48920, Portugalete",
+      "lat": 43.3182479,
+      "lng": -3.0211969,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:2599"
         ]
       }
     },
@@ -3220,6 +3421,1346 @@
         ],
         "external": [
           "bandai:29007"
+        ]
+      }
+    },
+    {
+      "id": "2d6-store-s-l-u",
+      "name": "2d6 Store S.L.U",
+      "city": "malaga",
+      "address": "CM. San rafael 115, Málaga, Málaga, 29006, Spain",
+      "lat": 36.703418510715466,
+      "lng": -4.456341002986623,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:20845",
+          "playriftbound:01a04231-0873-773f-afb9-f9823b57520c",
+          "wizards:18686"
+        ]
+      }
+    },
+    {
+      "id": "armeria-tcg",
+      "name": "ARMERIA TCG",
+      "city": "malaga",
+      "address": "C/ Sigfrido, nº 8, oficina A6, Málaga, Málaga, 29006, Spain",
+      "lat": 36.70711000000001,
+      "lng": -4.468686858736059,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Armeriatcg"
+        ],
+        "external": [
+          "playriftbound:01a0c480-b95b-7374-9315-7bbe5fb46c70",
+          "wizards:23743"
+        ]
+      }
+    },
+    {
+      "id": "atheneas-hobby",
+      "name": "Atheneas Hobby",
+      "city": "malaga",
+      "address": "Calle Martínez de la Rosa 100, 29010 Málaga",
+      "lat": 36.72756,
+      "lng": -4.44142,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "ATHENEAS HOBBY S.L."
+        ],
+        "external": [
+          "bandai:2120",
+          "playriftbound:019fb060-8b21-79a6-87cb-c2ee76d34a55",
+          "wizards:14588"
+        ]
+      }
+    },
+    {
+      "id": "cardcrack",
+      "name": "CardCrack",
+      "city": "malaga",
+      "address": "Avda. de Benalmadena, 27, Local 2, 29620, Torremolinos",
+      "lat": 36.606741462581,
+      "lng": -4.5172215726952,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:19643",
+          "playriftbound:01a00505-618b-7643-a8f6-0c7ce881e520",
+          "ravensburger:675"
+        ]
+      }
+    },
+    {
+      "id": "comic-stores-malaga-soho",
+      "name": "Comic Stores Málaga Soho",
+      "city": "malaga",
+      "address": "Calle Trinidad Grund 11, Comic Stores, 29001, Malaga",
+      "lat": 36.717174920486,
+      "lng": -4.4218146800995,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Comic Stores"
+        ],
+        "external": [
+          "bandai:21421",
+          "wizards:11020"
+        ]
+      }
+    },
+    {
+      "id": "el-taller-de-anowk",
+      "name": "El Taller de Anowk",
+      "city": "malaga",
+      "address": "Calle Rda., 42, RINCÓN DE LA VICTORIA, Málaga, 29730, Spain",
+      "lat": 36.71546830795146,
+      "lng": -4.282375599999999,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:18795"
+        ]
+      }
+    },
+    {
+      "id": "el-tumulo",
+      "name": "El Tumulo",
+      "city": "malaga",
+      "address": "C/ Eduardo de Palacio, 14, Malaga, Malaga, 29004, Spain",
+      "lat": 36.69496,
+      "lng": -4.44664,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "EL TUMULO"
+        ],
+        "external": [
+          "bandai:381",
+          "wizards:11243"
+        ]
+      }
+    },
+    {
+      "id": "foil-stores",
+      "name": "Foil Stores",
+      "city": "malaga",
+      "address": "Avenida del caribe 117 2-4, Benalmadena, Málaga, 29631, Spain",
+      "lat": 36.60609861079553,
+      "lng": -4.54259504201724,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:24274"
+        ]
+      }
+    },
+    {
+      "id": "freakpoint-malaga-suarez",
+      "name": "FREAKPOINT MALAGA SUAREZ",
+      "city": "malaga",
+      "address": "C. Lorenzo Silva, 46, Bailén-Miraflores, MÁLAGA, MÁLAGA, 29010, Spain",
+      "lat": 36.7324897,
+      "lng": -4.45034642235,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:22013"
+        ]
+      }
+    },
+    {
+      "id": "la-cienaga-hobby-shop",
+      "name": "La Ciénaga Hobby Shop",
+      "city": "malaga",
+      "address": "Calle Leopoldo Alas Clarin Nº3, Local 1, 29002, Malaga",
+      "lat": 36.707302557941,
+      "lng": -4.4341275479667,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:2323",
+          "playriftbound:019fb060-9000-70ef-ac8c-0c8abb99af3d",
+          "ravensburger:2869"
+        ]
+      }
+    },
+    {
+      "id": "la-forja",
+      "name": "La Forja",
+      "city": "malaga",
+      "address": "Calle Carlos Amel 5, Málaga, Andalucía, 29006, Spain",
+      "lat": 36.708813,
+      "lng": -4.441244,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:17346",
+          "gem:la-forja",
+          "playriftbound:01a0008c-863d-7423-80cf-e0b17832b26d",
+          "ravensburger:24025",
+          "wizards:19661"
+        ]
+      }
+    },
+    {
+      "id": "la-pequena-victoria",
+      "name": "La Pequeña Victoria",
+      "city": "malaga",
+      "address": "Av/ del Mediterraneo 72, 29730, Rincon de la Victoria",
+      "lat": 36.7152965,
+      "lng": -4.2875713,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:20349",
+          "playriftbound:019fb060-94c6-70a5-af7d-992dd5cab76f"
+        ]
+      }
+    },
+    {
+      "id": "mulligan",
+      "name": "MULLIGAN",
+      "city": "malaga",
+      "address": "Calle Jaen, 1, Malaga, MA, 29004, Spain",
+      "lat": 36.68498,
+      "lng": -4.4718,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Mulligan"
+        ],
+        "external": [
+          "bandai:13000",
+          "playriftbound:01a01014-60bc-75ee-bf9b-005d17593112",
+          "ravensburger:3489",
+          "wizards:13825"
+        ]
+      }
+    },
+    {
+      "id": "play-planet-coffee-and-shop",
+      "name": "Play Planet Coffee and Shop",
+      "city": "malaga",
+      "address": "P.º de los Tilos, 64, Cruz de Humilladero, 29006 Málaga, Spain",
+      "lat": 36.7128946,
+      "lng": -4.438515499999999,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "playriftbound:019fb060-9206-7cd7-988d-286039c7ce7d"
+        ]
+      }
+    },
+    {
+      "id": "rapture",
+      "name": "Rapture",
+      "city": "malaga",
+      "address": "C. de Alonso de Aguilar, 50, Local 2, 29010 Málaga",
+      "lat": 36.721974122002,
+      "lng": -4.456383657709,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Rapture TCG"
+        ],
+        "external": [
+          "bandai:22823",
+          "playriftbound:019ffb47-434e-7fe8-9ee4-61a3b434435f",
+          "ravensburger:49503"
+        ]
+      }
+    },
+    {
+      "id": "shark-games",
+      "name": "Shark Games",
+      "city": "malaga",
+      "address": "Calle Antonio Maura n:9 , Bajo local comercial, Malaga, MA, 29003, Spain",
+      "lat": 36.70292,
+      "lng": -4.44251,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Shark games"
+        ],
+        "external": [
+          "bandai:1232",
+          "playriftbound:019fb060-950c-73f8-afe7-2278256368df",
+          "wizards:10723"
+        ]
+      }
+    },
+    {
+      "id": "shark-games-center",
+      "name": "Shark Games Center",
+      "city": "malaga",
+      "address": "Calle Angosta de Carmen 12 , Local comercial, Málaga, Málaga, 29002, Spain",
+      "lat": 36.71477549503238,
+      "lng": -4.428601562799764,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:14975",
+          "playriftbound:019fb060-8d9e-744e-b7a7-287a82cc6195",
+          "wizards:19019"
+        ]
+      }
+    },
+    {
+      "id": "shark-games-vault",
+      "name": "Shark Games Vault",
+      "city": "malaga",
+      "address": "Calle jerónimo bobadilla n3, 29003, Málaga",
+      "lat": 36.70226540102,
+      "lng": -4.4430204147965,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:25389"
+        ]
+      }
+    },
+    {
+      "id": "the-golden-rabbit",
+      "name": "The Golden Rabbit",
+      "city": "malaga",
+      "address": "avenida ciudad de melilla local 32, Benalmadena, Málaga, 29631, Spain",
+      "lat": 36.5965712181361,
+      "lng": -4.533433172742576,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:17294",
+          "playriftbound:019ffc52-6af1-777f-8de4-1a4e06bfdad2",
+          "wizards:21202"
+        ]
+      }
+    },
+    {
+      "id": "torredragon",
+      "name": "Torredragón",
+      "city": "malaga",
+      "address": "15 Av. Joan Miró, Torremolinos, AN, 29620, Spain",
+      "lat": 36.621969,
+      "lng": -4.5018898,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Torreragón"
+        ],
+        "external": [
+          "bandai:19277",
+          "playriftbound:01a000e1-c325-7de1-aaca-814faea12d2f",
+          "wizards:19523"
+        ]
+      }
+    },
+    {
+      "id": "umbra-tcg",
+      "name": "Umbra TCG",
+      "city": "malaga",
+      "address": "Calle Lope de Rueda 256, 29190, Málaga",
+      "lat": 36.7439989,
+      "lng": -4.4900991,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:29764",
+          "playriftbound:01a111ae-5e4f-7b06-b62f-df8d0010796f"
+        ]
+      }
+    },
+    {
+      "id": "a-dado-y-pluma",
+      "name": "A dado y pluma",
+      "city": "sevilla",
+      "address": "Avenida Ronda de Triana 39, Local 17, Sevilla, Sevilla, 41010, Spain",
+      "lat": 37.38205720021514,
+      "lng": -6.009751478192864,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "A DADO Y PLUMA"
+        ],
+        "external": [
+          "playriftbound:01a00141-4894-7ba2-a94d-14e5f902f885",
+          "wizards:21667"
+        ]
+      }
+    },
+    {
+      "id": "el-liron",
+      "name": "El Lirón",
+      "city": "sevilla",
+      "address": "C. Venecia, 6, Local 3, Dos Hermanas, Sevilla, 41089, Spain",
+      "lat": 37.340824240855206,
+      "lng": -5.929158475193468,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:20160"
+        ]
+      }
+    },
+    {
+      "id": "empire-games",
+      "name": "Empire Games",
+      "city": "sevilla",
+      "address": "C/. Chaves Nogales local 20, Sevilla, SE, 41018, Spain",
+      "lat": 37.38518,
+      "lng": -5.98077,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "EMPIRE GAMES",
+          "Empire Games / Yoyocorp SC"
+        ],
+        "external": [
+          "bandai:295",
+          "playriftbound:019fff97-de15-7644-832c-913b659dfe26",
+          "ravensburger:1453",
+          "wizards:5753"
+        ]
+      }
+    },
+    {
+      "id": "holoplaza",
+      "name": "HoloPlaza",
+      "city": "sevilla",
+      "address": "Avenida Cruz del Campo 7, 41005, Sevilla",
+      "lat": 37.3868289,
+      "lng": -5.9649247,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:16121",
+          "playriftbound:019fc9e0-b064-74c3-bd13-35cb44589b34"
+        ]
+      }
+    },
+    {
+      "id": "jugamos-una",
+      "name": "Jugamos Una",
+      "city": "sevilla",
+      "address": "Calle Santo domingo de la calzada 4, 41018, Sevilla",
+      "lat": 37.38662438286,
+      "lng": -5.9739232063293,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:30406",
+          "ravensburger:2697"
+        ]
+      }
+    },
+    {
+      "id": "jupiter-sevilla",
+      "name": "Júpiter Sevilla",
+      "city": "sevilla",
+      "address": "c/ Febo, 15 (local) , Sevilla, C, 41010, Spain",
+      "lat": 37.38087,
+      "lng": -6.00371,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "JUPITER JUEGOS SEVILLA"
+        ],
+        "external": [
+          "playriftbound:019fde73-a4ab-73f9-b1b3-6e052c8a8b8b",
+          "wizards:5652"
+        ]
+      }
+    },
+    {
+      "id": "la-cartina",
+      "name": "La cartiña",
+      "city": "sevilla",
+      "address": "Avenida de las ciencias 40, local 6, SEVILLA, Sevilla, 41020, Spain",
+      "lat": 37.4033923,
+      "lng": -5.930129917,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:30582",
+          "wizards:23871"
+        ]
+      }
+    },
+    {
+      "id": "la-cueva-roja",
+      "name": "La Cueva Roja",
+      "city": "sevilla",
+      "address": "19 C. Tajo, Dos Hermanas, AN, 41702, Spain",
+      "lat": 37.2858645,
+      "lng": -5.914278299999999,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:5526",
+          "playriftbound:019ffceb-456e-75a9-b886-c2f0a0a666b2",
+          "ravensburger:2884",
+          "wizards:15184"
+        ]
+      }
+    },
+    {
+      "id": "laboratoriotcg",
+      "name": "LaboratorioTCG",
+      "city": "sevilla",
+      "address": "C. Vereda de Chapatales, 41300 San José de la Rinconada, Sevilla, Spain",
+      "lat": 37.4879078,
+      "lng": -5.9369586,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "ravensburger:65537"
+        ]
+      }
+    },
+    {
+      "id": "legadoxtudio",
+      "name": "Legadoxtudio",
+      "city": "sevilla",
+      "address": "Calle Virgen de Consolación Nº 23 (Local), Utrera, SE, 41710, Spain",
+      "lat": 37.18258,
+      "lng": -5.77918,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "ravensburger:22028",
+          "wizards:14709"
+        ]
+      }
+    },
+    {
+      "id": "lizard-comics",
+      "name": "Lizard Comics",
+      "city": "sevilla",
+      "address": "Virgen de la Victoria 3, 41011, Sevilla",
+      "lat": 37.3766939,
+      "lng": -5.9963134,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:10690"
+        ]
+      }
+    },
+    {
+      "id": "midgar",
+      "name": "Midgar",
+      "city": "sevilla",
+      "address": "Avd. Andalucía 144 local, 41701, Dos Hermanas",
+      "lat": 37.280472697116,
+      "lng": -5.928840637207,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:12317",
+          "playriftbound:01a02038-2391-72d8-b01c-32bee7427714"
+        ]
+      }
+    },
+    {
+      "id": "tini-games",
+      "name": "Tini Games",
+      "city": "sevilla",
+      "address": "calle santa maria magdalena 50, 41701, dos hermanas,, sevilla, sevilla, 41701, Spain",
+      "lat": 37.283156473691136,
+      "lng": -5.92573855224386,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Tini games"
+        ],
+        "external": [
+          "bandai:18285",
+          "wizards:20465"
+        ]
+      }
+    },
+    {
+      "id": "unchained-games",
+      "name": "Unchained Games",
+      "city": "sevilla",
+      "address": "C. Virgen de los Dolores, N° 20, local B, 41940 Tomares, Sevilla, 41940, Sevilla. Tomares",
+      "lat": 37.3755078,
+      "lng": -6.0439186,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:21030",
+          "playriftbound:019fb060-920f-79a7-88ba-b0443f15bfb4"
+        ]
+      }
+    },
+    {
+      "id": "vicol-tcg",
+      "name": "Vicol TCG",
+      "city": "sevilla",
+      "address": "C/ San Sebastián 3, local B, Dos Hermanas, Sevilla, 41701, Spain",
+      "lat": 37.281145,
+      "lng": -5.920876,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Vicol tcg"
+        ],
+        "external": [
+          "bandai:29990",
+          "ravensburger:66027",
+          "wizards:23739"
+        ]
+      }
+    },
+    {
+      "id": "zacatrus-sevilla",
+      "name": "Zacatrus Sevilla",
+      "city": "sevilla",
+      "address": "121 Calle Luis Montoto, Planta Baja. Local comercial, Sevilla, AN, 41007, ES",
+      "lat": 37.3877186,
+      "lng": -5.9693618,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Zacatrus S.L."
+        ],
+        "external": [
+          "playriftbound:019fec5c-c93c-75df-94d9-6a6f855ddc02",
+          "ravensburger:5445"
+        ]
+      }
+    },
+    {
+      "id": "cartoon-corp",
+      "name": "Cartoon Corp",
+      "city": "valencia",
+      "address": "Guillem de Castro 53 Bajo Izquierda, 46007, Valencia",
+      "lat": 39.470051000605,
+      "lng": -0.38309825014365,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Cartooncorp Evolution"
+        ],
+        "external": [
+          "bandai:19969",
+          "wizards:8159"
+        ]
+      }
+    },
+    {
+      "id": "dcomic",
+      "name": "DCOMIC",
+      "city": "valencia",
+      "address": "c/ Dr. García Donato, 7, Valencia, Valencia, 46021, Spain",
+      "lat": 39.47674,
+      "lng": -0.34718,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:30695",
+          "wizards:11621"
+        ]
+      }
+    },
+    {
+      "id": "draconomico",
+      "name": "Draconomicó",
+      "city": "valencia",
+      "address": "C. Gral. Pastor, 20, 46183 L'Eliana, Valencia, Spain",
+      "lat": 39.5649956,
+      "lng": -0.5306938,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "El Draconomicó S.C.P"
+        ],
+        "external": [
+          "playriftbound:019fc327-3928-70ea-a0c6-ecc3b8c18ad9",
+          "wizards:15236"
+        ]
+      }
+    },
+    {
+      "id": "friki-bunker",
+      "name": "FRIKI BUNKER",
+      "city": "valencia",
+      "address": "Emilio Baró 65 Bajo derecha, 46020, 46020",
+      "lat": 39.4886817,
+      "lng": -0.3605576,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:17461"
+        ]
+      }
+    },
+    {
+      "id": "friki-galaxy",
+      "name": "Friki Galaxy",
+      "city": "valencia",
+      "address": "Jacomart 53, 46019, Valencia",
+      "lat": 39.495951,
+      "lng": -0.3794518,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "FRIKI GALAXY"
+        ],
+        "external": [
+          "bandai:732",
+          "gem:friki-galaxy",
+          "playriftbound:019fb060-8e8e-712e-8471-1c762599e752"
+        ]
+      }
+    },
+    {
+      "id": "garhis",
+      "name": "Garhis",
+      "city": "valencia",
+      "address": "16 C de Campoamor, València, VC, 46021, Spain",
+      "lat": 39.4717555,
+      "lng": -0.350997,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:18398",
+          "ravensburger:2060",
+          "wizards:18008"
+        ]
+      }
+    },
+    {
+      "id": "geek-atmosphere-mn4",
+      "name": "Geek Atmosphere MN4",
+      "city": "valencia",
+      "address": "C. Alcalde José Puertes / Centro Comercial MN4 Alfafar, 46910, Alfafar, Valencia",
+      "lat": 39.416037977102,
+      "lng": -0.38005828857422,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:24524",
+          "playriftbound:01a03349-6cee-7cf8-9af4-2bbe2bba4b97"
+        ]
+      }
+    },
+    {
+      "id": "geeklogia",
+      "name": "Geeklogia",
+      "city": "valencia",
+      "address": "c/ Actor Mora 31 Bajo, 46009, Valencia",
+      "lat": 39.4861298,
+      "lng": -0.3778011,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:1417",
+          "playriftbound:01a00baa-2319-7b0c-9fae-b03147dbdbf7",
+          "ravensburger:13945"
+        ]
+      }
+    },
+    {
+      "id": "glitch-bar",
+      "name": "GLITCH BAR",
+      "city": "valencia",
+      "address": "Carrer de Campoamor, 58, 46022, Valencia",
+      "lat": 39.4706562,
+      "lng": -0.3466809,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:920"
+        ]
+      }
+    },
+    {
+      "id": "gremio-de-dragones",
+      "name": "Gremio de Dragones",
+      "city": "valencia",
+      "address": "Domingo Gomez 35, 46025, Valencia",
+      "lat": 39.492466885021,
+      "lng": -0.38207530975342,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:541"
+        ]
+      }
+    },
+    {
+      "id": "gts-valencia",
+      "name": "GTS Valencia",
+      "city": "valencia",
+      "address": "Calle del Conde de Altea 4, Local: Goblintrader, 46005, Valencia",
+      "lat": 39.4650016,
+      "lng": -0.3700098,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:21903"
+        ]
+      }
+    },
+    {
+      "id": "herofreaks",
+      "name": "HeroFreaks",
+      "city": "valencia",
+      "address": "Avinguda Drets Humans, 20, Almàssera, V, 46132, Spain",
+      "lat": 39.51466,
+      "lng": -0.35603,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:1029",
+          "gem:herofreaks",
+          "playriftbound:01a08a6f-0714-7f5d-8a12-30f984e43be0",
+          "ravensburger:2418",
+          "wizards:13573"
+        ]
+      }
+    },
+    {
+      "id": "homoludicus-valencia",
+      "name": "HomoLudicus Valencia",
+      "city": "valencia",
+      "address": "21 Carrer del Doctor Sanchis Sivera, València, VC, 46008, Spain",
+      "lat": 39.4683933,
+      "lng": -0.3868097,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Homoludicus Valencia"
+        ],
+        "external": [
+          "bandai:25720",
+          "playriftbound:019fb060-9505-7030-9691-5ad3b760dab2",
+          "wizards:16227"
+        ]
+      }
+    },
+    {
+      "id": "jupiter-juegos-valencia",
+      "name": "Jupiter Juegos Valencia",
+      "city": "valencia",
+      "address": "20 Calle Erudito Orellana, Valencia, Valencia, 46008, Spain",
+      "lat": 39.4705856,
+      "lng": -0.3877136,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Júpiter Juegos Valencia"
+        ],
+        "external": [
+          "bandai:29569",
+          "playriftbound:01a0c36f-9b35-7de2-816e-1ff2d84aebdc",
+          "ravensburger:65895",
+          "wizards:23543"
+        ]
+      }
+    },
+    {
+      "id": "khanbarrilete",
+      "name": "KHANBARRILETE",
+      "city": "valencia",
+      "address": "C/San Antonio 113 Bajo, Mislata, V, 46920, Spain",
+      "lat": 39.47767,
+      "lng": -0.42612,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "Khanbarrilete",
+          "Khanbarrilete SL"
+        ],
+        "external": [
+          "bandai:371",
+          "playriftbound:01a01f64-f9ec-7c4f-9555-cc52355a1a5a",
+          "ravensburger:2775",
+          "wizards:9159"
+        ]
+      }
+    },
+    {
+      "id": "kingdom-wargames-valencia",
+      "name": "Kingdom Wargames Valencia",
+      "city": "valencia",
+      "address": "Carrer del Campament, 8, Pobles de l'Oest,, Valencia, Valencia, 46035, Spain",
+      "lat": 39.503022601260305,
+      "lng": -0.4202963240995632,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:21360",
+          "playriftbound:019fb060-8dc2-72e6-9d6f-23d8dc71ab88",
+          "wizards:20312"
+        ]
+      }
+    },
+    {
+      "id": "la-base-rebelde",
+      "name": "La Base Rebelde",
+      "city": "valencia",
+      "address": "22 Carrer Miguel Adlert Noguerol, Alacuás, VC, 46970, Spain",
+      "lat": 39.45501720000001,
+      "lng": -0.4623833,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "la base rebelde"
+        ],
+        "external": [
+          "bandai:20897",
+          "playriftbound:019fb060-9354-7960-9617-87228b23d915",
+          "ravensburger:2849",
+          "wizards:17529"
+        ]
+      }
+    },
+    {
+      "id": "monte-ronin",
+      "name": "Monte Ronin",
+      "city": "valencia",
+      "address": "6 Carrer de Daoiz i Velarde, València, VC, 46021, Spain",
+      "lat": 39.4738111,
+      "lng": -0.34962,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:18262",
+          "playriftbound:019fb060-8be9-7030-bc59-f035d973ce2b",
+          "ravensburger:17132",
+          "wizards:16797"
+        ]
+      }
+    },
+    {
+      "id": "planeswalkers-valencia",
+      "name": "Planeswalkers Valencia",
+      "city": "valencia",
+      "address": "62 C/ de Sant Roc, València, VC, 46015, Spain",
+      "lat": 39.4904112,
+      "lng": -0.3941812000000001,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "playriftbound:01a00288-5062-7269-943a-80fcfddf4bc3",
+          "wizards:17303"
+        ]
+      }
+    },
+    {
+      "id": "tcgland",
+      "name": "TCGLAND",
+      "city": "valencia",
+      "address": "Maestro Valls 22, 46022, Valencia",
+      "lat": 39.4650113,
+      "lng": -0.3416531,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:177"
+        ]
+      }
+    },
+    {
+      "id": "una-cosa-rara-tcg",
+      "name": "una cosa rara tcg",
+      "city": "valencia",
+      "address": "2 Carrer de Villanueva i Gascon, Valencia, VC, 46007, ES",
+      "lat": 39.4702166,
+      "lng": -0.3892985,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "ravensburger:5188"
+        ]
+      }
+    },
+    {
+      "id": "zacatrus-valencia",
+      "name": "Zacatrus! Valencia",
+      "city": "valencia",
+      "address": "Avenida Reino de Valencia 66, 46005, Valencia",
+      "lat": 39.4630127,
+      "lng": -0.3655056,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:19125",
+          "playriftbound:019fbd07-b8a3-702d-9761-3938f44bf05c",
+          "ravensburger:5448"
+        ]
+      }
+    },
+    {
+      "id": "doctor-ocio",
+      "name": "Doctor Ocio",
+      "city": "zaragoza",
+      "address": "Calle Colón 7, Zaragoza, Z, 50007, Spain",
+      "lat": 41.64101,
+      "lng": -0.88498,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:5278",
+          "gem:doctor-ocio",
+          "playriftbound:019fbc8c-a42b-7cb4-adb0-b72fadca28ee",
+          "ravensburger:1238",
+          "wizards:11300"
+        ]
+      }
+    },
+    {
+      "id": "dragon-friends",
+      "name": "Dragon Friends",
+      "city": "zaragoza",
+      "address": "Calle Gertrudis Gómez de Avellaneda 31 Local 2, Zaragoza, Zaragoza, 50018, Spain",
+      "lat": 41.668146661590384,
+      "lng": -0.8894802900578601,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:19690",
+          "ravensburger:32605",
+          "wizards:20322"
+        ]
+      }
+    },
+    {
+      "id": "gorilla-tactics",
+      "name": "Gorilla Tactics",
+      "city": "zaragoza",
+      "address": "Avenida San Jose 99, 50008, Zaragoza",
+      "lat": 41.6394351,
+      "lng": -0.8742353,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:23629",
+          "playriftbound:019fb060-951d-7c63-954c-4d97a2b8d85d",
+          "ravensburger:46394"
+        ]
+      }
+    },
+    {
+      "id": "la-torre-karin-store",
+      "name": "La Torre Karin Store",
+      "city": "zaragoza",
+      "address": "Calle Ricla 20, Zaragoza, Aragón, 50005, Spain",
+      "lat": 41.64625543373304,
+      "lng": -0.8915028860609718,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:20906",
+          "playriftbound:019fd7aa-53fa-79c3-81d1-7ab01132304c",
+          "ravensburger:46395",
+          "wizards:21532"
+        ]
+      }
+    },
+    {
+      "id": "quinto-elemento",
+      "name": "Quinto Elemento",
+      "city": "zaragoza",
+      "address": "C. Desayuno con Diamantes, Zaragoza, AR, 50019, Spain",
+      "lat": 41.6221217,
+      "lng": -0.9303049000000001,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:21654",
+          "playriftbound:019fbcd4-a624-7e2f-8dac-97c286a00fc5",
+          "ravensburger:18830",
+          "wizards:17637"
+        ]
+      }
+    },
+    {
+      "id": "tpk-hobby-games-sl",
+      "name": "TPK Hobby & Games, SL",
+      "city": "zaragoza",
+      "address": "49 C. de Juan José Lorente, Zaragoza, AR, 50005, Spain",
+      "lat": 41.6445091,
+      "lng": -0.8971161999999999,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "TPK HOBBY & GAMES SL",
+          "TPK Hobby & Games",
+          "TPK Hobby & Games SL"
+        ],
+        "external": [
+          "bandai:19748",
+          "gem:tpk-hobby-games",
+          "playriftbound:01a01e6c-19dd-7814-8ea0-008be8fd59af",
+          "ravensburger:5084",
+          "wizards:16637"
+        ]
+      }
+    },
+    {
+      "id": "zentral-games",
+      "name": "ZENTRAL GAMES",
+      "city": "zaragoza",
+      "address": "9 C. de Ntra. Sra. de Bonaria, Zaragoza, AR, 50010, Spain",
+      "lat": 41.6541735,
+      "lng": -0.9052523,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [
+          "ZENTRALGAMES SL"
+        ],
+        "external": [
+          "bandai:7880",
+          "playriftbound:01a00e82-0171-73c5-abaa-3b0c5253fc6b",
+          "ravensburger:5462",
+          "wizards:16327"
         ]
       }
     }

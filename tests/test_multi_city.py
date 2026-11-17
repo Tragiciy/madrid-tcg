@@ -6,6 +6,7 @@ import pathlib
 import re
 import tempfile
 import unittest
+from unittest import mock
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -20,6 +21,7 @@ from pipeline.share import app_url, build_share_pages
 from scrapers import locator_gem
 from shared import bandai_locator, cities
 from shared.cities import CITIES, City
+from shared import locator_common
 from shared.locator_common import StoreResolver, for_each_city, store_hint
 from shared.store_registry import StoreRegistry
 from tools.sync_health_issues import issue_body, unhealthy_stores
@@ -51,7 +53,9 @@ def _e(start, store="Arte 9", store_id="arte-9", city=None, source="scrapers.x",
 
 class CityConfigTests(unittest.TestCase):
     def test_single_source_of_truth(self):
-        self.assertEqual([c.id for c in CITIES], ["madrid", "barcelona"])
+        self.assertEqual([c.id for c in CITIES],
+                         ["madrid", "barcelona", "valencia", "sevilla", "malaga", "bilbao", "zaragoza"])
+        self.assertEqual(cities.get("malaga").name, "Málaga")  # ASCII id, accented name
         self.assertEqual(cities.default().id, "madrid")
         self.assertEqual(BCN.radius_km, 30)
         self.assertEqual(BCN.location_name, "Barcelona, Spain")
@@ -64,6 +68,12 @@ class CityConfigTests(unittest.TestCase):
                      radius_km=30, country="ES", search_terms=("Lisboa",))
         with self.assertRaises(ValueError):
             cities._check(CITIES + (other,))
+
+    def test_overlapping_radii_are_refused(self):
+        alcala = City(id="alcala", name="Alcalá", timezone="Europe/Madrid", lat=40.48, lng=-3.36,
+                      radius_km=20, country="ES", search_terms=("Alcalá",))
+        with self.assertRaisesRegex(ValueError, "overlap"):
+            cities._check(CITIES + (alcala,))
 
     def test_duplicate_ids_are_refused(self):
         with self.assertRaises(ValueError):
@@ -80,18 +90,47 @@ class ForEachCityTests(unittest.TestCase):
                     {"source_event_id": f"x:{city.id}", "c": city.id}]
 
         out = for_each_city("T", fetch)
-        self.assertEqual(seen, ["madrid", "barcelona"])
+        self.assertEqual(seen, [c.id for c in CITIES])
         self.assertEqual([(e["source_event_id"], e["c"]) for e in out],
-                         [("x:1", "madrid"), ("x:madrid", "madrid"), ("x:barcelona", "barcelona")])
+                         [("x:1", "madrid"), *((f"x:{c.id}", c.id) for c in CITIES)])
 
-    def test_one_city_failing_fails_the_source(self):
+    def test_default_city_failing_fails_the_source(self):
         def fetch(city):
-            if city.id == "barcelona":
+            if city.id == "madrid":
                 raise RuntimeError("HTTP 500")
-            return [{"source_event_id": "x:1"}]
+            return [{"source_event_id": f"x:{city.id}"}]
 
         with self.assertRaises(RuntimeError):
             for_each_city("T", fetch)
+
+    def test_other_city_failing_gives_it_no_events_and_the_rest_publish(self):
+        locator_common.CITY_ERRORS.clear()
+
+        def fetch(city):
+            if city.id in ("bilbao", "barcelona"):
+                raise RuntimeError(f"HTTP 500 {city.id}")
+            return [{"source_event_id": f"x:{city.id}"}]
+
+        with self.assertLogs("shared.locator_common", "ERROR") as logs:
+            out = for_each_city("T Locator", fetch)
+        self.assertEqual([e["source_event_id"] for e in out],
+                         [f"x:{c.id}" for c in CITIES if c.id not in ("bilbao", "barcelona")])
+        self.assertEqual(locator_common.CITY_ERRORS,
+                         {"barcelona": "RuntimeError: HTTP 500 barcelona",
+                          "bilbao": "RuntimeError: HTTP 500 bilbao"})
+        self.assertEqual(len(logs.output), 2)
+        self.assertIn("T Locator: barcelona failed", logs.output[0])
+        locator_common.CITY_ERRORS.clear()
+
+    def test_every_other_city_failing_still_publishes_madrid(self):
+        def fetch(city):
+            if city.id != "madrid":
+                raise RuntimeError("down")
+            return [{"source_event_id": "x:madrid"}]
+
+        with self.assertLogs("shared.locator_common", "ERROR"):
+            self.assertEqual(for_each_city("T", fetch), [{"source_event_id": "x:madrid"}])
+        locator_common.CITY_ERRORS.clear()
 
 
 class ResolverCityTests(unittest.TestCase):
@@ -285,7 +324,9 @@ class PerCityPublishTests(unittest.TestCase):
         self.assertEqual([s["id"] for s in self.docs["madrid/stores.json"]["stores"]], ["arte-9", "dragon-den"])
         self.assertEqual(
             [(c["id"], c["name"], c["stores"]) for c in self.docs["cities.json"]["cities"]],
-            [("madrid", "Madrid", 2), ("barcelona", "Barcelona", 1)])
+            [("madrid", "Madrid", 2), ("barcelona", "Barcelona", 1), ("valencia", "Valencia", 0),
+             ("sevilla", "Sevilla", 0), ("malaga", "Málaga", 0), ("bilbao", "Bilbao", 0),
+             ("zaragoza", "Zaragoza", 0)])
         bcn = self.docs["cities.json"]["cities"][1]
         self.assertEqual((bcn["lat"], bcn["lng"], bcn["timezone"]), (41.3874, 2.1686, "Europe/Madrid"))
 
@@ -415,6 +456,58 @@ class PerCityGuardTests(unittest.TestCase):
         self.assertEqual(report["scrapers"][src]["suspect_zero_cities"], ["barcelona"])
         info = unhealthy_stores(report)["X Locator"]
         self.assertIn("0 events for barcelona", issue_body("X Locator", info, NOW))
+
+    def test_locator_city_failure_end_to_end(self):
+        """Ravensburger's Valencia search times out: Madrid and the others
+        publish, Valencia's existing Lorcana events are kept, the stats and
+        the health issue name the city and the error, the console warns."""
+        import contextlib, io
+        from pipeline.health import print_scraper_health
+        from scrapers import locator_ravensburger as rav
+        src = "scrapers.locator_ravensburger"
+        locator_common.CITY_ERRORS.clear()
+
+        def fetch(_sess, city):
+            if city.id == "valencia":
+                raise TimeoutError("read timed out")
+            return [city.id]
+
+        def parse(raw, _resolver, city):
+            return [_e("2026-12-05T18:00:00+01:00", store=f"{city.id} shop", store_id=None,
+                       source=src, source_event_id=f"ravensburger:{city.id}", city=city.id)]
+
+        with mock.patch.object(rav, "_fetch_events", side_effect=fetch), \
+             mock.patch.object(rav, "parse_events", side_effect=parse), \
+             mock.patch.object(rav, "StoreResolver"), \
+             self.assertLogs("shared.locator_common", "ERROR"):
+            fresh = rav.scrape()
+        city_errors = dict(locator_common.CITY_ERRORS)  # what tools.run_scraper reports
+        locator_common.CITY_ERRORS.clear()
+        self.assertEqual(sorted(e["city"] for e in fresh), sorted(c.id for c in CITIES if c.id != "valencia"))
+        self.assertEqual(list(city_errors), ["valencia"])
+
+        existing = [_e(f"2026-12-0{i}T18:00:00+01:00", store="valencia shop", store_id=None,
+                       source=src, source_event_id=f"ravensburger:v{i}", city="valencia")
+                    for i in (1, 2, 3)]
+        stats = {src: {"store": rav.STORE, "raw": len(fresh), "valid": len(fresh), "dropped": 0,
+                       "drop_reasons": {}, "error": None, "city_errors": city_errors}}
+        zero = find_suspect_zero_cities(stats, fresh, existing, NOW)
+        self.assertEqual(zero, {f"{src}@valencia"})
+        merged = merge_events(existing, fresh, NOW, protected_sources=zero)
+        kept = [e for e in merged if e["city"] == "valencia"]
+        self.assertEqual(len(kept), 3)
+        self.assertTrue(all(e.get("is_active", True) and not e.get("missing_runs") for e in kept))
+
+        report = build_stats(merged, stats, [], NOW, suspect_zero_sources=zero)
+        self.assertEqual(report["scrapers"][src]["suspect_zero_cities"], ["valencia"])
+        self.assertEqual(report["scrapers"][src]["city_errors"], city_errors)
+        body = issue_body(rav.STORE, unhealthy_stores(report)[rav.STORE], NOW)
+        self.assertIn("0 events for valencia", body)
+        self.assertIn("search failed: valencia: TimeoutError: read timed out", body)
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            print_scraper_health(report["scrapers"])
+        self.assertIn(f"[WARN] {src} search failed for valencia", out.getvalue())
 
     def test_failed_or_empty_source_is_not_a_city_zero(self):
         src = "scrapers.locator_x"
