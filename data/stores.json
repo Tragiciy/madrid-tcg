@@ -37,8 +37,11 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "D20 JOCS"
+        ],
         "external": [
+          "pokemon:5bc4d24e-08c8-45fc-93e7-120fbe0175a4",
           "wizards:20397"
         ]
       }
@@ -73,8 +76,11 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "DECKSDEN"
+        ],
         "external": [
+          "pokemon:068d0b92-9315-4827-a956-9496245d0278",
           "wizards:18634"
         ]
       }
@@ -91,11 +97,32 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "DECKTCG"
+        ],
         "external": [
           "bandai:15277",
+          "pokemon:3f3cec79-15db-4f6b-a141-a27eded8368d",
           "ravensburger:22018",
           "wizards:19588"
+        ]
+      }
+    },
+    {
+      "id": "doki-doki-daus",
+      "name": "DOKI DOKI DAUS",
+      "city": "barcelona",
+      "address": "PLAÇA FIVELLER, 24, 08301 MATARÓ, BARCELONA, SPAIN",
+      "lat": 41.542384,
+      "lng": 2.45029,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:4aab910e-14e6-453b-a450-b23511f09323"
         ]
       }
     },
@@ -131,9 +158,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "EL CAU LÚDIC"
+        ],
         "external": [
           "bandai:11716",
+          "pokemon:d47c5b3b-11b0-4501-a0df-c6d6adc59ef9",
           "ravensburger:18950",
           "wizards:17524"
         ]
@@ -152,10 +182,13 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "EL ENCUENTRO",
           "El Encuentro by Infrecuentes"
         ],
         "external": [
           "bandai:8735",
+          "pokemon:48d6b4ec-8b0d-4156-8b2d-d84828cb771d",
+          "pokemon:ddb6aa02-009b-4c21-84d6-857992735d7d",
           "ravensburger:25873",
           "wizards:17362"
         ]
@@ -289,10 +322,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "EQUILUX JUEGOS",
           "Equilux"
         ],
         "external": [
           "bandai:6151",
+          "pokemon:fb9f0ec8-35ba-4bdd-91be-6696982f435c",
           "ravensburger:1485",
           "wizards:16153"
         ]
@@ -349,6 +384,8 @@
         "names": [],
         "external": [
           "bandai:178",
+          "pokemon:b256b8d5-ec68-41f6-b3ff-861c9c9da307",
+          "pokemon:d19f30f1-3e16-44a6-9882-075dc29d9c64",
           "wizards:8966"
         ]
       }
@@ -365,8 +402,11 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "GEEKKAOS"
+        ],
         "external": [
+          "pokemon:7b3eaca2-7313-4c1e-b603-896efaa03479",
           "ravensburger:23621",
           "wizards:18404"
         ]
@@ -422,9 +462,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "HAMELIN GAMES",
           "Hamelin Games Mataró"
         ],
         "external": [
+          "pokemon:7cec4cff-1aad-4c72-9b25-f483201b1365",
+          "pokemon:b15d1371-783c-46b9-8537-e35f1a5013fc",
           "ravensburger:2367",
           "wizards:16759"
         ]
@@ -443,10 +486,13 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "HOMOLUDICUS GRANOLLERS",
           "Homoludicus Granollers"
         ],
         "external": [
           "bandai:3136",
+          "pokemon:294e8004-59b8-49ce-8ce6-4590d6c38ead",
+          "pokemon:c7b5ead7-5255-49ac-8d80-3e0801bef22f",
           "ravensburger:2492",
           "wizards:7757"
         ]
@@ -489,6 +535,25 @@
       }
     },
     {
+      "id": "infiniti-world",
+      "name": "INFINITI WORLD",
+      "city": "barcelona",
+      "address": "45 CARRER DE LA MARE DE DÉU DE LORDA, BADALONA, CT 08913, ES",
+      "lat": 41.439459,
+      "lng": 2.216855,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:1ad3b8f6-fcef-4aee-88cf-398d189949e3",
+          "pokemon:29760bb0-6167-4dad-9e96-d1301c3fd854"
+        ]
+      }
+    },
+    {
       "id": "ingenio-bcn-games",
       "name": "inGenio BCN Games",
       "city": "barcelona",
@@ -505,6 +570,7 @@
         ],
         "external": [
           "bandai:1609",
+          "pokemon:eae45297-458d-4c70-886c-e6f8b565c900",
           "wizards:10918"
         ]
       }
@@ -699,7 +765,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:374"
+          "bandai:374",
+          "pokemon:72c68b30-f01c-44f9-ac9c-e4a824691dc5"
         ]
       }
     },
@@ -720,6 +787,7 @@
         ],
         "external": [
           "bandai:19720",
+          "pokemon:590001e3-cb86-4ed8-9a4c-e2808db2e9b1",
           "wizards:18916"
         ]
       }
@@ -736,9 +804,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA TIENDA SCUM"
+        ],
         "external": [
-          "bandai:1622"
+          "bandai:1622",
+          "pokemon:eb30e49c-1a03-4c2f-a1cd-53927906dd52"
         ]
       }
     },
@@ -758,6 +829,24 @@
         "external": [
           "bandai:16340",
           "wizards:17171"
+        ]
+      }
+    },
+    {
+      "id": "laluna-premia",
+      "name": "LALUNA PREMIA",
+      "city": "barcelona",
+      "address": "60 CARRER DE MOSSÈN JACINT VERDAGUER, PREMIÀ DE MAR, CT 08330, ES",
+      "lat": 41.492511,
+      "lng": 2.356551,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:f13ee527-bb62-4d65-a46f-f68181c2a7bd"
         ]
       }
     },
@@ -796,10 +885,13 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "LORCANOS",
           "LorcanosTCG"
         ],
         "external": [
           "bandai:13596",
+          "pokemon:01e8b886-6039-46bf-ae8a-649c5d3da6ad",
+          "pokemon:1c3ac88a-7f18-4cd2-b194-53c770e94c8c",
           "ravensburger:3141",
           "wizards:19307"
         ]
@@ -892,9 +984,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "MONSTER CARDS"
+        ],
         "external": [
-          "bandai:1599"
+          "bandai:1599",
+          "pokemon:6736c420-752c-4128-8e8f-641f1fd050c0"
         ]
       }
     },
@@ -928,9 +1023,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "NIKOCHAN ARENA"
+        ],
         "external": [
           "bandai:1299",
+          "pokemon:4781c3ff-1952-47cc-bc5c-516204f7ae72",
+          "pokemon:6d5fd44e-7cd9-4720-909c-edf46dccdd51",
           "wizards:15800"
         ]
       }
@@ -947,9 +1046,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "OCIO CENTRAL"
+        ],
         "external": [
-          "bandai:4557"
+          "bandai:4557",
+          "pokemon:28e9062b-2728-49f7-b5e3-8f3831242213"
         ]
       }
     },
@@ -965,9 +1067,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "ORIGEN JUEGOS"
+        ],
         "external": [
           "bandai:26673",
+          "pokemon:2de62e33-200b-4c8b-8709-8ab8143657c8",
           "ravensburger:64339"
         ]
       }
@@ -1159,9 +1264,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "TOREKA GAMES"
+        ],
         "external": [
           "bandai:18668",
+          "pokemon:fcf5c679-68cb-4306-ae2e-7089d0adaeda",
           "ravensburger:36380"
         ]
       }
@@ -1196,9 +1304,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "UNIVERSE TCG"
+        ],
         "external": [
           "bandai:14926",
+          "pokemon:61a1fbff-5860-420b-993b-b102868fe0a3",
+          "pokemon:8618f60f-10d7-4b80-8fc7-f992d18c4206",
           "ravensburger:18018"
         ]
       }
@@ -1236,8 +1348,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "VA DE JOCS"
+        ],
         "external": [
+          "pokemon:22dd1add-9846-47b9-ba2c-cd5bcc5ec1e0",
+          "pokemon:f7798cfa-d27b-4bdc-8da1-dd627b59a078",
           "ravensburger:18039"
         ]
       }
@@ -1359,6 +1475,24 @@
         "names": [],
         "external": [
           "melee:13542"
+        ]
+      }
+    },
+    {
+      "id": "bettoy-coleccionistas",
+      "name": "Bettoy Coleccionistas",
+      "city": "madrid",
+      "address": "Calle Estrella 14, 28004, Madrid",
+      "lat": 40.4223224,
+      "lng": -3.706604,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:30732"
         ]
       }
     },
@@ -1703,15 +1837,18 @@
       "name": "Goblintrader Madrid-Norte",
       "city": "madrid",
       "address": "C. del Marqués de Lema 7, local 3, 28003 Madrid",
-      "lat": null,
-      "lng": null,
+      "lat": 40.445613,
+      "lng": -3.7063724,
       "website": "https://www.goblintrader.es",
       "notes": null,
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "Goblintrader Madrid Norte"
+        ],
         "external": [
+          "bandai:17850",
           "melee:13383"
         ]
       }
@@ -1721,17 +1858,20 @@
       "name": "Goblintrader Madrid Sur",
       "city": "madrid",
       "address": "Ronda de Toledo, 28, 28005 Madrid",
-      "lat": null,
-      "lng": null,
+      "lat": 40.4053289,
+      "lng": -3.7055133,
       "website": "https://goblintrader.es/gb/content/12-madrid",
       "notes": null,
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "Goblin Trader Madrid Sur",
           "Goblintrader Central"
         ],
-        "external": []
+        "external": [
+          "bandai:23726"
+        ]
       }
     },
     {
@@ -2569,6 +2709,24 @@
       }
     },
     {
+      "id": "tcg-sports-cards",
+      "name": "TCG & SPORTS CARDS",
+      "city": "madrid",
+      "address": "Narvaez 4 portal 2 Local 5, 28342, Valdemoro",
+      "lat": 40.1975717,
+      "lng": -3.6944116,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:29535"
+        ]
+      }
+    },
+    {
       "id": "te-juego-mucho",
       "name": "Te Juego Mucho",
       "city": "madrid",
@@ -2650,6 +2808,24 @@
           "melee:16204",
           "ravensburger:24012",
           "wizards:22370"
+        ]
+      }
+    },
+    {
+      "id": "timedeck",
+      "name": "TimeDeck",
+      "city": "madrid",
+      "address": "Blas Cabrera 73, 28044, Madrid",
+      "lat": 40.3788349,
+      "lng": -3.7735977,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "bandai:26980"
         ]
       }
     },
