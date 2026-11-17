@@ -30,16 +30,29 @@ Quirks (checked 2026-11, against the page's own JS and store sites):
     2026-11-17 plain requests worked for ~8 calls, then the IP got the
     "Pardon Our Interruption" page for 15+ minutes; headless Chromium got
     an hCaptcha. We do not work around either.
+
+Request budget. CI probes on 2026-11-17 (fresh runner IPs) got 7 calls
+through and the 8th blocked, also after a 90 s pause: the limit counts
+calls, not rate. So a run spends at most CALL_BUDGET calls: 3 for discovery
+and one POST per search area. Cities far apart cannot each get a POST, so
+AREA_GROUPS searches some of them together: one POST over a circle that
+encloses every member city's circle, whose venues are then split between
+the cities by distance (radii never overlap, shared/cities.py). A city in
+no group is searched alone, with the exact request a one-city search
+always made. A plan over budget fails before the first call, and a call
+past the budget raises: never a partial or silently truncated result.
 """
 
 import logging
+import math
 import re
+from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import Optional
 
 import requests
 
-from shared.cities import City, default as default_city
+from shared.cities import CITIES, City, default as default_city, distance_km
 from shared.locator_common import (
     StoreResolver, for_each_city, make_event, session, store_hint, to_madrid_iso, window,
 )
@@ -57,8 +70,15 @@ RUNTIME_SCRIPT = APP + "scripts/OutSystems.js"
 HOME_SCRIPT = APP + "scripts/EventLocator.MainFlow.Home.mvc.js"
 ACTION_PATH = "screenservices/EventLocator/MainFlow/Home/DataActionGetEventList"
 ACTION_URL = HOST + APP + ACTION_PATH
-MAX_RECORDS = 500
-MAX_POSTS = 6  # window splits if a response is ever capped
+MAX_RECORDS = 500  # what the page asks for; a response this big may be capped
+CALL_BUDGET = 7  # Imperva blocked the 8th call from one IP (see module docstring)
+DISCOVERY_CALLS = 3
+# Cities searched together in one POST (ids from shared/cities.py). Each
+# group's circle must stay well under MAX_RECORDS. Probe 2026-11-17, 60 days:
+# barcelona+valencia 469 (Barcelona alone 249), sevilla+malaga 321,
+# bilbao+zaragoza 90; Madrid alone 300.
+AREA_GROUPS = (("barcelona", "valencia"), ("sevilla", "malaga"), ("bilbao", "zaragoza"))
+AREA_MARGIN_KM = 5  # slack between the server's distance and ours
 
 _CSRF_RE = re.compile(r'AnonymousCSRFToken\s*=\s*"([^"]+)"')
 _API_VERSION_RE = re.compile(re.escape(f'"{ACTION_PATH}"') + r'\s*,\s*"([^"]+)"')
@@ -84,6 +104,84 @@ _CANCELLED = {"cancelled", "canceled", "rejected", "deleted"}
 
 class BlockedError(RuntimeError):
     """events.pokemon.com answered with its bot-protection page."""
+
+
+class BudgetExceeded(RuntimeError):
+    """The run would spend more calls than Imperva tolerates."""
+
+
+class CallBudget:
+    """A session that refuses the call after `limit` calls instead of
+    letting Imperva block the IP mid-run."""
+
+    def __init__(self, sess, limit: int = CALL_BUDGET):
+        self.sess, self.limit, self.used = sess, limit, 0
+
+    def request(self, method: str, url: str, **kwargs):
+        if self.used >= self.limit:
+            raise BudgetExceeded(f"Pokémon locator: call {self.used + 1} would exceed the budget "
+                                 f"of {self.limit} ({method} {url})")
+        self.used += 1
+        return self.sess.request(method, url, **kwargs)
+
+
+# ---------------------------------------------------------------------------
+# Search areas
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class SearchArea:
+    """One POST: a circle enclosing the circles of `cities`."""
+    cities: tuple[City, ...]
+    lat: float
+    lng: float
+    radius_km: int
+    location_name: str
+
+    @property
+    def label(self) -> str:
+        return "+".join(c.id for c in self.cities)
+
+    @classmethod
+    def of(cls, members: tuple[City, ...]) -> "SearchArea":
+        if len(members) == 1:  # the request a one-city search always made
+            c = members[0]
+            return cls(members, c.lat, c.lng, c.radius_km, c.location_name)
+        lats, lngs = [c.lat for c in members], [c.lng for c in members]
+        lat = round((min(lats) + max(lats)) / 2, 4)
+        lng = round((min(lngs) + max(lngs)) / 2, 4)
+        reach = max(distance_km(lat, lng, c.lat, c.lng) + c.radius_km for c in members)
+        return cls(members, lat, lng, math.ceil(reach) + AREA_MARGIN_KM, members[0].location_name)
+
+    def split(self, items: list[dict]) -> dict[str, list[dict]]:
+        """Each member city's items: venues inside its radius. Items outside
+        every member's radius (or without a pin) are dropped."""
+        out: dict[str, list[dict]] = {c.id: [] for c in self.cities}
+        for item in items:
+            addr = (item.get("Events") or {}).get("Address") or {}
+            lat, lng = addr.get("Latitude"), addr.get("Longitude")
+            if lat in (None, "") or lng in (None, ""):
+                continue
+            city = next((c for c in self.cities if c.contains(lat, lng)), None)
+            if city:
+                out[city.id].append(item)
+        return out
+
+
+def search_areas(cities: tuple[City, ...] = CITIES,
+                 groups: tuple[tuple[str, ...], ...] = AREA_GROUPS) -> list[SearchArea]:
+    """One area per group, one per ungrouped city, in the order of `cities`
+    (an area sits where its first member city is)."""
+    group_of = {cid: g for g in groups for cid in g}
+    by_id = {c.id: c for c in cities}
+    areas, done = [], set()
+    for c in cities:
+        if c.id in done:
+            continue
+        members = tuple(by_id[cid] for cid in group_of.get(c.id, (c.id,)) if cid in by_id)
+        done.update(m.id for m in members)
+        areas.append(SearchArea.of(members))
+    return areas
 
 
 # ---------------------------------------------------------------------------
@@ -126,8 +224,8 @@ def discover(sess: requests.Session) -> dict:
             "csrf": csrf.group(1)}
 
 
-def _body(app: dict, start: date, end: date, city: City) -> dict:
-    lat, lng, km = str(city.lat), str(city.lng), city.radius_km
+def _body(app: dict, start: date, end: date, area: SearchArea) -> dict:
+    lat, lng, km = str(area.lat), str(area.lng), area.radius_km
     return {
         "versionInfo": {"moduleVersion": app["moduleVersion"], "apiVersion": app["apiVersion"]},
         "viewName": "MainFlow.Home",
@@ -137,7 +235,7 @@ def _body(app: dict, start: date, end: date, city: City) -> dict:
         }},
         "clientVariables": {
             "Latitude": lat, "Longitude": lng, "Range": km, "IsKm": True,
-            "LocationName": city.location_name,
+            "LocationName": area.location_name,
             "StartDate": start.isoformat(), "EndDate": end.isoformat(),  # both inclusive
             "UserLocale": "en-us", "FilterEventTypes": "", "IsSearch": True, "IsShowEvents": True,
             "MaxDateLimit": 180, "RemovedFilter": "", "PremierEventsIdList": "",
@@ -146,8 +244,8 @@ def _body(app: dict, start: date, end: date, city: City) -> dict:
     }
 
 
-def _post(sess, app: dict, start: date, end: date, city: City) -> list[dict]:
-    data = _json(_call(sess, "POST", ACTION_URL, json=_body(app, start, end, city), headers={
+def _post(sess, app: dict, start: date, end: date, area: SearchArea) -> list[dict]:
+    data = _json(_call(sess, "POST", ACTION_URL, json=_body(app, start, end, area), headers={
         "X-CSRFToken": app["csrf"], "Content-Type": "application/json; charset=UTF-8",
         "Origin": HOST, "Referer": LOCATOR_PAGE,
     }))
@@ -159,26 +257,31 @@ def _post(sess, app: dict, start: date, end: date, city: City) -> list[dict]:
     return data["data"]["EventList"]["List"]
 
 
-def _fetch_events(sess, city: Optional[City] = None, app: Optional[dict] = None) -> list[dict]:
-    """One city's events (default: the default city). `app` is discover()'s
-    result; pass it to reuse one discovery for every city."""
-    city = city or default_city()
-    app = app or discover(sess)
+def _fetch_area(sess, area: SearchArea, app: dict) -> list[dict]:
+    """Every event of one search area. A response of MAX_RECORDS may be
+    capped: the window is split and asked again (CallBudget bounds it)."""
     start, end = window()
-    pending, items, posts = [(start, end)], {}, 0
+    pending, items = [(start, end)], {}
     while pending:
         a, b = pending.pop()
-        if posts == MAX_POSTS:
-            raise RuntimeError("Pokémon locator: too many requests splitting a capped window")
-        posts += 1
-        batch = _post(sess, app, a, b, city)
-        if len(batch) >= MAX_RECORDS and b > a:  # capped: split and ask again
+        batch = _post(sess, app, a, b, area)
+        if len(batch) >= MAX_RECORDS:
+            if b <= a:
+                raise RuntimeError(f"Pokémon locator: {area.label} has {len(batch)} events "
+                                   f"on {a} alone; the response may be capped")
             mid = a + (b - a) // 2
             pending += [(a, mid), (mid + timedelta(days=1), b)]
             continue
         for item in batch:
             items[item["Events"]["Guid"]] = item
     return list(items.values())
+
+
+def _fetch_events(sess, city: Optional[City] = None, app: Optional[dict] = None) -> list[dict]:
+    """One city searched alone (default: the default city). `app` is
+    discover()'s result."""
+    city = city or default_city()
+    return _fetch_area(sess, SearchArea.of((city,)), app or discover(sess))
 
 
 # ---------------------------------------------------------------------------
@@ -250,19 +353,32 @@ def parse_events(items: list[dict], resolver: StoreResolver,
 
 
 def scrape() -> list[dict]:
-    """One discovery (3 GETs), then one POST per city: few calls, because
-    Imperva blocks the IP after about eight."""
-    sess = session()
+    """One discovery (3 GETs), then one POST per search area; each area's
+    venues are split between its cities. See "Request budget" above."""
+    areas = search_areas()
+    planned = DISCOVERY_CALLS + len(areas)
+    if planned > CALL_BUDGET:
+        raise BudgetExceeded(f"Pokémon locator: {planned} calls planned, budget {CALL_BUDGET}; "
+                             f"add the new city to an AREA_GROUPS group")
+    sess = CallBudget(session())
     app = discover(sess)
     resolver = StoreResolver()
+    raw_by_city: dict[str, list[dict]] = {}
+    for area in areas:
+        raw = _fetch_area(sess, area, app)
+        raw_by_city.update(area.split(raw))
+        logger.info("%s area %s (%d km): %d raw → %s", STORE, area.label, area.radius_km, len(raw),
+                    ", ".join(f"{c.id} {len(raw_by_city[c.id])}" for c in area.cities))
 
     def one_city(city: City) -> list[dict]:
-        raw = _fetch_events(sess, city, app)
+        raw = raw_by_city[city.id]
         events = parse_events(raw, resolver, city)
         logger.info("%s %s: %d raw → %d events", STORE, city.id, len(raw), len(events))
         return events
 
-    return for_each_city(STORE, one_city)
+    events = for_each_city(STORE, one_city)
+    logger.info("%s: %d calls of %d", STORE, sess.used, CALL_BUDGET)
+    return events
 
 
 if __name__ == "__main__":
