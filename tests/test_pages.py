@@ -85,6 +85,28 @@ class PagesTests(unittest.TestCase):
         pages = build_pages([_e("2026-11-18T19:00:00+01:00", source_url="javascript:alert(1)")], REG, NOW)
         self.assertNotIn("javascript:", pages["madrid/hoy/index.html"])
 
+    def test_english_pages_mirror_spanish_with_hreflang(self):
+        for path in ("en/madrid/index.html", "en/madrid/today/index.html", "en/madrid/weekend/index.html",
+                     "en/madrid/lorcana/index.html", "en/madrid/stores/arte-9/index.html"):
+            self.assertIn(path, self.pages)
+        en = BeautifulSoup(self.pages["en/madrid/stores/arte-9/index.html"], "html.parser")
+        es = BeautifulSoup(self.pages["madrid/tiendas/arte-9/index.html"], "html.parser")
+        self.assertEqual(en.html["lang"], "en")
+        self.assertEqual(es.html["lang"], "es")
+        alt = lambda soup: {l["hreflang"]: l["href"] for l in soup.select("link[rel=alternate]")}
+        expected = {"es": "https://madrid-tcg.pages.dev/madrid/tiendas/arte-9/",
+                    "en": "https://madrid-tcg.pages.dev/en/madrid/stores/arte-9/",
+                    "x-default": "https://madrid-tcg.pages.dev/madrid/tiendas/arte-9/"}
+        self.assertEqual(alt(en), expected)
+        self.assertEqual(alt(es), expected)
+        self.assertIn("Upcoming card game tournaments at Arte 9", en.get_text())
+        self.assertEqual(en.select_one("a.lang")["href"], "/madrid/tiendas/arte-9/")
+        self.assertEqual(es.select_one("a.lang")["href"], "/en/madrid/stores/arte-9/")
+        # internal links stay in the page's language
+        self.assertTrue(all(a["href"].startswith("/en/madrid/") for a in en.select("li.ev span.store a, .tags a.tag")))
+        self.assertIn("Wednesday 18 November", en.get_text())
+        self.assertIn("<loc>https://madrid-tcg.pages.dev/en/madrid/weekend/</loc>", self.pages["sitemap.xml"])
+
     def test_game_slugs(self):
         self.assertEqual(game_slug("Magic: The Gathering"), "magic")
         self.assertEqual(game_slug("Some New Game!"), "some-new-game")
