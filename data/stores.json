@@ -23,6 +23,7 @@
         ],
         "external": [
           "bandai:2011",
+          "melee:10594",
           "pokemon:238f382f-8c65-4ab1-8b9d-ca96de9d0aa2",
           "pokemon:ae0dc0e2-2db1-487b-a6ae-3de6ab2595f4",
           "ravensburger:114"
@@ -64,6 +65,7 @@
         "external": [
           "bandai:12109",
           "gem:arte-9",
+          "melee:9634",
           "ravensburger:243"
         ]
       }
@@ -81,7 +83,9 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [],
-        "external": []
+        "external": [
+          "melee:13542"
+        ]
       }
     },
     {
@@ -163,7 +167,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:25160"
+          "bandai:25160",
+          "melee:19841"
         ]
       }
     },
@@ -202,6 +207,7 @@
         ],
         "external": [
           "bandai:2015",
+          "melee:4488",
           "pokemon:9dd4baaa-aa6b-44a7-91d7-5bbf85cf18bd",
           "ravensburger:2144"
         ]
@@ -224,6 +230,7 @@
         ],
         "external": [
           "bandai:17657",
+          "melee:17753",
           "pokemon:70f6c81d-0a1c-430e-bb2d-4fefe9473ecd",
           "pokemon:dfeffeea-d75e-4cd6-91e9-837ab201afed",
           "wizards:20135"
@@ -249,6 +256,7 @@
         "external": [
           "bandai:18341",
           "bandai:3451",
+          "melee:20680",
           "pokemon:cf5114d3-02cc-480b-9dec-c3f93b8118e0",
           "ravensburger:17290"
         ]
@@ -289,6 +297,7 @@
       "aliases": {
         "names": [],
         "external": [
+          "melee:9279",
           "ravensburger:2136"
         ]
       }
@@ -309,7 +318,8 @@
           "GenexComics"
         ],
         "external": [
-          "bandai:19123"
+          "bandai:19123",
+          "melee:19823"
         ]
       }
     },
@@ -330,6 +340,7 @@
         ],
         "external": [
           "bandai:5877",
+          "melee:9413",
           "pokemon:b9c2651e-6f73-4c2b-8c3e-633a4a836326"
         ]
       }
@@ -348,6 +359,7 @@
       "aliases": {
         "names": [],
         "external": [
+          "melee:9379",
           "ravensburger:2138"
         ]
       }
@@ -367,6 +379,7 @@
         "names": [],
         "external": [
           "bandai:2354",
+          "melee:9984",
           "wizards:11268"
         ]
       }
@@ -388,6 +401,7 @@
         ],
         "external": [
           "bandai:17396",
+          "melee:18191",
           "pokemon:04a61988-c53d-4909-ba59-3b56a459f9a9",
           "ravensburger:16759",
           "wizards:18454"
@@ -423,7 +437,9 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [],
-        "external": []
+        "external": [
+          "melee:13383"
+        ]
       }
     },
     {
@@ -506,6 +522,7 @@
         ],
         "external": [
           "bandai:20191",
+          "melee:1252",
           "ravensburger:2628",
           "wizards:8422"
         ]
@@ -529,6 +546,7 @@
         ],
         "external": [
           "bandai:264",
+          "melee:9488",
           "ravensburger:2711",
           "wizards:8420"
         ]
@@ -550,6 +568,7 @@
           "JÚPITER JUEGOS ALCORCÓN"
         ],
         "external": [
+          "melee:9748",
           "pokemon:34a99213-a075-42ab-bdf8-d6e35d4a4495",
           "ravensburger:2708"
         ]
@@ -573,6 +592,7 @@
         ],
         "external": [
           "bandai:354",
+          "melee:9695",
           "pokemon:84e20a2c-de41-4729-af7f-8cfa95786591",
           "wizards:6154"
         ]
@@ -631,6 +651,7 @@
         ],
         "external": [
           "bandai:15154",
+          "melee:10198",
           "pokemon:fcffdd28-3a8d-469b-89e9-2f9857635286",
           "ravensburger:2782",
           "wizards:14264"
@@ -711,6 +732,7 @@
         "names": [],
         "external": [
           "gem:la-guarida-juegos",
+          "melee:10211",
           "wizards:11228"
         ]
       }
@@ -768,6 +790,7 @@
         ],
         "external": [
           "bandai:1918",
+          "melee:9479",
           "ravensburger:3102",
           "wizards:14361"
         ]
@@ -790,6 +813,7 @@
         ],
         "external": [
           "bandai:13689",
+          "melee:12796",
           "pokemon:e8d34923-ddc3-499e-80c4-9943be87027d",
           "ravensburger:17400",
           "wizards:21613"
@@ -811,6 +835,7 @@
         "names": [],
         "external": [
           "bandai:1302",
+          "melee:12984",
           "wizards:15952"
         ]
       }
@@ -852,6 +877,7 @@
         ],
         "external": [
           "bandai:2042",
+          "melee:9530",
           "ravensburger:10644",
           "wizards:18456"
         ]
@@ -874,6 +900,7 @@
         ],
         "external": [
           "bandai:3983",
+          "melee:10464",
           "ravensburger:3365",
           "wizards:13409"
         ]
@@ -897,6 +924,7 @@
         ],
         "external": [
           "bandai:1014",
+          "melee:9217",
           "pokemon:531ffd06-09ee-409c-99ec-370fa5206de9",
           "pokemon:bddc338b-3d53-4425-97d7-dc219c6c8f8a",
           "ravensburger:3368",
@@ -921,6 +949,7 @@
         ],
         "external": [
           "bandai:10622",
+          "melee:13277",
           "ravensburger:3371",
           "wizards:17437"
         ]
@@ -943,6 +972,7 @@
         ],
         "external": [
           "bandai:1795",
+          "melee:10203",
           "ravensburger:3499",
           "wizards:14068"
         ]
@@ -963,6 +993,7 @@
         "names": [],
         "external": [
           "bandai:22158",
+          "melee:19601",
           "ravensburger:59506",
           "wizards:21913"
         ]
@@ -983,6 +1014,7 @@
         "names": [],
         "external": [
           "bandai:30730",
+          "melee:19937",
           "ravensburger:66337",
           "wizards:24208"
         ]
@@ -1007,6 +1039,7 @@
         "external": [
           "bandai:2754",
           "gem:oz-juegos",
+          "melee:8558",
           "pokemon:c427beca-6492-4d13-a057-f1977277b46b",
           "ravensburger:3750"
         ]
@@ -1029,6 +1062,7 @@
         ],
         "external": [
           "bandai:265",
+          "melee:9450",
           "pokemon:bb755eaa-a9be-42bb-b318-996f4e88bc78",
           "ravensburger:3759"
         ]
@@ -1051,6 +1085,7 @@
         ],
         "external": [
           "bandai:19083",
+          "melee:17986",
           "pokemon:70e7e289-3ff6-4f97-93da-ea23fa02cd4f",
           "ravensburger:25906",
           "wizards:20210"
@@ -1090,6 +1125,7 @@
         "names": [],
         "external": [
           "bandai:20564",
+          "melee:10222",
           "wizards:15914"
         ]
       }
@@ -1111,6 +1147,7 @@
         ],
         "external": [
           "bandai:21569",
+          "melee:9946",
           "ravensburger:4065",
           "wizards:9812"
         ]
@@ -1151,6 +1188,7 @@
         ],
         "external": [
           "bandai:23060",
+          "melee:18893",
           "ravensburger:54031",
           "wizards:22007"
         ]
@@ -1170,6 +1208,7 @@
       "aliases": {
         "names": [],
         "external": [
+          "melee:12512",
           "pokemon:c58ee8b9-6ca4-468b-a1b0-10df422e99b3"
         ]
       }
@@ -1190,7 +1229,8 @@
           "TABLERUM"
         ],
         "external": [
-          "bandai:6628"
+          "bandai:6628",
+          "melee:11758"
         ]
       }
     },
@@ -1209,6 +1249,7 @@
         "names": [],
         "external": [
           "bandai:23569",
+          "melee:19857",
           "ravensburger:52274"
         ]
       }
@@ -1270,6 +1311,7 @@
         ],
         "external": [
           "bandai:22673",
+          "melee:9774",
           "ravensburger:16918",
           "wizards:17599"
         ]
@@ -1292,6 +1334,7 @@
         ],
         "external": [
           "bandai:19692",
+          "melee:9824",
           "pokemon:caacb39d-d268-4028-86ad-c7a3183d9ef1"
         ]
       }
@@ -1310,6 +1353,7 @@
       "aliases": {
         "names": [],
         "external": [
+          "melee:9983",
           "wizards:17728"
         ]
       }
@@ -1329,6 +1373,7 @@
         "names": [],
         "external": [
           "bandai:23573",
+          "melee:16204",
           "ravensburger:24012",
           "wizards:22370"
         ]
@@ -1350,7 +1395,8 @@
           "Titan games"
         ],
         "external": [
-          "bandai:5088"
+          "bandai:5088",
+          "melee:12590"
         ]
       }
     },
@@ -1371,6 +1417,7 @@
         ],
         "external": [
           "bandai:11041",
+          "melee:13797",
           "pokemon:8452739a-90fe-4527-a99f-8019e2f95775",
           "wizards:17593"
         ]
@@ -1390,7 +1437,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:24867"
+          "bandai:24867",
+          "melee:18653"
         ]
       }
     },
@@ -1447,6 +1495,7 @@
         "names": [],
         "external": [
           "bandai:15475",
+          "melee:17235",
           "wizards:18616"
         ]
       }
@@ -1502,6 +1551,7 @@
         "names": [],
         "external": [
           "bandai:21396",
+          "melee:10783",
           "ravensburger:5310",
           "wizards:15373"
         ]
@@ -1525,6 +1575,7 @@
         ],
         "external": [
           "bandai:19154",
+          "melee:10552",
           "ravensburger:5443"
         ]
       }
@@ -1547,6 +1598,7 @@
         ],
         "external": [
           "bandai:19228",
+          "melee:10320",
           "ravensburger:5444"
         ]
       }
