@@ -75,6 +75,15 @@ Current per-store scrapers (22): `arte9`, `generacion_x_elfo`,
 `replay_boardgame_cafe`, `the_big_bang_games`, `three_stones_games`, `topdeck`,
 `wargen_wargames` (public Google Calendar via `shared/ics.py`).
 
+Barcelona-area per-store scrapers (3), for stores whose own calendars list
+games no locator carries (Riftbound, Yu-Gi-Oh!, Star Wars: Unlimited,
+Gundam): `el_encuentro` (EventON via `shared/eventon.py`), `origen_juegos`
+(the Astro calendar island on its home page) and `nikochan_arena` (its
+`/calendario` HTML). Their stores are Barcelona registry records, so their
+events get `city: "barcelona"` like any event (`attach_store_ids`). Events
+in games we don't track (Dragon Ball, board games) are skipped, because an
+unknown-game event would swallow a locator event in the dedup.
+
 Removed in 2026-11 because the official locators fully cover them, and their
 own sites had changed or blocked scraping: `collectorage`, `kamikaze_freak_shop`,
 `metamorfo`, `next_dice`. Their registry records stay for the locator
@@ -282,6 +291,14 @@ is missing.
 `shared/ics.py` reads public iCalendar feeds. It handles RRULE expansion,
 EXDATE, RECURRENCE-ID overrides and cancelled occurrences, and skips all-day
 events.
+
+`shared/eventon.py` reads a WordPress EventON calendar (used by
+`el_encuentro`). It loads the calendar page for its shortcode and nonces,
+then posts them to `/?evo-ajax=eventon_get_events`, once per month (current,
+then "next"). Times come from `unix_start`, a real UTC epoch;
+`event_start_unix` is wall-clock time written as UTC and is not used. The
+WordPress REST route `wp/v2/ajde_events` has no dates. Any unexpected page or
+answer raises.
 
 ### 1c. Scraper stats and anomaly detection
 

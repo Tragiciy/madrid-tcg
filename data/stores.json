@@ -176,9 +176,9 @@
       "address": "Carrer Les Torres 44, Sant Joan Despí, Barcelona,  08970, Spain",
       "lat": 41.369076697776784,
       "lng": 2.0577640045799983,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
+      "website": "https://elencuentro.infrecuentes.es/",
+      "notes": "Own events: EventON calendar at /eventos/ (scrapers/el_encuentro.py).",
+      "origin": "curated",
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
@@ -1018,9 +1018,9 @@
       "address": "32 Plaça del Triomf, Terrassa, CT, 08225, Spain",
       "lat": 41.5722133,
       "lng": 2.0132205,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
+      "website": "https://nikochancomics.net/",
+      "notes": "Own events: /calendario (scrapers/nikochan_arena.py).",
+      "origin": "curated",
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
@@ -1062,9 +1062,9 @@
       "address": "Carrer Ample 65, 08225, Terrassa",
       "lat": 41.572941,
       "lng": 2.0165264,
-      "website": null,
-      "notes": null,
-      "origin": "auto",
+      "website": "https://www.origenjuegos.com/",
+      "notes": "Own events: calendar on the home page (scrapers/origen_juegos.py).",
+      "origin": "curated",
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
