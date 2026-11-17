@@ -69,6 +69,16 @@ for the next `WINDOW_DAYS` (60) days:
 | `locator_ravensburger` | Ravensburger Play Hub (hydraproxy `/v2/events/`) | Lorcana |
 | `locator_gem` | GEM (`gem.fabtcg.com/api/v1/locator/events/`) | Flesh and Blood |
 | `locator_pokemon` | Play! Pokémon Event Locator (OutSystems screen action `DataActionGetEventList` on `events.pokemon.com/EventLocator`) | Pokémon (TCG products only) |
+| `locator_melee` | Melee.gg organizer pages (`/Organization/GetScheduledTournaments/{id}`) for every `melee:<id>` alias in the store registry | Cyberpunk TCG, Star Wars: Unlimited (and any listed game a store runs there) |
+
+Melee is the official platform for Cyberpunk TCG events. Its global search
+has no location filter and stops at 250 results (a few hours worldwide), so
+`locator_melee` reads the organizers we mapped to Madrid stores instead.
+`python -m tools.find_melee_organizers` proposes organizers for stores without
+a `melee:` alias (strong match: contact email on the store's website domain);
+add the confirmed ids to the store's `aliases.external`. Times are UTC.
+The official store list at cyberpunktcg.com/stores feeds store discovery
+(`discoverers/cyberpunk_locator.py`); it has no events.
 
 GEM ignores its lat/lon parameters, so the adapter searches by city name and
 filters by distance itself. GEM also stamps local wall-clock times with a
