@@ -623,6 +623,38 @@ haversine distance to `STORE_META[store].lat/lng`. Stores without
 coordinates are excluded while the filter is on. The cards and the vertical
 view show `storeDistanceLabel`. `resetFilters()` clears the filter.
 
+### Cities
+
+The app at the site root serves every city in `/api/v1/cities.json`.
+- **City choice:** `?city=<id>` comes first. A link with `?event`, `?w`,
+  `?game`, `?store` or `?format` but no `?city` means Madrid. Otherwise
+  `tcg-city-v1`, then `madrid`. An inline script in `index.html` applies the same rule to
+  preload that city's `upcoming.json` and `stores.json`, and passes the
+  result to `startCity()` in `app.js`.
+- **Unknown cities:** a city whose `upcoming.json` returns 404 falls back to
+  Madrid.
+- **URLs:** the default city has no `?city=`, so Madrid links are unchanged.
+  Every other city always keeps `?city=` in the URL, so filter and event
+  links copied from the address bar keep their city.
+- **Switcher:** it appears in the header only when `cities.json` lists more
+  than one city.
+- **Loading:** `setCity()` fetches the new city completely before changing
+  anything (`fetchCityData`, then `applyCityData`). If the fetch fails, the
+  previous city stays as it was and an error is shown. The switcher is
+  disabled while loading. A request counter drops late answers, and
+  `_dataGen` makes `loadWeek` discard a week fetched for the previous city.
+- **What switching does:** `setCity()`
+  - clears the store filter, Near me and the map selection, keeping game and
+    format;
+  - swaps the favorites key;
+  - recentres the map;
+  - reloads `STORE_META`, the week index and upcoming events through
+    `loadCityData()`.
+- **Per-city favorites:** `cleanupFavorites()` drops keys missing from the
+  loaded weeks, so one shared list would wipe the other city's stars.
+- **Timezone:** every city is assumed to be in Europe/Madrid. The pipeline
+  refuses other timezones (`shared/cities.py`).
+
 ### Map view
 
 The third view (`viewMode === 'map'`) answers "where can I go". It shows this
@@ -669,7 +701,8 @@ cluster shows the total of its events.
 | `tcg-presets-v1` | JSON array | Saved filter presets |
 | `tcg-default-preset-v1` | JSON `{id}` | ID of the preset auto-applied on fresh visits |
 | `tcg-onboarding-v1` | JSON `{completed}` | Whether first-run onboarding has been completed |
-| `tcg-favorites-v1` | JSON array of strings | Starred event keys |
+| `tcg-favorites-v1` | JSON array of strings | Starred event keys (Madrid; other cities use `tcg-favorites-v1:<city>`, and the same suffix applies to `tcg-favorite-weeks-v1`) |
+| `tcg-city-v1` | city id | Last city chosen; `?city=` overrides it and is then remembered |
 
 localStorage is for user personalization only. Filter state (game/store/format
 selections) is never written to localStorage. URL params are the mechanism for
