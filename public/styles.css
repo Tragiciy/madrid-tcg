@@ -640,7 +640,7 @@ input:focus, select:focus { border-color: var(--accent); }
 
 /* Cards inside horizontal cells stay compact (replaces old
    .cal-wrap.view-horizontal .ev-card rules) */
-.cal-grid-h .ev-card  { padding: .3rem .4rem 1.85rem .4rem; border-radius: 5px; }
+.cal-grid-h .ev-card  { padding: .3rem .4rem; border-radius: 5px; }
 .cal-grid-h .ev-time  { font-size: .7rem; margin-bottom: .1rem; }
 .cal-grid-h .ev-title {
   font-size: .74rem;
@@ -744,10 +744,7 @@ input:focus, select:focus { border-color: var(--accent); }
   border: 1px solid var(--border);
   border-left: 3px solid var(--card-accent, var(--border-strong));
   border-radius: 6px;
-  /* Extra bottom padding reserves the floating .calendar-btn slot
-     (positioned absolutely in the bottom-right corner), so the
-     tag row never sits underneath it. */
-  padding: .45rem .55rem 2rem .55rem;
+  padding: .45rem .55rem;
   position: relative;
   cursor: pointer;
   transition: border-color .12s, transform .12s, box-shadow .12s;
@@ -769,13 +766,17 @@ input:focus, select:focus { border-color: var(--accent); }
 }
 .ev-card-top .ev-time { margin-bottom: 0; }
 
-/* Right-aligned, secondary store name */
+/* Secondary store name: follows the time, takes the free width and
+   truncates, so distance / attendance stay pinned to the right edge. */
 .ev-store-top {
-  margin-left: auto;
-  text-align: right;
+  flex: 1 1 auto;
+  margin-left: .3rem;
   font-size: .7rem;
   color: var(--text-muted);
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   cursor: pointer;
   transition: color .12s;
 }
@@ -784,28 +785,29 @@ input:focus, select:focus { border-color: var(--accent); }
 
 /* Horizontal density: prevent long store names from consuming too much width */
 .cal-grid-h .ev-card-top { margin-bottom: .1rem; }
-.cal-grid-h .ev-store-top {
-  font-size: .6rem;
-  max-width: 60%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+.cal-grid-h .ev-store-top { font-size: .6rem; }
 
 .ev-time  { font-size: .75rem; color: var(--text-muted); margin-bottom: .05rem; }
 .ev-title { font-size: .82rem; font-weight: 700; line-height: 1.2; margin-bottom: .2rem; color: var(--text); }
 
 .ev-tags  { display: flex; flex-wrap: wrap; gap: .2rem; }
-/* Footer used to flex-justify the calendar button to the right.
-   The button is now absolute-positioned (see .calendar-btn), so
-   the footer just hosts the tag row left-aligned. */
+/* Footer: tags on the left, actions (★ + GCal) pushed right. Everything
+   is in normal flow and wraps, so a long tag row moves the actions onto
+   their own line instead of sliding underneath them. */
 .ev-footer {
   align-items: center;
   display: flex;
-  gap: .25rem;
-  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: .25rem .35rem;
 }
 .ev-footer .ev-tags { min-width: 0; }
+.ev-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: .2rem;
+  margin-left: auto;
+}
 
 .tag {
   font-size: .62rem;
@@ -842,12 +844,6 @@ input:focus, select:focus { border-color: var(--accent); }
 .tag.fmt.active   { background: #a5f3fc; border-color: #0891b2; color: #0e7490; }
 
 .calendar-btn {
-  /* Pinned to the card's bottom-right corner so it never overlaps
-     the title or the tag row, regardless of how chips wrap. The
-     containing block is .ev-card via position: relative above. */
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
   align-items: center;
   background: rgba(255, 255, 255, .35);
   border: 1px solid var(--border);
@@ -865,9 +861,6 @@ input:focus, select:focus { border-color: var(--accent); }
   padding: .1rem .3rem;
   transition: background .12s, border-color .12s, color .12s;
   white-space: nowrap;
-  /* Lift above the card content so it can't be visually clipped
-     by tag chips that happen to extend full width on the last row. */
-  z-index: 1;
 }
 .calendar-btn:hover {
   background: #fff;
@@ -1054,10 +1047,6 @@ input:focus, select:focus { border-color: var(--accent); }
   .cal-wrap.view-vertical .tag {
     font-size: .6rem;
     padding: .05rem .28rem;
-  }
-  .calendar-btn {
-    min-height: 44px;
-    min-width: 44px;
   }
 }
 
@@ -1275,13 +1264,7 @@ input:focus, select:focus { border-color: var(--accent); }
 .fav-btn.is-fav { color: #f4b942; }
 .fav-btn:active { transform: scale(1.3); }
 
-/* Horizontal grid: bottom-left to mirror calendar-btn (bottom-right) */
-.cal-grid-h .fav-btn {
-  position: absolute;
-  left: 6px;
-  bottom: 6px;
-  font-size: .75rem;
-}
+.cal-grid-h .fav-btn { font-size: .75rem; }
 
 /* Panel save button */
 .fav-btn-panel { min-width: 80px; }
@@ -1310,14 +1293,140 @@ input:focus, select:focus { border-color: var(--accent); }
 .near-me .btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .near-me .radius { font: inherit; font-size: .8rem; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--border, #d8dbe3); background: #fff; }
 .geo-error { font-size: .75rem; color: #b42318; }
-.ev-distance { font-size: .7rem; color: var(--text-muted); white-space: nowrap; margin-left: auto; }
+.ev-distance { font-size: .7rem; color: var(--text-muted); white-space: nowrap; flex: 0 0 auto; }
 .offline-msg { padding: 6px 12px; background: #fff7e6; color: #8a5a00; font-size: .8rem; }
 
 /* ── Attendance ───────────────────────────────────────────────── */
-.ev-attendance { font-size: .7rem; color: var(--text-muted); white-space: nowrap; }
+.ev-attendance { font-size: .7rem; color: var(--text-muted); white-space: nowrap; flex: 0 0 auto; }
 .ev-attendance.is-full { color: #b42318; font-weight: 600; }
 /* Horizontal grid: the top row is too narrow (it would squeeze the store
-   name), so the badge follows the tags in the footer and wraps onto its
-   own line when the column is tight. */
-.cal-grid-h .ev-footer { flex-wrap: wrap; row-gap: .2rem; }
+   name), so the badge follows the tags in the footer. */
 .cal-grid-h .ev-attendance { font-size: .62rem; }
+
+/* ── Phone jump bar ───────────────────────────────────────────── */
+.jump-bar { display: none; }
+
+@media (max-width: 900px) {
+  .jump-bar {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    margin: 0 -1rem .6rem;
+    padding: .4rem 1rem;
+    background: rgba(246, 247, 251, .94);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .jump-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .25rem;
+  }
+  .jump-day {
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font: inherit;
+    line-height: 1.1;
+    min-height: 46px;
+    justify-content: center;
+    padding: .2rem 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .jump-day .jd-dow {
+    color: var(--text-muted);
+    font-size: .6rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .jump-day .jd-num   { font-size: .95rem; font-weight: 700; }
+  .jump-day .jd-count { color: var(--text-muted); font-size: .58rem; }
+  .jump-day.is-empty  { opacity: .45; }
+  .jump-day.is-today  { border-color: var(--accent-dim); }
+  .jump-day.is-today .jd-dow,
+  .jump-day.is-today .jd-num { color: var(--accent); }
+  .jump-day.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    opacity: 1;
+  }
+  .jump-day.is-active .jd-dow,
+  .jump-day.is-active .jd-num,
+  .jump-day.is-active .jd-count { color: #fff; }
+
+  .jump-segs { display: flex; gap: .25rem; }
+  .jump-seg {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    flex: 1 1 0;
+    font: inherit;
+    font-size: .74rem;
+    font-weight: 500;
+    min-height: 32px;
+    padding: 0 .3rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .jump-seg.is-active {
+    background: var(--accent-soft);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Horizontal grid on phones: column-by-column swiping. */
+  .cal-wrap.view-horizontal { scroll-snap-type: x proximity; }
+  .cal-grid-h .day-header-cell { scroll-snap-align: start; }
+}
+
+/* ── Phones ───────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Exactly two full day columns per screen instead of 2.5 cramped ones. */
+  .cal-grid-h {
+    grid-template-columns: repeat(7, calc((100vw - 2rem - .4rem) / 2));
+    min-width: 0;
+  }
+
+  /* Vertical list: day label as a row on top, cards get the full width
+     (the 54px side column wasted space and was only visible mid-day). */
+  .cal-wrap.view-vertical .day-col { flex-direction: column; align-items: stretch; }
+  .cal-wrap.view-vertical .day-header {
+    width: auto;
+    min-width: 0;
+    flex-direction: row;
+    align-items: baseline;
+    gap: .4rem;
+    padding: .45rem .6rem;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .cal-wrap.view-vertical .day-header .dom { font-size: 1rem; }
+
+  /* Bigger, but in-flow, tap targets for card actions. */
+  .ev-actions { gap: .3rem; }
+  .calendar-btn {
+    min-height: 32px;
+    padding: 0 .55rem;
+    font-size: .68rem;
+    background: rgba(255, 255, 255, .6);
+  }
+  .calendar-btn svg { height: 14px; width: 14px; }
+  .fav-btn,
+  .cal-grid-h .fav-btn {
+    font-size: 1.05rem;
+    min-height: 32px;
+    min-width: 32px;
+  }
+}

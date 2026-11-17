@@ -369,6 +369,10 @@ function app() {
     collapsedSegments: { morning: false, afternoon: false, evening: false, late: false },
     SEGMENTS,
     showBackToTop: false,
+    // Phone jump bar: the day / segment currently at the top of the
+    // viewport (scroll-spy), highlighted in the sticky bar.
+    jumpDay: null,
+    jumpSeg: null,
     filterHistory: [],       // stack of { filters, segmentFilter } snapshots; max 5
     selectedEvent: null,
     panelOpen: false,
@@ -409,6 +413,7 @@ function app() {
       // Show Back to top after 400px scroll
       window.addEventListener('scroll', () => {
         this.showBackToTop = window.scrollY > 400;
+        this.onScrollSpy();
       }, { passive: true });
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -492,7 +497,13 @@ function app() {
         this.$nextTick(() => {
           requestAnimationFrame(() => this.scrollToCurrentSegment());
         });
+      } else {
+        // Phones see ~2 day columns: start on today's, not on Monday's.
+        this.$nextTick(() => requestAnimationFrame(() => {
+          this.scrollColumnIntoView(this.nowMadrid.iso, 'auto');
+        }));
       }
+      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
 
       this.$watch('filters.search', () => this.cleanupFilters());
     },
@@ -504,7 +515,12 @@ function app() {
         this.$nextTick(() => {
           requestAnimationFrame(() => this.scrollToCurrentSegment());
         });
+      } else {
+        this.$nextTick(() => requestAnimationFrame(() => {
+          this.scrollColumnIntoView(this.jumpDay || this.nowMadrid.iso, 'auto');
+        }));
       }
+      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
     },
 
     scrollToCurrentSegment() {
@@ -530,6 +546,126 @@ function app() {
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
+    /* ── Phone jump bar ─────────────────────────────────────────────
+         Day buttons scroll to that day (horizontally in the grid,
+         vertically in the list); segment buttons scroll to that time of
+         day (the grid row, or the segment inside the current day). */
+
+    // Height of the sticky jump bar (0 when it is hidden on wide screens),
+    // plus a little breathing room, so jump targets land below it.
+    jumpOffset() {
+      const bar = this.$refs.jumpBar;
+      if (!bar || getComputedStyle(bar).position !== 'sticky') return 8;
+      return bar.getBoundingClientRect().height + 8;
+    },
+
+    scrollWindowTo(el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - this.jumpOffset();
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    },
+
+    // Horizontal grid: bring a day's column to the left edge.
+    scrollColumnIntoView(iso, behavior = 'smooth') {
+      const wrap = this.$refs.calWrap;
+      const el = document.getElementById('day-' + iso);
+      if (!wrap || !el || this.viewMode !== 'horizontal') return;
+      const left = wrap.scrollLeft + el.getBoundingClientRect().left - wrap.getBoundingClientRect().left;
+      wrap.scrollTo({ left: Math.max(0, left), behavior });
+    },
+
+    // While a jump animates, the scroll-spy would flick through every day
+    // it passes; pin the highlight to the target until scrolling has been
+    // idle for a moment (each scroll event re-arms the timer), so a second
+    // tap mid-animation still sees the day the user picked.
+    lockScrollSpy(idleMs = 400) {
+      clearTimeout(this._spyUnlock);
+      this._spyLocked = true;
+      this._spyUnlock = setTimeout(() => {
+        this._spyLocked = false;
+        this.updateScrollSpy();
+      }, idleMs);
+    },
+
+    jumpToDay(iso) {
+      this.jumpDay = iso;
+      this.lockScrollSpy();
+      if (this.viewMode === 'horizontal') {
+        this.scrollColumnIntoView(iso);
+        // From the filters above the grid, also bring the grid into view;
+        // inside the grid keep the current row (same time, other day).
+        const wrap = this.$refs.calWrap;
+        if (wrap && wrap.getBoundingClientRect().top > window.innerHeight / 2) {
+          this.scrollWindowTo(wrap);
+        }
+        return;
+      }
+      const el = document.getElementById('day-' + iso);
+      if (el) this.scrollWindowTo(el);
+    },
+
+    jumpToSegment(key) {
+      this.jumpSeg = key;
+      this.lockScrollSpy();
+      if (this.viewMode === 'horizontal') {
+        const cell = this.$refs.calWrap && this.$refs.calWrap.querySelector(`.seg-cell[data-seg="${key}"]`);
+        if (cell) this.scrollWindowTo(cell);
+        return;
+      }
+      // Vertical: that segment in the current day, else the next day with it.
+      const days = this.weekDays;
+      const start = Math.max(0, days.findIndex(d => d.iso === (this.jumpDay || this.nowMadrid.iso)));
+      for (let i = start; i < days.length; i++) {
+        const dayEl = document.getElementById('day-' + days[i].iso);
+        const el = dayEl && dayEl.querySelector(`[data-seg-key="${key}"]`);
+        if (el) {
+          this.jumpDay = days[i].iso;
+          this.scrollWindowTo(el);
+          return;
+        }
+      }
+    },
+
+    onScrollSpy() {
+      if (this._spyLocked) { this.lockScrollSpy(150); return; }
+      if (this._spyQueued) return;
+      this._spyQueued = true;
+      requestAnimationFrame(() => {
+        this._spyQueued = false;
+        this.updateScrollSpy();
+      });
+    },
+
+    updateScrollSpy() {
+      if (this._spyLocked) return;
+      const bar = this.$refs.jumpBar;
+      const wrap = this.$refs.calWrap;
+      if (!bar || !wrap || getComputedStyle(bar).position !== 'sticky') return;
+      const line = this.jumpOffset() + 12;
+      // Last element whose top edge has scrolled past the line under the bar.
+      const lastAbove = (els) => {
+        let hit = els[0] || null;
+        for (const el of els) if (el.getBoundingClientRect().top <= line) hit = el;
+        return hit;
+      };
+      if (this.viewMode === 'horizontal') {
+        const wl = wrap.getBoundingClientRect().left;
+        const day = [...wrap.querySelectorAll('.day-header-cell')]
+          .find(h => h.getBoundingClientRect().right - wl > 40);
+        if (day) this.jumpDay = day.id.slice(4);
+        const rows = this.activeSegments
+          .map(s => wrap.querySelector(`.seg-cell[data-seg="${s.key}"]`))
+          .filter(Boolean);
+        const row = lastAbove(rows);
+        if (row) this.jumpSeg = row.dataset.seg;
+        return;
+      }
+      const dayEl = lastAbove([...wrap.querySelectorAll('.day-col')]);
+      if (!dayEl) return;
+      this.jumpDay = dayEl.id.slice(4);
+      const seg = lastAbove([...dayEl.querySelectorAll('[data-seg-key]')]);
+      this.jumpSeg = seg ? seg.dataset.segKey : null;
+    },
+
     /* ── Navigation ────────────────────────────────────────────────── */
     // Filters are week-scoped, so they are validated only once the week's
     // events are loaded — otherwise a not-yet-fetched week would wipe them.
@@ -537,11 +673,13 @@ function app() {
       this.weekStart = addDays(this.weekStart, -7);
       await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
+      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
     },
     async nextWeek() {
       this.weekStart = addDays(this.weekStart, +7);
       await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
+      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
     },
 
     // Week ids whose events are already in this.events (not reactive state).
@@ -578,6 +716,8 @@ function app() {
       // In vertical view scroll to today after Alpine re-renders the week
       if (this.viewMode === 'vertical') {
         this.$nextTick(() => this.scrollToDay(readMadridNow().iso));
+      } else {
+        this.$nextTick(() => this.scrollColumnIntoView(readMadridNow().iso));
       }
     },
 
@@ -1358,6 +1498,7 @@ function app() {
           iso,
           dow: DOW_LABELS[i],
           dom: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+          num: d.getDate(),
           isToday: iso === todayISO,
           events: evs,
           segments,
@@ -1608,12 +1749,11 @@ function app() {
                 `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
 
               `</div>` +
-              favButton +
               // After the tags, not in the top row: grid columns are too
               // narrow there and the store name would shrink to "I…".
               (attendanceBadge(e)
                 ? `<div class="ev-attendance${e.full && !e.participants ? ' is-full' : ''}" title="${esc(attendanceDetail(e))}">👥 ${esc(attendanceBadge(e))}</div>` : '') +
-              calendarButton +
+              `<div class="ev-actions">` + favButton + calendarButton + `</div>` +
             `</div>` +
           `</div>`
         );
