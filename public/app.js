@@ -211,6 +211,9 @@ function attendanceBadge(e) {
   if (e.participants) return `${e.participants} played`;
   if (e.full) return 'Full';
   if (e.registered) return e.capacity ? `${e.registered}/${e.capacity}` : `${e.registered} signed up`;
+  // No sign-ups reported yet: the cap alone still tells a player how big
+  // the event is. Only past events with no player count stay blank.
+  if (e.capacity && new Date(e.datetime_start) > Date.now()) return `${e.capacity} spots`;
   return '';
 }
 
@@ -1283,6 +1286,14 @@ function app() {
           const events = (day.segmentMap && day.segmentMap[seg.key]) || [];
           out.push({
             key:     seg.key + '-' + day.iso,
+            // x-for key: changes whenever the cell's events do, so Alpine
+            // rebuilds the cell instead of refreshing its scope. A scope
+            // refresh alone can leave the x-html cards stale: Alpine 3's
+            // scheduler won't re-queue an effect that already ran in the
+            // current flush, so when events and filters change in one tick
+            // (startup with ?game=… or a default preset) the cards kept
+            // showing the unfiltered week.
+            renderKey: seg.key + '-' + day.iso + ':' + events.map(e => e.id).join(','),
             seg, day, sIdx: s, dIdx: d,
             events,
             isEmpty: events.length === 0,
@@ -1589,8 +1600,6 @@ function app() {
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
               (this.nearMe && this.storeDistanceKm(e.store) !== null
                 ? `<div class="ev-distance">${esc(this.storeDistanceLabel(e.store))}</div>` : '') +
-              (attendanceBadge(e)
-                ? `<div class="ev-attendance${e.full && !e.participants ? ' is-full' : ''}" title="${esc(attendanceDetail(e))}">👥 ${esc(attendanceBadge(e))}</div>` : '') +
             `</div>` +
             `<div class="ev-title">${esc(e.title)}</div>` +
             `<div class="ev-footer">` +
@@ -1600,6 +1609,10 @@ function app() {
 
               `</div>` +
               favButton +
+              // After the tags, not in the top row: grid columns are too
+              // narrow there and the store name would shrink to "I…".
+              (attendanceBadge(e)
+                ? `<div class="ev-attendance${e.full && !e.participants ? ' is-full' : ''}" title="${esc(attendanceDetail(e))}">👥 ${esc(attendanceBadge(e))}</div>` : '') +
               calendarButton +
             `</div>` +
           `</div>`

@@ -1312,3 +1312,8 @@ input:focus, select:focus { border-color: var(--accent); }
 /* ── Attendance ───────────────────────────────────────────────── */
 .ev-attendance { font-size: .7rem; color: var(--text-muted); white-space: nowrap; }
 .ev-attendance.is-full { color: #b42318; font-weight: 600; }
+/* Horizontal grid: the top row is too narrow (it would squeeze the store
+   name), so the badge follows the tags in the footer and wraps onto its
+   own line when the column is tight. */
+.cal-grid-h .ev-footer { flex-wrap: wrap; row-gap: .2rem; }
+.cal-grid-h .ev-attendance { font-size: .62rem; }
