@@ -33,15 +33,15 @@ Quirks (checked 2026-11, against the page's own JS and store sites):
 """
 
 import logging
-import math
 import re
 from datetime import date, timedelta
 from typing import Optional
 
 import requests
 
+from shared.cities import City, default as default_city
 from shared.locator_common import (
-    CITY, StoreResolver, make_event, session, store_hint, to_madrid_iso, window,
+    StoreResolver, for_each_city, make_event, session, store_hint, to_madrid_iso, window,
 )
 
 logger = logging.getLogger(__name__)
@@ -126,8 +126,8 @@ def discover(sess: requests.Session) -> dict:
             "csrf": csrf.group(1)}
 
 
-def _body(app: dict, start: date, end: date) -> dict:
-    lat, lng, km = str(CITY["lat"]), str(CITY["lng"]), CITY["radius_km"]
+def _body(app: dict, start: date, end: date, city: City) -> dict:
+    lat, lng, km = str(city.lat), str(city.lng), city.radius_km
     return {
         "versionInfo": {"moduleVersion": app["moduleVersion"], "apiVersion": app["apiVersion"]},
         "viewName": "MainFlow.Home",
@@ -137,7 +137,7 @@ def _body(app: dict, start: date, end: date) -> dict:
         }},
         "clientVariables": {
             "Latitude": lat, "Longitude": lng, "Range": km, "IsKm": True,
-            "LocationName": f"{CITY['name']}, Spain",
+            "LocationName": city.location_name,
             "StartDate": start.isoformat(), "EndDate": end.isoformat(),  # both inclusive
             "UserLocale": "en-us", "FilterEventTypes": "", "IsSearch": True, "IsShowEvents": True,
             "MaxDateLimit": 180, "RemovedFilter": "", "PremierEventsIdList": "",
@@ -146,8 +146,8 @@ def _body(app: dict, start: date, end: date) -> dict:
     }
 
 
-def _post(sess, app: dict, start: date, end: date) -> list[dict]:
-    data = _json(_call(sess, "POST", ACTION_URL, json=_body(app, start, end), headers={
+def _post(sess, app: dict, start: date, end: date, city: City) -> list[dict]:
+    data = _json(_call(sess, "POST", ACTION_URL, json=_body(app, start, end, city), headers={
         "X-CSRFToken": app["csrf"], "Content-Type": "application/json; charset=UTF-8",
         "Origin": HOST, "Referer": LOCATOR_PAGE,
     }))
@@ -159,8 +159,11 @@ def _post(sess, app: dict, start: date, end: date) -> list[dict]:
     return data["data"]["EventList"]["List"]
 
 
-def _fetch_events(sess) -> list[dict]:
-    app = discover(sess)
+def _fetch_events(sess, city: Optional[City] = None, app: Optional[dict] = None) -> list[dict]:
+    """One city's events (default: the default city). `app` is discover()'s
+    result; pass it to reuse one discovery for every city."""
+    city = city or default_city()
+    app = app or discover(sess)
     start, end = window()
     pending, items, posts = [(start, end)], {}, 0
     while pending:
@@ -168,7 +171,7 @@ def _fetch_events(sess) -> list[dict]:
         if posts == MAX_POSTS:
             raise RuntimeError("Pokémon locator: too many requests splitting a capped window")
         posts += 1
-        batch = _post(sess, app, a, b)
+        batch = _post(sess, app, a, b, city)
         if len(batch) >= MAX_RECORDS and b > a:  # capped: split and ask again
             mid = a + (b - a) // 2
             pending += [(a, mid), (mid + timedelta(days=1), b)]
@@ -181,13 +184,6 @@ def _fetch_events(sess) -> list[dict]:
 # ---------------------------------------------------------------------------
 # Parsing
 # ---------------------------------------------------------------------------
-
-def _km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    p = math.pi / 180
-    a = (math.sin((lat2 - lat1) * p / 2) ** 2
-         + math.cos(lat1 * p) * math.cos(lat2 * p) * math.sin((lon2 - lon1) * p / 2) ** 2)
-    return 12742 * math.asin(math.sqrt(a))
-
 
 def start_iso(ev: dict) -> Optional[str]:
     """Start time in Madrid. Play sessions are UTC; other activities are
@@ -209,7 +205,10 @@ def _format_hint(ev: dict, type_name: str) -> str:
     return _FORMAT_BY_TYPE.get(type_name, "")
 
 
-def parse_events(items: list[dict], resolver: StoreResolver) -> list[dict]:
+def parse_events(items: list[dict], resolver: StoreResolver,
+                 city: Optional[City] = None) -> list[dict]:
+    """Events of one city's search inside its radius (default: the default city)."""
+    city = city or default_city()
     out: list[dict] = []
     for item in items:
         ev = item.get("Events") or {}
@@ -224,13 +223,13 @@ def parse_events(items: list[dict], resolver: StoreResolver) -> list[dict]:
         venue, lat, lng = (addr.get("Name") or "").strip(), addr.get("Latitude"), addr.get("Longitude")
         if not venue or lat in (None, "") or lng in (None, ""):
             continue  # no physical venue
-        if _km(CITY["lat"], CITY["lng"], float(lat), float(lng)) > CITY["radius_km"]:
+        if not city.contains(lat, lng):
             continue
         start = start_iso(ev)
         if not start or not ev.get("Guid"):
             continue
         address = (addr.get("Full_address") or "").strip()
-        store = resolver.resolve(SOURCE, addr.get("Guid"), venue, address)
+        store = resolver.resolve(SOURCE, addr.get("Guid"), venue, address, city=city)
         if store is StoreResolver.SKIP:
             continue
         type_name = (item.get("EventTypeName") or "").strip()
@@ -244,17 +243,25 @@ def parse_events(items: list[dict], resolver: StoreResolver) -> list[dict]:
             source_event_id=f"{SOURCE}:{ev['Guid']}",
             source_url=LOCATOR_PAGE,  # the locator has no per-event page
             format_hint=_format_hint(ev, type_name),
-            hint=store_hint(SOURCE, addr.get("Guid"), venue, address, lat, lng),
+            hint=store_hint(SOURCE, addr.get("Guid"), venue, address, lat, lng, city=city),
         ))
     return out
 
 
 def scrape() -> list[dict]:
+    """One discovery (3 GETs), then one POST per city: few calls, because
+    Imperva blocks the IP after about eight."""
     sess = session()
-    raw = _fetch_events(sess)
-    events = parse_events(raw, StoreResolver())
-    logger.info("%s: %d raw → %d events", STORE, len(raw), len(events))
-    return events
+    app = discover(sess)
+    resolver = StoreResolver()
+
+    def one_city(city: City) -> list[dict]:
+        raw = _fetch_events(sess, city, app)
+        events = parse_events(raw, resolver, city)
+        logger.info("%s %s: %d raw → %d events", STORE, city.id, len(raw), len(events))
+        return events
+
+    return for_each_city(STORE, one_city)
 
 
 if __name__ == "__main__":

@@ -16,6 +16,7 @@ API_URL = "https://api.carde.io/api/play/establishments"
 LOCATOR_URL = "https://play.carde.io/stores/search"
 FAB_GAME_ID = "1ceb00e9-28ea-45ac-8dfb-c84957f75ed1"
 
+# TODO(multi-city): Madrid only; see discoverers/__init__.py.
 MADRID_LAT = 40.3907
 MADRID_LON = -3.6997
 SEARCH_RADIUS_KM = 50

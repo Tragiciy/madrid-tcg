@@ -3,18 +3,20 @@ scrapers/locator_gem.py — Flesh and Blood events from GEM, the official
 FaB event locator (gem.fabtcg.com).
 
 Quirks (checked 2026-11):
-  - lat/lon parameters do not filter results, so we query by city name
-    (`search`) and filter by distance ourselves;
+  - lat/lon parameters do not filter results, so we query by each city's
+    search terms (`search`, shared/cities.py) and keep only events inside
+    that city's radius;
   - start_time is the venue's wall-clock time with a bogus "+13:00"
     offset; the offset is dropped and the time read as Madrid time.
 """
 
 import logging
-import math
 from datetime import datetime
+from typing import Optional
 
+from shared.cities import City, default as default_city
 from shared.locator_common import (
-    CITY, StoreResolver, TZ, make_event, request_json, store_hint, session, window,
+    StoreResolver, TZ, for_each_city, make_event, request_json, store_hint, session, window,
 )
 
 logger = logging.getLogger(__name__)
@@ -24,15 +26,7 @@ SOURCE = "gem"
 GAME = "Flesh and Blood"
 EVENTS_URL = "https://gem.fabtcg.com/api/v1/locator/events/"
 LOCATOR_PAGE = "https://fabtcg.com/en/locator/"
-SEARCH_TERMS = ["Madrid"]
 MAX_PAGES = 10
-
-
-def _km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    p = math.pi / 180
-    a = (math.sin((lat2 - lat1) * p / 2) ** 2
-         + math.cos(lat1 * p) * math.cos(lat2 * p) * math.sin((lon2 - lon1) * p / 2) ** 2)
-    return 12742 * math.asin(math.sqrt(a))
 
 
 def _wall_clock(value: str):
@@ -44,9 +38,9 @@ def _wall_clock(value: str):
     return naive.replace(tzinfo=TZ)
 
 
-def _fetch(sess) -> list[dict]:
+def _fetch(sess, city: City) -> list[dict]:
     seen: dict[int, dict] = {}
-    for term in SEARCH_TERMS:
+    for term in city.search_terms:
         url, params = EVENTS_URL, {"search": term}
         for _ in range(MAX_PAGES):
             data = request_json(sess, "GET", url, params=params)
@@ -58,7 +52,10 @@ def _fetch(sess) -> list[dict]:
     return list(seen.values())
 
 
-def parse_events(raw_events: list[dict], resolver: StoreResolver) -> list[dict]:
+def parse_events(raw_events: list[dict], resolver: StoreResolver,
+                 city: Optional[City] = None) -> list[dict]:
+    """Events of one city's search inside its radius (default: the default city)."""
+    city = city or default_city()
     start_day, end_day = window()
     out: list[dict] = []
     for ev in raw_events:
@@ -66,7 +63,7 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver) -> list[dict]:
             continue
         if ev.get("lat") is None or ev.get("lon") is None:
             continue
-        if _km(CITY["lat"], CITY["lng"], ev["lat"], ev["lon"]) > CITY["radius_km"]:
+        if not city.contains(ev["lat"], ev["lon"]):
             continue
         start = _wall_clock(ev.get("start_time") or "")
         if not start or not (start_day <= start.date() <= end_day):
@@ -74,7 +71,8 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver) -> list[dict]:
         name, address = ev.get("organiser_name"), ev.get("address") or ""
         if not name:
             continue
-        store = resolver.resolve(SOURCE, ev.get("organiser_store_slug") or name, name, address)
+        store = resolver.resolve(SOURCE, ev.get("organiser_store_slug") or name, name, address,
+                                 city=city)
         if store is StoreResolver.SKIP:
             continue
         kind = ev.get("tournament_type") or "Flesh and Blood event"
@@ -90,16 +88,22 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver) -> list[dict]:
             format_hint=f"{kind} {fmt}",
             capacity=ev.get("player_cap"),
             hint=store_hint(SOURCE, ev.get("organiser_store_slug") or name, name, address,
-                            ev.get("lat"), ev.get("lon")),
+                            ev.get("lat"), ev.get("lon"), city=city),
         ))
     return out
 
 
 def scrape() -> list[dict]:
-    raw = _fetch(session())
-    events = parse_events(raw, StoreResolver())
-    logger.info("%s: %d raw → %d events", STORE, len(raw), len(events))
-    return events
+    sess = session()
+    resolver = StoreResolver()
+
+    def one_city(city: City) -> list[dict]:
+        raw = _fetch(sess, city)
+        events = parse_events(raw, resolver, city)
+        logger.info("%s %s: %d raw → %d events", STORE, city.id, len(raw), len(events))
+        return events
+
+    return for_each_city(STORE, one_city)
 
 
 if __name__ == "__main__":

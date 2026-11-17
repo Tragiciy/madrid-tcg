@@ -30,10 +30,10 @@ import unicodedata
 from datetime import date
 from typing import Optional
 
+from shared.cities import BY_ID as CITY_IDS, DEFAULT_CITY
 from shared.store_matching import normalize_name
 
 REGISTRY_FILE = pathlib.Path("data/stores.json")
-DEFAULT_CITY = "madrid"
 
 
 _POSTCODE_RE = re.compile(r"\b(\d{5})\b")
@@ -88,13 +88,18 @@ class StoreRegistry:
         self.by_name = {s["name"]: s for s in self.stores}
         self.by_external: dict[str, dict] = {}
         self.by_norm: dict[str, dict] = {}
+        self._named: dict[str, list[dict]] = {}
         for s in self.stores:
             s.setdefault("aliases", {}).setdefault("names", [])
             s["aliases"].setdefault("external", [])
             for ext in s["aliases"]["external"]:
                 self.by_external[ext] = s
             for n in [s["name"], *s["aliases"]["names"]]:
-                self.by_norm.setdefault(normalize_name(n), s)
+                norm = normalize_name(n)
+                self.by_norm.setdefault(norm, s)
+                same = self._named.setdefault(norm, [])
+                if not any(x is s for x in same):
+                    same.append(s)
         self.ignored_external = set(self.ignore.get("external", []))
         self.ignored_norm = {normalize_name(n) for n in self.ignore.get("names", [])}
 
@@ -104,6 +109,17 @@ class StoreRegistry:
         if name in self.by_name:
             return self.by_name[name]
         return self.by_norm.get(normalize_name(name or ""))
+
+    def named(self, norm: str) -> list[dict]:
+        """Every store whose name or an alias normalizes to `norm`; the first
+        is by_norm's. Stores in different cities may share a spelling."""
+        return self._named.get(norm, [])
+
+    @staticmethod
+    def city_of(store: dict) -> str:
+        """The store's city id. Records without one predate multi-city
+        support and are the default city's (Madrid)."""
+        return store.get("city") or DEFAULT_CITY
 
     def is_ignored(self, name: str = "", external: Optional[str] = None) -> bool:
         return (external in self.ignored_external) or (normalize_name(name or "") in self.ignored_norm)
@@ -152,12 +168,21 @@ class StoreRegistry:
         (no address, fuzzy name) is used for this run but never persisted,
         so it is re-decided next run instead of being glued on for good.
         To undo a wrong alias, delete it from `aliases` in data/stores.json.
+
+        City: a store created here gets the hint's `city` (the city whose
+        locator search found it), else DEFAULT_CITY. A known store keeps its
+        registry city whatever search found it (overlapping radii), and the
+        normalized-spelling lookup only considers stores of the hint's city.
         """
         hint = hint or {}
+        city = hint.get("city")
+        if city is not None and city not in CITY_IDS:
+            raise ValueError(f"store hint for {store_name!r} has unknown city {city!r}")
         theirs = postcode(hint.get("address"))
         record = self.by_name.get(store_name)
         if record is None:
-            near = self.by_norm.get(normalize_name(store_name))
+            near = next((s for s in self.named(normalize_name(store_name))
+                         if city is None or self.city_of(s) == city), None)
             ours = postcode(near.get("address")) if near else None
             if near is not None and not (theirs and ours and theirs != ours):
                 record = near
@@ -165,6 +190,7 @@ class StoreRegistry:
             record = self.add(
                 store_name, origin="auto", address=hint.get("address"),
                 lat=hint.get("lat"), lng=hint.get("lng"), today=today,
+                city=city or DEFAULT_CITY,
             )
         ours = postcode(record.get("address"))
         confirmed = bool(theirs) and (ours is None or ours == theirs)

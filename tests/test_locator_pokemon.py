@@ -51,6 +51,7 @@ class ParseTests(unittest.TestCase):
             "external": f"pokemon:{ARTE9_VENUE}", "name": "ARTE 9",
             "address": "C/ DE FRANCISCO SILVELA, 21, SALAMANCA, 28028 MADRID, SPAIN",
             "lat": e["store_hint"]["lat"], "lng": e["store_hint"]["lng"],
+            "city": "madrid",  # the city whose search found the venue
         })
         self.assertAlmostEqual(e["store_hint"]["lat"], 40.43, places=1)
         self.assertAlmostEqual(e["store_hint"]["lng"], -3.67, places=1)
