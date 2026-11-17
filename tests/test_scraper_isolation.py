@@ -34,5 +34,31 @@ class IsolatedRunnerTests(unittest.TestCase):
             results = runner.run_all_scrapers(["a", "b", "c"])
         self.assertEqual([r[2] for r in results], ["a", "b", "c"])
 
+    def test_failed_scraper_is_retried_once(self):
+        calls = {}
+        def run(m):
+            calls[m] = calls.get(m, 0) + 1
+            if m == "flaky" and calls[m] == 1:
+                return [], "ReadTimeout", m
+            if m == "broken":
+                return [], f"Boom {calls[m]}", m
+            return [{"title": m}], None, m
+        sleeps = []
+        with mock.patch.object(runner, "_run_scraper_isolated", side_effect=run):
+            results = runner.run_all_scrapers(["ok", "flaky", "broken"], retry_delay_s=60, sleep=sleeps.append)
+        self.assertEqual(sleeps, [60])
+        self.assertEqual(calls, {"ok": 1, "flaky": 2, "broken": 2})
+        self.assertEqual([(r[0], r[1]) for r in results],
+                         [([{"title": "ok"}], None), ([{"title": "flaky"}], None), ([], "Boom 2")])
+
+    def test_no_retry_when_all_succeed_or_disabled(self):
+        sleeps = []
+        with mock.patch.object(runner, "_run_scraper_isolated", side_effect=lambda m: ([], None, m)):
+            runner.run_all_scrapers(["a"], retry_delay_s=60, sleep=sleeps.append)
+        with mock.patch.object(runner, "_run_scraper_isolated", side_effect=lambda m: ([], "x", m)):
+            results = runner.run_all_scrapers(["a"], retry_delay_s=0, sleep=sleeps.append)
+        self.assertEqual(sleeps, [])
+        self.assertEqual(results[0][1], "x")
+
 if __name__ == "__main__":
     unittest.main()

@@ -46,3 +46,8 @@ UPCOMING_GUARD_MIN = 50
 SCRAPER_TIMEOUT_S = int(os.environ.get("SCRAPER_TIMEOUT_S", "300"))
 # Scrapers are I/O bound and hit different hosts, so run several at once.
 SCRAPER_WORKERS = int(os.environ.get("SCRAPER_WORKERS", "6"))
+# Scrapers that fail are run once more after this pause: small store sites
+# often time out or answer 403 for a minute (genexcomics.com, theweeapps.com,
+# ozjuegos.com on 2026-11-17), and each blip opened a health issue. Only a
+# second failure counts. 0 disables the retry.
+SCRAPER_RETRY_DELAY_S = int(os.environ.get("SCRAPER_RETRY_DELAY_S", "60"))
