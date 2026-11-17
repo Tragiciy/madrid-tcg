@@ -76,8 +76,8 @@ Current per-store scrapers (22): `arte9`, `generacion_x_elfo`,
 `wargen_wargames` (public Google Calendar via `shared/ics.py`).
 
 Barcelona-area per-store scrapers (3), for stores whose own calendars list
-games no locator carries (Riftbound, Yu-Gi-Oh!, Star Wars: Unlimited,
-Gundam): `el_encuentro` (EventON via `shared/eventon.py`), `origen_juegos`
+games no locator carries (Yu-Gi-Oh!, Star Wars: Unlimited, Gundam; and
+Riftbound, before `locator_riftbound`): `el_encuentro` (EventON via `shared/eventon.py`), `origen_juegos`
 (the Astro calendar island on its home page) and `nikochan_arena` (its
 `/calendario` HTML). Their stores are Barcelona registry records, so their
 events get `city: "barcelona"` like any event (`attach_store_ids`). Events
@@ -108,6 +108,7 @@ cancellations:
 | `locator_gem` | GEM (`gem.fabtcg.com/api/v1/locator/events/`) | Flesh and Blood |
 | `locator_pokemon` | Play! Pokémon Event Locator (OutSystems screen action `DataActionGetEventList` on `events.pokemon.com/EventLocator`) | Pokémon (TCG products only) |
 | `locator_melee` | Melee.gg organizer pages (`/Organization/GetScheduledTournaments/{id}`) for every `melee:<id>` alias in the store registry | Cyberpunk TCG, Star Wars: Unlimited (and any listed game a store runs there) |
+| `locator_riftbound` | playriftbound.com event locator (Riot GraphQL gateway `playriftbound.com/api/gql`, persisted operation `CompeteTournamentSearch`) | Riftbound |
 
 Melee is the official platform for Cyberpunk TCG events. Its global search
 has no location filter and stops at 250 results (a few hours worldwide), so
@@ -118,6 +119,23 @@ a `melee:` alias (strong match: contact email on the store's website domain);
 add the confirmed ids to the store's `aliases.external`. Times are UTC.
 The official store list at cyberpunktcg.com/stores feeds store discovery
 (`discoverers/cyberpunk_locator.py`); it has no events.
+
+Riftbound's locator replaced the UVS feed, which stopped after 2026-10-15.
+The gateway only runs safelisted ("persisted") operations, sent by their
+sha256 id, and wants Apollo client headers (any client name; we send our
+own). `CompeteTournamentSearch` takes coordinates, a radius in metres and a
+start date, but no end date: results are sorted by date, 100 per page at
+most, so paging stops past the window. Times are UTC. The store is the
+event's organizer (UUID), the venue its `tournamentLocation`. The
+REGISTERED count is sign-ups before the event and players after it. There
+is no cancelled status: organizers delete events, which then vanish like
+any other. The operation id is hard-coded; if the gateway reports it stale,
+the run reads the current one from the site's persisted query manifest (the
+event page's JS chunks lead to it) and retries once. Events before 07:00
+are skipped and logged: some organizers enter 17:30 as 05:30. Ids are
+`playriftbound:<id>`, the namespace store scrapers use for cards that link
+a playriftbound.com event (`nikochan_arena`), so both copies share one event
+key.
 
 GEM ignores its lat/lon parameters, so the adapter searches each city's
 `search_terms` and keeps only events within that city's radius. GEM matches
@@ -213,7 +231,10 @@ A test validates the committed registry: unique ids, names and external ids.
 How the aggregator treats locator events:
 - **Source tag.** Every fresh event gets `source` (its scraper module).
   Legacy events without one are backfilled from the store's scraper.
-- **Store-scraper priority.** A locator event is dropped when it duplicates
+- **Store-scraper priority.** A locator event with the same event key as a
+  store scraper's event (a card linking the locator's id, such as
+  `playriftbound:<id>`) is dropped, whatever the times say. Otherwise a
+  locator event is dropped when it duplicates
   one of the same store's own scraper events: same game (or an unknown game),
   same day, starting within `DUPLICATE_WINDOW_MIN` (90) minutes. Matching is
   one-to-one and nearest-first, so one scraper event absorbs at most one

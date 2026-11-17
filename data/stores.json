@@ -77,9 +77,11 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
-          "DECKSDEN"
+          "DECKSDEN",
+          "Decksden"
         ],
         "external": [
+          "playriftbound:01a16331-9358-742d-a99e-6b1f33c643bb",
           "pokemon:068d0b92-9315-4827-a956-9496245d0278",
           "wizards:18634"
         ]
@@ -102,6 +104,7 @@
         ],
         "external": [
           "bandai:15277",
+          "playriftbound:01a03810-05a8-7a06-a1ec-a72ee6ef7881",
           "pokemon:3f3cec79-15db-4f6b-a141-a27eded8368d",
           "ravensburger:22018",
           "wizards:19588"
@@ -127,6 +130,24 @@
       }
     },
     {
+      "id": "don-mazo-sociedad-civil",
+      "name": "Don Mazo Sociedad Civil",
+      "city": "barcelona",
+      "address": "Carrer de Balmes, 180, 2a 2o, Sarrià-Sant Gervasi, 08006 Barcelona, Spain",
+      "lat": 41.3962692,
+      "lng": 2.1538687,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-17",
+      "aliases": {
+        "names": [],
+        "external": [
+          "playriftbound:01a02037-15d5-75ce-9550-bbb5b7cd5dd7"
+        ]
+      }
+    },
+    {
       "id": "el-carton-peleon",
       "name": "El Cartón Peleón",
       "city": "barcelona",
@@ -141,6 +162,7 @@
         "names": [],
         "external": [
           "bandai:16806",
+          "playriftbound:01a01fc3-2b43-70d1-b4d4-3df8364428de",
           "ravensburger:20098",
           "wizards:19503"
         ]
@@ -163,6 +185,7 @@
         ],
         "external": [
           "bandai:11716",
+          "playriftbound:019fb060-91f2-7b95-bfd8-0812a324f940",
           "pokemon:d47c5b3b-11b0-4501-a0df-c6d6adc59ef9",
           "ravensburger:18950",
           "wizards:17524"
@@ -183,10 +206,12 @@
       "aliases": {
         "names": [
           "EL ENCUENTRO",
+          "El Encuentro Infrecuentes S.L.",
           "El Encuentro by Infrecuentes"
         ],
         "external": [
           "bandai:8735",
+          "playriftbound:01a082ab-25a7-7b3d-a7f2-a5fe8de3ee34",
           "pokemon:48d6b4ec-8b0d-4156-8b2d-d84828cb771d",
           "pokemon:ddb6aa02-009b-4c21-84d6-857992735d7d",
           "ravensburger:25873",
@@ -206,9 +231,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "El Nexo SF"
+        ],
         "external": [
           "bandai:23519",
+          "playriftbound:01a028ba-5292-73d5-a43d-458e12738e0d",
           "ravensburger:54790",
           "wizards:22369"
         ]
@@ -305,6 +333,7 @@
         "names": [],
         "external": [
           "bandai:5126",
+          "playriftbound:01a037f5-f8e0-77fe-80bf-4e5e4cf51ca0",
           "wizards:15050"
         ]
       }
@@ -327,6 +356,7 @@
         ],
         "external": [
           "bandai:6151",
+          "playriftbound:01a03f43-fee5-7ac7-92db-37bb5cdc3bc3",
           "pokemon:fb9f0ec8-35ba-4bdd-91be-6696982f435c",
           "ravensburger:1485",
           "wizards:16153"
@@ -384,6 +414,7 @@
         "names": [],
         "external": [
           "bandai:178",
+          "playriftbound:01a0146b-91e8-7ed2-9392-99b7b58f5a3c",
           "pokemon:b256b8d5-ec68-41f6-b3ff-861c9c9da307",
           "pokemon:d19f30f1-3e16-44a6-9882-075dc29d9c64",
           "wizards:8966"
@@ -406,6 +437,7 @@
           "GEEKKAOS"
         ],
         "external": [
+          "playriftbound:01a16402-b933-7227-aba3-474ac74aac97",
           "pokemon:7b3eaca2-7313-4c1e-b603-896efaa03479",
           "ravensburger:23621",
           "wizards:18404"
@@ -491,6 +523,7 @@
         ],
         "external": [
           "bandai:3136",
+          "playriftbound:019fb060-8d32-7e81-a923-ac447b3a4900",
           "pokemon:294e8004-59b8-49ce-8ce6-4590d6c38ead",
           "pokemon:c7b5ead7-5255-49ac-8d80-3e0801bef22f",
           "ravensburger:2492",
@@ -512,7 +545,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:25832"
+          "bandai:25832",
+          "playriftbound:01a01e56-0dd9-7a45-9b4a-be146afebed7"
         ]
       }
     },
@@ -528,9 +562,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "BPG Trade and Publishing SL"
+        ],
         "external": [
-          "bandai:735"
+          "bandai:735",
+          "playriftbound:01a023da-4f0b-7307-b1a3-af81039677c2"
         ]
       }
     },
@@ -566,10 +603,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
-          "INGENIO BCN GAMES"
+          "INGENIO BCN GAMES",
+          "InGenio BCN Games SL."
         ],
         "external": [
           "bandai:1609",
+          "playriftbound:01a11b68-9d00-7ac1-8159-2e85e3af7526",
           "pokemon:eae45297-458d-4c70-886c-e6f8b565c900",
           "wizards:10918"
         ]
@@ -611,6 +650,7 @@
         ],
         "external": [
           "bandai:325",
+          "playriftbound:019fd15b-3e8b-7cb5-a42b-f79d0ff9ebb7",
           "wizards:8183"
         ]
       }
@@ -628,10 +668,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
-          "KABURI ROL & GAME"
+          "KABURI ROL & GAME",
+          "Kaburi Rol & Games"
         ],
         "external": [
           "bandai:20626",
+          "playriftbound:019fb060-9413-7508-ba8f-1fa2c20cd2bf",
           "wizards:18249"
         ]
       }
@@ -650,7 +692,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:23367"
+          "bandai:23367",
+          "playriftbound:019fb060-95e2-7083-bfe4-9f8bdc33c212"
         ]
       }
     },
@@ -716,8 +759,8 @@
       "name": "Keiken",
       "city": "barcelona",
       "address": "C/Abrera 5-7 Local 3B, Martorell, CT, 08760, Spain",
-      "lat": 41.4901661,
-      "lng": 1.9117561,
+      "lat": 41.4749744,
+      "lng": 1.9180463,
       "website": null,
       "notes": null,
       "origin": "auto",
@@ -726,6 +769,7 @@
         "names": [],
         "external": [
           "bandai:11758",
+          "playriftbound:01a023eb-09ec-7ce7-bd67-9fec574cd25e",
           "ravensburger:2760",
           "wizards:15919"
         ]
@@ -746,6 +790,7 @@
         "names": [],
         "external": [
           "bandai:18008",
+          "playriftbound:019fb060-908a-71e5-a3fb-f17ea4a25c2f",
           "ravensburger:24243",
           "wizards:20246"
         ]
@@ -809,6 +854,7 @@
         ],
         "external": [
           "bandai:1622",
+          "playriftbound:01a018cb-f146-7044-ac9a-84083fba4c5f",
           "pokemon:eb30e49c-1a03-4c2f-a1cd-53927906dd52"
         ]
       }
@@ -890,6 +936,7 @@
         ],
         "external": [
           "bandai:13596",
+          "playriftbound:019fb060-8bfa-7da7-976a-3021e2fa41bb",
           "pokemon:01e8b886-6039-46bf-ae8a-649c5d3da6ad",
           "pokemon:1c3ac88a-7f18-4cd2-b194-53c770e94c8c",
           "ravensburger:3141",
@@ -946,10 +993,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "INDUSTRIA 61",
           "industria 61"
         ],
         "external": [
           "bandai:121",
+          "playriftbound:019fb060-8c20-78f2-b203-d703eb737674",
           "wizards:11705"
         ]
       }
@@ -985,10 +1034,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
-          "MONSTER CARDS"
+          "MONSTER CARDS",
+          "Monstercards"
         ],
         "external": [
           "bandai:1599",
+          "playriftbound:019fb060-8d6b-7668-a948-e3bf20b66d65",
           "pokemon:6736c420-752c-4128-8e8f-641f1fd050c0"
         ]
       }
@@ -1005,9 +1056,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Neolab TCG"
+        ],
         "external": [
-          "bandai:21758"
+          "bandai:21758",
+          "playriftbound:01a15680-ffd5-7c2a-9d1b-80aad4c102e8"
         ]
       }
     },
@@ -1028,6 +1082,7 @@
         ],
         "external": [
           "bandai:1299",
+          "playriftbound:01a0a019-0a18-7f46-b06e-4869345aec6a",
           "pokemon:4781c3ff-1952-47cc-bc5c-516204f7ae72",
           "pokemon:6d5fd44e-7cd9-4720-909c-edf46dccdd51",
           "wizards:15800"
@@ -1072,6 +1127,7 @@
         ],
         "external": [
           "bandai:26673",
+          "playriftbound:019ffd55-bace-7bd3-9814-965f9d278370",
           "pokemon:2de62e33-200b-4c8b-8709-8ab8143657c8",
           "ravensburger:64339"
         ]
@@ -1094,6 +1150,7 @@
         ],
         "external": [
           "bandai:24879",
+          "playriftbound:019fbcc5-c5dc-762a-8dff-18345f88515b",
           "wizards:22713"
         ]
       }
@@ -1134,6 +1191,7 @@
         "names": [],
         "external": [
           "bandai:19464",
+          "playriftbound:019febaa-c6f4-7465-889e-b1a7a27ab16a",
           "ravensburger:52241",
           "wizards:20526"
         ]
@@ -1153,6 +1211,7 @@
       "aliases": {
         "names": [],
         "external": [
+          "playriftbound:019fb060-8f21-78c2-a3cf-035f7682013c",
           "wizards:20546"
         ]
       }
@@ -1174,6 +1233,7 @@
         ],
         "external": [
           "bandai:4816",
+          "playriftbound:019fb060-8c98-7620-9544-9ab1e031edcc",
           "wizards:20602"
         ]
       }
@@ -1211,6 +1271,7 @@
         "names": [],
         "external": [
           "bandai:18248",
+          "playriftbound:01a01ef5-2bf8-7148-9928-5e69441d81bf",
           "ravensburger:14391",
           "wizards:18931"
         ]
@@ -1228,9 +1289,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "TCG Comunity Gava"
+        ],
         "external": [
-          "bandai:19889"
+          "bandai:19889",
+          "playriftbound:019fb060-944d-7c79-97ad-0ac49e869592"
         ]
       }
     },
@@ -1248,7 +1312,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:21636"
+          "bandai:21636",
+          "playriftbound:019fb060-9846-7c15-a8ea-923c809f2743"
         ]
       }
     },
@@ -1309,6 +1374,7 @@
         ],
         "external": [
           "bandai:14926",
+          "playriftbound:019fc212-3d40-7d5a-ac56-f400ecd47740",
           "pokemon:61a1fbff-5860-420b-993b-b102868fe0a3",
           "pokemon:8618f60f-10d7-4b80-8fc7-f992d18c4206",
           "ravensburger:18018"
@@ -1332,7 +1398,8 @@
         ],
         "external": [
           "bandai:27540",
-          "bandai:28559"
+          "bandai:28559",
+          "playriftbound:019fd23d-32f9-7163-82cd-fb74baaa51a7"
         ]
       }
     },
@@ -1352,6 +1419,7 @@
           "VA DE JOCS"
         ],
         "external": [
+          "playriftbound:01a00ee4-70e2-7e88-8166-98c752c7dc01",
           "pokemon:22dd1add-9846-47b9-ba2c-cd5bcc5ec1e0",
           "pokemon:f7798cfa-d27b-4bdc-8da1-dd627b59a078",
           "ravensburger:18039"
@@ -1373,6 +1441,7 @@
         "names": [],
         "external": [
           "bandai:18384",
+          "playriftbound:019fd287-d101-79c4-9ecd-b9e808cd064d",
           "wizards:21452"
         ]
       }
@@ -1453,6 +1522,7 @@
         "names": [],
         "external": [
           "bandai:19961",
+          "playriftbound:019fb060-9173-7122-8e7d-ef0ad236c110",
           "wizards:19306"
         ]
       }
@@ -1474,6 +1544,7 @@
           "bandai:12109",
           "gem:arte-9",
           "melee:9634",
+          "playriftbound:01a00770-d0eb-7163-b982-46b1985bb079",
           "ravensburger:243"
         ]
       }
@@ -1546,10 +1617,12 @@
       "aliases": {
         "names": [
           "Crisis Alcorcon Juegos",
-          "GALLEGOS DE LA TORRE S.L. (CRISIS ALCORCÓN JUEGOS)"
+          "GALLEGOS DE LA TORRE S.L. (CRISIS ALCORCÓN JUEGOS)",
+          "Juegos Crisis"
         ],
         "external": [
           "bandai:5296",
+          "playriftbound:019fb060-8faa-708f-a5be-956aa0a5587e",
           "ravensburger:1017",
           "wizards:8800"
         ]
@@ -1634,6 +1707,7 @@
         "external": [
           "bandai:2015",
           "melee:4488",
+          "playriftbound:01a010b3-40f1-75c2-b470-da48bf5f58d3",
           "pokemon:9dd4baaa-aa6b-44a7-91d7-5bbf85cf18bd",
           "ravensburger:2144"
         ]
@@ -1657,6 +1731,7 @@
         "external": [
           "bandai:17657",
           "melee:17753",
+          "playriftbound:019ffcdf-2dd2-78c0-8ff6-8290fe9399ed",
           "pokemon:70f6c81d-0a1c-430e-bb2d-4fefe9473ecd",
           "pokemon:dfeffeea-d75e-4cd6-91e9-837ab201afed",
           "wizards:20135"
@@ -1683,6 +1758,7 @@
           "bandai:18341",
           "bandai:3451",
           "melee:20680",
+          "playriftbound:019fc854-c627-7976-9d01-89fb4e254f9f",
           "pokemon:cf5114d3-02cc-480b-9dec-c3f93b8118e0",
           "ravensburger:17290"
         ]
@@ -1724,6 +1800,7 @@
         "names": [],
         "external": [
           "melee:9279",
+          "playriftbound:019fb060-92ce-7cd9-aa78-36503133a56b",
           "ravensburger:2136"
         ]
       }
@@ -1762,11 +1839,13 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
-          "GENERACIÓN X GETAFE"
+          "GENERACIÓN X GETAFE",
+          "Generación X Getafe"
         ],
         "external": [
           "bandai:5877",
           "melee:9413",
+          "playriftbound:019fb060-9440-77ba-b3c7-961a2ec95b2f",
           "pokemon:b9c2651e-6f73-4c2b-8c3e-633a4a836326"
         ]
       }
@@ -1786,6 +1865,7 @@
         "names": [],
         "external": [
           "melee:9379",
+          "playriftbound:019fb060-8f36-7795-929c-5d3a0fe971e5",
           "ravensburger:2138"
         ]
       }
@@ -1823,11 +1903,13 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
-          "GLADIUS GAMES"
+          "GLADIUS GAMES",
+          "Gladius Games S.L."
         ],
         "external": [
           "bandai:17396",
           "melee:18191",
+          "playriftbound:01a03f1c-e1a2-7644-9b8c-e64898f002aa",
           "pokemon:04a61988-c53d-4909-ba59-3b56a459f9a9",
           "ravensburger:16759",
           "wizards:18454"
@@ -1955,6 +2037,7 @@
         "external": [
           "bandai:20191",
           "melee:1252",
+          "playriftbound:019fde73-a40b-7cdd-a5f7-a734ce9fb181",
           "ravensburger:2628",
           "wizards:8422"
         ]
@@ -1979,6 +2062,7 @@
         "external": [
           "bandai:264",
           "melee:9488",
+          "playriftbound:019fb060-8c68-70a5-8d55-9fc66a460074",
           "ravensburger:2711",
           "wizards:8420"
         ]
@@ -2001,6 +2085,7 @@
         ],
         "external": [
           "melee:9748",
+          "playriftbound:019fb060-8b3a-7a5e-b76a-69f43bb99127",
           "pokemon:34a99213-a075-42ab-bdf8-d6e35d4a4495",
           "ravensburger:2708"
         ]
@@ -2020,11 +2105,13 @@
       "aliases": {
         "names": [
           "JUPITER MADRID NORTE",
+          "Júpiter Alcobendas",
           "Júpiter Juegos"
         ],
         "external": [
           "bandai:354",
           "melee:9695",
+          "playriftbound:019fd809-80dc-7222-a8db-2f56684808bd",
           "pokemon:84e20a2c-de41-4729-af7f-8cfa95786591",
           "wizards:6154"
         ]
@@ -2084,6 +2171,7 @@
         "external": [
           "bandai:15154",
           "melee:10198",
+          "playriftbound:019fde73-a4e1-758a-bc24-f18112a4dd60",
           "pokemon:fcffdd28-3a8d-469b-89e9-2f9857635286",
           "ravensburger:2782",
           "wizards:14264"
@@ -2161,10 +2249,13 @@
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "La Guarida juegos"
+        ],
         "external": [
           "gem:la-guarida-juegos",
           "melee:10211",
+          "playriftbound:019fb060-8c87-710c-b983-e8fe65c61113",
           "wizards:11228"
         ]
       }
@@ -2223,6 +2314,7 @@
         "external": [
           "bandai:1918",
           "melee:9479",
+          "playriftbound:019fc1f7-e361-72bd-b078-5135f6e72eb2",
           "ravensburger:3102",
           "wizards:14361"
         ]
@@ -2246,6 +2338,7 @@
         "external": [
           "bandai:13689",
           "melee:12796",
+          "playriftbound:019fb060-8be8-7bb9-8248-1b2513935810",
           "pokemon:e8d34923-ddc3-499e-80c4-9943be87027d",
           "ravensburger:17400",
           "wizards:21613"
@@ -2268,6 +2361,7 @@
         "external": [
           "bandai:1302",
           "melee:12984",
+          "playriftbound:019fb060-8e23-7ea8-af7b-a9a8ce3e4ecf",
           "wizards:15952"
         ]
       }
@@ -2284,9 +2378,12 @@
       "origin": "curated",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "Madakiba"
+        ],
         "external": [
           "bandai:78",
+          "playriftbound:01a034e8-2ded-7a3f-bf12-ee000ab1d6c9",
           "pokemon:710649ed-7efa-40d0-a744-6aac3d3ba90c",
           "wizards:9397"
         ]
@@ -2310,6 +2407,7 @@
         "external": [
           "bandai:2042",
           "melee:9530",
+          "playriftbound:019fb060-954e-7846-8c1a-d45286f8291d",
           "ravensburger:10644",
           "wizards:18456"
         ]
@@ -2333,6 +2431,7 @@
         "external": [
           "bandai:3983",
           "melee:10464",
+          "playriftbound:019fb060-8cb5-7422-816e-08098c399c51",
           "ravensburger:3365",
           "wizards:13409"
         ]
@@ -2357,6 +2456,7 @@
         "external": [
           "bandai:1014",
           "melee:9217",
+          "playriftbound:01a04a49-9d66-7109-be9c-5e2ed3f3f3c7",
           "pokemon:531ffd06-09ee-409c-99ec-370fa5206de9",
           "pokemon:bddc338b-3d53-4425-97d7-dc219c6c8f8a",
           "ravensburger:3368",
@@ -2382,6 +2482,7 @@
         "external": [
           "bandai:10622",
           "melee:13277",
+          "playriftbound:01a04d5d-6fae-722a-ab86-08850102f847",
           "ravensburger:3371",
           "wizards:17437"
         ]
@@ -2405,6 +2506,7 @@
         "external": [
           "bandai:1795",
           "melee:10203",
+          "playriftbound:01a01ece-5bad-77dc-8c73-248810927591",
           "ravensburger:3499",
           "wizards:14068"
         ]
@@ -2447,6 +2549,7 @@
         "external": [
           "bandai:30730",
           "melee:19937",
+          "playriftbound:01a0ecc1-069a-7fb6-b701-05016e859517",
           "ravensburger:66337",
           "wizards:24208"
         ]
@@ -2472,6 +2575,7 @@
           "bandai:2754",
           "gem:oz-juegos",
           "melee:8558",
+          "playriftbound:019fb060-90dc-70f5-bdd1-8c9113a6f50a",
           "pokemon:c427beca-6492-4d13-a057-f1977277b46b",
           "ravensburger:3750"
         ]
@@ -2495,6 +2599,7 @@
         "external": [
           "bandai:265",
           "melee:9450",
+          "playriftbound:019fb060-93fe-7c4e-ab72-8ab88bfb3470",
           "pokemon:bb755eaa-a9be-42bb-b318-996f4e88bc78",
           "ravensburger:3759"
         ]
@@ -2518,6 +2623,7 @@
         "external": [
           "bandai:19083",
           "melee:17986",
+          "playriftbound:019fb060-8dd8-74e9-b4e5-94d90e46ad2e",
           "pokemon:24ce2d7b-e64f-45fe-b93b-ba0fcbf5b76b",
           "pokemon:70e7e289-3ff6-4f97-93da-ea23fa02cd4f",
           "ravensburger:25906",
@@ -2559,6 +2665,7 @@
         "external": [
           "bandai:20564",
           "melee:10222",
+          "playriftbound:01a0108d-1edc-7cf2-b565-bf5ef5748208",
           "wizards:15914"
         ]
       }
@@ -2617,11 +2724,13 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
-          "SIMONV TCG"
+          "SIMONV TCG",
+          "SimonV Tcg Store"
         ],
         "external": [
           "bandai:23060",
           "melee:18893",
+          "playriftbound:01a0e893-6118-7c0c-a851-3f06c081b16d",
           "ravensburger:54031",
           "wizards:22007"
         ]
@@ -2639,9 +2748,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Somosjuegos"
+        ],
         "external": [
           "melee:12512",
+          "playriftbound:019fe088-c90e-7816-9ca6-658a15673b23",
           "pokemon:c58ee8b9-6ca4-468b-a1b0-10df422e99b3"
         ]
       }
@@ -2679,10 +2791,14 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "TCGAcademymad"
+        ],
         "external": [
           "bandai:23569",
           "melee:19857",
+          "playriftbound:01a034f6-d5f2-7c06-b188-c92e43578932",
+          "playriftbound:01a04515-967d-7dd4-874e-16cf3f397836",
           "ravensburger:52274"
         ]
       }
@@ -2781,11 +2897,13 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "TEMPEST STORE",
           "TEMPEST STORE SL"
         ],
         "external": [
           "bandai:19692",
           "melee:9824",
+          "playriftbound:019fb060-919b-7f26-b0f4-bfe50a836816",
           "pokemon:caacb39d-d268-4028-86ad-c7a3183d9ef1"
         ]
       }
@@ -2825,6 +2943,7 @@
         "external": [
           "bandai:23573",
           "melee:16204",
+          "playriftbound:01a04aca-40ce-7edd-b344-7a45238644cb",
           "ravensburger:24012",
           "wizards:22370"
         ]
@@ -2865,7 +2984,8 @@
         ],
         "external": [
           "bandai:5088",
-          "melee:12590"
+          "melee:12590",
+          "playriftbound:019fbcee-5b46-7947-be6f-9ff14117897b"
         ]
       }
     },
@@ -2887,6 +3007,7 @@
         "external": [
           "bandai:11041",
           "melee:13797",
+          "playriftbound:01a01bfa-d4a1-7447-a6f7-9d83089a0bf8",
           "pokemon:8452739a-90fe-4527-a99f-8019e2f95775",
           "wizards:17593"
         ]
@@ -2907,7 +3028,8 @@
         "names": [],
         "external": [
           "bandai:24867",
-          "melee:18653"
+          "melee:18653",
+          "playriftbound:019fffc4-6c0f-7a92-9bcb-2ea39f0776a3"
         ]
       }
     },
@@ -2944,6 +3066,7 @@
         "names": [],
         "external": [
           "bandai:25774",
+          "playriftbound:019ffbdb-0166-746b-a18d-1c5fe415891f",
           "ravensburger:53232",
           "wizards:24073"
         ]
@@ -2965,6 +3088,7 @@
         "external": [
           "bandai:15475",
           "melee:17235",
+          "playriftbound:019fce07-78b2-7b97-8e5b-4453b02d7065",
           "wizards:18616"
         ]
       }
@@ -2981,9 +3105,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "VillanoTCG"
+        ],
         "external": [
-          "bandai:23408"
+          "bandai:23408",
+          "playriftbound:019fb060-9667-7ea2-ad31-7a5413d2f441"
         ]
       }
     },
@@ -3021,6 +3148,7 @@
         "external": [
           "bandai:21396",
           "melee:10783",
+          "playriftbound:019fb060-8d64-75b3-93ee-b0b7b51dea77",
           "ravensburger:5310",
           "wizards:15373"
         ]
@@ -3040,11 +3168,13 @@
       "aliases": {
         "names": [
           "Zacatrus Chamberi",
+          "Zacatrus Madrid Chamberi",
           "Zacatrus! Madrid Chamberí"
         ],
         "external": [
           "bandai:19154",
           "melee:10552",
+          "playriftbound:019fc79b-3274-7dfe-b7ac-6a4eeba1a5ac",
           "ravensburger:5443"
         ]
       }
@@ -3068,6 +3198,7 @@
         "external": [
           "bandai:19228",
           "melee:10320",
+          "playriftbound:019fbd20-b740-726d-bfd1-4971242ff884",
           "ravensburger:5444"
         ]
       }

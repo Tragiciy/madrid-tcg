@@ -132,6 +132,27 @@ class DedupTests(unittest.TestCase):
         self.assertEqual(dropped, 1)
         self.assertEqual(len(kept), 3)
 
+    def test_same_event_key_is_one_event_whatever_the_times(self):
+        # A store card linking the locator's event id; the times disagree.
+        card = dict(_ev("Ítaca", "Riftbound", "2026-11-20T18:00:00+01:00", "scrapers.itaca"),
+                    source_event_id="playriftbound:1")
+        copy_ = dict(_ev("Ítaca", "Riftbound", "2026-11-20T06:00:00+01:00", "scrapers.locator_riftbound"),
+                     source_event_id="playriftbound:1")
+        other = _ev("Ítaca", "Riftbound", "2026-11-20T18:30:00+01:00", "scrapers.locator_riftbound", "B")
+        kept, dropped = drop_locator_duplicates([card, copy_, other], [], NOW)
+        # The id match uses the card's claim: the 18:30 event stays.
+        self.assertEqual((kept, dropped), ([card, other], 1))
+
+    def test_same_key_at_another_store_is_not_merged_by_id(self):
+        # A card linking another venue's event: the id must not drop it.
+        card = dict(_ev("Nikochan Arena", "Riftbound", "2026-11-20T18:00:00+01:00", "scrapers.nikochan_arena"),
+                    source_event_id="playriftbound:1")
+        elsewhere = dict(_ev("Ítaca", "Riftbound", "2026-11-21T11:00:00+01:00", "scrapers.locator_riftbound"),
+                         source_event_id="playriftbound:1")
+        with self.assertLogs("pipeline.reconcile", "WARNING"):
+            kept, dropped = drop_locator_duplicates([card, elsewhere], [], NOW)
+        self.assertEqual((kept, dropped), ([card, elsewhere], 0))
+
     def test_protected_scraper_events_still_block_locator_copies(self):
         existing = [_ev("Ítaca", None, "2026-11-20T19:00:00+01:00", "scrapers.itaca")]
         fresh = [_ev("Ítaca", "Pokémon", "2026-11-20T19:15:00+01:00", "scrapers.locator_x")]
