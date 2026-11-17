@@ -292,9 +292,14 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
     Modern event at the same hour. Upcoming scraper events already on disk
     count too (once), so a scraper that failed today — its events protected
     — does not let locator copies slip in.
+
+    A locator event with the same event key as a scraper event (a store
+    card linking the locator's event id, e.g. "playriftbound:<id>") is that
+    event whatever the times say, and is dropped first.
     """
     claims: list[tuple] = []  # (store, date, dt, game)
     seen_keys: set[str] = set()
+    claim_by_key: dict[str, int] = {}
 
     def claim(e):
         k = event_key(e)
@@ -303,6 +308,7 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
         seen_keys.add(k)
         dt = _parse_dt(e.get("datetime_start") or "")
         if dt is not None:
+            claim_by_key[k] = len(claims)
             claims.append((e.get("store"), dt.date(), dt, e.get("game")))
 
     for e in fresh:
@@ -329,9 +335,18 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
     for ci, (store, day, _dt, _g) in enumerate(claims):
         by_day.setdefault((store, day), []).append(ci)
 
+    dropped_idx: set[int] = set()
+    used_claims: set[int] = set()
+    for li, e in enumerate(fresh):
+        k = event_key(e)
+        if is_locator(e.get("source")) and k in seen_keys:
+            dropped_idx.add(li)
+            if k in claim_by_key:
+                used_claims.add(claim_by_key[k])
+
     pairs: list[tuple] = []  # (unknown_game, seconds_apart, locator_idx, claim_idx)
     for li, e in enumerate(fresh):
-        if not is_locator(e.get("source")):
+        if not is_locator(e.get("source")) or li in dropped_idx:
             continue
         dt = _parse_dt(e.get("datetime_start") or "")
         if dt is None:
@@ -342,8 +357,6 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
             if gap <= DUPLICATE_WINDOW_MIN * 60 and (cgame is None or cgame == e.get("game")):
                 pairs.append((cgame is None, gap, li, ci))
 
-    dropped_idx: set[int] = set()
-    used_claims: set[int] = set()
     for _unknown, _gap, li, ci in sorted(pairs):
         if li in dropped_idx or ci in used_claims:
             continue

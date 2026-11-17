@@ -1,0 +1,448 @@
+{
+ "_comment": "Trimmed real CompeteTournamentSearch responses (playriftbound.com/api/gql, 2026-11-17), one per city search; cursors shortened.",
+ "madrid": {
+  "data": {
+   "__typename": "Query",
+   "competeTournamentSearch": {
+    "__typename": "CompeteTournamentSearchConnection",
+    "edges": [
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NTgwMjgyNTM4MDAyNzAy",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 1459,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "019fb060-8c68-70a5-8d55-9fc66a460074",
+        "isFavorited": null,
+        "name": "Júpiter Juegos Madrid"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "CONSTRUCTED",
+         "participantCapacity": 16,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "NEXUS_NIGHT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": {
+         "__typename": "CompeteEntryFee",
+         "currency": "EUR",
+         "minorUnits": 500
+        },
+        "id": "117580282538002702",
+        "name": "Júpiter Nexus Night",
+        "pricing": "PAID",
+        "registrantCounts": [
+         {
+          "__typename": "TournamentRegistrantCount",
+          "count": 4,
+          "status": "REGISTERED"
+         }
+        ],
+        "startsAt": "2026-11-10T10:30:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "MD",
+         "city": "Madrid",
+         "formattedAddress": "Calle de Manuel Silvela, 8, Chamberí, 28010 Madrid, Spain",
+         "latitude": 40.4292735,
+         "longitude": -3.6984561
+        }
+       }
+      }
+     },
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NTM4Mjk2NjQ1NDMyNDIy",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 1772,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "019fde73-a40b-7cdd-a5f7-a734ce9fb181",
+        "isFavorited": null,
+        "name": "Itaca"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "CONSTRUCTED",
+         "participantCapacity": 24,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "OPEN_PLAY",
+         "waitlistCapacity": 0
+        },
+        "entryFee": null,
+        "id": "117538296645432422",
+        "name": "MARTES GRATUITO LIGA RADIANCE",
+        "pricing": "FREE",
+        "registrantCounts": [
+         {
+          "__typename": "TournamentRegistrantCount",
+          "count": 11,
+          "status": "REGISTERED"
+         }
+        ],
+        "startsAt": "2026-11-10T16:00:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "MD",
+         "city": "Madrid",
+         "formattedAddress": "C. de Blasco de Garay, 15, Chamberí, 28015 Madrid, Spain",
+         "latitude": 40.431491199999996,
+         "longitude": -3.7119142000000003
+        }
+       }
+      }
+     },
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NjA5NzY0ODgwMzkzMTQ4",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 15051,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "019fd809-80dc-7222-a8db-2f56684808bd",
+        "isFavorited": null,
+        "name": "Júpiter Alcobendas"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "CONSTRUCTED",
+         "participantCapacity": 4,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "NEXUS_NIGHT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": {
+         "__typename": "CompeteEntryFee",
+         "currency": "EUR",
+         "minorUnits": 500
+        },
+        "id": "117609764880393148",
+        "name": "Nexus Night",
+        "pricing": "PAID",
+        "registrantCounts": [
+         {
+          "__typename": "TournamentRegistrantCount",
+          "count": 4,
+          "status": "REGISTERED"
+         }
+        ],
+        "startsAt": "2026-11-13T16:15:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "MD",
+         "city": "Alcobendas",
+         "formattedAddress": "C. del Marqués de la Valdavia, 95, 28100 Alcobendas, Madrid, Spain",
+         "latitude": 40.5460834,
+         "longitude": -3.6511059
+        }
+       }
+      }
+     },
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3MjQ2NDE5NDg0NzYyMDg5",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 1896,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "019fbd20-b740-726d-bfd1-4971242ff884",
+        "isFavorited": null,
+        "name": "Zacatrus Pirámides"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "CONSTRUCTED",
+         "participantCapacity": 8,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "NEXUS_NIGHT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": null,
+        "id": "117246419484762089",
+        "name": "Nexus",
+        "pricing": "FREE",
+        "registrantCounts": [
+         {
+          "__typename": "TournamentRegistrantCount",
+          "count": 8,
+          "status": "REGISTERED"
+         }
+        ],
+        "startsAt": "2026-11-25T16:00:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "MD",
+         "city": "Madrid",
+         "formattedAddress": "P.º de las Acacias, 67, Arganzuela, 28005 Madrid, Spain",
+         "latitude": 40.401175599999995,
+         "longitude": -3.7127553000000004
+        }
+       }
+      }
+     },
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NTgwNjM5MDQ1OTI4NTE2",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 2496,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "01a04d5d-6fae-722a-ab86-08850102f847",
+        "isFavorited": null,
+        "name": "Micelion Games"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "LIMITED_SEALED",
+         "participantCapacity": 64,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "PRE_RIFT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": {
+         "__typename": "CompeteEntryFee",
+         "currency": "USD",
+         "minorUnits": 3000
+        },
+        "id": "117580639045928516",
+        "name": "Presentacion Legacy Viernes T",
+        "pricing": "PAID",
+        "registrantCounts": [],
+        "startsAt": "2027-01-22T16:00:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "MD",
+         "city": "Madrid",
+         "formattedAddress": "Av. del Mediterráneo, 8, Retiro, 28007 Madrid, Spain",
+         "latitude": 40.4071682,
+         "longitude": -3.6771662
+        }
+       }
+      }
+     },
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NTUxNjE5MTE4NDU2MjI0",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 11658,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "019fb060-8b3a-7a5e-b76a-69f43bb99127",
+        "isFavorited": null,
+        "name": "Júpiter Juegos Alcorcón"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "LIMITED_SEALED",
+         "participantCapacity": 32,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "PRE_RIFT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": {
+         "__typename": "CompeteEntryFee",
+         "currency": "EUR",
+         "minorUnits": 3200
+        },
+        "id": "117551619118456224",
+        "name": "Prerelease Legacy Viernes Tarde",
+        "pricing": "PAID",
+        "registrantCounts": [],
+        "startsAt": "2027-01-22T16:00:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "MD",
+         "city": "Alcorcón",
+         "formattedAddress": "C. Parque Bujaruelo, 10, 28924 Alcorcón, Madrid, Spain",
+         "latitude": 40.3478065,
+         "longitude": -3.8074393
+        }
+       }
+      }
+     }
+    ],
+    "pageInfo": {
+     "__typename": "PageInfo",
+     "endCursor": "REFURTpmOjA6MTE3NTUxNjE5MTE4NDU2MjI0",
+     "hasNextPage": false
+    }
+   }
+  }
+ },
+ "barcelona": {
+  "data": {
+   "__typename": "Query",
+   "competeTournamentSearch": {
+    "__typename": "CompeteTournamentSearchConnection",
+    "edges": [
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NDc3OTU0OTIyMDg4NzUw",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 3154,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "019fb060-8d6b-7668-a948-e3bf20b66d65",
+        "isFavorited": null,
+        "name": "Monstercards"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "CONSTRUCTED",
+         "participantCapacity": 32,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "NEXUS_NIGHT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": {
+         "__typename": "CompeteEntryFee",
+         "currency": "EUR",
+         "minorUnits": 800
+        },
+        "id": "117477954922088750",
+        "name": "Nexus Nigth Monster Cards",
+        "pricing": "PAID",
+        "registrantCounts": [
+         {
+          "__typename": "TournamentRegistrantCount",
+          "count": 13,
+          "status": "REGISTERED"
+         }
+        ],
+        "startsAt": "2026-11-13T16:00:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "CT",
+         "city": "Barcelona",
+         "formattedAddress": "Carrer de Joan Güell, 149, Les Corts, 08028 Barcelona, Spain",
+         "latitude": 41.382662499999995,
+         "longitude": 2.1313299
+        }
+       }
+      }
+     },
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NjIxMzU1ODQxNTQ4NzMw",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 9497,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "01a082ab-25a7-7b3d-a7f2-a5fe8de3ee34",
+        "isFavorited": null,
+        "name": "El Encuentro Infrecuentes S.L."
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "CONSTRUCTED",
+         "participantCapacity": 16,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "NEXUS_NIGHT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": {
+         "__typename": "CompeteEntryFee",
+         "currency": "EUR",
+         "minorUnits": 600
+        },
+        "id": "117621355841548730",
+        "name": "El Encuentro - Nexus Nights Domingos",
+        "pricing": "PAID",
+        "registrantCounts": [
+         {
+          "__typename": "TournamentRegistrantCount",
+          "count": 10,
+          "status": "REGISTERED"
+         }
+        ],
+        "startsAt": "2026-11-15T05:00:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "CT",
+         "city": "Sant Joan Despí",
+         "formattedAddress": "Carrer de les Torres, 44, 08970 Sant Joan Despí, Barcelona, Spain",
+         "latitude": 41.368947899999995,
+         "longitude": 2.0574635999999997
+        }
+       }
+      }
+     },
+     {
+      "__typename": "CompeteTournamentSearchEdge",
+      "cursor": "REFURTpmOjA6MTE3NDY4NDY2ODUwNDA3Mzgy",
+      "node": {
+       "__typename": "RbTournamentSearchResult",
+       "distanceMeters": 24289,
+       "organizer": {
+        "__typename": "OrganizerSummary",
+        "id": "01a0a019-0a18-7f46-b06e-4869345aec6a",
+        "isFavorited": null,
+        "name": "Nikochan Arena"
+       },
+       "tournament": {
+        "__typename": "CompeteTournament",
+        "config": {
+         "__typename": "RiftboundTournamentConfig",
+         "format": "CONSTRUCTED",
+         "participantCapacity": 16,
+         "playerFormat": "ONE_V_ONE",
+         "tournamentType": "NEXUS_NIGHT",
+         "waitlistCapacity": 0
+        },
+        "entryFee": {
+         "__typename": "CompeteEntryFee",
+         "currency": "EUR",
+         "minorUnits": 600
+        },
+        "id": "117468466850407382",
+        "name": "NEXUS NIGHT DOMINGO 10:00",
+        "pricing": "PAID",
+        "registrantCounts": [],
+        "startsAt": "2026-11-29T09:00:00Z",
+        "tournamentLocation": {
+         "__typename": "Location",
+         "adminArea1": "CT",
+         "city": "Terrassa",
+         "formattedAddress": "Plaça del Triomf, 32, 08225 Terrassa, Barcelona, Spain",
+         "latitude": 41.5722002,
+         "longitude": 2.0131485
+        }
+       }
+      }
+     }
+    ],
+    "pageInfo": {
+     "__typename": "PageInfo",
+     "endCursor": "REFURTpmOjA6MTE3NDY4NDY2ODUwNDA3Mzgy",
+     "hasNextPage": false
+    }
+   }
+  }
+ }
+}

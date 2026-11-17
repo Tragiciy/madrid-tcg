@@ -25,9 +25,9 @@ unreadable (unknown game label, no "Hora:") raises. Only the intended skips
 (history, Wizards-linked Magic, untracked games, placeholder times) are
 silent.
 
-The calendar's Riftbound nights are on no locator we read; its One Piece,
-Pokémon and Digimon events are, and those locator copies are dropped by
-the aggregator's dedup. Cards whose sign-up link is a Wizards locator join
+Its Riftbound, One Piece, Pokémon and Digimon events are also on the
+official locators, and those locator copies are dropped by the
+aggregator's dedup (Riftbound cards by their shared playriftbound id). Cards whose sign-up link is a Wizards locator join
 code are skipped: they are Wizards locator events by definition, and the
 two listings sometimes disagree on the time (a Sunday sealed is 12:05 on
 the locator and 17:00 here), which the dedup window would not join.
