@@ -1067,6 +1067,47 @@ html.welcome-open { overflow: hidden; }
   font-size: .85rem; color: var(--text-muted); line-height: 1.4;
 }
 .welcome-features b { color: var(--text); margin-right: .3rem; }
+.welcome-hero, .welcome-setup { display: flex; flex-direction: column; gap: 1.25rem; }
+.welcome-features-wide { display: none; }
+
+/* Wide screens: pitch on the left, setup card on the right, bigger type. */
+@media (min-width: 960px) {
+  .welcome { display: flex; align-items: center; }
+  .welcome-inner {
+    max-width: 1180px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+    padding: 3rem 2.5rem;
+  }
+  .welcome-brand { font-size: 1.15rem; }
+  .welcome-title { font-size: clamp(2.6rem, 3.6vw, 3.6rem); }
+  .welcome-lead { font-size: 1.2rem; }
+  .welcome-stats strong { font-size: 2.1rem; }
+  .welcome-stats span { font-size: .85rem; }
+  .welcome-features-wide { display: grid; font-size: 1rem; gap: .6rem; }
+  .welcome-features-narrow { display: none; }
+  .welcome-setup {
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, .08);
+  }
+  .welcome-step h3 { font-size: 1.1rem; }
+  .welcome-city, .welcome-game { font-size: .98rem; min-height: 44px; padding: .45rem 1rem; }
+  .welcome-actions { position: static; margin: 0; padding: 0; background: none; }
+  .welcome-actions .btn { min-height: 54px; font-size: 1.08rem; }
+}
+@media (min-width: 1500px) {
+  .welcome-inner { max-width: 1380px; gap: 5rem; }
+  .welcome-title { font-size: 4rem; }
+  .welcome-lead { font-size: 1.35rem; }
+  .welcome-setup { padding: 2.5rem; }
+}
+
 .welcome-skip {
   align-self: center;
   background: none; border: none;

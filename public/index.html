@@ -677,6 +677,7 @@
          x-effect="document.documentElement.classList.toggle('welcome-open', onboardingOpen)"
          role="dialog" aria-modal="true" aria-labelledby="welcome-title" style="display:none">
   <div class="welcome-inner">
+   <div class="welcome-hero">
     <div class="welcome-brand">TCG Events</div>
     <h2 id="welcome-title" class="welcome-title">Every card game tournament in your city. <span>One calendar.</span></h2>
     <p class="welcome-lead">Magic, Pokémon, One Piece, Lorcana, Riftbound and more, from official organizers
@@ -687,6 +688,15 @@
       <div><strong x-text="loading ? '…' : welcomeStats.stores"></strong><span>stores</span></div>
       <div><strong x-text="loading ? '…' : welcomeStats.games"></strong><span>games</span></div>
     </div>
+
+    <ul class="welcome-features welcome-features-wide">
+      <li><b>⌖ Map</b> Every store with its events, and what's near you.</li>
+      <li><b>★ Save</b> Star events, add them to Google, Apple or Outlook calendars.</li>
+      <li><b>📲 App</b> Add it to your home screen: it works like an app, even offline.</li>
+    </ul>
+   </div>
+
+   <div class="welcome-setup">
 
     <div class="welcome-step" x-show="cities.length > 1">
       <h3><span class="welcome-num">1</span> Your city</h3>
@@ -722,13 +732,14 @@
       <button type="button" class="btn welcome-map" :disabled="loading" @click="completeOnboarding('map')">⌖ See the map</button>
     </div>
 
-    <ul class="welcome-features">
+    <ul class="welcome-features welcome-features-narrow">
       <li><b>⌖ Map</b> Every store with its events, and what's near you.</li>
       <li><b>★ Save</b> Star events, add them to Google, Apple or Outlook calendars.</li>
       <li><b>📲 App</b> Add it to your home screen: it works like an app, even offline.</li>
     </ul>
 
     <button type="button" class="welcome-skip" @click="skipOnboarding">Skip</button>
+   </div>
   </div>
 </section>
 
