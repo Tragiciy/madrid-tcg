@@ -229,7 +229,8 @@ def parse_events(items: list[dict], resolver: StoreResolver,
         if not start or not ev.get("Guid"):
             continue
         address = (addr.get("Full_address") or "").strip()
-        store = resolver.resolve(SOURCE, addr.get("Guid"), venue, address, city=city)
+        store = resolver.resolve(SOURCE, addr.get("Guid"), venue, address, city=city,
+                                 lat=lat, lng=lng)
         if store is StoreResolver.SKIP:
             continue
         type_name = (item.get("EventTypeName") or "").strip()

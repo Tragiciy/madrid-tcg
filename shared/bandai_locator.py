@@ -86,10 +86,11 @@ def parse_events(raw_events: list[dict], game: str, resolver: StoreResolver,
         if not start or not name or not title:
             continue
         address = _address(ev)
-        store = resolver.resolve(SOURCE, ev.get("organizer_id"), name, address, city=city)
+        geo = ev.get("place_geo") or {}  # x = latitude, y = longitude
+        store = resolver.resolve(SOURCE, ev.get("organizer_id"), name, address, city=city,
+                                 lat=geo.get("x"), lng=geo.get("y"))
         if store is StoreResolver.SKIP:
             continue
-        geo = ev.get("place_geo") or {}
         out.append(make_event(
             title=title,
             store=store,

@@ -105,7 +105,8 @@ def parse_events(raw_events: list[dict], addresses: dict,
         if isinstance(info, str):
             info = {"address": info}
         address = info.get("address") or ""
-        store = resolver.resolve(SOURCE, org.get("id"), org["name"], address, city=city)
+        store = resolver.resolve(SOURCE, org.get("id"), org["name"], address, city=city,
+                                 lat=info.get("lat"), lng=info.get("lng"))
         if store is StoreResolver.SKIP:
             continue
         players = ev.get("numberOfPlayers")

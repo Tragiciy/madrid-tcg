@@ -27,7 +27,7 @@ import requests
 from shared.cities import CITIES, City, default as default_city
 from shared.scraper_keywords import extract_best_of, extract_format_for_event
 from shared.store_matching import match_existing_store, normalize_name
-from shared.store_registry import StoreRegistry
+from shared.store_registry import StoreRegistry, same_place
 
 logger = logging.getLogger(__name__)
 
@@ -155,10 +155,11 @@ class StoreResolver:
     registry (data/stores.json) read-only.
 
     Order: registry alias by "<source>:<external_id>" → registry alias by
-    normalized name → confident match against registry stores (name or
-    address) whose postcode does not contradict the locator's → the
-    locator's own name (suffixed with its postcode if it would collide with
-    a known store). Ignored names/ids resolve to SKIP.
+    normalized name, unless the postcodes differ and the pins (`lat`/`lng`)
+    are more than SAME_PLACE_KM apart → confident match against registry
+    stores (name or address) whose postcode does not contradict the
+    locator's → the locator's own name (suffixed with its postcode if it
+    would collide with a known store). Ignored names/ids resolve to SKIP.
 
     With `city` (the city whose search found the store), name and address
     matching only considers stores of that city: those whose registry city
@@ -192,7 +193,7 @@ class StoreResolver:
         return self._scopes[city.id]
 
     def resolve(self, source: str, external_id, name: str, address: str = "",
-                city: Optional[City] = None):
+                city: Optional[City] = None, lat=None, lng=None):
         """Canonical store name, or StoreResolver.SKIP."""
         external = f"{source}:{external_id}" if external_id is not None else None
         own = (name or "").strip()
@@ -202,11 +203,11 @@ class StoreResolver:
             return self.registry.by_external[external]["name"]
         scope = self._scope(city) if city is not None else None
         norm = normalize_name(own)
-        named = [s for s in self.registry.named(norm) if scope is None or s["id"] in scope]
-        if named:
-            target = named[0]["name"]
-            if self._same_postcode(address, target):
-                return target
+        for s in self.registry.named(norm):
+            # Same name: one store unless the postcodes differ and the pins
+            # are more than SAME_PLACE_KM apart.
+            if (scope is None or s["id"] in scope) and same_place(s, address, lat, lng):
+                return s["name"]
         if not own:
             return self.SKIP
         known = self.known if scope is None else [

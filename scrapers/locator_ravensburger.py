@@ -70,7 +70,8 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver,
             continue
         address = store_info.get("full_address") or ev.get("full_address") or ""
         store = resolver.resolve(SOURCE, store_info.get("id"), store_info["name"], address,
-                                 city=city)
+                                 city=city, lat=store_info.get("latitude"),
+                                 lng=store_info.get("longitude"))
         if store is StoreResolver.SKIP:
             continue
         finished = datetime.fromisoformat(start) <= datetime.now(TZ)

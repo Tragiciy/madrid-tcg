@@ -72,7 +72,7 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver,
         if not name:
             continue
         store = resolver.resolve(SOURCE, ev.get("organiser_store_slug") or name, name, address,
-                                 city=city)
+                                 city=city, lat=ev.get("lat"), lng=ev.get("lon"))
         if store is StoreResolver.SKIP:
             continue
         kind = ev.get("tournament_type") or "Flesh and Blood event"

@@ -30,10 +30,14 @@ import unicodedata
 from datetime import date
 from typing import Optional
 
-from shared.cities import BY_ID as CITY_IDS, DEFAULT_CITY
+from shared.cities import BY_ID as CITY_IDS, DEFAULT_CITY, distance_km
 from shared.store_matching import normalize_name
 
 REGISTRY_FILE = pathlib.Path("data/stores.json")
+# Two listings with the same name whose postcodes disagree are still one
+# store when their pins are this close (a mistyped postcode, a listing that
+# kept the old street after a move). Chain branches are kilometres apart.
+SAME_PLACE_KM = 1.0
 
 
 _POSTCODE_RE = re.compile(r"\b(\d{5})\b")
@@ -42,6 +46,21 @@ _POSTCODE_RE = re.compile(r"\b(\d{5})\b")
 def postcode(address: Optional[str]) -> Optional[str]:
     m = _POSTCODE_RE.search(address or "")
     return m.group(1) if m else None
+
+
+def near(record: dict, lat, lng) -> bool:
+    """Both have coordinates and lie within SAME_PLACE_KM of each other."""
+    if None in (record.get("lat"), record.get("lng")) or lat in (None, "") or lng in (None, ""):
+        return False
+    return distance_km(record["lat"], record["lng"], float(lat), float(lng)) <= SAME_PLACE_KM
+
+
+def same_place(record: dict, address: Optional[str], lat=None, lng=None) -> bool:
+    """False only when both addresses carry postcodes that differ and the
+    pins are not within SAME_PLACE_KM. Use it for same-name matches only:
+    a fuzzy name match next door may be another shop."""
+    theirs, ours = postcode(address), postcode(record.get("address"))
+    return not (theirs and ours and theirs != ours) or near(record, lat, lng)
 
 
 class RegistryMissing(RuntimeError):
@@ -151,6 +170,17 @@ class StoreRegistry:
         self._reindex()
         return record
 
+    def _fits(self, record: dict, hint: dict) -> bool:
+        """Can `record` be the store a hint describes? It is in the hint's
+        city, or located inside that city's radius (overlapping radii: the
+        record keeps its own city), and not a different place (same_place).
+        The same scope StoreResolver matches names in."""
+        city = hint.get("city")
+        in_city = (city is None or self.city_of(record) == city
+                   or (record.get("lat") is not None and record.get("lng") is not None
+                       and CITY_IDS[city].contains(record["lat"], record["lng"])))
+        return in_city and same_place(record, hint.get("address"), hint.get("lat"), hint.get("lng"))
+
     def learn(self, store_name: str, hint: Optional[dict] = None,
               today: Optional[str] = None) -> dict:
         """
@@ -169,23 +199,37 @@ class StoreRegistry:
         so it is re-decided next run instead of being glued on for good.
         To undo a wrong alias, delete it from `aliases` in data/stores.json.
 
+        Postcodes that disagree still mean the same store when the pins are
+        within SAME_PLACE_KM (same_place); the alias is then recorded, so the
+        next run resolves the listing by its external id.
+
         City: a store created here gets the hint's `city` (the city whose
         locator search found it), else DEFAULT_CITY. A known store keeps its
-        registry city whatever search found it (overlapping radii), and the
-        normalized-spelling lookup only considers stores of the hint's city.
+        registry city whatever search found it (overlapping radii). A store
+        in another city is never a match, not even by exact name: the new
+        store gets the suffix StoreResolver would give it next run,
+        "<name> (<postcode or city name>)". The same goes for a same-named
+        store in the same city whose postcode and pin both disagree (a
+        branch), unless the hint's external id is already that store's.
         """
         hint = hint or {}
         city = hint.get("city")
         if city is not None and city not in CITY_IDS:
             raise ValueError(f"store hint for {store_name!r} has unknown city {city!r}")
         theirs = postcode(hint.get("address"))
+        ext = hint.get("external")
         record = self.by_name.get(store_name)
+        if (record is not None and not (ext and self.by_external.get(ext) is record)
+                and not self._fits(record, hint)):
+            suffix = theirs or (CITY_IDS[city].name if city else None)
+            if suffix is None:
+                raise ValueError(f"{store_name!r}: name taken by another store and no "
+                                 f"postcode or city to tell them apart")
+            store_name = f"{store_name} ({suffix})"
+            record = self.by_name.get(store_name)
         if record is None:
-            near = next((s for s in self.named(normalize_name(store_name))
-                         if city is None or self.city_of(s) == city), None)
-            ours = postcode(near.get("address")) if near else None
-            if near is not None and not (theirs and ours and theirs != ours):
-                record = near
+            record = next((s for s in self.named(normalize_name(store_name))
+                           if self._fits(s, hint)), None)
         if record is None:
             record = self.add(
                 store_name, origin="auto", address=hint.get("address"),
@@ -193,7 +237,8 @@ class StoreRegistry:
                 city=city or DEFAULT_CITY,
             )
         ours = postcode(record.get("address"))
-        confirmed = bool(theirs) and (ours is None or ours == theirs)
+        confirmed = bool(theirs) and (ours is None or ours == theirs
+                                      or near(record, hint.get("lat"), hint.get("lng")))
         if not confirmed:
             return record
         changed = False
