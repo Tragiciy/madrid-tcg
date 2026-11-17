@@ -1,9 +1,9 @@
 {
-  "total_events": 9487,
-  "active_events": 5629,
-  "total_scrapers": 35,
-  "successful_scrapers": 34,
-  "failed_scrapers_count": 1,
+  "total_events": 9778,
+  "active_events": 5936,
+  "total_scrapers": 36,
+  "successful_scrapers": 36,
+  "failed_scrapers_count": 0,
   "by_store": {
     "Arte 9": {
       "total": 1282,
@@ -17,12 +17,12 @@
         "off_topic": 3
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Ítaca": {
-      "total": 703,
-      "active": 140,
+      "total": 709,
+      "active": 146,
       "raw_this_run": 125,
       "previous_raw": 125,
       "dropped_this_run": 2,
@@ -32,12 +32,12 @@
         "off_topic": 2
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Micelion Games": {
-      "total": 678,
-      "active": 109,
+      "total": 686,
+      "active": 117,
       "raw_this_run": 37,
       "previous_raw": 37,
       "dropped_this_run": 0,
@@ -47,7 +47,7 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "TopDeck": {
@@ -62,12 +62,12 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Metropolis Center": {
-      "total": 453,
-      "active": 94,
+      "total": 455,
+      "active": 97,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -92,12 +92,12 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Júpiter Central": {
-      "total": 320,
-      "active": 148,
+      "total": 323,
+      "active": 151,
       "raw_this_run": 177,
       "previous_raw": 177,
       "dropped_this_run": 33,
@@ -107,12 +107,12 @@
         "off_topic": 33
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "La Guarida Juegos": {
-      "total": 231,
-      "active": 116,
+      "total": 233,
+      "active": 118,
       "raw_this_run": 154,
       "previous_raw": 154,
       "dropped_this_run": 39,
@@ -122,12 +122,12 @@
         "off_topic": 39
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Gladius Games": {
-      "total": 210,
-      "active": 25,
+      "total": 211,
+      "active": 26,
       "raw_this_run": 10,
       "previous_raw": 10,
       "dropped_this_run": 3,
@@ -137,14 +137,14 @@
         "off_topic": 3
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "El Encuentro": {
-      "total": 189,
+      "total": 183,
       "active": 171,
       "raw_this_run": 42,
-      "previous_raw": 40,
+      "previous_raw": 42,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -152,7 +152,7 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "The Big Bang Games": {
@@ -167,12 +167,12 @@
         "off_topic": 4
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Universe TCG": {
-      "total": 141,
-      "active": 141,
+      "total": 142,
+      "active": 142,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -181,12 +181,26 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "El Cartón Peleón": {
+      "total": 133,
+      "active": 133,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Wargen Wargames": {
-      "total": 129,
-      "active": 128,
+      "total": 130,
+      "active": 129,
       "raw_this_run": 76,
       "previous_raw": 76,
       "dropped_this_run": 1,
@@ -196,55 +210,12 @@
         "off_topic": 1
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "El Cartón Peleón": {
-      "total": 127,
-      "active": 127,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "inGenio BCN Games": {
-      "total": 124,
-      "active": 123,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Mundicomics": {
-      "total": 123,
-      "active": 47,
-      "raw_this_run": 21,
-      "previous_raw": 21,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0,
-        "off_topic": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Padis": {
-      "total": 118,
-      "active": 105,
+      "total": 129,
+      "active": 116,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -257,9 +228,9 @@
       "last_seen_at": "2026-11-14T14:15:31.868380+01:00",
       "anomaly": null
     },
-    "Ludoteca Maldita": {
-      "total": 116,
-      "active": 115,
+    "inGenio BCN Games": {
+      "total": 125,
+      "active": 124,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -268,14 +239,14 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "MADAKIBA": {
-      "total": 103,
-      "active": 97,
-      "raw_this_run": 12,
-      "previous_raw": 8,
+    "Mundicomics": {
+      "total": 124,
+      "active": 48,
+      "raw_this_run": 21,
+      "previous_raw": 21,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -283,7 +254,36 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Ludoteca Maldita": {
+      "total": 118,
+      "active": 117,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "MADAKIBA": {
+      "total": 106,
+      "active": 100,
+      "raw_this_run": 12,
+      "previous_raw": 12,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0,
+        "off_topic": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "El Nucli": {
@@ -297,37 +297,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Origen Juegos": {
-      "total": 102,
-      "active": 92,
-      "raw_this_run": 54,
-      "previous_raw": 54,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0,
-        "off_topic": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Nikochan Arena": {
-      "total": 102,
-      "active": 97,
-      "raw_this_run": 39,
-      "previous_raw": 37,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0,
-        "off_topic": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Next Dice": {
@@ -341,14 +311,14 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Panda Games": {
-      "total": 90,
-      "active": 59,
-      "raw_this_run": 26,
-      "previous_raw": 26,
+    "Nikochan Arena": {
+      "total": 100,
+      "active": 100,
+      "raw_this_run": 39,
+      "previous_raw": 39,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -356,12 +326,12 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "OZ JUEGOS": {
-      "total": 84,
-      "active": 80,
+      "total": 94,
+      "active": 89,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -372,6 +342,50 @@
       },
       "scraper_failed": false,
       "last_seen_at": "2026-11-14T14:15:31.868380+01:00",
+      "anomaly": null
+    },
+    "Origen Juegos": {
+      "total": 94,
+      "active": 94,
+      "raw_this_run": 54,
+      "previous_raw": 54,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0,
+        "off_topic": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Panda Games": {
+      "total": 93,
+      "active": 61,
+      "raw_this_run": 26,
+      "previous_raw": 26,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0,
+        "off_topic": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Metamorfo": {
+      "total": 87,
+      "active": 86,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Magic Barcelona": {
@@ -385,12 +399,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Kingdom Wargames": {
-      "total": 81,
-      "active": 79,
+      "total": 83,
+      "active": 81,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -399,21 +413,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Metamorfo": {
-      "total": 79,
-      "active": 78,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Generacion X - Elfo": {
@@ -428,7 +428,7 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "El Tesoro del Dragon Blanco": {
@@ -442,7 +442,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "El Turno Extra": {
+      "total": 68,
+      "active": 66,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Troopertoys": {
@@ -456,12 +470,26 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "DeckTCG": {
+      "total": 64,
+      "active": 63,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Libertalia Juegos": {
-      "total": 60,
-      "active": 58,
+      "total": 63,
+      "active": 61,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -470,12 +498,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Júpiter Madrid Norte": {
-      "total": 59,
-      "active": 58,
+      "total": 62,
+      "active": 61,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -484,7 +512,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Snafu Store": {
+      "total": 60,
+      "active": 60,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "NeoLab TCG S.L.": {
@@ -498,52 +540,24 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "DeckTCG": {
-      "total": 57,
-      "active": 57,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Snafu Store": {
-      "total": 57,
-      "active": 57,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "El Turno Extra": {
-      "total": 55,
-      "active": 53,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Joc & Rol": {
+      "total": 57,
+      "active": 57,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Shark Games St.Boi": {
       "total": 54,
       "active": 54,
       "raw_this_run": 0,
@@ -554,26 +568,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Shark Games St.Boi": {
-      "total": 50,
-      "active": 50,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Ludus Belli": {
-      "total": 50,
-      "active": 48,
+      "total": 51,
+      "active": 49,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -582,7 +582,49 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Magic Industria 61": {
+      "total": 47,
+      "active": 46,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "HomoLudicus": {
+      "total": 46,
+      "active": 46,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Factory Cards": {
+      "total": 46,
+      "active": 41,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Zial TCG Store": {
@@ -596,12 +638,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Magic Industria 61": {
-      "total": 44,
-      "active": 43,
+    "El Cau Lúdic": {
+      "total": 43,
+      "active": 42,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -610,11 +652,53 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Factory Cards": {
-      "total": 41,
+    "Wild Mana": {
+      "total": 42,
+      "active": 42,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Universe TCG - Barberà": {
+      "total": 42,
+      "active": 42,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Ninpo Store": {
+      "total": 40,
+      "active": 38,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Medusa Cómics": {
+      "total": 39,
       "active": 36,
       "raw_this_run": 0,
       "previous_raw": 0,
@@ -624,35 +708,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "HomoLudicus": {
-      "total": 41,
-      "active": 41,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Universe TCG - Barberà": {
-      "total": 41,
-      "active": 41,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "SimonV TCG": {
@@ -666,12 +722,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "El Cau Lúdic": {
-      "total": 38,
-      "active": 38,
+    "Portal Juegos": {
+      "total": 39,
+      "active": 39,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -680,21 +736,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Wild Mana": {
-      "total": 38,
-      "active": 38,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Isekai TCG Store": {
@@ -708,25 +750,11 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Ninpo Store": {
-      "total": 37,
-      "active": 35,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Medusa Cómics": {
-      "total": 37,
+    "Toreka Games": {
+      "total": 35,
       "active": 34,
       "raw_this_run": 0,
       "previous_raw": 0,
@@ -736,12 +764,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Portal Juegos": {
-      "total": 37,
-      "active": 37,
+    "La Competència": {
+      "total": 33,
+      "active": 33,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -750,12 +778,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Toreka Games": {
-      "total": 35,
-      "active": 35,
+    "Paladin Store and Events": {
+      "total": 33,
+      "active": 32,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -764,7 +792,35 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "TCG Legacy": {
+      "total": 33,
+      "active": 33,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Impact Store": {
+      "total": 32,
+      "active": 32,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Rebellion": {
@@ -778,26 +834,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Impact Store": {
-      "total": 31,
-      "active": 31,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Paladin Store and Events": {
+    "Equilux Juegos": {
       "total": 30,
-      "active": 29,
+      "active": 30,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -806,7 +848,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "La Forja de TCG": {
@@ -820,24 +862,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "La Competència": {
-      "total": 29,
-      "active": 29,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Equilux Juegos": {
+    "DecksDen": {
       "total": 28,
       "active": 28,
       "raw_this_run": 0,
@@ -848,10 +876,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "TCG Legacy": {
+    "Infernal Forge": {
       "total": 28,
       "active": 28,
       "raw_this_run": 0,
@@ -862,7 +890,63 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Generación X Tirso": {
+      "total": 27,
+      "active": 27,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Júpiter Juegos Alcorcón": {
+      "total": 27,
+      "active": 27,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "La Tienda Scum": {
+      "total": 27,
+      "active": 27,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Velkarion": {
+      "total": 27,
+      "active": 25,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "TCG Box": {
@@ -876,7 +960,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Tabletop Gamers": {
+      "total": 27,
+      "active": 27,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Goblintrader Barcelona": {
@@ -890,10 +988,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "DecksDen": {
+    "Keiken": {
       "total": 26,
       "active": 26,
       "raw_this_run": 0,
@@ -904,7 +1002,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Va de Jocs": {
+      "total": 26,
+      "active": 26,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Alcalá Cómics": {
@@ -918,12 +1030,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Infernal Forge": {
-      "total": 25,
-      "active": 25,
+    "Crisis Alcorcón Juegos": {
+      "total": 24,
+      "active": 24,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -932,7 +1044,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "GAMERIA": {
+      "total": 24,
+      "active": 24,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Kamikaze Freak Shop": {
@@ -946,21 +1072,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
-      "anomaly": null
-    },
-    "Tabletop Gamers": {
-      "total": 24,
-      "active": 24,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Can Font TCG": {
@@ -974,7 +1086,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "TCG Academy Madrid": {
+      "total": 23,
+      "active": 23,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Dracarys Juegos": {
@@ -988,7 +1114,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "DASHU": {
@@ -1002,35 +1128,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Crisis Alcorcón Juegos": {
-      "total": 22,
-      "active": 22,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Keiken": {
-      "total": 22,
-      "active": 22,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Tablerum": {
@@ -1044,7 +1142,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Deckeadittos": {
@@ -1058,25 +1156,11 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "GAMERIA": {
-      "total": 22,
-      "active": 22,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Júpiter Juegos Alcorcón": {
-      "total": 20,
+    "Ego Ludo": {
+      "total": 21,
       "active": 20,
       "raw_this_run": 0,
       "previous_raw": 0,
@@ -1086,12 +1170,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Lorcanos": {
-      "total": 19,
-      "active": 19,
+      "total": 21,
+      "active": 20,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -1100,11 +1184,25 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Tempest Store": {
-      "total": 19,
+      "total": 21,
+      "active": 21,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Zacatrus Pirámides": {
+      "total": 20,
       "active": 19,
       "raw_this_run": 0,
       "previous_raw": 0,
@@ -1114,11 +1212,11 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Va de Jocs": {
-      "total": 18,
+    "Villano TCG": {
+      "total": 20,
       "active": 18,
       "raw_this_run": 0,
       "previous_raw": 0,
@@ -1128,12 +1226,12 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Villano TCG": {
-      "total": 18,
-      "active": 16,
+    "El NexoSF": {
+      "total": 19,
+      "active": 19,
       "raw_this_run": 0,
       "previous_raw": 0,
       "dropped_this_run": 0,
@@ -1142,7 +1240,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "El Paraiso Friki S.L": {
@@ -1156,7 +1254,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Krucis Games": {
@@ -1170,7 +1268,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "FRIKIPLANET": {
@@ -1184,7 +1282,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Goblintrader Madrid-Norte": {
@@ -1202,21 +1300,7 @@
       "last_seen_at": "2026-10-13T15:54:25.643747+02:00",
       "anomaly": "stale"
     },
-    "Generación X Tirso": {
-      "total": 17,
-      "active": 17,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Ego Ludo": {
+    "Generacion X Getafe": {
       "total": 17,
       "active": 16,
       "raw_this_run": 0,
@@ -1227,7 +1311,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Geekkaos": {
+      "total": 17,
+      "active": 17,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Vortex TCG & Games": {
@@ -1241,7 +1339,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "LA ORDEN DEL FRIKI": {
@@ -1255,7 +1353,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Collectorage": {
@@ -1269,10 +1367,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "El NexoSF": {
+    "Zacatrus Chamberí": {
       "total": 16,
       "active": 16,
       "raw_this_run": 0,
@@ -1283,7 +1381,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Kaburi": {
+      "total": 16,
+      "active": 16,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Dark Ritual TCG": {
@@ -1297,7 +1409,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Hamelin Games": {
@@ -1311,7 +1423,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Rincon del Friki": {
@@ -1325,10 +1437,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Geekkaos": {
+    "Monster Cards": {
       "total": 15,
       "active": 15,
       "raw_this_run": 0,
@@ -1339,21 +1451,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "La Tienda Scum": {
-      "total": 15,
-      "active": 15,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Magic Elendra": {
@@ -1367,7 +1465,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Genex Comics": {
@@ -1381,38 +1479,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Zacatrus Pirámides": {
-      "total": 14,
-      "active": 13,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Velkarion": {
-      "total": 14,
-      "active": 12,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Kaburi": {
+    "Titan Games": {
       "total": 14,
       "active": 14,
       "raw_this_run": 0,
@@ -1423,7 +1493,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Kame Kame Comics": {
@@ -1437,7 +1507,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Karak 7 Picos": {
@@ -1451,7 +1521,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "TCG & SPORTS CARDS": {
@@ -1465,7 +1535,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Tsuki Center": {
+      "total": 12,
+      "active": 12,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Llibreria Ulises & Desconnecta Jugant": {
@@ -1479,7 +1563,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "INFINITI WORLD": {
@@ -1493,10 +1577,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "TCG Academy Madrid": {
+    "Torrejugones": {
       "total": 11,
       "active": 11,
       "raw_this_run": 0,
@@ -1507,7 +1591,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "DOKI DOKI DAUS": {
@@ -1521,7 +1605,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "SOMOSJUEGOS": {
+      "total": 11,
+      "active": 11,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Galaxy Comics": {
@@ -1535,7 +1633,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "TCG Community Gava": {
+      "total": 10,
+      "active": 10,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Hobby Shop Wargames": {
@@ -1549,35 +1661,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Monster Cards": {
-      "total": 10,
-      "active": 10,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Zacatrus Chamberí": {
-      "total": 9,
-      "active": 9,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Ocio Central": {
@@ -1591,21 +1675,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "SOMOSJUEGOS": {
-      "total": 9,
-      "active": 9,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "LALUNA PREMIA": {
@@ -1619,21 +1689,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Torrejugones": {
-      "total": 9,
-      "active": 9,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "PokeSportsCards": {
@@ -1647,10 +1703,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Tsuki Center": {
+    "Aquijabara Store": {
       "total": 8,
       "active": 8,
       "raw_this_run": 0,
@@ -1661,10 +1717,10 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
-    "Titan Games": {
+    "El Viajero": {
       "total": 8,
       "active": 8,
       "raw_this_run": 0,
@@ -1675,21 +1731,35 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Kaburi Lab": {
+      "total": 8,
+      "active": 8,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "3da2juegos": {
       "total": 8,
       "active": 8,
       "raw_this_run": 0,
-      "previous_raw": null,
+      "previous_raw": 0,
       "dropped_this_run": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Trading Souls": {
@@ -1703,49 +1773,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
-      "anomaly": null
-    },
-    "Generacion X Getafe": {
-      "total": 7,
-      "active": 6,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Aquijabara Store": {
-      "total": 7,
-      "active": 7,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "TCG Community Gava": {
-      "total": 7,
-      "active": 7,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Replay Boardgame Cafe": {
@@ -1760,7 +1788,7 @@
         "off_topic": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "EL TEMPLO": {
@@ -1774,7 +1802,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Frikicards": {
@@ -1788,7 +1816,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "KARONTEC GAMES": {
@@ -1802,35 +1830,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "El Viajero": {
-      "total": 6,
-      "active": 6,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Kaburi Lab": {
-      "total": 6,
-      "active": 6,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Goblintrader Madrid Sur": {
@@ -1845,7 +1845,7 @@
         "off_topic": 7
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Japan Hunters": {
@@ -1859,7 +1859,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "D20 Jocs": {
@@ -1873,7 +1873,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Kaburi Sants": {
@@ -1887,7 +1887,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Laluna": {
@@ -1901,7 +1901,35 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Singleton TCG": {
+      "total": 4,
+      "active": 4,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Don Mazo Sociedad Civil": {
+      "total": 4,
+      "active": 4,
+      "raw_this_run": 0,
+      "previous_raw": null,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Zacatrus S.L Barcelona": {
@@ -1915,7 +1943,21 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
+      "anomaly": null
+    },
+    "Generacion X Carranza": {
+      "total": 4,
+      "active": 4,
+      "raw_this_run": 0,
+      "previous_raw": 0,
+      "dropped_this_run": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0
+      },
+      "scraper_failed": false,
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Te Juego Mucho": {
@@ -1929,7 +1971,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Bettoy Coleccionistas": {
@@ -1943,7 +1985,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "TimeDeck": {
@@ -1957,7 +1999,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "La Jugación": {
@@ -1971,21 +2013,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
-      "anomaly": null
-    },
-    "Generacion X Carranza": {
-      "total": 2,
-      "active": 2,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "LA MÀQUINA DEL TEMPS": {
@@ -1999,7 +2027,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "La Guarida del Vigilante": {
@@ -2013,7 +2041,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Gigamesh": {
@@ -2027,7 +2055,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Mathom Store S.L.": {
@@ -2041,7 +2069,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "SpaceshipTCG": {
@@ -2055,7 +2083,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "LA PISADA DEL TROLL SL": {
@@ -2069,7 +2097,7 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "Goblintrader Central (Fuenlabrada)": {
@@ -2084,7 +2112,7 @@
         "off_topic": 6
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     },
     "TCG Games": {
@@ -2098,31 +2126,17 @@
         "bad_datetime": 0
       },
       "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:36:46.097689+01:00",
-      "anomaly": null
-    },
-    "Singleton TCG": {
-      "total": 1,
-      "active": 1,
-      "raw_this_run": 0,
-      "previous_raw": 0,
-      "dropped_this_run": 0,
-      "drop_reasons": {
-        "missing_fields": 0,
-        "bad_datetime": 0
-      },
-      "scraper_failed": false,
-      "last_seen_at": "2026-11-17T22:14:07.453176+01:00",
+      "last_seen_at": "2026-11-17T23:00:50.969206+01:00",
       "anomaly": null
     }
   },
   "by_game": {
     "Magic: The Gathering": 3505,
-    "One Piece": 1760,
-    "Riftbound": 916,
-    "Pokémon": 843,
-    "Lorcana": 662,
-    "Digimon": 347,
+    "One Piece": 1750,
+    "Riftbound": 1227,
+    "Pokémon": 839,
+    "Lorcana": 661,
+    "Digimon": 342,
     "Gundam Card Game": 280,
     "Dragon Ball Fusion World": 223,
     "Cyberpunk TCG": 221,
@@ -2149,7 +2163,7 @@
         "off_topic": 3
       },
       "error": null,
-      "duration_s": 86.7,
+      "duration_s": 220.1,
       "empty_ok": false,
       "previous_raw": 334,
       "anomaly": null
@@ -2165,9 +2179,9 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 7.8,
+      "duration_s": 9.2,
       "empty_ok": false,
-      "previous_raw": 40,
+      "previous_raw": 42,
       "anomaly": null
     },
     "scrapers.generacion_x_elfo": {
@@ -2181,7 +2195,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 2.0,
+      "duration_s": 2.7,
       "empty_ok": false,
       "previous_raw": 23,
       "anomaly": null
@@ -2197,7 +2211,7 @@
         "off_topic": 3
       },
       "error": null,
-      "duration_s": 7.0,
+      "duration_s": 6.6,
       "empty_ok": false,
       "previous_raw": 10,
       "anomaly": null
@@ -2213,7 +2227,7 @@
         "off_topic": 6
       },
       "error": null,
-      "duration_s": 0.8,
+      "duration_s": 1.2,
       "empty_ok": false,
       "previous_raw": 7,
       "anomaly": null
@@ -2229,7 +2243,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 0.9,
+      "duration_s": 1.3,
       "empty_ok": false,
       "previous_raw": 0,
       "anomaly": "stale"
@@ -2245,7 +2259,7 @@
         "off_topic": 7
       },
       "error": null,
-      "duration_s": 0.5,
+      "duration_s": 0.8,
       "empty_ok": false,
       "previous_raw": 9,
       "anomaly": null
@@ -2261,7 +2275,7 @@
         "off_topic": 2
       },
       "error": null,
-      "duration_s": 0.8,
+      "duration_s": 1.4,
       "empty_ok": false,
       "previous_raw": 125,
       "anomaly": null
@@ -2277,7 +2291,7 @@
         "off_topic": 33
       },
       "error": null,
-      "duration_s": 3.2,
+      "duration_s": 3.9,
       "empty_ok": false,
       "previous_raw": 177,
       "anomaly": null
@@ -2293,7 +2307,7 @@
         "off_topic": 39
       },
       "error": null,
-      "duration_s": 4.7,
+      "duration_s": 5.4,
       "empty_ok": false,
       "previous_raw": 154,
       "anomaly": null
@@ -2309,7 +2323,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 6.2,
+      "duration_s": 7.5,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
@@ -2325,7 +2339,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 3.9,
+      "duration_s": 4.8,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
@@ -2341,7 +2355,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 9.5,
+      "duration_s": 11.1,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
@@ -2357,7 +2371,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 10.9,
+      "duration_s": 13.0,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
@@ -2373,7 +2387,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 53.4,
+      "duration_s": 61.6,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
@@ -2389,7 +2403,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 3.5,
+      "duration_s": 3.2,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
@@ -2405,15 +2419,15 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 52.3,
+      "duration_s": 54.7,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
     },
     "scrapers.locator_pokemon": {
       "store": "Play! Pokémon Event Locator",
-      "raw": 522,
-      "valid": 522,
+      "raw": 517,
+      "valid": 517,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -2421,15 +2435,15 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 43.9,
+      "duration_s": 46.0,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
     },
     "scrapers.locator_ravensburger": {
       "store": "Ravensburger Play Locator",
-      "raw": 418,
-      "valid": 418,
+      "raw": 420,
+      "valid": 420,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
@@ -2437,23 +2451,39 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 12.2,
+      "duration_s": 12.1,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
     },
-    "scrapers.locator_wizards": {
-      "store": "Wizards Locator",
-      "raw": 0,
-      "valid": 0,
+    "scrapers.locator_riftbound": {
+      "store": "Riftbound Event Locator",
+      "raw": 366,
+      "valid": 366,
       "dropped": 0,
       "drop_reasons": {
         "missing_fields": 0,
         "bad_datetime": 0,
         "off_topic": 0
       },
-      "error": "RuntimeError: Wizards Locator: GraphQL error 500: Internal Server Error",
-      "duration_s": 17.1,
+      "error": null,
+      "duration_s": 6.0,
+      "empty_ok": false,
+      "previous_raw": null,
+      "anomaly": null
+    },
+    "scrapers.locator_wizards": {
+      "store": "Wizards Locator",
+      "raw": 1443,
+      "valid": 1443,
+      "dropped": 0,
+      "drop_reasons": {
+        "missing_fields": 0,
+        "bad_datetime": 0,
+        "off_topic": 0
+      },
+      "error": null,
+      "duration_s": 21.1,
       "empty_ok": false,
       "previous_raw": null,
       "anomaly": null
@@ -2469,9 +2499,9 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.7,
+      "duration_s": 1.2,
       "empty_ok": false,
-      "previous_raw": 8,
+      "previous_raw": 12,
       "anomaly": null
     },
     "scrapers.manual_submissions": {
@@ -2501,7 +2531,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.1,
+      "duration_s": 1.2,
       "empty_ok": false,
       "previous_raw": 0,
       "anomaly": null
@@ -2517,7 +2547,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 3.6,
+      "duration_s": 3.5,
       "empty_ok": false,
       "previous_raw": 37,
       "anomaly": null
@@ -2533,7 +2563,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 0.8,
+      "duration_s": 1.2,
       "empty_ok": false,
       "previous_raw": 21,
       "anomaly": null
@@ -2549,9 +2579,9 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.2,
+      "duration_s": 1.4,
       "empty_ok": false,
-      "previous_raw": 37,
+      "previous_raw": 39,
       "anomaly": null
     },
     "scrapers.origen_juegos": {
@@ -2565,7 +2595,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.2,
+      "duration_s": 1.3,
       "empty_ok": false,
       "previous_raw": 54,
       "anomaly": null
@@ -2581,7 +2611,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.1,
+      "duration_s": 1.4,
       "empty_ok": false,
       "previous_raw": 0,
       "anomaly": null
@@ -2597,7 +2627,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.2,
+      "duration_s": 1.6,
       "empty_ok": false,
       "previous_raw": 0,
       "anomaly": null
@@ -2613,7 +2643,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 7.2,
+      "duration_s": 7.8,
       "empty_ok": false,
       "previous_raw": 26,
       "anomaly": null
@@ -2629,7 +2659,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.8,
+      "duration_s": 2.6,
       "empty_ok": false,
       "previous_raw": 1,
       "anomaly": null
@@ -2645,7 +2675,7 @@
         "off_topic": 4
       },
       "error": null,
-      "duration_s": 4.6,
+      "duration_s": 4.2,
       "empty_ok": false,
       "previous_raw": 50,
       "anomaly": null
@@ -2661,7 +2691,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 1.0,
+      "duration_s": 0.9,
       "empty_ok": false,
       "previous_raw": 158,
       "anomaly": null
@@ -2677,7 +2707,7 @@
         "off_topic": 0
       },
       "error": null,
-      "duration_s": 20.4,
+      "duration_s": 21.3,
       "empty_ok": false,
       "previous_raw": 195,
       "anomaly": null
@@ -2693,14 +2723,12 @@
         "off_topic": 1
       },
       "error": null,
-      "duration_s": 1.6,
+      "duration_s": 1.7,
       "empty_ok": false,
       "previous_raw": 76,
       "anomaly": null
     }
   },
-  "failed_scrapers": [
-    "scrapers.locator_wizards"
-  ],
-  "generated_at": "2026-11-17T22:36:46.097689+01:00"
+  "failed_scrapers": [],
+  "generated_at": "2026-11-17T23:00:50.969206+01:00"
 }
