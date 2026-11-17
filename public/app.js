@@ -367,6 +367,8 @@ function app() {
     // Independent of segmentFilter: collapsed segments still occupy a
     // grid row (alignment preserved) but their cards are hidden.
     collapsedSegments: { morning: false, afternoon: false, evening: false, late: false },
+    // Vertical view collapses per day: { '2026-11-17:evening': true }.
+    collapsedDaySegs: {},
     SEGMENTS,
     showBackToTop: false,
     // Phone jump bar: the day / segment currently at the top of the
@@ -580,10 +582,19 @@ function app() {
     lockScrollSpy(idleMs = 400) {
       clearTimeout(this._spyUnlock);
       this._spyLocked = true;
-      this._spyUnlock = setTimeout(() => {
-        this._spyLocked = false;
-        this.updateScrollSpy();
-      }, idleMs);
+      // No recompute on unlock: near the page bottom the target can't reach
+      // the top, and the spy would snap the highlight back to what's above.
+      // The next manual scroll recomputes it.
+      this._spyUnlock = setTimeout(() => { this._spyLocked = false; }, idleMs);
+    },
+
+    // Events per segment on the day highlighted in the jump bar; segment
+    // buttons with 0 are disabled (nothing to jump to on that day).
+    get jumpDaySegCounts() {
+      const day = this.weekDays.find(d => d.iso === this.jumpDay);
+      const counts = {};
+      for (const s of SEGMENTS) counts[s.key] = day ? day.segmentMap[s.key].length : 0;
+      return counts;
     },
 
     jumpToDay(iso) {
@@ -612,6 +623,7 @@ function app() {
         return;
       }
       // Vertical: that segment in the current day, else the next day with it.
+      // A collapsed block is opened, since the user asked to see it.
       const days = this.weekDays;
       const start = Math.max(0, days.findIndex(d => d.iso === (this.jumpDay || this.nowMadrid.iso)));
       for (let i = start; i < days.length; i++) {
@@ -619,6 +631,7 @@ function app() {
         const el = dayEl && dayEl.querySelector(`[data-seg-key="${key}"]`);
         if (el) {
           this.jumpDay = days[i].iso;
+          this.collapsedDaySegs[days[i].iso + ':' + key] = false;
           this.scrollWindowTo(el);
           return;
         }
@@ -1315,6 +1328,14 @@ function app() {
          row in the grid so alignment is preserved. */
     toggleSegmentCollapse(key) {
       this.collapsedSegments[key] = !this.collapsedSegments[key];
+    },
+
+    isDaySegCollapsed(iso, key) {
+      return !!this.collapsedDaySegs[iso + ':' + key];
+    },
+    toggleDaySegCollapse(iso, key) {
+      const k = iso + ':' + key;
+      this.collapsedDaySegs[k] = !this.collapsedDaySegs[k];
     },
 
     /* ── For today's column only: a segment is "past" iff its end

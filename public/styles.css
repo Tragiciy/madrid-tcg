@@ -607,6 +607,9 @@ input:focus, select:focus { border-color: var(--accent); }
   transform: rotate(-45deg) translate(-1px, 1px);
 }
 
+/* Vertical list: a collapsed block keeps only its header line. */
+.seg-block .seg-header.is-clickable { min-height: 32px; padding-left: .2rem; }
+
 /* When the segment is collapsed, slightly mute the header so the
    collapsed state is recognisable from the row level. */
 .seg-cell.is-collapsed .seg-header { opacity: .75; }
@@ -1379,6 +1382,12 @@ input:focus, select:focus { border-color: var(--accent); }
     padding: 0 .3rem;
     -webkit-tap-highlight-color: transparent;
   }
+  .jump-seg .js-count { font-size: .62rem; margin-left: .2rem; opacity: .7; }
+  .jump-seg:disabled {
+    cursor: default;
+    opacity: .4;
+    border-style: dashed;
+  }
   .jump-seg.is-active {
     background: var(--accent-soft);
     border-color: var(--accent-dim);
@@ -1411,6 +1420,7 @@ input:focus, select:focus { border-color: var(--accent); }
     padding: .45rem .6rem;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    justify-content: flex-start;
   }
   .cal-wrap.view-vertical .day-header .dom { font-size: 1rem; }
 
