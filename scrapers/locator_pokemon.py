@@ -40,8 +40,17 @@ encloses every member city's circle, whose venues are then split between
 the cities by distance (radii never overlap, shared/cities.py). A city in
 no group is searched alone, with the exact request a one-city search
 always made. The server refuses a range past about 200 km (MAX_RANGE_KM).
-A plan over budget or too wide fails before the first call, and a call
-past the budget raises: never a partial or silently truncated result.
+
+Failure is contained per area, most important first. Areas run in CITIES
+order: Madrid alone, then Barcelona+Valencia, then the newer cities, so
+when calls run short the newest cities lose out. Discovery or Madrid's
+search failing fails the whole source, as before. Any other area failing
+(capped, HTTP error, block, too wide, no budget left) logs an ERROR naming
+the area and gives its cities no events this run; the others publish. The
+pipeline then protects those cities' existing Pokémon events and opens a
+health issue naming the city (find_suspect_zero_cities, "<source>@<city>").
+A city with no Pokémon history yet has nothing to protect: the ERROR is
+its signal. Nothing is ever published from a truncated response.
 """
 
 import logging
@@ -74,10 +83,13 @@ ACTION_URL = HOST + APP + ACTION_PATH
 MAX_RECORDS = 500  # what the page asks for; a response this big may be capped
 CALL_BUDGET = 7  # Imperva blocked the 8th call from one IP (see module docstring)
 DISCOVERY_CALLS = 3
-# Cities searched together in one POST (ids from shared/cities.py). Each
-# group's circle must stay well under MAX_RECORDS. Probe 2026-11-17, 60 days:
-# barcelona+valencia 469 (Barcelona alone 249), sevilla+malaga 321,
-# bilbao+zaragoza 90; Madrid alone 300.
+# Cities searched together in one POST (ids from shared/cities.py). The only
+# 4-POST plan within MAX_RANGE_KM with Madrid alone: a pair fits only when its
+# centres are at most ~330 km apart, so Bilbao can only pair with Zaragoza,
+# which leaves Barcelona+Valencia (Valencia is 468-540 km from Sevilla and
+# Málaga). Splitting Barcelona and Valencia would need an 8th call. Probe
+# 2026-11-17, 60 days, raw: madrid 300, barcelona+valencia 479 (Barcelona
+# alone 249), sevilla+malaga 321, bilbao+zaragoza 90.
 AREA_GROUPS = (("barcelona", "valencia"), ("sevilla", "malaga"), ("bilbao", "zaragoza"))
 AREA_MARGIN_KM = 5  # slack between the server's distance and ours
 MAX_RANGE_KM = 200  # 201 km worked, 250 km got "400 Bad Request" (probe 2026-11-17)
@@ -259,15 +271,22 @@ def _post(sess, app: dict, start: date, end: date, area: SearchArea) -> list[dic
     return data["data"]["EventList"]["List"]
 
 
-def _fetch_area(sess, area: SearchArea, app: dict) -> list[dict]:
+def _fetch_area(sess, area: SearchArea, app: dict, split: bool = True) -> list[dict]:
     """Every event of one search area. A response of MAX_RECORDS may be
-    capped: the window is split and asked again (CallBudget bounds it)."""
+    capped: with `split`, the window is halved and asked again (CallBudget
+    bounds it); without, the area fails rather than spend later areas' calls."""
+    if area.radius_km > MAX_RANGE_KM:
+        raise RuntimeError(f"Pokémon locator: area {area.label} is {area.radius_km} km, wider than "
+                           f"the server allows ({MAX_RANGE_KM} km); regroup AREA_GROUPS")
     start, end = window()
     pending, items = [(start, end)], {}
     while pending:
         a, b = pending.pop()
         batch = _post(sess, app, a, b, area)
         if len(batch) >= MAX_RECORDS:
+            if not split:
+                raise RuntimeError(f"Pokémon locator: area {area.label} returned {len(batch)} "
+                                   f"events, the response may be capped")
             if b <= a:
                 raise RuntimeError(f"Pokémon locator: {area.label} has {len(batch)} events "
                                    f"on {a} alone; the response may be capped")
@@ -355,23 +374,31 @@ def parse_events(items: list[dict], resolver: StoreResolver,
 
 
 def scrape() -> list[dict]:
-    """One discovery (3 GETs), then one POST per search area; each area's
-    venues are split between its cities. See "Request budget" above."""
+    """One discovery (3 GETs), then one POST per search area, most important
+    first; each area's venues are split between its cities. See "Request
+    budget" and "Failure is contained per area" above."""
     areas = search_areas()
-    too_wide = [f"{a.label} {a.radius_km} km" for a in areas if a.radius_km > MAX_RANGE_KM]
-    if too_wide:
-        raise RuntimeError(f"Pokémon locator: search areas wider than {MAX_RANGE_KM} km: "
-                           f"{', '.join(too_wide)}; regroup AREA_GROUPS")
-    planned = DISCOVERY_CALLS + len(areas)
-    if planned > CALL_BUDGET:
-        raise BudgetExceeded(f"Pokémon locator: {planned} calls planned, budget {CALL_BUDGET}; "
-                             f"add the new city to an AREA_GROUPS group")
+    critical = areas[0]  # Madrid alone: its failure fails the source
+    if critical.cities != (default_city(),):
+        raise RuntimeError(f"Pokémon locator: the first search area must be "
+                           f"{default_city().id} alone, not {critical.label}")
     sess = CallBudget(session())
     app = discover(sess)
     resolver = StoreResolver()
     raw_by_city: dict[str, list[dict]] = {}
+    failed: list[str] = []
     for area in areas:
-        raw = _fetch_area(sess, area, app)
+        try:
+            raw = _fetch_area(sess, area, app, split=area is critical)
+        except (RuntimeError, requests.RequestException) as exc:
+            if area is critical:
+                raise
+            failed.append(area.label)
+            logger.error("%s area %s failed; no Pokémon events for %s this run "
+                         "(existing ones are kept by the per-city guard): %s",
+                         STORE, area.label, ", ".join(c.id for c in area.cities), exc)
+            raw_by_city.update({c.id: [] for c in area.cities})
+            continue
         raw_by_city.update(area.split(raw))
         logger.info("%s area %s (%d km): %d raw → %s", STORE, area.label, area.radius_km, len(raw),
                     ", ".join(f"{c.id} {len(raw_by_city[c.id])}" for c in area.cities))
@@ -383,7 +410,8 @@ def scrape() -> list[dict]:
         return events
 
     events = for_each_city(STORE, one_city)
-    logger.info("%s: %d calls of %d", STORE, sess.used, CALL_BUDGET)
+    logger.info("%s: %d calls of %d; failed areas: %s", STORE, sess.used, CALL_BUDGET,
+                ", ".join(failed) or "none")
     return events
 
 

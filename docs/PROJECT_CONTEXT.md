@@ -170,14 +170,27 @@ and Bilbao+Zaragoza together: one POST over a circle that encloses both
 cities' circles (plus 5 km), whose venues are split between the cities by
 distance (`SearchArea.split`). Madrid is searched alone with the same request
 as before. The server answers "400 Bad Request" past about 200 km
-(`MAX_RANGE_KM`; 201 km worked, 250 km did not). A plan over budget or wider
-than that fails before the first call (`BudgetExceeded`: add a new city to a
-group), and `CallBudget` refuses any call past the
-budget, so a capped response that would need a window split fails the source
-instead of being published truncated. Area sizes on 2026-11-17 (raw events,
-60 days): Madrid 300, Barcelona+Valencia 469, Sevilla+Málaga 321,
-Bilbao+Zaragoza 90. A group near `MAX_RECORDS` (500) is the first thing to
-split when it grows; the server ignores the `MaxRecords` it is sent.
+(`MAX_RANGE_KM`; 201 km worked, 250 km did not). Within that limit a pair
+fits only when its centres are at most ~330 km apart, so Bilbao can only
+pair with Zaragoza, which leaves Barcelona+Valencia; splitting those two
+would need an 8th call. Raw events on 2026-11-17 (60 days): Madrid 300,
+Barcelona+Valencia 479, Sevilla+Málaga 321, Bilbao+Zaragoza 90. The server
+ignores the `MaxRecords` it is sent; a response of `MAX_RECORDS` (500) is
+treated as possibly capped.
+
+Failure is contained per area, most important first. Areas run in
+`CITIES` order: Madrid alone, then Barcelona+Valencia, then the newer
+cities, so when calls run short the newest cities lose out. Discovery or
+Madrid's search failing fails the whole source, as for any locator (Madrid's
+window may still be split if capped). Any other area failing (capped, HTTP
+error, Imperva block, wider than `MAX_RANGE_KM`, no budget left) logs an
+ERROR naming the area and returns no events for its cities; the rest
+publish. The per-city suspect-zero guard (`find_suspect_zero_cities`) then
+protects those cities' existing Pokémon events
+(`scrapers.locator_pokemon@<city>`) and the health issue names the city. A
+city with no Pokémon history yet has nothing to protect, and the ERROR in
+the run log is its only signal. A grouped area is never split, so it cannot
+spend the calls of the areas after it.
 
 `shared/locator_common.py` holds the parts they share:
 - the time window, and `for_each_city()`, which runs one search per city in

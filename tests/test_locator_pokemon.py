@@ -196,6 +196,9 @@ class SearchAreaTests(unittest.TestCase):
         self.assertEqual(areas[-1].label, "lisboa")
 
 
+_RealBudget = locator_pokemon.CallBudget
+
+
 class ScrapeBudgetTests(unittest.TestCase):
     """scrape() end to end on a fake server: discovery, one POST per area."""
 
@@ -235,29 +238,126 @@ class ScrapeBudgetTests(unittest.TestCase):
                          {"BCN SHOP": "barcelona", "VLC SHOP": "valencia", "MLG SHOP": "malaga"})
         self.assertEqual(sum(1 for v in hints.values() if v == "madrid"), 4)  # fixture's TCG venues
 
-    def test_capped_response_fails_loudly_within_budget(self):
+    # Area centres' latitudes as sent in each POST body.
+    MAD, BCN_VAL, SEV_MAL, BIL_ZAR = "40.4168", "40.4287", "37.0552", "42.4559"
+
+    def _world(self, **override):
+        """Per-area responses; an int instead of a list is an HTTP error."""
         base = _items()[0]
-        capped = [_at(base, f"g{i}", 40.42, -3.70) for i in range(locator_pokemon.MAX_RECORDS)]
-        sess = self._server(lambda body: capped)  # every window stays capped
-        with self.assertRaises(RuntimeError):
+        world = {self.MAD: _items(),
+                 self.BCN_VAL: [_at(base, "bcn", 41.40, 2.17, "BCN SHOP"),
+                                _at(base, "vlc", 39.47, -0.37, "VLC SHOP")],
+                 self.SEV_MAL: [_at(base, "sev", 37.39, -5.98, "SEV SHOP"),
+                                _at(base, "mlg", 36.72, -4.42, "MLG SHOP")],
+                 self.BIL_ZAR: [_at(base, "zgz", 41.65, -0.88, "ZGZ SHOP")]}
+        world.update({getattr(self, k): v for k, v in override.items()})
+
+        def post(body):
+            got = world.get(body["screenData"]["variables"]["latitude"], [])
+            if isinstance(got, int):
+                raise RuntimeError(f"HTTP {got}")
+            return got
+        return post
+
+    @staticmethod
+    def _cities(events):
+        return sorted({e["store_hint"]["city"] for e in events})
+
+    @staticmethod
+    def _capped(lat, lng):
+        return [_at(_items()[0], f"g{i}", lat, lng) for i in range(locator_pokemon.MAX_RECORDS)]
+
+    def test_areas_run_most_important_first(self):
+        sess = self._server(self._world())
+        self._scrape(sess)
+        lats = [kw["json"]["screenData"]["variables"]["latitude"] for m, _, kw in sess.calls if m == "POST"]
+        self.assertEqual(lats, [self.MAD, self.BCN_VAL, self.SEV_MAL, self.BIL_ZAR])
+
+    def test_capped_group_fails_alone_and_the_others_publish(self):
+        sess = self._server(self._world(BCN_VAL=self._capped(41.40, 2.17)))
+        with self.assertLogs(locator_pokemon.logger, "ERROR") as logs:
+            events = self._scrape(sess)
+        self.assertEqual(self._cities(events), ["madrid", "malaga", "sevilla", "zaragoza"])
+        self.assertEqual(len(logs.output), 1)
+        self.assertIn("barcelona+valencia failed", logs.output[0])
+        self.assertIn("may be capped", logs.output[0])
+        self.assertEqual(len(sess.calls), 7)  # no split: later areas keep their calls
+
+    def test_http_error_in_a_group_fails_that_group_only(self):
+        sess = self._server(self._world(SEV_MAL=503))
+        with self.assertLogs(locator_pokemon.logger, "ERROR") as logs:
+            events = self._scrape(sess)
+        self.assertEqual(self._cities(events), ["barcelona", "madrid", "valencia", "zaragoza"])
+        self.assertIn("no Pokémon events for sevilla, malaga", logs.output[0])
+
+    def test_madrid_failing_fails_the_source(self):
+        for madrid in (503, self._capped(40.42, -3.70)):  # capped on every split
+            sess = self._server(self._world(MAD=madrid))
+            with self.assertRaises(RuntimeError):
+                self._scrape(sess)
+            self.assertLessEqual(len(sess.calls), locator_pokemon.CALL_BUDGET)
+
+    def test_discovery_failing_fails_the_source(self):
+        page = "<html><head><title>Pardon Our Interruption</title></head></html>"
+        sess = _Session([("https://", _Resp(page, "text/html"))])
+        with self.assertRaises(locator_pokemon.BlockedError):
             self._scrape(sess)
-        self.assertLessEqual(len(sess.calls), locator_pokemon.CALL_BUDGET)
 
-    def test_plan_over_budget_fails_before_any_call(self):
-        sess = self._server(lambda body: [])
-        ungrouped = locator_pokemon.search_areas(CITIES, groups=())  # 3 + 7 calls > 7
-        with mock.patch.object(locator_pokemon, "search_areas", lambda: ungrouped):
-            with self.assertRaises(locator_pokemon.BudgetExceeded):
-                self._scrape(sess)
-        self.assertEqual(sess.calls, [])
+    def test_budget_short_the_least_important_areas_lose_out(self):
+        sess = self._server(self._world())
+        with mock.patch.object(locator_pokemon, "CallBudget",
+                               lambda inner: _RealBudget(inner, limit=5)), \
+             self.assertLogs(locator_pokemon.logger, "ERROR") as logs:
+            events = self._scrape(sess)
+        self.assertEqual(self._cities(events), ["barcelona", "madrid", "valencia"])
+        self.assertEqual(len(logs.output), 2)  # sevilla+malaga, bilbao+zaragoza
+        self.assertTrue(all("exceed the budget" in o for o in logs.output))
+        self.assertEqual(len(sess.calls), 5)
 
-    def test_too_wide_area_fails_before_any_call(self):
-        sess = self._server(lambda body: [])
-        wide = locator_pokemon.search_areas(CITIES, groups=(("madrid", "barcelona"),))
-        with mock.patch.object(locator_pokemon, "search_areas", lambda: wide):
-            with self.assertRaisesRegex(RuntimeError, "wider than"):
-                self._scrape(sess)
-        self.assertEqual(sess.calls, [])
+    def test_too_wide_group_fails_before_its_call(self):
+        sess = self._server(self._world())
+        wide = locator_pokemon.search_areas(CITIES, groups=(("barcelona", "sevilla"),))
+        with mock.patch.object(locator_pokemon, "search_areas", lambda: wide), \
+             self.assertLogs(locator_pokemon.logger, "ERROR") as logs:
+            self._scrape(sess)
+        self.assertIn("wider than", logs.output[0])
+        posted = [kw["json"]["screenData"]["variables"]["range"] for m, _, kw in sess.calls if m == "POST"]
+        self.assertTrue(all(int(r) <= locator_pokemon.MAX_RANGE_KM for r in posted))
+
+    def test_failed_group_is_protected_per_city_by_the_pipeline(self):
+        """A failed group leaves its cities without fresh Pokémon events. The
+        per-city suspect-zero guard keeps their existing events and names the
+        city in the health issue; a city with no history only has the ERROR."""
+        from pipeline.health import build_stats
+        from pipeline.reconcile import find_suspect_zero_cities, merge_events
+        from tools.sync_health_issues import issue_body, unhealthy_stores
+        src, now = "scrapers.locator_pokemon", "2026-11-18T12:00:00+01:00"
+        sess = self._server(self._world(SEV_MAL=503, BIL_ZAR=503))
+        with self.assertLogs(locator_pokemon.logger, "ERROR"):
+            fresh = self._scrape(sess)
+        for e in fresh:  # what attach_store_ids does for a new store
+            e.update(source=src, city=e.pop("store_hint")["city"], is_active=True)
+
+        def old(city, i):
+            return {"title": "Liga Pokémon", "store": f"{city} shop", "game": "Pokémon",
+                    "datetime_start": f"2026-12-0{i}T18:00:00+01:00", "source": src, "city": city,
+                    "source_event_id": f"pokemon:{city}{i}", "is_active": True,
+                    "source_url": locator_pokemon.LOCATOR_PAGE}
+        # Sevilla and Málaga have Pokémon history; Bilbao and Zaragoza none yet.
+        existing = [old(c, i) for c in ("madrid", "sevilla", "malaga") for i in (1, 2)]
+        stats = {src: {"store": locator_pokemon.STORE, "raw": len(fresh), "valid": len(fresh),
+                       "dropped": 0, "drop_reasons": {}, "error": None}}
+        zero = find_suspect_zero_cities(stats, fresh, existing, now)
+        self.assertEqual(zero, {f"{src}@sevilla", f"{src}@malaga"})
+        merged = merge_events(existing, fresh, now, protected_sources=zero)
+        kept = [e for e in merged if e["city"] in ("sevilla", "malaga")]
+        self.assertEqual(len(kept), 4)
+        self.assertTrue(all(e.get("is_active", True) and not e.get("missing_runs") for e in kept))
+        report = build_stats(merged, stats, [], now, suspect_zero_sources=zero)
+        self.assertEqual(report["scrapers"][src]["suspect_zero_cities"], ["malaga", "sevilla"])
+        body = issue_body(locator_pokemon.STORE, unhealthy_stores(report)[locator_pokemon.STORE], now)
+        self.assertIn("0 events for", body)
+        self.assertIn("sevilla", body)
 
     def test_call_budget_refuses_the_extra_call(self):
         sess = _Session([("https://", _Resp("{}", "application/json"))])
