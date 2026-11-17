@@ -4,7 +4,7 @@ Pure functions over lists of event dicts: no file or network I/O.
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 from pipeline.normalize import _parse_dt
@@ -189,6 +189,9 @@ LOCATOR_PREFIX = "scrapers.locator_"
 # same store and game (or the scraper's game is unknown) on the same day,
 # starting within this many minutes of each other.
 DUPLICATE_WINDOW_MIN = 90
+# Locators are read this many days back (shared.locator_common.LOOKBACK_DAYS
+# plus a day of margin); existing scraper events in that range claim slots.
+CLAIM_LOOKBACK_DAYS = 8
 
 
 def is_locator(module_name: Optional[str]) -> bool:
@@ -256,8 +259,21 @@ def drop_locator_duplicates(fresh: list[dict], existing: list[dict],
     for e in fresh:
         if not is_locator(e.get("source")):
             claim(e)
-    for e in _upcoming_active(existing, now_iso):
-        if e.get("source") and not is_locator(e.get("source")):
+    # Existing scraper events claim too — upcoming ones (a scraper that failed
+    # today keeps its events) and recent past ones, because locators are
+    # also re-read LOOKBACK_DAYS back for final player counts and their
+    # copies of already-held past events must not become history duplicates.
+    now_dt = datetime.fromisoformat(now_iso)
+    since = now_dt - timedelta(days=CLAIM_LOOKBACK_DAYS)
+    for e in existing:
+        if not e.get("source") or is_locator(e.get("source")):
+            continue
+        dt = _parse_dt(e.get("datetime_start") or "")
+        if dt is None:
+            continue
+        if dt > now_dt and e.get("is_active", True):
+            claim(e)
+        elif since <= dt <= now_dt:
             claim(e)
 
     by_day: dict[tuple, list[int]] = {}

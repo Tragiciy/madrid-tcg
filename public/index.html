@@ -316,6 +316,8 @@
                            :title="e.store"
                            x-text="e.store"></div>
                       <div class="ev-distance" x-show="nearMe && storeDistanceLabel(e.store)" x-text="storeDistanceLabel(e.store)"></div>
+                      <div class="ev-attendance" :class="{ 'is-full': e.full && !e.participants }"
+                           x-show="attendanceBadge(e)" :title="attendanceDetail(e)" x-text="'👥 ' + attendanceBadge(e)"></div>
                     </div>
                     <div class="ev-title" x-text="e.title"></div>
                     <div class="ev-footer">
@@ -444,6 +446,10 @@
         <span class="panel-label">WHEN</span>
         <span class="panel-value" x-text="selectedEvent ? formatDateLong(selectedEvent.datetime_start) : ''"></span>
         <span class="panel-value" x-html="selectedEvent ? formatTimeRange(selectedEvent) : ''"></span>
+      </div>
+      <div class="panel-row" x-show="attendanceDetail(selectedEvent)">
+        <span class="panel-label">PLAYERS</span>
+        <span class="panel-value" x-text="attendanceDetail(selectedEvent)"></span>
       </div>
 
       <div class="panel-actions">

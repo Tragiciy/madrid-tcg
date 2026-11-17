@@ -39,6 +39,7 @@ CITIES = {
 EVENT_FIELDS = (
     "title", "store", "store_id", "store_address", "game", "format",
     "format_official", "best_of", "datetime_start", "datetime_end", "source_url",
+    "capacity", "registered", "participants", "full",
 )
 STORE_FIELDS = ("id", "name", "address", "lat", "lng", "website", "notes")
 

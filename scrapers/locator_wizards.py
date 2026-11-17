@@ -9,10 +9,11 @@ scraper for.
 """
 
 import logging
+from datetime import datetime
 
 from shared.locator_common import (
-    CITY, StoreResolver, make_event, request_json, session, store_hint, to_madrid_iso,
-    window,
+    CITY, TZ, StoreResolver, lookback_start, make_event, request_json, session, store_hint,
+    to_madrid_iso, window,
 )
 
 logger = logging.getLogger(__name__)
@@ -41,7 +42,7 @@ query($lat: Float!, $lng: Float!, $m: Int!, $start: DateTime!, $end: DateTime!,
   searchEvents(query: {latitude: $lat, longitude: $lng, maxMeters: $m, tags: [],
                        startDate: $start, endDate: $end, page: $page, pageSize: $size}) {
     events {
-      id title scheduledStartTime
+      id title scheduledStartTime capacity numberOfPlayers
       eventFormat { name }
       organization { id name }
     }
@@ -72,7 +73,8 @@ def _fetch_store_addresses(sess) -> dict[str, dict]:
 
 
 def _fetch_events(sess) -> list[dict]:
-    start, end = window()
+    _, end = window()
+    start = lookback_start()  # recent past too: their final player counts
     events: list[dict] = []
     for page in range(MAX_PAGES):
         data = _graphql(sess, EVENTS_QUERY, {
@@ -101,6 +103,8 @@ def parse_events(raw_events: list[dict], addresses: dict,
         store = resolver.resolve(SOURCE, org.get("id"), org["name"], address)
         if store is StoreResolver.SKIP:
             continue
+        players = ev.get("numberOfPlayers")
+        finished = datetime.fromisoformat(start) <= datetime.now(TZ)
         out.append(make_event(
             title=ev["title"],
             store=store,
@@ -110,6 +114,9 @@ def parse_events(raw_events: list[dict], addresses: dict,
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=f"https://locator.wizards.com/event/{ev['id']}",
             format_hint=(ev.get("eventFormat") or {}).get("name") or "",
+            capacity=ev.get("capacity"),
+            registered=None if finished else players,
+            participants=players if finished else None,
             hint=store_hint(SOURCE, org.get("id"), org["name"], address, info.get("lat"), info.get("lng")),
         ))
     return out
