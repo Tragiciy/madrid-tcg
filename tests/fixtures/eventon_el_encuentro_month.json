@@ -1,0 +1,103 @@
+{
+ "status": "GOOD",
+ "json": [
+  {
+   "ID": 7847,
+   "event_id": 7847,
+   "event_start_unix": 1793813400,
+   "event_end_unix": 1793826000,
+   "event_title": "Riftbound &#8211; Nexus Nights",
+   "event_type": "nr",
+   "event_past": "yes",
+   "ri": "0",
+   "unix_start": 1793809800,
+   "unix_end": 1793822400,
+   "_ID": "7847_0"
+  },
+  {
+   "ID": 7920,
+   "event_id": 7920,
+   "event_start_unix": 1795023000,
+   "event_end_unix": 1795035600,
+   "event_title": "MTG Commander (Bracket 2)",
+   "event_type": "nr",
+   "event_past": "no",
+   "ri": "0",
+   "unix_start": 1795019400,
+   "unix_end": 1795032000,
+   "_ID": "7920_0"
+  },
+  {
+   "ID": 7877,
+   "event_id": 7877,
+   "event_start_unix": 1795023000,
+   "event_end_unix": 1795035600,
+   "event_title": "Riftbound &#8211; Nexus Nights",
+   "event_type": "nr",
+   "event_past": "no",
+   "ri": "0",
+   "unix_start": 1795019400,
+   "unix_end": 1795032000,
+   "_ID": "7877_0"
+  },
+  {
+   "ID": 7917,
+   "event_id": 7917,
+   "event_start_unix": 1795024800,
+   "event_end_unix": 1795035600,
+   "event_title": "Gundam TCG &#8211; Store Tournament",
+   "event_type": "nr",
+   "event_past": "no",
+   "ri": "0",
+   "unix_start": 1795021200,
+   "unix_end": 1795032000,
+   "_ID": "7917_0"
+  },
+  {
+   "ID": 7889,
+   "event_id": 7889,
+   "event_start_unix": 1795111200,
+   "event_end_unix": 1795122000,
+   "event_title": "Yu-Gi-Oh! &#8211; Formato EDISON",
+   "event_type": "nr",
+   "event_past": "no",
+   "ri": "0",
+   "unix_start": 1795107600,
+   "unix_end": 1795118400,
+   "_ID": "7889_0"
+  },
+  {
+   "ID": 7886,
+   "event_id": 7886,
+   "event_start_unix": 1795111200,
+   "event_end_unix": 1795122000,
+   "event_title": "Pokémon League &#8211; Standard",
+   "event_type": "nr",
+   "event_past": "no",
+   "ri": "0",
+   "unix_start": 1795107600,
+   "unix_end": 1795118400,
+   "_ID": "7886_0"
+  },
+  {
+   "ID": 8218,
+   "event_id": 8218,
+   "event_start_unix": 1795257000,
+   "event_end_unix": 1795269600,
+   "event_title": "Dragon Ball Fusion World &#8211; Store Tournament",
+   "event_type": "nr",
+   "event_past": "no",
+   "ri": "0",
+   "unix_start": 1795253400,
+   "unix_end": 1795266000,
+   "_ID": "8218_0"
+  }
+ ],
+ "html": "<div id=\"event_7847_0\" class=\"eventon_list_event event\" data-event_id=\"7847\"><div class=\"evo_event_schema\" style=\"display:none\"><a href=\"https://elencuentro.infrecuentes.es/evento/riftbound-nexus-nights-2/\" itemprop=\"url\"></a><meta itemprop=\"image\"/><meta content=\"2026-11-4T17:30+1:00\" itemprop=\"startDate\"/><meta content=\"2026-11-4T21:00+1:00\" itemprop=\"endDate\"/><meta content=\"https://schema.org/EventScheduled\" itemprop=\"eventStatus\"/><meta itemprop=\"eventAttendanceMode\" itemscope=\"\" itemtype=\"https://schema.org/OfflineEventAttendanceMode\"/><div itemprop=\"location\" itemscope=\"\" itemtype=\"http://schema.org/Place\" style=\"display:none\"><span itemprop=\"name\">El Encuentro</span><span itemprop=\"address\" itemscope=\"\" itemtype=\"http://schema.org/PostalAddress\"><item itemprop=\"streetAddress\">C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona</item></span></div><script type=\"application/ld+json\">{\"@context\": \"http://schema.org\",\"@type\": \"Event\",\n\t\t\t\t\"@id\": \"event_7847_0\",\n\t\t\t\t\"eventAttendanceMode\":\"https://schema.org/OfflineEventAttendanceMode\",\n\t\t\t\t\"eventStatus\":\"https://schema.org/EventScheduled\",\n\t\t\t\t\"name\": \"Riftbound - Nexus Nights\",\n\t\t\t\t\"url\": \"https://elencuentro.infrecuentes.es/evento/riftbound-nexus-nights-2/\",\n\t\t\t\t\"startDate\": \"2026-11-4T17:30+1:00\",\n\t\t\t\t\"endDate\": \"2026-11-4T21:00+1:00\",\n\t\t\t\t\"image\":\"\", \n\t\t\t\t\"description\":\"<p>💶 Precio: 6 €<br /> 📝 Check-in: 17:00h<br /> 🚀 Inicio 1ª ronda: 17:30h<br /> 🔄 Rondas: Hasta 3 rondas<br /> ⏱️ Tiempo por ronda: 50 minutos</p> <p>🎁 Participación: 1 Sobre de Riftbound + 1 Sobre Promocional Nexus</p> \",\"location\":[{\"@type\":\"Place\",\"name\":\"El Encuentro\",\"address\":{\"@type\": \"PostalAddress\",\"streetAddress\":\"C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona\"}}]}</script></div></div><div id=\"event_7920_0\" class=\"eventon_list_event event\" data-event_id=\"7920\"><div class=\"evo_event_schema\" style=\"display:none\"><a href=\"https://elencuentro.infrecuentes.es/evento/mtg-commander-bracket-2-2/\" itemprop=\"url\"></a><meta itemprop=\"image\"/><meta content=\"2026-11-18T17:30+1:00\" itemprop=\"startDate\"/><meta content=\"2026-11-18T21:00+1:00\" itemprop=\"endDate\"/><meta content=\"https://schema.org/EventScheduled\" itemprop=\"eventStatus\"/><meta itemprop=\"eventAttendanceMode\" itemscope=\"\" itemtype=\"https://schema.org/OfflineEventAttendanceMode\"/><div itemprop=\"location\" itemscope=\"\" itemtype=\"http://schema.org/Place\" style=\"display:none\"><span itemprop=\"name\">El Encuentro</span><span itemprop=\"address\" itemscope=\"\" itemtype=\"http://schema.org/PostalAddress\"><item itemprop=\"streetAddress\">C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona</item></span></div><script type=\"application/ld+json\">{\"@context\": \"http://schema.org\",\"@type\": \"Event\",\n\t\t\t\t\"@id\": \"event_7920_0\",\n\t\t\t\t\"eventAttendanceMode\":\"https://schema.org/OfflineEventAttendanceMode\",\n\t\t\t\t\"eventStatus\":\"https://schema.org/EventScheduled\",\n\t\t\t\t\"name\": \"MTG Commander (Bracket 2)\",\n\t\t\t\t\"url\": \"https://elencuentro.infrecuentes.es/evento/mtg-commander-bracket-2-2/\",\n\t\t\t\t\"startDate\": \"2026-11-18T17:30+1:00\",\n\t\t\t\t\"endDate\": \"2026-11-18T21:00+1:00\",\n\t\t\t\t\"image\":\"\", \n\t\t\t\t\"description\":\"<p>🧙 Formato: Commander Budget / Precon (Bracket 2 – CORE)<br /> 💶 Precio: Compra de 1 sobre de Magic: The Gathering<br /> 📝 Check-in: 17:00h<br /> 🚀 Inicio 1ª ronda: 17:30h<br /> 🔄 Rondas: Hasta 3 rondas<br /> ⏱️ Tiempo por ronda: 80 minutos</p> <p>🎁 Sorteos: Cartas promocionales y Promo Packs entre participantes (mín. 8 jugadores, evento WPN)</p> <h3>🧩 Normas de construcción</h3> <ul> <li>Presupuesto máximo: No hay límite</li> <li>Se permiten mazos preconstruidos sin modificar</li> <li>Barajas dentro de Bracket 2 (CORE)</li> </ul> \",\"location\":[{\"@type\":\"Place\",\"name\":\"El Encuentro\",\"address\":{\"@type\": \"PostalAddress\",\"streetAddress\":\"C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona\"}}]}</script></div></div><div id=\"event_7877_0\" class=\"eventon_list_event event\" data-event_id=\"7877\"><div class=\"evo_event_schema\" style=\"display:none\"><a href=\"https://elencuentro.infrecuentes.es/evento/riftbound-nexus-nights-4/\" itemprop=\"url\"></a><meta itemprop=\"image\"/><meta content=\"2026-11-18T17:30+1:00\" itemprop=\"startDate\"/><meta content=\"2026-11-18T21:00+1:00\" itemprop=\"endDate\"/><meta content=\"https://schema.org/EventScheduled\" itemprop=\"eventStatus\"/><meta itemprop=\"eventAttendanceMode\" itemscope=\"\" itemtype=\"https://schema.org/OfflineEventAttendanceMode\"/><div itemprop=\"location\" itemscope=\"\" itemtype=\"http://schema.org/Place\" style=\"display:none\"><span itemprop=\"name\">El Encuentro</span><span itemprop=\"address\" itemscope=\"\" itemtype=\"http://schema.org/PostalAddress\"><item itemprop=\"streetAddress\">C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona</item></span></div><script type=\"application/ld+json\">{\"@context\": \"http://schema.org\",\"@type\": \"Event\",\n\t\t\t\t\"@id\": \"event_7877_0\",\n\t\t\t\t\"eventAttendanceMode\":\"https://schema.org/OfflineEventAttendanceMode\",\n\t\t\t\t\"eventStatus\":\"https://schema.org/EventScheduled\",\n\t\t\t\t\"name\": \"Riftbound - Nexus Nights\",\n\t\t\t\t\"url\": \"https://elencuentro.infrecuentes.es/evento/riftbound-nexus-nights-4/\",\n\t\t\t\t\"startDate\": \"2026-11-18T17:30+1:00\",\n\t\t\t\t\"endDate\": \"2026-11-18T21:00+1:00\",\n\t\t\t\t\"image\":\"\", \n\t\t\t\t\"description\":\"<p>💶 Precio: 6 €<br /> 📝 Check-in: 17:00h<br /> 🚀 Inicio 1ª ronda: 17:30h<br /> 🔄 Rondas: Hasta 3 rondas<br /> ⏱️ Tiempo por ronda: 50 minutos</p> <p>🎁 Participación: 1 Sobre de Riftbound + 1 Sobre Promocional Nexus</p> \",\"location\":[{\"@type\":\"Place\",\"name\":\"El Encuentro\",\"address\":{\"@type\": \"PostalAddress\",\"streetAddress\":\"C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona\"}}]}</script></div></div><div id=\"event_7917_0\" class=\"eventon_list_event event\" data-event_id=\"7917\"><div class=\"evo_event_schema\" style=\"display:none\"><a href=\"https://elencuentro.infrecuentes.es/evento/gundam-tcg-store-tournament-2/\" itemprop=\"url\"></a><meta itemprop=\"image\"/><meta content=\"2026-11-18T18:00+1:00\" itemprop=\"startDate\"/><meta content=\"2026-11-18T21:00+1:00\" itemprop=\"endDate\"/><meta content=\"https://schema.org/EventScheduled\" itemprop=\"eventStatus\"/><meta itemprop=\"eventAttendanceMode\" itemscope=\"\" itemtype=\"https://schema.org/OfflineEventAttendanceMode\"/><div itemprop=\"location\" itemscope=\"\" itemtype=\"http://schema.org/Place\" style=\"display:none\"><span itemprop=\"name\">El Encuentro</span><span itemprop=\"address\" itemscope=\"\" itemtype=\"http://schema.org/PostalAddress\"><item itemprop=\"streetAddress\">C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona</item></span></div><script type=\"application/ld+json\">{\"@context\": \"http://schema.org\",\"@type\": \"Event\",\n\t\t\t\t\"@id\": \"event_7917_0\",\n\t\t\t\t\"eventAttendanceMode\":\"https://schema.org/OfflineEventAttendanceMode\",\n\t\t\t\t\"eventStatus\":\"https://schema.org/EventScheduled\",\n\t\t\t\t\"name\": \"Gundam TCG - Store Tournament\",\n\t\t\t\t\"url\": \"https://elencuentro.infrecuentes.es/evento/gundam-tcg-store-tournament-2/\",\n\t\t\t\t\"startDate\": \"2026-11-18T18:00+1:00\",\n\t\t\t\t\"endDate\": \"2026-11-18T21:00+1:00\",\n\t\t\t\t\"image\":\"\", \n\t\t\t\t\"description\":\"<p>🎮 Formato: Construido<br /> 💶 Precio: Compra de un sobre de GUNDAM TCG<br /> 📝 Check-in: 17:30h<br /> 🚀 Inicio 1ª ronda: 18:00h<br /> 🔄 Rondas: Hasta 4 rondas.<br /> ⏱️ Tiempo por ronda: 45 minutos</p> <p>🎁 Sorteo: Material promocional de Gundam TCG</p> \",\"location\":[{\"@type\":\"Place\",\"name\":\"El Encuentro\",\"address\":{\"@type\": \"PostalAddress\",\"streetAddress\":\"C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona\"}}]}</script></div></div><div id=\"event_7889_0\" class=\"eventon_list_event event\" data-event_id=\"7889\"><div class=\"evo_event_schema\" style=\"display:none\"><a href=\"https://elencuentro.infrecuentes.es/evento/yu-gi-oh-formato-edison-3/\" itemprop=\"url\"></a><meta itemprop=\"image\"/><meta content=\"2026-11-19T18:00+1:00\" itemprop=\"startDate\"/><meta content=\"2026-11-19T21:00+1:00\" itemprop=\"endDate\"/><meta content=\"https://schema.org/EventScheduled\" itemprop=\"eventStatus\"/><meta itemprop=\"eventAttendanceMode\" itemscope=\"\" itemtype=\"https://schema.org/OfflineEventAttendanceMode\"/><div itemprop=\"location\" itemscope=\"\" itemtype=\"http://schema.org/Place\" style=\"display:none\"><span itemprop=\"name\">El Encuentro</span><span itemprop=\"address\" itemscope=\"\" itemtype=\"http://schema.org/PostalAddress\"><item itemprop=\"streetAddress\">C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona</item></span></div><script type=\"application/ld+json\">{\"@context\": \"http://schema.org\",\"@type\": \"Event\",\n\t\t\t\t\"@id\": \"event_7889_0\",\n\t\t\t\t\"eventAttendanceMode\":\"https://schema.org/OfflineEventAttendanceMode\",\n\t\t\t\t\"eventStatus\":\"https://schema.org/EventScheduled\",\n\t\t\t\t\"name\": \"Yu-Gi-Oh! - Formato EDISON\",\n\t\t\t\t\"url\": \"https://elencuentro.infrecuentes.es/evento/yu-gi-oh-formato-edison-3/\",\n\t\t\t\t\"startDate\": \"2026-11-19T18:00+1:00\",\n\t\t\t\t\"endDate\": \"2026-11-19T21:00+1:00\",\n\t\t\t\t\"image\":\"\", \n\t\t\t\t\"description\":\"<p>🎮 Formato: Edison (marzo 2010)<br /> 💶 Precio: Gratis<br /> 👥 Plazas: 12<br /> 📝 Check-in: 17:30h<br /> 🚀 Inicio 1ª ronda: 18:00h<br /> 🔄 Rondas: Hasta 4 rondas (suizo)<br /> ⏱️ Tiempo por ronda: 40 minutos</p> \",\"location\":[{\"@type\":\"Place\",\"name\":\"El Encuentro\",\"address\":{\"@type\": \"PostalAddress\",\"streetAddress\":\"C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona\"}}]}</script></div></div><div id=\"event_7886_0\" class=\"eventon_list_event event\" data-event_id=\"7886\"><div class=\"evo_event_schema\" style=\"display:none\"><a href=\"https://elencuentro.infrecuentes.es/evento/pokemon-league-standard-3/\" itemprop=\"url\"></a><meta itemprop=\"image\"/><meta content=\"2026-11-19T18:00+1:00\" itemprop=\"startDate\"/><meta content=\"2026-11-19T21:00+1:00\" itemprop=\"endDate\"/><meta content=\"https://schema.org/EventScheduled\" itemprop=\"eventStatus\"/><meta itemprop=\"eventAttendanceMode\" itemscope=\"\" itemtype=\"https://schema.org/OfflineEventAttendanceMode\"/><div itemprop=\"location\" itemscope=\"\" itemtype=\"http://schema.org/Place\" style=\"display:none\"><span itemprop=\"name\">El Encuentro</span><span itemprop=\"address\" itemscope=\"\" itemtype=\"http://schema.org/PostalAddress\"><item itemprop=\"streetAddress\">C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona</item></span></div><script type=\"application/ld+json\">{\"@context\": \"http://schema.org\",\"@type\": \"Event\",\n\t\t\t\t\"@id\": \"event_7886_0\",\n\t\t\t\t\"eventAttendanceMode\":\"https://schema.org/OfflineEventAttendanceMode\",\n\t\t\t\t\"eventStatus\":\"https://schema.org/EventScheduled\",\n\t\t\t\t\"name\": \"Pokémon League - Standard\",\n\t\t\t\t\"url\": \"https://elencuentro.infrecuentes.es/evento/pokemon-league-standard-3/\",\n\t\t\t\t\"startDate\": \"2026-11-19T18:00+1:00\",\n\t\t\t\t\"endDate\": \"2026-11-19T21:00+1:00\",\n\t\t\t\t\"image\":\"\", \n\t\t\t\t\"description\":\"<p>🃏 Formato: Standard<br /> 💶 Precio: 6€<br /> 📝 Check-in: 17:30h<br /> 🚀 Inicio 1ª ronda: 18:00h<br /> 🔄 Rondas: Hasta 4 rondas<br /> ⏱️ Tiempo por ronda: 30 minutos</p> <p>🎁 Sobre de liga por participar.</p> <p><strong>🏆</strong>Picking de premios: Se añadirá un sobre por participante (Si no hubiera sobres suficientes para realizar el picking el premio será repartido en cheque tienda para el TOP)</p> \",\"location\":[{\"@type\":\"Place\",\"name\":\"El Encuentro\",\"address\":{\"@type\": \"PostalAddress\",\"streetAddress\":\"C/ de les Torres, 44, 08970, Sant Joan Despí, Barcelona\"}}]}</script></div></div><div id=\"event_8218_0\" class=\"eventon_list_event event\" data-event_id=\"8218\"><div class=\"evo_event_schema\" style=\"display:none\"><a href=\"https://elencuentro.infrecuentes.es/evento/dragon-ball-fusion-world-store-tournament/\" itemprop=\"url\"></a><meta itemprop=\"image\"/><meta content=\"2026-11-21T10:30+1:00\" itemprop=\"startDate\"/><meta content=\"2026-11-21T14:00+1:00\" itemprop=\"endDate\"/><meta content=\"https://schema.org/EventScheduled\" itemprop=\"eventStatus\"/><meta itemprop=\"eventAttendanceMode\" itemscope=\"\" itemtype=\"https://schema.org/OfflineEventAttendanceMode\"/><script type=\"application/ld+json\">{\"@context\": \"http://schema.org\",\"@type\": \"Event\",\n\t\t\t\t\"@id\": \"event_8218_0\",\n\t\t\t\t\"eventAttendanceMode\":\"https://schema.org/OfflineEventAttendanceMode\",\n\t\t\t\t\"eventStatus\":\"https://schema.org/EventScheduled\",\n\t\t\t\t\"name\": \"Dragon Ball Fusion World - Store Tournament\",\n\t\t\t\t\"url\": \"https://elencuentro.infrecuentes.es/evento/dragon-ball-fusion-world-store-tournament/\",\n\t\t\t\t\"startDate\": \"2026-11-21T10:30+1:00\",\n\t\t\t\t\"endDate\": \"2026-11-21T14:00+1:00\",\n\t\t\t\t\"image\":\"\", \n\t\t\t\t\"description\":\"<p><span style='font-weight: 400;'><img class='emoji' role='img' draggable='false' src='https://s.w.org/images/core/emoji/17.0.2/svg/1f3ae.svg' alt='🎮' /> Formato: Construido<br /> 🕕 Inicio de ronda: 10:30h<br /> </span><span style='font-weight: 400;'>👥 8 Plazas<br /> </span><span style='font-weight: 400;'>🎟️ Inscripción: 5€<br /> <img class='emoji' role='img' draggable='false' src='https://s.w.org/images/core/emoji/17.0.2/svg/1f504.svg' alt='🔄' /> Rondas: Hasta 3 rondas (suizo)<br /> </span><span style='font-weight: 400;'>🎁 Cheque tienda al TOP + Promo packs para los participantes.</span><span style='font-weight: 400;'><br /> </span></p> \"}</script></div></div>",
+ "cal_month_title": "noviembre, 2026",
+ "SC": {
+  "fixed_month": "11",
+  "fixed_year": "2026",
+  "calendar_type": "fullcal"
+ }
+}
