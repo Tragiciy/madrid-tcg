@@ -1,9 +1,16 @@
-var SEGMENTS = [
-  { key: 'morning',   label: 'Morning',   range: '09:00 – 12:00', shortRange: '<12',   start: 0,  end: 12 },
-  { key: 'afternoon', label: 'Afternoon', range: '12:00 – 16:00', shortRange: '12–16', start: 12, end: 16 },
-  { key: 'evening',   label: 'Evening',   range: '16:00 – 19:00', shortRange: '16–19', start: 16, end: 19 },
-  { key: 'late',      label: 'Late',      range: '19:00+',        shortRange: '19+',   start: 19, end: 30 },
-];
+// Time-of-day slots and day sections live in model.js (TCG.TIME_SLOTS,
+// TCG.DAY_SECTIONS), next to the logic that uses them.
+
+// Short game names for chips and pills (the data keeps the full name).
+var GAME_SHORT = {
+  'Magic: The Gathering':      'Magic',
+  'Star Wars: Unlimited':      'Star Wars',
+  'Dragon Ball Fusion World':  'Dragon Ball FW',
+  'Dragon Ball Super Masters': 'DB Masters',
+  'Final Fantasy TCG':         'Final Fantasy',
+  'Gundam Card Game':          'Gundam',
+  'Cyberpunk TCG':             'Cyberpunk',
+};
 
 // Store details (address, coordinates, website, notes) keyed by display
 // name. Filled at runtime from api/v1/madrid/stores.json, which the
@@ -11,25 +18,17 @@ var SEGMENTS = [
 // stores there.
 var STORE_META = {};
 
+// Games with their own colour (the 8 busiest; styles.css section 1). Any
+// other game gets 'game-other', the warm neutral.
 var GAME_CLASS_MAP = {
-  'Magic: The Gathering': 'game-mtg',
-  'Star Wars: Unlimited': 'game-starwars',
-  'Riftbound':            'game-riftbound',
-  'One Piece':            'game-onepiece',
-  'Pokémon':              'game-pokemon',
-  'Lorcana':              'game-lorcana',
-  'Digimon':              'game-digimon',
-  'Yu-Gi-Oh!':            'game-yugioh',
-  'Flesh and Blood':      'game-fab',
-  'Final Fantasy TCG':    'game-finalfantasy',
-  'Weiß Schwarz':         'game-weiss',
-  'Naruto Mythos':        'game-naruto',
-  'Cyberpunk TCG':        'game-cyberpunk',
-  'Gundam Card Game':     'game-gundam',
-  'Dragon Ball Fusion World':  'game-dbfw',
-  'Dragon Ball Super Masters': 'game-dbmasters',
-  'My Little Pony':       'game-mlp',
-  'Palworld':             'game-palworld',
+  'Magic: The Gathering':     'game-mtg',
+  'One Piece':                'game-onepiece',
+  'Pokémon':                  'game-pokemon',
+  'Riftbound':                'game-riftbound',
+  'Lorcana':                  'game-lorcana',
+  'Digimon':                  'game-digimon',
+  'Gundam Card Game':         'game-gundam',
+  'Dragon Ball Fusion World': 'game-dbfw',
 };
 
 // Map view (Leaflet, loaded on first open). Tiles are the standard

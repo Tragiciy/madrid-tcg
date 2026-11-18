@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <meta name="theme-color" content="#5b21b6" />
+  <meta name="theme-color" content="#FFF8E7" />
   <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" integrity="sha384-l8f0VcPi/M1iHPv8egOnY/15TDwqgbOR1anMIJWvU6nLRgZVLTLSaNqi/TOoT5Fh" crossorigin="anonymous"></script>
@@ -29,7 +29,7 @@
       var re = /^[a-z]+(-[a-z]+)*$/, params = new URLSearchParams(location.search);
       var city = params.get('city');
       if (!re.test(city || '')) {
-        var scoped = ['event', 'w', 'game', 'store', 'format'].some(function (p) { return params.has(p); });
+        var scoped = ['event', 'w', 'game', 'store', 'format', 'type', 'time', 'q'].some(function (p) { return params.has(p); });
         try { city = scoped ? null : localStorage.getItem('tcg-city-v1'); } catch (e) { city = null; }
         if (!re.test(city || '')) city = 'madrid';
       }
@@ -42,282 +42,210 @@
       });
     })();
   </script>
+  <!-- Theme fonts (styles.css section 0 has the system fallbacks) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&amp;display=swap" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-<div class="page">
+<div class="page" :class="'is-' + viewMode">
 
-  <!-- Site header -->
-  <div class="site-header">
-    <div>
-      <h1>
-        <button type="button" class="brand" @click="openOnboarding()" title="About &amp; setup">TCG Events</button>
-        <template x-if="cities.length > 1">
-          <select class="city-select" :value="city" :disabled="loading"
-                  @change="setCity($event.target.value); $event.target.value = city" aria-label="City">
-            <template x-for="c in cities" :key="c.id">
-              <option :value="c.id" x-text="c.name" :selected="c.id === city"></option>
-            </template>
-          </select>
+  <!-- ── Header: brand, city, count · views ─────────────────────────── -->
+  <header class="top">
+    <h1 class="sr-only"><span x-text="cityName">Madrid</span> TCG events</h1>
+    <button type="button" class="brand" @click="openOnboarding()" title="About &amp; set up your feed">TCG Events</button>
+    <label class="city" x-show="cities.length > 1">
+      <span class="sr-only">City</span>
+      <select :value="city" :disabled="loading" @change="setCity($event.target.value); $event.target.value = city">
+        <template x-for="c in cities" :key="c.id">
+          <option :value="c.id" x-text="c.name" :selected="c.id === city"></option>
         </template>
-        <span class="city-name" x-show="cities.length <= 1" x-text="cityName">Madrid</span>
-      </h1>
-      <div class="subtitle">TCG tournaments and events in <span x-text="cityName">Madrid</span></div>
-      <div class="city-error" role="alert" x-show="cityError" x-text="cityError"></div>
-    </div>
-  </div>
-
-  <!-- Navigation -->
-  <div class="nav-bar">
-    <button class="btn" @click="prevWeek">← Prev</button>
-    <button class="btn current" @click="goToday">Today</button>
-    <button class="btn" @click="nextWeek">Next →</button>
-    <span class="week-range" x-text="weekRangeLabel"></span>
-    <span class="count-badge" x-show="!loading">
-      <span x-text="weekEventCount"></span>
-      <span x-text="weekEventCount === 1 ? 'event' : 'events'"></span> this week
-    </span>
-    <div class="view-toggle" style="margin-left:auto">
-      <button :class="{ active: viewMode === 'horizontal' }" @click="setView('horizontal')">⊞ Horizontal</button>
-      <button :class="{ active: viewMode === 'vertical' }"   @click="setView('vertical')">≡ Vertical</button>
-      <button :class="{ active: viewMode === 'map' }"        @click="setView('map')">⌖ Map</button>
-    </div>
-  </div>
-
-  <!-- Filters -->
-  <div class="filters" @keydown.escape.window="openFacet = null">
-    <div class="filter-group">
-      <label>Search</label>
-      <input type="text" placeholder="Title…" x-model.debounce.250ms="filters.search" />
-    </div>
-    <div class="filter-group">
-      <label>Game</label>
-      <div class="facet" @click.outside="openFacet = openFacet === 'game' ? null : openFacet">
-        <button class="facet-btn" type="button" @click="toggleFacetPanel('game')" :aria-expanded="openFacet === 'game'">
-          <span class="facet-summary" x-text="facetSummary('game', 'All games')"></span>
-          <span class="facet-caret">▾</span>
-        </button>
-        <div class="facet-panel" x-show="openFacet === 'game'">
-          <div class="facet-search-wrap">
-            <input type="text" class="facet-search" placeholder="Search games…" x-model="filterSearch.game" />
-            <button type="button" class="facet-search-clear" x-show="filterSearch.game" @click.stop="filterSearch.game = ''">×</button>
-          </div>
-          <div class="facet-actions" x-show="filters.game.length">
-            <button class="facet-clear" type="button" @click="clearFacet('game')">All</button>
-          </div>
-          <template x-for="g in filteredFacetOptions('game')" :key="g">
-            <label class="facet-option">
-              <input type="checkbox" :checked="isSelected('game', g)" @change="toggleFilter('game', g)">
-              <span class="facet-option-label" x-text="g"></span>
-              <span class="facet-option-count" x-text="facetOptionCount('game', g)"></span>
-            </label>
-          </template>
-          <div class="facet-empty" x-show="filteredFacetOptions('game').length === 0">No matches</div>
-        </div>
-      </div>
-    </div>
-    <div class="filter-group">
-      <label>Store</label>
-      <div class="facet" @click.outside="openFacet = openFacet === 'store' ? null : openFacet">
-        <button class="facet-btn" type="button" @click="toggleFacetPanel('store')" :aria-expanded="openFacet === 'store'">
-          <span class="facet-summary" x-text="facetSummary('store', 'All stores')"></span>
-          <span class="facet-caret">▾</span>
-        </button>
-        <div class="facet-panel" x-show="openFacet === 'store'">
-          <div class="facet-search-wrap">
-            <input type="text" class="facet-search" placeholder="Search stores…" x-model="filterSearch.store" />
-            <button type="button" class="facet-search-clear" x-show="filterSearch.store" @click.stop="filterSearch.store = ''">×</button>
-          </div>
-          <div class="facet-actions" x-show="filters.store.length">
-            <button class="facet-clear" type="button" @click="clearFacet('store')">All</button>
-          </div>
-          <template x-for="s in filteredFacetOptions('store')" :key="s">
-            <label class="facet-option">
-              <input type="checkbox" :checked="isSelected('store', s)" @change="toggleFilter('store', s)">
-              <span class="facet-option-label" x-text="s"></span>
-              <span class="facet-option-count" x-text="facetOptionCount('store', s)"></span>
-            </label>
-          </template>
-          <div class="facet-empty" x-show="filteredFacetOptions('store').length === 0">No matches</div>
-        </div>
-      </div>
-    </div>
-    <div class="filter-group">
-      <label>Format</label>
-      <div class="facet" @click.outside="openFacet = openFacet === 'format' ? null : openFacet">
-        <button class="facet-btn" type="button" @click="toggleFacetPanel('format')" :aria-expanded="openFacet === 'format'">
-          <span class="facet-summary" x-text="facetSummary('format', 'All formats')"></span>
-          <span class="facet-caret">▾</span>
-        </button>
-        <div class="facet-panel" x-show="openFacet === 'format'">
-          <div class="facet-search-wrap">
-            <input type="text" class="facet-search" placeholder="Search formats…" x-model="filterSearch.format" />
-            <button type="button" class="facet-search-clear" x-show="filterSearch.format" @click.stop="filterSearch.format = ''">×</button>
-          </div>
-          <div class="facet-actions" x-show="filters.format.length">
-            <button class="facet-clear" type="button" @click="clearFacet('format')">All</button>
-          </div>
-          <template x-for="f in filteredFacetOptions('format')" :key="f">
-            <label class="facet-option">
-              <input type="checkbox" :checked="isSelected('format', f)" @change="toggleFilter('format', f)">
-              <span class="facet-option-label" x-text="f"></span>
-              <span class="facet-option-count" x-text="facetOptionCount('format', f)"></span>
-            </label>
-          </template>
-          <div class="facet-empty" x-show="filteredFacetOptions('format').length === 0">No matches</div>
-        </div>
-      </div>
-    </div>
-    <div class="near-me" style="align-self:flex-end">
-      <button class="btn" type="button" :class="{ active: nearMe }" @click="toggleNearMe()"
-              :aria-pressed="!!nearMe" title="Show stores near you (your location stays on this device)">
-        <span x-text="geoStatus === 'locating' ? '📍 Locating…' : '📍 Near me'"></span>
-      </button>
-      <select class="radius" x-show="nearMe" x-model.number="radiusKm" @change="cleanupFilters()" aria-label="Distance">
-        <option value="2">≤ 2 km</option>
-        <option value="5">≤ 5 km</option>
-        <option value="10">≤ 10 km</option>
-        <option value="25">≤ 25 km</option>
       </select>
-      <span class="geo-error" x-show="geoStatus && geoStatus !== 'locating'" x-text="geoStatus" role="status"></span>
+    </label>
+    <span class="city city-static" x-show="cities.length <= 1" x-text="cityName">Madrid</span>
+    <span class="top-count num" x-show="!loading" aria-live="polite">
+      <span x-text="weekEventCount"></span> <span x-text="weekEventCount === 1 ? 'event' : 'events'"></span> this week
+    </span>
+    <span class="sp"></span>
+    <div class="seg hide-phone" role="tablist" aria-label="View">
+      <button type="button" role="tab" :aria-selected="viewMode === 'day'" :class="{ on: viewMode === 'day' }" @click="setView('day')">Day</button>
+      <button type="button" role="tab" :aria-selected="viewMode === 'week'" :class="{ on: viewMode === 'week' }" @click="setView('week')">Week</button>
+      <button type="button" role="tab" :aria-selected="viewMode === 'map'" :class="{ on: viewMode === 'map' }" @click="setView('map')">Map</button>
     </div>
-    <button class="btn" style="align-self:flex-end" @click="resetFilters">✕ Clear</button>
-    <button class="btn" style="align-self:flex-end" @click="saveCurrentPreset">Save preset</button>
-    <button class="btn fav-toggle"
-            :class="{ active: showFavoritesOnly }"
-            type="button"
-            style="align-self:flex-end"
-            @click="showFavoritesOnly = !showFavoritesOnly; cleanupFilters()"
-            x-show="favoritesCount > 0"
-            :title="showFavoritesOnly ? 'Show all events' : 'Show saved events only'">
-      <span>★</span>
-      <span x-text="favoritesCount"></span>
+    <!-- Phones: search and filters as icons in the header -->
+    <button type="button" class="ib ib-lg show-phone" @click="searchOpen = !searchOpen; searchOpen && $nextTick(() => $refs.searchPhone.focus())"
+            :aria-expanded="searchOpen" aria-label="Search">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+    </button>
+    <button type="button" class="ib ib-lg show-phone ib-badged" @click="openFilters()" :aria-expanded="filtersOpen"
+            :aria-label="'Filters' + (activeFilterCount ? ', ' + activeFilterCount + ' active' : '')">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+      <span class="badge num" x-show="activeFilterCount" x-text="activeFilterCount"></span>
+    </button>
+  </header>
+  <div class="city-error" role="alert" x-show="cityError" x-text="cityError"></div>
+
+  <div class="search-phone show-phone" x-show="searchOpen">
+    <label class="search">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <span class="sr-only">Search events or stores</span>
+      <input type="search" x-ref="searchPhone" placeholder="Search events or stores…" x-model.debounce.250ms="filters.search" />
+    </label>
+  </div>
+
+  <!-- ── Week navigation ─────────────────────────────────────────────── -->
+  <nav class="weeknav" aria-label="Week">
+    <button type="button" class="btn btn-round" @click="prevWeek()" aria-label="Previous week">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6"/></svg>
+    </button>
+    <span class="range num" x-text="weekRangeLabel"></span>
+    <button type="button" class="btn btn-round" @click="nextWeek()" aria-label="Next week">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6"/></svg>
+    </button>
+    <button type="button" class="btn" @click="goToday()" :disabled="isThisWeek && currentDay === nowMadrid.iso && viewMode === 'day'">Today</button>
+  </nav>
+
+  <!-- ── Day strip (Day view) ────────────────────────────────────────── -->
+  <div class="days" role="tablist" aria-label="Day" x-show="viewMode === 'day' && !loading && !loadError">
+    <template x-for="d in dayStrip" :key="'ds-' + d.iso">
+      <button type="button" role="tab" class="day"
+              :class="{ 'is-sel': d.iso === currentDay, 'is-today': d.isToday, 'is-past': d.isPast }"
+              :aria-selected="d.iso === currentDay"
+              :aria-label="d.long + (d.isToday ? ', today' : '') + ', ' + d.count + (d.count === 1 ? ' event' : ' events')"
+              @click="pickDay(d.iso)">
+        <span class="day-dow"><span x-text="d.dow"></span><span class="day-today" x-show="d.isToday">today</span></span>
+        <b class="day-num num" x-text="d.num"></b>
+        <em class="day-n num" x-text="d.count"></em>
+        <span class="bar" aria-hidden="true"><u :style="'width:' + Math.round(d.load * 100) + '%'"></u></span>
+      </button>
+    </template>
+  </div>
+
+  <!-- ── Search · game chips · Filters ──────────────────────────────── -->
+  <div class="toolbar" x-show="!loading && !loadError">
+    <label class="search hide-phone">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <span class="sr-only">Search events or stores</span>
+      <input type="search" placeholder="Search events or stores…" x-model.debounce.250ms="filters.search" />
+    </label>
+    <div class="chips" role="group" aria-label="Games" :class="{ 'is-expanded': gamesExpanded }">
+      <template x-for="g in gameChips" :key="'gc-' + g.game">
+        <button type="button" class="gchip" :class="g.cls + (g.on ? ' on' : '') + (g.extra ? ' is-extra' : '')"
+                :aria-pressed="g.on" @click="toggleGame(g.game)">
+          <i aria-hidden="true"></i><span x-text="g.label"></span><small class="num" x-text="g.n"></small>
+        </button>
+      </template>
+      <button type="button" class="gchip gchip-more hide-phone" x-show="hiddenGameCount" @click="gamesExpanded = !gamesExpanded"
+              :aria-expanded="gamesExpanded" x-text="gamesExpanded ? 'Fewer' : '+' + hiddenGameCount + ' more'"></button>
+    </div>
+    <span class="sp hide-phone"></span>
+    <button type="button" class="btn hide-phone" x-show="favoritesCount" :class="{ on: showFavoritesOnly }" :aria-pressed="showFavoritesOnly"
+            @click="toggleSaved()" :title="showFavoritesOnly ? 'Show all events' : 'Show saved events only'"
+            :aria-label="'Saved events only (' + favoritesCount + ')'">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>
+      <span class="num" x-text="favoritesCount"></span>
+    </button>
+    <button type="button" class="btn hide-phone" @click="openFilters()" :aria-expanded="filtersOpen" aria-haspopup="dialog" x-ref="filtersBtn">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+      Filters <span class="badge num" x-show="activeFilterCount" x-text="activeFilterCount"></span>
     </button>
   </div>
 
-  <!-- Saved filter presets -->
-  <div class="preset-bar" x-show="savedPresets.length">
-    <span class="preset-label">Presets</span>
-    <template x-for="preset in savedPresets" :key="preset.id">
-      <span class="preset-chip" :class="{ 'is-default': defaultPresetId === preset.id }">
-        <button class="preset-apply" type="button" @click="applyPreset(preset)" x-text="preset.name"></button>
-        <button class="preset-edit" type="button" @click.stop="startEditPreset(preset)" :aria-label="'Edit preset ' + preset.name" title="Edit preset">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-        </button>
-        <button class="preset-default" type="button" @click.stop="setDefaultPreset(preset.id)" :aria-label="defaultPresetId === preset.id ? 'Used automatically on startup' : 'Set as default preset'" :title="defaultPresetId === preset.id ? 'Used automatically on startup' : 'Set as default preset'">
-          <span x-show="defaultPresetId === preset.id">★ Default</span>
-          <span x-show="defaultPresetId !== preset.id">☆</span>
-        </button>
-        <button class="preset-remove" type="button" @click.stop="deletePreset(preset.id)" :aria-label="'Delete preset ' + preset.name">×</button>
-      </span>
-    </template>
-  </div>
-
-  <!-- Default preset active banner -->
-  <div class="default-preset-banner" x-show="defaultPresetActive">
-    <span>★ Showing your default feed — tap a chip to focus</span>
-  </div>
-
-  <!-- Editing preset banner -->
-  <div class="edit-preset-banner" x-show="editingPresetId !== null">
-    <span class="edit-preset-label">✏ Editing preset:</span>
-    <input type="text" class="edit-preset-input"
-      x-model="editingPresetName"
-      @keydown.enter.prevent="saveEditedPreset()"
-      @keydown.escape.prevent="cancelEditPreset()" />
-    <span class="edit-preset-hint">Change filters, then:</span>
-    <button class="btn btn-small" @click="saveEditedPreset()">Save</button>
-    <button class="btn btn-small" @click="cancelEditPreset()">Cancel</button>
-  </div>
-
-  <!-- Time-segment filter -->
-  <div class="seg-filter" x-show="!loading">
-    <span class="seg-label">Time</span>
-    <template x-for="s in SEGMENTS" :key="s.key">
-      <button
-        class="seg-chip"
-        :class="{ active: segmentFilter[s.key] }"
-        @click="toggleSegment(s.key)"
-        :title="s.range"
-      >
-        <span x-text="s.label"></span>
-        <span class="seg-count" x-text="segmentTotals[s.key]" x-show="segmentTotals[s.key] > 0"></span>
-      </button>
-    </template>
-  </div>
-
-  <div class="state-msg offline-msg" x-show="offline" role="status">Offline — showing the last saved data.</div>
-
-  <!-- Loading -->
+  <div class="state-msg" x-show="offline" role="status">Offline — showing the last saved data.</div>
   <div class="state-msg" x-show="loading">Loading events…</div>
   <div class="state-msg state-error" x-show="!loading && loadError" role="alert">
     <span x-text="loadError"></span>
-    <button class="btn" @click="location.reload()">Retry</button>
+    <button type="button" class="btn" @click="location.reload()">Retry</button>
   </div>
 
-  <!-- Phone jump bar: sticky day + time-of-day shortcuts, so reaching
-       "Saturday evening" is two taps instead of a long scroll. Hidden
-       on wide screens via CSS. -->
-  <nav class="jump-bar" x-ref="jumpBar" x-show="!loading && !loadError && viewMode !== 'map'" aria-label="Jump to day and time">
-    <div class="jump-days">
-      <template x-for="day in weekDays" :key="'j-' + day.iso">
-        <button type="button" class="jump-day"
-                :class="{ 'is-today': day.isToday, 'is-active': jumpDay === day.iso, 'is-empty': day.events.length === 0 }"
-                @click="jumpToDay(day.iso)"
-                :aria-label="day.dow + ' ' + day.dom + ', ' + day.events.length + ' events'">
-          <span class="jd-dow" x-text="day.dow"></span>
-          <span class="jd-num" x-text="day.num"></span>
-          <span class="jd-count" x-text="day.events.length || '–'"></span>
-        </button>
-      </template>
+  <!-- ── DAY: one day, by time of day ───────────────────────────────── -->
+  <main class="dayview" x-show="viewMode === 'day' && !loading && !loadError">
+    <div class="dhead">
+      <h2 x-text="day.long"></h2>
+      <span class="n num" x-text="day.events.length"></span>
+      <span class="line" aria-hidden="true"></span>
+      <span class="hint" x-text="filterSummary"></span>
     </div>
-    <div class="jump-segs" x-show="activeSegments.length > 1">
-      <template x-for="s in activeSegments" :key="'js-' + s.key">
-        <button type="button" class="jump-seg"
-                :class="{ 'is-active': jumpSeg === s.key }"
-                :disabled="jumpDay && !jumpDaySegCounts[s.key]"
-                @click="jumpToSegment(s.key)">
-          <span x-text="s.label"></span>
-          <span class="js-count" x-show="jumpDaySegCounts[s.key]" x-text="jumpDaySegCounts[s.key]"></span>
-        </button>
-      </template>
+    <!-- Key changes with the events: Alpine then rebuilds the section, so
+         its x-html cards can never be left stale. -->
+    <template x-for="sec in day.sections" :key="day.iso + sec.key + ':' + sec.events.map(e => e.id).join(',')">
+      <section class="dsec">
+        <h3 class="dsec-h">
+          <button type="button" class="dsec-btn" :aria-expanded="isSecOpen(sec)" @click="toggleSec(sec)">
+            <span class="dsec-title" x-text="secTitle(sec)"></span>
+            <span class="n num" x-text="sec.count"></span>
+            <span class="line" aria-hidden="true"></span>
+            <span class="hint" x-text="secHint(sec)"></span>
+            <svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10l6 6 6-6"/></svg>
+          </button>
+        </h3>
+        <div class="cards" x-show="isSecOpen(sec)" x-html="isSecOpen(sec) ? cardsHtml(sec.events) : ''" @click="onCards($event)"></div>
+      </section>
+    </template>
+    <div class="empty" x-show="!day.events.length">
+      <p x-text="filterSummary ? 'Nothing on this day with these filters.' : 'No events listed for this day yet.'"></p>
+      <button type="button" class="btn" x-show="filterSummary || filters.search" @click="clearAll()">Clear filters</button>
     </div>
-  </nav>
+  </main>
 
-  <!-- Map view: one pin per store with events still ahead this week (after
-       the filters). Leaflet loads on first open; see drawMap in app.js. -->
+  <!-- ── WEEK: 7 columns, one row per time of day ───────────────────── -->
+  <template x-if="viewMode === 'week' && !loading && !loadError">
+  <main class="weekview">
+    <div class="wgrid" :style="'grid-template-rows: auto repeat(' + weekRows.length + ', auto)'" @click="onCards($event, { compact: true })">
+      <template x-for="(d, i) in weekDays" :key="'wh-' + d.iso">
+        <button type="button" class="whead" :data-iso="d.iso" :class="{ 'is-today': d.isToday, 'is-past': d.isPast }" :style="'grid-column:' + (i + 1)"
+                @click="pickDay(d.iso); setView('day')" :aria-label="'Open ' + d.long + ' in the Day view'">
+          <span class="day-dow" x-text="d.dow"></span><b class="num" x-text="d.num"></b>
+          <span class="day-today" x-show="d.isToday">today</span>
+          <em class="num" x-text="d.events.length"></em>
+        </button>
+      </template>
+      <template x-for="cell in weekCells" :key="cell.renderKey">
+        <div class="wcell" :class="{ 'is-today': cell.day.isToday, 'is-empty': !cell.events.length }"
+             :style="'grid-column:' + (cell.c + 1) + '; grid-row:' + (cell.r + 2)">
+          <button type="button" class="wrow-h" x-show="cell.events.length" @click.stop="toggleRow(cell.row.key)"
+                  :aria-expanded="!collapsedRows[cell.row.key]">
+            <span x-text="cell.row.label"></span> <span class="num" x-text="cell.events.length"></span>
+            <svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10l6 6 6-6"/></svg>
+          </button>
+          <div class="wcards" x-show="!collapsedRows[cell.row.key]" x-html="collapsedRows[cell.row.key] ? '' : cardsHtml(cell.events, { compact: true })"></div>
+        </div>
+      </template>
+    </div>
+    <div class="empty" x-show="!weekEventCount">
+      <p>Nothing this week with these filters.</p>
+      <button type="button" class="btn" @click="clearAll()">Clear filters</button>
+    </div>
+  </main>
+  </template>
+
+  <!-- ── MAP: one pin per store with events still ahead this week ───── -->
   <section class="map-view" x-show="viewMode === 'map' && !loading && !loadError"
            x-effect="viewMode === 'map' && !loading && !loadError && drawMap()">
     <div class="map-days" role="group" aria-label="Day">
-      <button type="button" class="map-day map-day-week" :class="{ 'is-active': !mapDay }" @click="setMapDay(null)">
+      <button type="button" class="map-day map-day-week" :class="{ 'is-active': !mapDay }" @click="setMapDay(null)" :aria-pressed="!mapDay">
         <span class="md-dow">Week</span>
-        <span class="md-count" x-text="mapDayChips.reduce((n, d) => n + d.count, 0) || '–'"></span>
+        <span class="md-count num" x-text="mapDayChips.reduce((n, d) => n + d.count, 0) || '0'"></span>
       </button>
       <template x-for="d in mapDayChips" :key="'md-' + d.iso">
         <button type="button" class="map-day"
                 :class="{ 'is-active': mapDay === d.iso, 'is-today': d.isToday }"
-                :disabled="!d.count" @click="setMapDay(d.iso)"
+                :disabled="!d.count" @click="setMapDay(d.iso)" :aria-pressed="mapDay === d.iso"
                 :aria-label="d.dow + ' ' + d.num + ', ' + d.count + ' events'">
           <span class="md-dow" x-text="d.dow"></span>
-          <span class="md-num" x-text="d.num"></span>
-          <span class="md-count" x-text="d.count || '–'"></span>
+          <span class="md-num num" x-text="d.num"></span>
+          <span class="md-count num" x-text="d.count"></span>
         </button>
       </template>
     </div>
 
-    <!-- Colour key for the pins; a tap filters by that game (tap again to undo) -->
-    <div class="map-legend" x-show="mapLegend.length > 1 || selectedValues('game').length" role="group" aria-label="Games on the map">
-      <template x-for="g in mapLegend" :key="'lg-' + g.game">
-        <button type="button" class="map-legend-item" :class="{ 'is-active': isSelected('game', g.game) }"
-                @click="toggleFilter('game', g.game)" :aria-pressed="isSelected('game', g.game)">
-          <span class="lg-dot" :style="'background:' + g.color"></span>
-          <span x-text="g.game"></span>
-          <span class="lg-n" x-text="g.n"></span>
-        </button>
-      </template>
+    <div class="map-tools">
+      <button type="button" class="btn" :class="{ on: nearMe }" :aria-pressed="!!nearMe" @click="toggleNearMe()">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+        <span x-text="geoStatus === 'locating' ? 'Locating…' : (nearMe ? 'Near me · on' : 'Near me')"></span>
+      </button>
+      <span class="geo-error" x-show="geoStatus && geoStatus !== 'locating'" x-text="geoStatus" role="status"></span>
     </div>
 
     <div class="map-box">
@@ -344,18 +272,20 @@
             </div>
           </div>
           <div class="ms-actions">
-            <a class="btn" :href="directionsUrl(mapSelected)" target="_blank" rel="noopener">Directions ↗</a>
-            <a class="btn" x-show="mapSelected.website" :href="mapSelected.website" target="_blank" rel="noopener">Website ↗</a>
+            <a class="btn" :href="directionsUrl(mapSelected)" target="_blank" rel="noopener">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>Directions</a>
+            <a class="btn" x-show="mapSelected.website" :href="mapSelected.website" target="_blank" rel="noopener">
+              Website <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
           </div>
           <ul class="ms-events">
             <template x-for="e in mapSelected.events" :key="eventKey(e)">
               <li>
-                <button type="button" class="ms-event" :class="getGameClass(e.game)" @click="openPanel(e)">
-                  <span class="ms-when" x-text="formatDayShort(e.datetime_start) + ' · ' + formatTime(e.datetime_start)"></span>
+                <button type="button" class="ms-event" @click="openSheet(e)">
+                  <span class="ms-when num" x-text="formatDayShort(e.datetime_start) + ' · ' + cardTime(e)"></span>
                   <span class="ms-what">
                     <span class="ms-ev-title" x-text="e.title"></span>
                     <span class="ms-ev-sub">
-                      <span x-text="e.game"></span><span x-show="e.format" x-text="' · ' + e.format"></span><span x-show="attendanceBadge(e)" x-text="' · 👥 ' + attendanceBadge(e)"></span>
+                      <span class="pill" :class="getGameClass(e.game)" x-text="gameLabel(e.game)"></span><span x-show="e.format" x-text="e.format"></span>
                     </span>
                   </span>
                   <span class="ms-fav" x-show="isFavorite(e)" aria-label="Saved">★</span>
@@ -371,7 +301,6 @@
     <div class="map-list" x-show="!mapSelected && mapStores.length">
       <div class="ml-head">
         <span x-text="mapStores.length + (mapStores.length === 1 ? ' store' : ' stores') + (nearMe ? ', nearest first' : ', busiest first')"></span>
-        <button type="button" class="btn" x-show="!nearMe" @click="toggleNearMe()">📍 Near me</button>
       </div>
       <ul>
         <template x-for="s in mapStores" :key="'ml-' + s.name">
@@ -381,10 +310,10 @@
               <span class="ml-text">
                 <span class="ml-name" x-text="s.name"></span>
                 <span class="ml-sub">
-                  <span x-show="s.km !== null" x-text="s.km !== null ? storeDistanceLabel(s.name) + ' · ' : ''"></span><span x-text="s.games.join(', ')"></span><span x-show="s.lat === null"> · not on the map</span>
+                  <span x-show="s.km !== null" x-text="s.km !== null ? storeDistanceLabel(s.name) + ' · ' : ''"></span><span x-text="s.gameLabels.join(', ')"></span><span x-show="s.lat === null"> · not on the map</span>
                 </span>
               </span>
-              <span class="ml-next" x-text="formatDayShort(s.events[0].datetime_start) + ' ' + formatTime(s.events[0].datetime_start)"></span>
+              <span class="ml-next num" x-text="formatDayShort(s.events[0].datetime_start) + ' ' + cardTime(s.events[0])"></span>
             </button>
           </li>
         </template>
@@ -392,285 +321,235 @@
     </div>
   </section>
 
-  <!-- Calendar grid -->
-  <div class="cal-wrap" :class="'view-' + viewMode" x-show="!loading && !loadError && viewMode !== 'map'"
-       x-ref="calWrap" @scroll.passive="onScrollSpy()">
-
-    <!-- ── HORIZONTAL: global grid; segments aligned across days ── -->
-    <template x-if="viewMode === 'horizontal'">
-    <div class="cal-grid cal-grid-h"
-         @click="onGridClick($event)"
-         :style="`grid-template-rows: auto repeat(${activeSegments.length}, auto)`">
-
-      <!-- Day-header row -->
-      <template x-for="(day, dIdx) in weekDays" :key="'h-' + day.iso">
-        <div class="day-cell day-header-cell"
-             :class="{ 'is-today': day.isToday }"
-             :id="'day-' + day.iso"
-             :style="`grid-column: ${dIdx + 1}; grid-row: 1;`">
-          <div class="dow" x-text="day.dow"></div>
-          <div class="dom" x-text="day.dom"></div>
-        </div>
-      </template>
-
-      <!-- Segment × day cells, flattened to a single x-for to avoid
-           Alpine's triple-nested-template processing quirk. -->
-      <template x-for="cell in cells" :key="cell.renderKey">
-        <div class="day-cell seg-cell"
-             :data-seg="cell.seg.key"
-             :class="[
-               cell.isToday ? 'is-today' : '',
-               cell.isEmpty ? 'is-empty' : '',
-               collapsedSegments[cell.seg.key] ? 'is-collapsed' : '',
-               cell.isPast ? 'is-past' : ''
-             ]"
-             :style="`grid-column: ${cell.dIdx + 1}; grid-row: ${cell.sIdx + 2};`">
-          <!-- Header always present when the cell has events, regardless
-               of collapsed state. -->
-          <div class="seg-header is-clickable"
-               x-show="!focusMode && cell.events.length > 0"
-               @click="toggleSegmentCollapse(cell.seg.key)"
-               :title="collapsedSegments[cell.seg.key] ? 'Expand' : 'Collapse'">
-            <span class="seg-chev" :class="{ 'is-collapsed': collapsedSegments[cell.seg.key] }"></span>
-            <span x-text="cell.seg.label"></span>
-            <span class="seg-header-count" x-text="'· ' + cell.events.length"></span>
-            <span class="seg-range" x-text="cell.seg.shortRange"></span>
-          </div>
-          <!-- Cards rendered as raw HTML to bypass an Alpine quirk where
-               nested <template x-for> inside dynamically cloned content
-               doesn't re-fire when the outer iterable rebuilds. The grid
-               root has a single delegated @click that handles card
-               clicks and chip toggles via data- attributes. -->
-          <div class="seg-cards"
-               x-html="cellCardsHtml(cell)"
-               x-show="!collapsedSegments[cell.seg.key]"></div>
-        </div>
-      </template>
-    </div>
-    </template>
-
-    <!-- ── VERTICAL: per-day stacked layout (unchanged) ── -->
-    <template x-if="viewMode === 'vertical'">
-    <div class="cal-grid">
-      <template x-for="day in weekDays" :key="day.iso">
-        <div class="day-col" :id="'day-' + day.iso" :class="{ 'is-today': day.isToday }">
-
-          <!-- Day header -->
-          <div class="day-header">
-            <div class="dow" x-text="day.dow"></div>
-            <div class="dom" x-text="day.dom"></div>
-          </div>
-
-          <!-- Events list — grouped by time segment -->
-          <div class="day-events">
-            <template x-if="day.segments.length === 0">
-              <div class="no-events">No events</div>
-            </template>
-
-            <template x-for="seg in day.segments" :key="seg.key">
-              <div class="seg-block" :id="'seg-' + seg.key" :data-seg-key="seg.key">
-                <div class="seg-header is-clickable" x-show="!focusMode"
-                     role="button" tabindex="0"
-                     :aria-expanded="!isDaySegCollapsed(day.iso, seg.key)"
-                     @click="toggleDaySegCollapse(day.iso, seg.key)"
-                     @keydown.enter.prevent="toggleDaySegCollapse(day.iso, seg.key)"
-                     :title="isDaySegCollapsed(day.iso, seg.key) ? 'Expand' : 'Collapse'">
-                  <span class="seg-chev" :class="{ 'is-collapsed': isDaySegCollapsed(day.iso, seg.key) }"></span>
-                  <span x-text="seg.label"></span>
-                  <span class="seg-header-count" x-text="'· ' + seg.count"></span>
-                  <span class="seg-range" x-text="seg.shortRange"></span>
-                </div>
-                <template x-for="e in (isDaySegCollapsed(day.iso, seg.key) && !focusMode ? [] : seg.events)" :key="eventKey(e)">
-                  <div class="ev-card"
-                       :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '', isFavorite(e) ? 'is-favorite' : '' ]"
-                       @click="openEvent(e)">
-                    <div class="ev-card-top">
-                      <div class="ev-time"><span x-text="formatTime(e.datetime_start)"></span><span x-html="timeFixIcon(e)"></span></div>
-                      <div class="ev-store-top"
-                           :class="{ active: isSelected('store', e.store) }"
-                           @click.stop="toggleFilter('store', e.store)"
-                           :title="e.store"
-                           x-text="e.store"></div>
-                      <div class="ev-distance" x-show="nearMe && storeDistanceLabel(e.store)" x-text="storeDistanceLabel(e.store)"></div>
-                      <div class="ev-attendance" :class="{ 'is-full': e.full && !e.participants }"
-                           x-show="attendanceBadge(e)" :title="attendanceDetail(e)" x-text="'👥 ' + attendanceBadge(e)"></div>
-                    </div>
-                    <div class="ev-title" x-text="e.title"></div>
-                    <div class="ev-footer">
-                      <div class="ev-tags">
-                        <span class="tag game"
-                          :class="{ active: isSelected('game', e.game || 'Unknown') }"
-                          @click.stop="toggleFilter('game', e.game || 'Unknown')"
-                          x-text="e.game || 'Unknown'"></span>
-                        <span class="tag fmt"
-                          :class="{ active: isSelected('format', e.format || 'Unknown') }"
-                          @click.stop="toggleFilter('format', e.format || 'Unknown')"
-                          x-text="e.format || 'Unknown'"></span>
-
-                      </div>
-                      <div class="ev-actions">
-                        <button
-                          class="fav-btn"
-                          :class="{ 'is-fav': isFavorite(e) }"
-                          type="button"
-                          @click.stop="toggleFavorite(e)"
-                          :title="isFavorite(e) ? 'Remove from saved' : 'Save event'"
-                          :aria-label="isFavorite(e) ? 'Remove from saved' : 'Save event'">★</button>
-                        <button
-                          class="calendar-btn"
-                          type="button"
-                          x-show="canAddToCalendar(e)"
-                          @click.stop="openCalendar(e)"
-                          title="Add to Google Calendar"
-                          aria-label="Add to Google Calendar">
-                          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M8 2v4"></path><path d="M16 2v4"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path>
-                          </svg>
-                          <span>GCal</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </template>
-              </div>
-            </template>
-          </div>
-
-        </div>
-      </template>
-    </div>
-    </template>
-
-  </div><!-- /.cal-wrap -->
-
 </div>
 
-<!-- Back to top — only in vertical view, appears after 400px scroll -->
-<button
-  class="back-to-top"
-  x-show="viewMode === 'vertical' && showBackToTop"
-  x-transition:enter="transition ease-out duration-200"
-  x-transition:enter-start="opacity-0 translate-y-2"
-  x-transition:enter-end="opacity-100 translate-y-0"
-  x-transition:leave="transition ease-in duration-150"
-  x-transition:leave-start="opacity-100"
-  x-transition:leave-end="opacity-0"
-  @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
-  title="Back to top"
->↑</button>
+<!-- ── Filters: popover (desktop), sheet (phones) ──────────────────── -->
+<div class="scrim scrim-light" x-show="filtersOpen" @click="closeFilters()" style="display:none"></div>
+<section class="fp" x-show="filtersOpen" role="dialog" aria-modal="true" aria-labelledby="filters-title" style="display:none"
+         x-ref="fp" @touchstart.passive="isPhone && dragStart($event, $refs.fp)" @touchmove.passive="dragMove($event)" @touchend="dragEnd(() => closeFilters())">
+  <div class="grip show-phone" aria-hidden="true"><span class="handle"></span></div>
+  <div class="fp-head">
+    <h2 id="filters-title" tabindex="-1">Filters</h2>
+    <button type="button" class="linkish linkish-coral" @click="clearAll()">Clear all</button>
+    <button type="button" class="ib" @click="closeFilters()" aria-label="Close filters">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
 
-<!-- Undo last filter — both view modes, appears whenever filter history exists -->
-<button
-  class="undo-filter"
-  x-show="filterHistory.length > 0 && editingPresetId === null"
-  x-transition:enter="transition ease-out duration-200"
-  x-transition:enter-start="opacity-0 translate-y-2"
-  x-transition:enter-end="opacity-100 translate-y-0"
-  x-transition:leave="transition ease-in duration-150"
-  x-transition:leave-start="opacity-100"
-  x-transition:leave-end="opacity-0"
-  @click="undoFilterAction()"
-  :title="'Отменить последнее изменение фильтра (' + filterHistory.length + ' шагов)'"
-  aria-label="Отменить последнее изменение фильтра"
-><span x-text="filterHistory.length > 1 ? '↩ ×' + filterHistory.length : '↩'"></span></button>
-
-<!-- Event Detail Panel -->
-<div class="panel-backdrop"
-     x-show="panelOpen"
-     x-transition:enter="transition ease-out duration-200"
-     x-transition:enter-start="opacity-0"
-     x-transition:enter-end="opacity-100"
-     x-transition:leave="transition ease-in duration-150"
-     x-transition:leave-start="opacity-100"
-     x-transition:leave-end="opacity-0"
-     @click.self="closePanel()">
-  <div class="panel"
-       :class="selectedEvent ? getGameClass(selectedEvent.game) : ''"
-       @click.stop
-       x-show="panelOpen"
-       x-transition:enter="transition ease-out duration-200"
-       x-transition:enter-start="opacity-0 translate-y-2"
-       x-transition:enter-end="opacity-100 translate-y-0"
-       x-transition:leave="transition ease-in duration-150"
-       x-transition:leave-start="opacity-100 translate-y-0"
-       x-transition:leave-end="opacity-0 translate-y-2">
-    <button class="panel-close" type="button" @click="closePanel()" aria-label="Close">✕</button>
-
-    <div class="panel-header">
-      <h2 class="panel-title" x-text="selectedEvent?.title"></h2>
-      <div class="panel-meta">
-        <span class="tag game"
-              :class="{ active: isSelected('game', selectedEvent?.game) }"
-              @click.stop="filterFromPanel('game', selectedEvent?.game)"
-              x-text="selectedEvent?.game || 'Unknown'"></span>
-        <span class="tag fmt"
-              :class="{ active: isSelected('format', selectedEvent?.format) }"
-              @click.stop="filterFromPanel('format', selectedEvent?.format)"
-              x-text="selectedEvent?.format || 'Unknown'"></span>
-
-        <button class="panel-store-filter" type="button"
-                x-show="selectedEvent?.store"
-                @click.stop="filterFromPanel('store', selectedEvent?.store)"
-                x-text="selectedEvent?.store"></button>
-        <span class="panel-past-badge" x-show="selectedEvent && isEventPast(selectedEvent)">Past</span>
-      </div>
-      <div class="panel-official"
-           x-show="selectedEvent?.format_official"
-           x-text="'Officially: ' + selectedEvent?.format_official"></div>
+  <div class="fp-body" @scroll.passive="updateFpMore()"
+       x-effect="JSON.stringify(filters) + filtersOpen + storePickerOpen + gamesPanelExpanded + storeQuery; $nextTick(() => updateFpMore())">
+    <!-- Games -->
+    <div class="lab"><span>Games</span><em x-text="filters.game.length ? filters.game.length + ' selected' : 'all'"></em></div>
+    <!-- Picked games, then this week's (most events first); the city's other
+         games behind "+N more". -->
+    <div class="row">
+      <template x-for="g in panelGames.shown.concat(gamesPanelExpanded ? panelGames.rest : [])" :key="'fg-' + g.game">
+        <button type="button" class="gchip gchip-sm" :class="g.cls + (g.on ? ' on' : '')" :aria-pressed="g.on" @click="toggleGame(g.game)">
+          <i aria-hidden="true"></i><span x-text="g.label"></span><small class="num" x-text="g.n"></small>
+        </button>
+      </template>
+      <button type="button" class="gchip gchip-sm gchip-more" x-show="panelGames.rest.length"
+              @click="gamesPanelExpanded = !gamesPanelExpanded" :aria-expanded="gamesPanelExpanded"
+              x-text="gamesPanelExpanded ? 'Fewer' : '+' + panelGames.rest.length + ' more'"></button>
     </div>
 
-    <div class="panel-body">
-      <div class="panel-row">
-        <span class="panel-label">WHEN</span>
-        <span class="panel-value" x-text="selectedEvent ? formatDateLong(selectedEvent.datetime_start) : ''"></span>
-        <span class="panel-value" x-html="selectedEvent ? formatTimeRange(selectedEvent) : ''"></span>
+    <!-- Format: depends on the games -->
+    <div class="lab"><span>Format</span><em x-show="formatFacet.mode !== 'none'">depends on the games</em></div>
+    <p class="hintbox" x-show="formatFacet.mode === 'none'">Pick a game above to see its formats. Event type works for every game.</p>
+    <div class="row" x-show="formatFacet.mode === 'single'">
+      <template x-for="c in (formatFacet.chips || [])" :key="'f1-' + c.format">
+        <button type="button" class="fchip" :class="{ on: c.selected, off: c.disabled }" :disabled="c.disabled" :aria-pressed="c.selected"
+                @click="toggleList('format', c.format)">
+          <span x-text="c.format"></span><small class="num" x-text="c.count"></small>
+        </button>
+      </template>
+      <span class="muted" x-show="formatFacet.mode === 'single' && !formatFacet.chips.length">No formats listed for this game this week.</span>
+    </div>
+    <div x-show="formatFacet.mode === 'multi'">
+      <div class="grp" x-show="(formatFacet.shared || []).length">
+        <h5>In several games <em>one tap applies to all of them</em></h5>
+        <div class="row">
+          <template x-for="c in (formatFacet.shared || [])" :key="'fs-' + c.format">
+            <button type="button" class="fchip" :class="{ on: c.selected, off: c.disabled }" :disabled="c.disabled" :aria-pressed="c.selected"
+                    @click="toggleList('format', c.format)" :title="c.games.map(gameLabel).join(', ')">
+              <span x-text="c.format"></span>
+              <span class="dots" aria-hidden="true">
+                <template x-for="g in c.games" :key="'fd-' + c.format + g"><i :class="getGameClass(g)"></i></template>
+              </span>
+              <small class="num" x-text="c.count"></small>
+            </button>
+          </template>
+        </div>
       </div>
-      <div class="panel-row" x-show="attendanceDetail(selectedEvent)">
-        <span class="panel-label">PLAYERS</span>
-        <span class="panel-value" x-text="attendanceDetail(selectedEvent)"></span>
-      </div>
-
-      <div class="panel-actions">
-        <div class="calendar-dropdown" x-show="canAddToCalendar(selectedEvent)">
-          <button class="btn btn-primary" type="button" @click.stop="calendarMenuOpen = !calendarMenuOpen">
-            Add to Calendar <span>▾</span>
-          </button>
-          <div class="calendar-dropdown-menu" x-show="calendarMenuOpen">
-            <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'google')">Google Calendar</button>
-            <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'apple')">iCalendar (.ics)</button>
-            <button type="button" @click.stop="openCalendarProvider(selectedEvent, 'outlook')">Outlook</button>
+      <template x-for="gr in (formatFacet.groups || [])" :key="'fgr-' + gr.game">
+        <div class="grp">
+          <h5><i class="dot" :class="getGameClass(gr.game)" aria-hidden="true"></i><span x-text="gameLabel(gr.game)"></span></h5>
+          <div class="row">
+            <template x-for="c in gr.chips" :key="'fg-' + gr.game + c.format">
+              <button type="button" class="fchip" :class="{ on: c.selected, off: c.disabled }" :disabled="c.disabled" :aria-pressed="c.selected"
+                      @click="toggleList('format', c.format)">
+                <span x-text="c.format"></span><small class="num" x-text="c.count"></small>
+              </button>
+            </template>
           </div>
         </div>
-        <a class="btn" :href="safeUrl(selectedEvent?.source_url)" target="_blank" rel="noopener" x-show="safeUrl(selectedEvent?.source_url)" @click.stop>Open Source</a>
-        <span class="panel-source-time" x-show="sourceTimeNote(selectedEvent)" x-text="sourceTimeNote(selectedEvent)"></span>
-        <button class="btn" type="button" @click.stop="shareEvent(selectedEvent)">Share</button>
-        <button class="btn fav-btn-panel"
-                :class="{ 'is-fav': isFavorite(selectedEvent) }"
-                type="button"
-                x-show="selectedEvent"
-                @click.stop="toggleFavorite(selectedEvent)"
-                x-text="isFavorite(selectedEvent) ? '★ Saved' : '☆ Save'"></button>
+      </template>
+    </div>
+
+    <!-- Event type: any game -->
+    <div class="lab"><span>Event type</span></div>
+    <div class="row">
+      <template x-for="c in typeChips" :key="'ft-' + c.key">
+        <button type="button" class="fchip" :class="{ on: c.on, off: !c.n && !c.on }" :disabled="!c.n && !c.on" :aria-pressed="c.on"
+                @click="toggleList('type', c.key)">
+          <span x-text="c.label"></span><small class="num" x-text="c.n"></small>
+        </button>
+      </template>
+    </div>
+
+    <!-- Time of day -->
+    <div class="lab"><span>Time of day</span></div>
+    <div class="row">
+      <template x-for="c in timeChips" :key="'fh-' + c.key">
+        <button type="button" class="fchip" :class="{ on: c.on, off: !c.n && !c.on }" :disabled="!c.n && !c.on" :aria-pressed="c.on"
+                @click="toggleList('time', c.key)" :aria-label="c.label + ', ' + c.words + ', ' + c.n + ' events'">
+          <span x-text="c.label"></span><span class="fchip-sub" x-text="c.words"></span><small class="num" x-text="c.n"></small>
+        </button>
+      </template>
+    </div>
+
+    <!-- Distance -->
+    <div class="lab"><span>Distance</span><em x-show="nearMe">from where you are</em></div>
+    <div class="row">
+      <button type="button" class="fchip" :class="{ on: !km }" :aria-pressed="!km" @click="setDistance(null)">Anywhere</button>
+      <template x-for="d in DISTANCES" :key="'fk-' + d">
+        <button type="button" class="fchip" :class="{ on: km === d && nearMe }" :aria-pressed="km === d && !!nearMe" @click="setDistance(d)">
+          <span class="num" x-text="'Within ' + d + ' km'"></span>
+        </button>
+      </template>
+    </div>
+    <p class="muted small" x-show="geoStatus === 'locating'" role="status">Finding your location…</p>
+    <p class="geo-error" x-show="geoStatus && geoStatus !== 'locating'" x-text="geoStatus" role="status"></p>
+    <p class="muted small" x-show="!nearMe && !geoStatus">Your location stays on this device.</p>
+
+    <!-- Store -->
+    <div class="lab"><span>Store</span></div>
+    <button type="button" class="rowsel" @click="storePickerOpen = !storePickerOpen; storePickerOpen && $nextTick(() => $refs.storeQ.focus())"
+            :aria-expanded="storePickerOpen">
+      <span x-text="storeSummary"></span>
+      <svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10l6 6 6-6"/></svg>
+    </button>
+    <div class="storepick" x-show="storePickerOpen">
+      <label class="search search-sm">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+        <span class="sr-only">Search stores</span>
+        <input type="search" x-ref="storeQ" placeholder="Search stores…" x-model="storeQuery" />
+      </label>
+      <button type="button" class="linkish" x-show="filters.store.length" @click="filters.store = []; cleanupFilters({ syncUrl: true })">All stores</button>
+      <ul class="storelist">
+        <template x-for="s in storeOptions" :key="'st-' + s.name">
+          <li>
+            <label class="check" :class="{ 'is-zero': !s.n }">
+              <input type="checkbox" :checked="s.on" @change="toggleList('store', s.name)" />
+              <span x-text="s.name"></span><small class="num" x-text="s.n"></small>
+            </label>
+          </li>
+        </template>
+        <li class="muted small" x-show="!storeOptions.length">No store matches.</li>
+      </ul>
+    </div>
+
+    <!-- Saved only -->
+    <div x-show="favoritesCount">
+      <div class="lab"><span>Saved</span></div>
+      <div class="row">
+        <button type="button" class="fchip" :class="{ on: showFavoritesOnly }" :aria-pressed="showFavoritesOnly" @click="toggleSaved()">
+          ★ Saved events only <small class="num" x-text="favoritesCount"></small>
+        </button>
       </div>
     </div>
 
-    <div class="panel-store" x-show="selectedEvent?.store && storeAddress(selectedEvent)">
-      <h3>Location</h3>
-      <div class="store-name" x-text="selectedEvent?.store"></div>
-      <div class="store-address">
-        <span class="store-address-indicator">@</span>
-        <span x-text="storeAddress(selectedEvent)"></span>
-      </div>
-      <div class="store-links">
-        <a class="btn btn-primary"
-           :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeAddress(selectedEvent) || selectedEvent?.store)"
-           target="_blank"
-           rel="noopener"
-           @click.stop
-           x-show="storeAddress(selectedEvent) || selectedEvent?.store">Open in Maps</a>
-      </div>
+    <!-- Presets -->
+    <div class="lab"><span>Presets</span><em x-show="!savedPresets.length">save the filters you use most</em></div>
+    <div class="row">
+      <template x-for="p in savedPresets" :key="'pr-' + p.id">
+        <span class="preset" :class="{ on: isPresetActive(p) }">
+          <button type="button" class="preset-apply" @click="applyPreset(p)" :aria-pressed="isPresetActive(p)" x-text="p.name"></button>
+          <button type="button" class="preset-x" @click="setDefaultPreset(p.id)" :aria-pressed="defaultPresetId === p.id"
+                  :title="defaultPresetId === p.id ? 'Opens by default — tap to unset' : 'Open with this preset by default'"
+                  :aria-label="(defaultPresetId === p.id ? 'Default preset: ' : 'Make default: ') + p.name"
+                  x-text="defaultPresetId === p.id ? '★' : '☆'"></button>
+          <button type="button" class="preset-x" @click="deletePreset(p.id)" :aria-label="'Delete preset ' + p.name" title="Delete">×</button>
+        </span>
+      </template>
     </div>
   </div>
+
+  <!-- Reset lives in the header ("Clear all"); the footer only acts. -->
+  <div class="fp-foot" :class="{ 'has-more': fpMore }">
+    <button type="button" class="btn btn-lg" :disabled="!canSavePreset" @click="saveCurrentPreset()"
+            :title="canSavePreset ? '' : 'Pick a game or a filter first'">Save as preset</button>
+    <button type="button" class="btn btn-lg btn-cta fp-go" @click="closeFilters()">
+      <span class="num" x-text="'Show ' + weekEventCount + (weekEventCount === 1 ? ' event' : ' events')"></span>
+    </button>
+  </div>
+</section>
+
+<!-- ── Event sheet: phones, and Week / Map views on desktop ──────────── -->
+<div class="scrim" x-show="sheetEvent" @click="closeSheet()" style="display:none"></div>
+<section class="sheet" x-show="sheetEvent" role="dialog" aria-modal="true" aria-labelledby="sheet-title" style="display:none"
+         x-ref="sheet" :class="sheetEvent ? getGameClass(sheetEvent.game) : ''"
+         @touchstart.passive="isPhone && dragStart($event, $refs.sheet)" @touchmove.passive="dragMove($event)" @touchend="dragEnd(() => closeSheet())">
+  <div class="grip"><span class="handle" aria-hidden="true"></span>
+    <button type="button" class="ib" @click="closeSheet()" aria-label="Close">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="sheet-body" x-html="sheetBodyHtml(sheetEvent)" @click="onCards($event)"></div>
+  <div class="sheet-bar" x-show="sheetEvent">
+    <button type="button" class="btn btn-lg btn-cta sb-cal" x-show="sheetEvent && canAddToCalendar(sheetEvent)" @click="openCalendar(sheetEvent)">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>
+      Add to Google Calendar
+    </button>
+    <button type="button" class="btn btn-lg sb-icon" :class="{ 'is-on': isFavorite(sheetEvent) }" :aria-pressed="isFavorite(sheetEvent)"
+            @click="toggleFavorite(sheetEvent)" :aria-label="isFavorite(sheetEvent) ? 'Saved — remove' : 'Save'">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>
+      <span class="sb-label" x-text="isFavorite(sheetEvent) ? 'Saved' : 'Save'"></span>
+    </button>
+    <a class="btn btn-lg sb-icon" :href="sheetEvent ? eventDirectionsUrl(sheetEvent) : '#'" target="_blank" rel="noopener" aria-label="Directions">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+      <span class="sb-label">Directions</span>
+    </a>
+    <button type="button" class="btn btn-lg sb-icon" @click="shareEvent(sheetEvent)" aria-label="Share">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/></svg>
+      <span class="sb-label">Share</span>
+    </button>
+  </div>
+</section>
+
+<!-- Phones: views as a bottom tab bar -->
+<nav class="tabbar show-phone" aria-label="View">
+  <button type="button" :class="{ on: viewMode === 'day' }" :aria-current="viewMode === 'day' ? 'page' : null" @click="setView('day')">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>Day</button>
+  <button type="button" :class="{ on: viewMode === 'week' }" :aria-current="viewMode === 'week' ? 'page' : null" @click="setView('week')">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg>Week</button>
+  <button type="button" :class="{ on: viewMode === 'map' }" :aria-current="viewMode === 'map' ? 'page' : null" @click="setView('map')">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>Map</button>
+  <button type="button" :class="{ on: showFavoritesOnly }" :aria-pressed="showFavoritesOnly" @click="toggleSaved()">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span class="num" x-text="'Saved' + (favoritesCount ? ' ' + favoritesCount : '')">Saved</span></button>
+</nav>
+
+<!-- Status line. Phones: over the tab bar; desktop: bottom left, narrower
+     than a card minus its buttons; with a sheet open: above the sheet. -->
+<div class="toast" role="status" aria-live="polite" x-show="toast" style="display:none"
+     @mouseenter="holdToast()" @mouseleave="toast && toast.undo && armToast(3000)"
+     @focusin="holdToast()" @focusout="toast && toast.undo && armToast(3000)">
+  <span x-text="toast && toast.text"></span>
+  <template x-if="toast && toast.undo">
+    <span class="toast-undo"><span aria-hidden="true">·</span><button type="button" @click="undoToast()">Undo</button></span>
+  </template>
 </div>
+
 
 <!-- Welcome: the first screen of a first visit (bare URL only), and the
      "About & setup" footer link. City + games, then the calendar or the map. -->
@@ -714,7 +593,7 @@
         <small>optional, skip to see them all</small></h3>
       <div class="welcome-games">
         <template x-for="g in welcomeGamesShown" :key="'wg-' + g.game">
-          <button type="button" class="welcome-game" :class="{ 'is-active': onboarding.game.includes(g.game) }"
+          <button type="button" class="welcome-game" :class="getGameClass(g.game) + (onboarding.game.includes(g.game) ? ' is-active' : '')"
                   @click="toggleOnboardingValue('game', g.game)" :aria-pressed="onboarding.game.includes(g.game)">
             <span class="lg-dot" :style="'background:' + g.color"></span>
             <span x-text="g.game"></span>
@@ -727,7 +606,7 @@
     </div>
 
     <div class="welcome-actions">
-      <button type="button" class="btn btn-primary welcome-go" :disabled="loading" @click="completeOnboarding()">
+      <button type="button" class="btn btn-cta welcome-go" :disabled="loading" @click="completeOnboarding()">
         Show my calendar →
       </button>
       <button type="button" class="btn welcome-map" :disabled="loading" @click="completeOnboarding('map')">⌖ See the map</button>
@@ -754,6 +633,7 @@
   <a href="/health" class="footer-link">Scraper health</a>
 </div>
 
+<script src="/model.js"></script>
 <script src="/config.js"></script>
 <script src="/app.js"></script>
 </body>
