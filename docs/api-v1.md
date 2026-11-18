@@ -90,6 +90,7 @@ example `2026-W47.json`. It has the same shape as `upcoming.json`, plus
 | `datetime_end` | string? | |
 | `time_corrected` | true? | `datetime_start` was corrected from what the source said (`pipeline/time_fixes.py`: Bandai TCG+ starts from 01:00 to 06:59 are read as PM) |
 | `datetime_start_source` | string? | With `time_corrected`: the start time as the source gave it |
+| `time_uncertain` | true? | The start time is the source's but may be wrong: a Ravensburger event of a Spanish store carries another clock's timezone (an organizer account set to America/New_York) |
 | `source_url` | string | Official event or store page |
 | `capacity` | int? | Player cap reported by the source (Wizards, Ravensburger, Bandai, GEM) |
 | `registered` | int? | Sign-ups so far, for upcoming events (Ravensburger, sometimes Wizards) |

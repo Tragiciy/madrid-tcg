@@ -3,6 +3,9 @@ import unittest
 
 from pipeline.publish import EVENT_FIELDS
 from pipeline.time_fixes import apply_time_fixes, correct_start_time
+from scrapers import locator_ravensburger
+from shared.locator_common import StoreResolver
+from shared.store_registry import StoreRegistry
 
 
 def bandai(start, **kw):
@@ -85,6 +88,47 @@ class BandaiPmRuleTests(unittest.TestCase):
         self.assertIn('apply_time_fixes(fresh', main)
         # Fresh events are fixed before the locator/store dedup compares times.
         self.assertLess(main.index('apply_time_fixes(fresh'), main.index('drop_locator_duplicates('))
+
+
+def rv(start, zone, country="ES"):
+    return {"id": 984072, "name": "Thursday Night Weekly Play (Constructed)", "start_datetime": start,
+            "timezone": zone, "is_end_datetime_estimated": True, "event_status": "SCHEDULED",
+            "store": {"id": 1, "name": "Kingdom Wargames", "country": country,
+                      "full_address": "12 Calle Arroyo de la Elipa, Madrid"}}
+
+
+def parse(*raw):
+    resolver = StoreResolver(StoreRegistry({"ignore": {"names": [], "external": []}, "stores": []}))
+    return locator_ravensburger.parse_events(list(raw), resolver)
+
+
+class RavensburgerUncertainTimeTests(unittest.TestCase):
+    """Spanish store, event in another clock's zone: time kept, flagged."""
+
+    def test_american_zone_on_a_spanish_store_is_flagged_not_moved(self):
+        for zone in ("America/New_York", "America/Port_of_Spain"):
+            [e] = parse(rv("2026-11-21T02:00:00+00:00", zone))
+            self.assertIs(e["time_uncertain"], True, zone)
+            self.assertEqual(e["datetime_start"], "2026-11-21T03:00:00+01:00")   # the source's time
+            self.assertNotIn("time_corrected", e)
+            self.assertNotIn("datetime_start_source", e)
+
+    def test_madrid_clock_zones_are_not_flagged(self):
+        for zone in ("Europe/Madrid", "Europe/Paris", None, "Not/AZone"):
+            [e] = parse(rv("2026-11-20T17:00:00+00:00", zone))
+            self.assertNotIn("time_uncertain", e, zone)
+
+    def test_store_outside_spain_is_not_flagged(self):
+        [e] = parse(rv("2026-11-21T02:00:00+00:00", "America/New_York", country="US"))
+        self.assertNotIn("time_uncertain", e)
+
+    def test_bandai_rule_leaves_it_alone(self):
+        [e] = parse(rv("2026-11-21T02:00:00+00:00", "America/New_York"))
+        self.assertFalse(correct_start_time(e))
+        self.assertEqual(e["datetime_start"], "2026-11-21T03:00:00+01:00")
+
+    def test_published(self):
+        self.assertIn("time_uncertain", EVENT_FIELDS)
 
 
 if __name__ == "__main__":

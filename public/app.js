@@ -2158,21 +2158,28 @@ function app() {
       return datePart + ' · ' + weekday;
     },
 
-    // The pipeline corrected this start time (pipeline/time_fixes.py): what
-    // the source said, for the detail panel; '' otherwise.
+    // Notes about a start time, for the detail panel ('' when none):
+    // corrected by the pipeline (pipeline/time_fixes.py) → what the source
+    // said; kept but doubtful (time_uncertain) → a warning and the time.
     sourceTimeNote(e) {
-      return e && e.time_corrected && e.datetime_start_source
-        ? 'Source says ' + this.formatTime(e.datetime_start_source) : '';
+      if (!e) return '';
+      if (e.time_corrected && e.datetime_start_source) return 'Source says ' + this.formatTime(e.datetime_start_source);
+      if (e.time_uncertain) return 'Time may be wrong · Source says ' + this.formatTime(e.datetime_start);
+      return '';
     },
 
-    // Small mark next to a corrected time on a card (no text on the card).
+    // Small mark next to such a time on a card (no text on the card).
     timeFixIcon(e) {
       const note = this.sourceTimeNote(e);
       if (!note) return '';
-      const label = `Time corrected. ${note} (a missing PM)`;
-      return `<span class="time-fix" role="img" aria-label="${label}" title="${label}">`
+      const uncertain = !e.time_corrected;
+      const label = uncertain ? note.replace(' · ', '. ') : `Time corrected. ${note} (a missing PM)`;
+      const glyph = uncertain
+        ? `<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.5M12 16.2v.3"/>`
+        : `<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`;
+      return `<span class="time-fix${uncertain ? ' is-uncertain' : ''}" role="img" aria-label="${label}" title="${label}">`
         + `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">`
-        + `<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>`;
+        + glyph + `</svg></span>`;
     },
 
     formatTimeRange(e) {

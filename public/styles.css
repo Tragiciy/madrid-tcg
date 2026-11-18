@@ -15,6 +15,7 @@
   --today-bdr:  rgba(124,58,237,.35);
   --text:       #1f2937;
   --text-muted: #6b7280;
+  --warn-text:  #92400e;       /* doubtful start time mark (7.1:1 on white) */
   --radius:     8px;
   --shadow-sm:  0 1px 2px rgba(15,23,42,.04);
   --shadow-md:  0 2px 8px rgba(15,23,42,.06);
@@ -821,6 +822,7 @@ input:focus, select:focus { border-color: var(--accent); }
 .time-fix { display: inline-flex; vertical-align: -.1em; margin-left: .2em; color: var(--text-muted); }
 .time-fix svg { width: .9em; height: .9em; }
 .panel-source-time { align-self: center; font-size: .8rem; color: var(--text-muted); }
+.time-fix.is-uncertain { color: var(--warn-text); }
 .ev-title { font-size: .82rem; font-weight: 700; line-height: 1.2; margin-bottom: .2rem; color: var(--text); }
 
 .ev-tags  { display: flex; flex-wrap: wrap; gap: .2rem; }
