@@ -156,6 +156,29 @@ def to_madrid_iso(value: str, assume_tz: Optional[str] = None) -> Optional[str]:
     return dt.astimezone(TZ).isoformat()
 
 
+def venue_wall_clock(value: str, event_tz: Optional[str]) -> Optional[str]:
+    """
+    The same wall-clock time read in Madrid instead of `event_tz`.
+
+    For a Spanish venue whose event carries another zone (an organizer
+    account set to America/New_York): the organizer typed Madrid times, the
+    source converted them as New York ones. "02:00Z" in New York is Friday
+    21:00; this returns Friday 21:00 Madrid. Returns the plain Madrid time
+    when the zone is missing or unknown.
+    """
+    if not value:
+        return None
+    text = _FRACTION_RE.sub("", value.strip()).replace("Z", "+00:00")
+    try:
+        dt = datetime.fromisoformat(text)
+        zone = ZoneInfo(event_tz) if event_tz else None
+    except (ValueError, KeyError):
+        return to_madrid_iso(value)
+    if dt.tzinfo is None or zone is None:
+        return to_madrid_iso(value)
+    return dt.astimezone(zone).replace(tzinfo=None).replace(tzinfo=TZ).isoformat()
+
+
 # ---------------------------------------------------------------------------
 # Store resolution
 # ---------------------------------------------------------------------------
