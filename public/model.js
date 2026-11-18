@@ -155,20 +155,17 @@
   /* ── Time of day ───────────────────────────────────────────────── */
 
   // Spanish hours: lunch ends the morning at 14:00, evening play starts at
-  // 17:00. "Late" exists for the filter; in the day list it closes Evening.
+  // 17:00. One set of boundaries for the filter, the day list and the week
+  // grid. No separate "Late": events from 20:00 are 1–2% of a week across
+  // the cities (Málaga peaks near 10%), too few for a section of their own.
   const TIME_SLOTS = [
     { key: 'morning',   label: 'Morning',   start: 0,  end: 14, words: 'until 14:00' },
     { key: 'afternoon', label: 'Afternoon', start: 14, end: 17, words: '14:00 – 17:00' },
-    { key: 'evening',   label: 'Evening',   start: 17, end: 20, words: '17:00 – 20:00' },
-    { key: 'late',      label: 'Late',      start: 20, end: 30, words: 'from 20:00' },
+    { key: 'evening',   label: 'Evening',   start: 17, end: 30, words: 'from 17:00' },
   ];
-  // Sections of the day list (and rows of the week grid).
-  const DAY_SECTIONS = [
-    { key: 'unlisted',  label: 'Time not listed', words: '' },
-    { key: 'morning',   label: 'Morning',   words: 'until 14:00' },
-    { key: 'afternoon', label: 'Afternoon', words: '14:00 – 17:00' },
-    { key: 'evening',   label: 'Evening',   words: 'from 17:00' },
-  ];
+  // Sections of the day list (and rows of the week grid): the slots, plus
+  // events whose source gave no time.
+  const DAY_SECTIONS = [{ key: 'unlisted', label: 'Time not listed', words: '' }].concat(TIME_SLOTS);
 
   function hhmm(e) {
     const s = (e && e.datetime_start) || '';
@@ -188,8 +185,7 @@
   }
 
   function sectionOf(e) {
-    const slot = timeSlotOf(e);
-    return slot === 'late' ? 'evening' : slot;
+    return timeSlotOf(e);
   }
 
   function passesTime(e, selectedSlots) {
@@ -205,7 +201,6 @@
       key: s.key, label: s.label, words: s.words,
       events: buckets[s.key],
       count: buckets[s.key].length,
-      late: s.key === 'evening' ? buckets[s.key].filter(e => timeSlotOf(e) === 'late').length : 0,
     }));
   }
 

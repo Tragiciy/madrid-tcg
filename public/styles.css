@@ -219,6 +219,12 @@
   --c-tab-bg: #FFF1D2;                 /* Day / Week / Map switch */
   --sh-sel: 0 4px 0 rgba(18, 112, 107, .35);
   --sh-cta: 0 3px 0 rgba(18, 112, 107, .35);
+  --sh-foot: 0 -8px 16px rgba(43, 33, 24, .10);
+  --sh-tabbar: 0 -4px 12px rgba(43, 33, 24, .08);
+  --c-toast-hover: rgba(255, 255, 255, .12);
+  --notch: 8px;
+  /* Toast width: one Day-view card minus its button column. */
+  --toast-max: min(360px, calc((min(100vw, var(--page-max)) - 2 * var(--page-pad-x) - 2 * var(--sp-4)) / 3 - var(--ib) - 3 * var(--sp-4)));
   --sh-seg: 0 2px 0 rgba(18, 112, 107, .25);
   --sh-panel: 0 10px 0 rgba(18, 112, 107, .18), 0 20px 40px rgba(43, 33, 24, .12);
   --sh-open-card: 0 6px 0;             /* + colour-mix of the game colour */
@@ -270,7 +276,11 @@
   --dur: 180ms;
   --ease: cubic-bezier(.34, 1.56, .64, 1);
   --press-scale: .95;
-  --disabled-opacity: .45;
+}
+
+/* Two card columns below 1100px (see .cards): a narrower toast. */
+@media (max-width: 1099px) {
+  :root { --toast-max: min(360px, calc((100vw - 2 * var(--page-pad-x) - var(--sp-4)) / 2 - var(--ib) - 3 * var(--sp-4))); }
 }
 
 /* ── 1. Game colours ──────────────────────────────────────────────
@@ -393,8 +403,9 @@ a:hover { color: var(--c-link-hover); }
 }
 .btn:hover { background: var(--c-btn-hover-bg); border-color: var(--c-btn-hover-border); color: var(--c-btn-hover-text); }
 .btn:active { transform: scale(var(--press-scale)); }
-.btn:disabled, .btn[aria-disabled="true"] { cursor: default; opacity: var(--disabled-opacity); transform: none; }
-.btn:disabled:hover { background: var(--c-btn-bg); border-color: var(--c-border-strong); color: var(--c-btn-text); }
+/* Disabled: dashed and muted, still ≥ 4.5:1 (no opacity). */
+.btn:disabled, .btn[aria-disabled="true"] { border-style: dashed; border-color: var(--c-border); box-shadow: none; color: var(--c-text-muted); cursor: default; transform: none; }
+.btn:disabled:hover { background: var(--c-btn-bg); border-color: var(--c-border); color: var(--c-text-muted); }
 .btn.on { background: var(--c-saved); border-color: var(--c-saved-border); color: var(--c-on-saved); }
 .btn .ico { width: var(--ib-icon); height: var(--ib-icon); }
 .btn-lg { min-height: var(--ib-phone); padding: 0 var(--sp-5); }
@@ -721,17 +732,33 @@ a:hover { color: var(--c-link-hover); }
 .ev-compact .ev-title { font-size: var(--fs-title-grid); }
 .ev-compact .ev-tags { margin-top: var(--sp-2); }
 
-/* ── Card expanded in place (Day view, desktop) ───────────────── */
-.ev.is-open {
+/* ── Open card (Day view, desktop) ────────────────────────────────
+   The card stays in its row, marked active (game-colour border, tinted
+   like the panel's header, a notch pointing down); its details are a
+   full-width panel right after the row. */
+.ev.is-active {
+  background: color-mix(in srgb, var(--card-accent) var(--c-head-tint), var(--c-surface));
+  border-color: var(--card-accent);
+  box-shadow: 0 0 0 var(--bw) var(--card-accent);
+}
+.ev.is-active.is-saved { box-shadow: inset var(--stripe-w) 0 0 var(--c-saved), 0 0 0 var(--bw) var(--card-accent); }
+.ev.is-active::after {
+  border: var(--notch) solid transparent;
+  border-top-color: var(--card-accent);
+  bottom: calc(-1 * var(--notch) - var(--sp-4) / 2);
+  content: "";
+  left: calc(var(--time-col) + 2 * var(--sp-4));
+  position: absolute;
+}
+.evx {
+  background: var(--c-card);
   border: var(--focus-w) solid var(--card-accent);
+  border-radius: var(--r-card);
   box-shadow: var(--sh-open-card) color-mix(in srgb, var(--card-accent) var(--open-card-mix), transparent);
-  cursor: default;
-  display: block;
   grid-column: 1 / -1;
   overflow: hidden;
-  padding: 0;
 }
-.ev.is-open.is-saved { box-shadow: inset var(--stripe-w) 0 0 var(--c-saved), var(--sh-open-card) color-mix(in srgb, var(--card-accent) var(--open-card-mix), transparent); }
+.evx.is-saved { box-shadow: inset var(--stripe-w) 0 0 var(--c-saved), var(--sh-open-card) color-mix(in srgb, var(--card-accent) var(--open-card-mix), transparent); }
 .evx-head {
   align-items: flex-start;
   background: color-mix(in srgb, var(--card-accent) var(--c-head-tint), var(--c-surface));
@@ -870,8 +897,10 @@ a:hover { color: var(--c-link-hover); }
 }
 .fp-head { align-items: center; display: flex; gap: var(--sp-3); padding: var(--sp-5) var(--sp-5) var(--sp-1); }
 .fp-head h2 { flex: 1 1 auto; font-family: var(--font-display); font-size: var(--fs-xl); font-weight: var(--fw-display); }
-.fp-body { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: 0 var(--sp-5) var(--sp-4); }
-.fp-foot { align-items: center; border-top: var(--bw) solid var(--c-border-soft); display: flex; gap: var(--sp-3); justify-content: flex-end; padding: var(--sp-4) var(--sp-5); }
+.fp-body { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: 0 var(--sp-5) var(--sp-6); }
+.fp-foot { align-items: center; border-top: var(--bw) solid var(--c-border-soft); display: flex; gap: var(--sp-3); justify-content: flex-end; padding: var(--sp-4) var(--sp-5); position: relative; transition: box-shadow var(--dur) ease-out; }
+/* Content continues below: the footer floats over it. */
+.fp-foot.has-more { box-shadow: var(--sh-foot); }
 .fp .lab {
   align-items: baseline;
   color: var(--c-text-muted);
@@ -971,7 +1000,7 @@ a:hover { color: var(--c-link-hover); }
 .sheet .grip { padding: var(--sp-1) var(--sp-3) 0; }
 .sheet .grip .handle { visibility: hidden; }
 .sheet .grip .ib { position: absolute; right: var(--sp-3); top: var(--sp-3); }
-.sheet-body { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: var(--sp-2) var(--sp-6) var(--sp-4); }
+.sheet-body { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: var(--sp-2) var(--sp-6) var(--sp-6); }
 .sh-when { color: var(--c-text-soft); font-weight: var(--fw-bold); }
 .sh-when b { color: var(--c-time); font-family: var(--font-display); font-size: var(--fs-time-open); font-weight: var(--fw-display); margin-right: var(--sp-1); }
 .sh-title { font-size: var(--fs-sheet-title); font-weight: var(--fw-title); line-height: var(--lh-snug); margin: var(--sp-1) 0 var(--sp-0); padding-right: var(--tap-lg); }
@@ -980,26 +1009,51 @@ a:hover { color: var(--c-link-hover); }
 .sheet-bar { align-items: center; border-top: var(--bw) solid var(--c-border); display: flex; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5); }
 .sb-cal { flex: 1 1 auto; }
 
-/* ── Toast ────────────────────────────────────────────────────── */
+/* ── Toast ────────────────────────────────────────────────────────
+   Never over a card's buttons: on desktop it sits bottom left and is
+   narrower than a card minus its button column (cards keep their
+   buttons on the right); with a sheet or dialog open it moves to the
+   top, over the scrim; on phones it covers the tab bar instead. */
 .toast {
+  align-items: center;
   background: var(--c-text);
   border-radius: var(--r-btn);
-  bottom: var(--sp-6);
+  bottom: var(--sp-5);
+  box-shadow: var(--sh-pop);
   color: var(--c-surface);
+  display: flex;
   font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
-  left: 50%;
-  padding: var(--sp-3) var(--sp-5);
+  gap: var(--sp-2);
+  left: max(var(--page-pad-x), calc((100vw - var(--page-max)) / 2 + var(--page-pad-x)));
+  max-width: var(--toast-max);
+  min-height: var(--tap-lg);
+  padding: 0 var(--sp-3) 0 var(--sp-5);
   position: fixed;
-  transform: translateX(-50%);
   z-index: 400;
 }
+.toast-undo { align-items: center; display: inline-flex; gap: var(--sp-2); }
+.toast-undo button {
+  background: none;
+  border: none;
+  border-radius: var(--r-btn);
+  color: var(--c-saved);
+  font-weight: var(--fw-bold);
+  min-height: var(--ib-phone);
+  padding: 0 var(--sp-3);
+  text-decoration: underline;
+  text-underline-offset: var(--sp-0);
+}
+.toast-undo button:hover { background: var(--c-toast-hover); }
+.toast-undo button:focus-visible { outline-color: var(--c-saved); }
+html.sheet-open .toast { bottom: auto; left: 50%; top: var(--sp-3); transform: translateX(-50%); }
 
 /* ── Phone tab bar ────────────────────────────────────────────── */
 .tabbar {
   background: var(--c-surface);
   border-top: var(--bw) solid var(--c-border);
   bottom: 0;
+  box-shadow: var(--sh-tabbar);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   left: 0;
@@ -1161,7 +1215,7 @@ a:hover { color: var(--c-link-hover); }
   color: var(--c-tab-sel-text);
   font-weight: var(--fw-bold);
 }
-.welcome-city:disabled { cursor: default; opacity: var(--disabled-opacity); }
+.welcome-city:disabled { border-style: dashed; color: var(--c-text-muted); cursor: default; }
 .welcome-game .lg-dot { border-radius: var(--r-dot); height: var(--chip-dot); width: var(--chip-dot); }
 /* Same as the game chips: dot in the game colour, picked = filled. */
 .welcome-game:hover { border-color: var(--card-accent); }
@@ -1383,7 +1437,7 @@ a:hover { color: var(--c-link-hover); }
 .sheet { animation: rise-in var(--dur) ease-out; }
 .fp { animation: drop-in var(--dur) ease-out; }
 .scrim { animation: fade-in var(--dur) ease-out; }
-.ev.is-open { animation: fade-in var(--dur) ease-out; }
+.evx { animation: fade-in var(--dur) ease-out; }
 .day-today::before { content: "\00a0· "; }
 
 /* ── Desktop only ─────────────────────────────────────────────── */
@@ -1470,7 +1524,7 @@ a:hover { color: var(--c-link-hover); }
   .sheet .grip { padding: var(--sp-2) var(--sp-3) 0; }
   .sheet .grip .handle { visibility: visible; }
   .sheet .grip .ib { top: var(--sp-1); }
-  .sheet-body { padding: var(--sp-2) var(--sp-5) var(--sp-3); }
+  .sheet-body { padding: var(--sp-2) var(--sp-5) var(--sp-6); }
   .sheet-bar, .fp-foot { padding: var(--sp-3) var(--sp-4) calc(var(--sp-3) + env(safe-area-inset-bottom)); }
   .sb-icon { padding: 0; width: var(--tap-lg); }
   .sb-icon .ico { height: var(--ib-icon-lg); width: var(--ib-icon-lg); }
@@ -1480,11 +1534,24 @@ a:hover { color: var(--c-link-hover); }
   .facts { grid-template-columns: var(--time-col-open) minmax(0, 1fr); }
 
   .fp-head { padding: 0 var(--sp-5) var(--sp-1); }
-  .fp-body { padding: 0 var(--sp-5) var(--sp-4); }
+  .fp-body { padding: 0 var(--sp-5) var(--sp-6); }
+  .fp-foot .btn { flex: 1 1 0; }
   .fp-foot .btn, .sheet-bar .btn { min-height: var(--tap-lg); }
   /* Every remaining tap target ≥ 40px on phones. */
   .more-row, .more-all, .check, .linkish, .facts .linkish { min-height: var(--ib-phone); }
-  .fp-go { flex: 1 1 auto; }
+  .fp-go { flex: 1.6 1 0; }
+  /* Toast: over the tab bar, never over the cards. */
+  .toast {
+    border-radius: 0;
+    bottom: 0;
+    justify-content: space-between;
+    left: 0;
+    max-width: none;
+    min-height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+    padding: 0 var(--sp-3) env(safe-area-inset-bottom) var(--sp-5);
+    right: 0;
+  }
+  html.sheet-open .toast { border-radius: var(--r-btn); bottom: auto; left: var(--sp-3); min-height: var(--tap-lg); padding: 0 var(--sp-3) 0 var(--sp-5); right: var(--sp-3); top: var(--sp-3); transform: none; }
   .fchip, .preset-apply, .preset-x { min-height: var(--ib-phone); }
 
   .toast { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--sp-4)); }

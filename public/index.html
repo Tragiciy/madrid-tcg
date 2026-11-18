@@ -336,15 +336,21 @@
     </button>
   </div>
 
-  <div class="fp-body">
+  <div class="fp-body" @scroll.passive="updateFpMore()"
+       x-effect="JSON.stringify(filters) + filtersOpen + storePickerOpen + gamesPanelExpanded + storeQuery; $nextTick(() => updateFpMore())">
     <!-- Games -->
     <div class="lab"><span>Games</span><em x-text="filters.game.length ? filters.game.length + ' selected' : 'all'"></em></div>
+    <!-- Picked games, then this week's (most events first); the city's other
+         games behind "+N more". -->
     <div class="row">
-      <template x-for="g in gameChips" :key="'fg-' + g.game">
+      <template x-for="g in panelGames.shown.concat(gamesPanelExpanded ? panelGames.rest : [])" :key="'fg-' + g.game">
         <button type="button" class="gchip gchip-sm" :class="g.cls + (g.on ? ' on' : '')" :aria-pressed="g.on" @click="toggleGame(g.game)">
-          <i aria-hidden="true"></i><span x-text="g.label"></span>
+          <i aria-hidden="true"></i><span x-text="g.label"></span><small class="num" x-text="g.n"></small>
         </button>
       </template>
+      <button type="button" class="gchip gchip-sm gchip-more" x-show="panelGames.rest.length"
+              @click="gamesPanelExpanded = !gamesPanelExpanded" :aria-expanded="gamesPanelExpanded"
+              x-text="gamesPanelExpanded ? 'Fewer' : '+' + panelGames.rest.length + ' more'"></button>
     </div>
 
     <!-- Format: depends on the games -->
@@ -476,13 +482,12 @@
           <button type="button" class="preset-x" @click="deletePreset(p.id)" :aria-label="'Delete preset ' + p.name" title="Delete">×</button>
         </span>
       </template>
-      <button type="button" class="fchip show-phone" :disabled="!canSavePreset" @click="saveCurrentPreset()">+ Save as preset</button>
     </div>
   </div>
 
-  <div class="fp-foot">
-    <button type="button" class="btn btn-lg" @click="clearAll()">Clear</button>
-    <button type="button" class="btn btn-lg hide-phone" :disabled="!canSavePreset" @click="saveCurrentPreset()"
+  <!-- Reset lives in the header ("Clear all"); the footer only acts. -->
+  <div class="fp-foot" :class="{ 'has-more': fpMore }">
+    <button type="button" class="btn btn-lg" :disabled="!canSavePreset" @click="saveCurrentPreset()"
             :title="canSavePreset ? '' : 'Pick a game or a filter first'">Save as preset</button>
     <button type="button" class="btn btn-lg btn-cta fp-go" @click="closeFilters()">
       <span class="num" x-text="'Show ' + weekEventCount + (weekEventCount === 1 ? ' event' : ' events')"></span>
@@ -534,7 +539,16 @@
     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span class="num" x-text="'Saved' + (favoritesCount ? ' ' + favoritesCount : '')">Saved</span></button>
 </nav>
 
-<div class="toast" role="status" aria-live="polite" x-show="toast" x-text="toast" style="display:none"></div>
+<!-- Status line. Phones: over the tab bar; desktop: bottom left, narrower
+     than a card minus its buttons; with a sheet open: above the sheet. -->
+<div class="toast" role="status" aria-live="polite" x-show="toast" style="display:none"
+     @mouseenter="holdToast()" @mouseleave="toast && toast.undo && armToast(3000)"
+     @focusin="holdToast()" @focusout="toast && toast.undo && armToast(3000)">
+  <span x-text="toast && toast.text"></span>
+  <template x-if="toast && toast.undo">
+    <span class="toast-undo"><span aria-hidden="true">·</span><button type="button" @click="undoToast()">Undo</button></span>
+  </template>
+</div>
 
 
 <!-- Welcome: the first screen of a first visit (bare URL only), and the

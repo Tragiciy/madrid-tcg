@@ -622,7 +622,7 @@ function typeOf(e) {
 // DOM nodes the UI remembers (who opened a sheet, an ongoing swipe).
 // Never on Alpine's state: it would wrap them in proxies, and DOM APIs
 // such as document.contains() reject a proxy.
-const UI = { sheetOpener: null, filtersOpener: null, drag: null, toastTimer: null };
+const UI = { sheetOpener: null, filtersOpener: null, drag: null, toastTimer: null, undo: null };
 
 // Focus an element as soon as it can take focus: a sheet shown by x-show
 // may become visible a frame after the state change.
@@ -633,6 +633,13 @@ function focusSoon(find, tries = 6) {
 }
 
 const PHONE_MQ = '(max-width: 720px)';
+// Columns of the Day view's card grid; the same breakpoints as styles.css
+// (.cards: 3 columns from 1100px, 2 from 721px, 1 on phones).
+const COLS_MQ = { three: '(min-width: 1100px)', two: '(min-width: 721px)' };
+function gridCols() {
+  if (window.matchMedia(COLS_MQ.three).matches) return 3;
+  return window.matchMedia(COLS_MQ.two).matches ? 2 : 1;
+}
 const VIEW_STORAGE_KEY = 'tcg-view-v3';
 const DISTANCES = [2, 5, 10, 25];
 const GAME_CHIPS_SHOWN = 6;   // desktop row; the rest behind "+N more"
@@ -691,6 +698,7 @@ function app() {
     nowMadrid: readMadridNow(),
     viewMode:  startView(),
     isPhone:   window.matchMedia(PHONE_MQ).matches,
+    cols:      gridCols(),
 
     // Day view
     selectedDay:  null,   // ISO date; null = today if in the week, else Monday
@@ -706,7 +714,9 @@ function app() {
     storeQuery:   '',
     gamesExpanded: false,
     searchOpen:   false,  // phones: the search field under the header
-    toast:        '',
+    toast:        null,   // { text, undo } — the status line at the bottom
+    fpMore:       false,  // Filters body has content below its footer
+    gamesPanelExpanded: false,  // Filters: games without events this week
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
@@ -722,6 +732,7 @@ function app() {
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW registration failed', err));
       }
+      for (const q of Object.values(COLS_MQ)) window.matchMedia(q).addEventListener('change', () => { this.cols = gridCols(); });
       const mq = window.matchMedia(PHONE_MQ);
       mq.addEventListener('change', () => {
         this.isPhone = mq.matches;
@@ -1123,8 +1134,7 @@ function app() {
     },
 
     secHint(sec) {
-      if (!this.isSecOpen(sec)) return 'Show';
-      return sec.late ? `${sec.late} after 20:00` : '';
+      return this.isSecOpen(sec) ? 'Hide' : 'Show';
     },
 
     // Week view rows: the day sections that have events this week.
@@ -1170,9 +1180,27 @@ function app() {
       return [...games]
         .sort((a, b) => (order[b] || 0) - (order[a] || 0) || a.localeCompare(b))
         .map((g, i) => ({
-          game: g, label: gameLabel(g), n: counts[g] || 0, on: sel.includes(g),
+          game: g, label: gameLabel(g), n: counts[g] || 0, w: order[g] || 0, on: sel.includes(g),
           cls: this.getGameClass(g), extra: i >= GAME_CHIPS_SHOWN && !sel.includes(g),
         }));
+    },
+
+    // Filters panel: picked games first, then this week's games (most
+    // events first), then the city's other games behind "+N more".
+    get panelGames() {
+      const chips = this.gameChips;                     // picked + this week's, busiest first
+      const week = new Set(chips.map(c => c.game));
+      const others = {};
+      for (const e of this.events) {
+        const g = TCG.gameOf(e);
+        if (g !== 'Unknown' && !week.has(g)) others[g] = (others[g] || 0) + 1;
+      }
+      const sel = chips.filter(c => c.on);
+      const active = chips.filter(c => !c.on && c.w > 0);   // already busiest-first
+      const rest = chips.filter(c => !c.on && c.w === 0)
+        .concat(Object.keys(others).sort((a, b) => others[b] - others[a])
+          .map(g => ({ game: g, label: gameLabel(g), n: 0, w: 0, on: false, cls: this.getGameClass(g) })));
+      return { shown: sel.concat(active), rest };
     },
 
     get hiddenGameCount() {
@@ -1451,11 +1479,24 @@ function app() {
     toggleFavorite(keyOrEvent) {
       const key = typeof keyOrEvent === 'string' ? keyOrEvent : eventKey(keyOrEvent);
       const idx = this.favorites.indexOf(key);
-      if (idx >= 0) this.favorites.splice(idx, 1);
-      else          this.favorites.push(key);
-      if (typeof keyOrEvent !== 'string' && keyOrEvent.datetime_start) {
+      const week = (this._favWeeks || {})[key]
+        || (typeof keyOrEvent !== 'string' && keyOrEvent.datetime_start ? weekOfIso(keyOrEvent.datetime_start) : null);
+      if (idx >= 0) {
+        this.favorites.splice(idx, 1);
+        this.persistFavorites();
+        // Removing is one tap: offer the way back.
+        this.flash('Removed from saved', () => {
+          if (this.favorites.includes(key)) return;
+          this.favorites.push(key);
+          if (week) { if (!this._favWeeks) this._favWeeks = {}; this._favWeeks[key] = week; }
+          this.persistFavorites();
+        });
+        return;
+      }
+      this.favorites.push(key);
+      if (week) {
         if (!this._favWeeks) this._favWeeks = {};
-        this._favWeeks[key] = weekOfIso(keyOrEvent.datetime_start);
+        this._favWeeks[key] = week;
       }
       this.persistFavorites();
     },
@@ -1725,17 +1766,21 @@ function app() {
         + (km ? `<span class="ev-km">· ${esc(full ? km + ' from you' : km)}</span>` : '') + `</span>`;
     },
 
+    // A card. The open one (Day view, desktop) stays in its row, marked
+    // active; its details are a separate panel after the row (detailHtml).
     cardHtml(e, { compact = false } = {}) {
       const key = eventKey(e);
-      const open = !compact && this.openKey === key;
-      if (open) return this.openCardHtml(e);
+      const active = !compact && this.openKey === key;
       const fav = this.favorites.includes(key);
       const cal = buildGoogleCalendarUrl(e);
-      const cls = ['ev', compact ? 'ev-compact' : '', this.isEventPast(e) ? 'is-past' : '', fav ? 'is-saved' : ''].filter(Boolean).join(' ');
+      const cls = ['ev', compact ? 'ev-compact' : '', this.isEventPast(e) ? 'is-past' : '', fav ? 'is-saved' : '',
+        active ? 'is-active ' + this.getGameClass(e.game) : ''].filter(Boolean).join(' ');
+      const aria = compact ? ' aria-haspopup="dialog"'
+        : ` aria-expanded="${active}"` + (active ? ` aria-controls="${this.detailId(key)}"` : '');
       return `<article class="${cls}" data-key="${esc(key)}">`
         + `<div class="ev-time">${esc(this.cardTime(e))}</div>`
         + `<div class="ev-main">`
-        +   `<h4 class="ev-title"><button type="button" class="ev-open" data-act="open" aria-expanded="false"${compact ? ' aria-haspopup="dialog"' : ''}>${esc(e.title)}</button></h4>`
+        +   `<h4 class="ev-title"><button type="button" class="ev-open" data-act="open"${aria}>${esc(e.title)}</button></h4>`
         +   this.storeLine(e)
         +   `<div class="ev-tags">${this.tagsHtml(e)}</div>`
         + `</div>`
@@ -1744,6 +1789,10 @@ function app() {
         +   (cal ? `<button type="button" class="ib" data-act="gcal" aria-label="Add to Google Calendar: ${esc(e.title)}" title="Add to Google Calendar">${icon('cal')}</button>` : '')
         + `</div>`
         + `</article>`;
+    },
+
+    detailId(key) {
+      return 'evx-' + key.replace(/[^a-zA-Z0-9]/g, '').slice(-24);
     },
 
     // When / Where / Players / Format. Rows without data are left out.
@@ -1799,23 +1848,23 @@ function app() {
         : `<a class="src" href="${esc(url)}" target="_blank" rel="noopener">Source: ${domain} ${icon('ext')}</a>`;
     },
 
-    // Card expanded in place (Day view, desktop): the whole grid row.
-    openCardHtml(e) {
+    // Details of the open card (Day view, desktop): a full-width panel
+    // inserted after the card's row, so no cell above it is left empty.
+    detailHtml(e) {
       const key = eventKey(e);
       const fav = this.favorites.includes(key);
       const cal = buildGoogleCalendarUrl(e);
-      const id = 'ev-' + key.replace(/[^a-zA-Z0-9]/g, '').slice(-24);
-      return `<article class="ev is-open ${this.getGameClass(e.game)}${fav ? ' is-saved' : ''}" data-key="${esc(key)}">`
+      return `<section class="evx ${this.getGameClass(e.game)}${fav ? ' is-saved' : ''}" id="${this.detailId(key)}" data-key="${esc(key)}" aria-label="${esc(e.title)}">`
         + `<header class="evx-head" data-act="close">`
         +   `<div class="evx-time">${esc(this.cardTime(e))}</div>`
         +   `<div class="ev-main">`
-        +     `<h4 class="ev-title evx-title"><button type="button" class="ev-open" data-act="close" aria-expanded="true" aria-controls="${id}">${esc(e.title)}</button></h4>`
-        +     this.storeLine(e)
+        +     `<h4 class="ev-title evx-title" tabindex="-1">${esc(e.title)}</h4>`
+        +     this.storeLine(e, { full: true })
         +     `<div class="ev-tags">${this.tagsHtml(e)}</div>`
         +   `</div>`
         +   `<button type="button" class="ib" data-act="close" aria-label="Collapse" title="Collapse (Esc)">${icon('up')}</button>`
         + `</header>`
-        + `<div class="evx-body" id="${id}" data-act="noop">`
+        + `<div class="evx-body" data-act="noop">`
         +   `<div>${this.factsHtml(e)}</div>`
         +   this.moreHtml(e)
         + `</div>`
@@ -1826,7 +1875,7 @@ function app() {
         +   `<button type="button" class="btn" data-act="share">${icon('share')}Share</button>`
         +   `<span class="sp"></span>${this.sourceHtml(e)}`
         + `</footer>`
-        + `</article>`;
+        + `</section>`;
     },
 
     // The sheet's scrolling body (phones; Week/Map views on desktop).
@@ -1840,8 +1889,12 @@ function app() {
         + this.moreHtml(e);
     },
 
-    cardsHtml(events, opts) {
-      return events.map(e => this.cardHtml(e, opts)).join('');
+    // Cards of one section; the open card's details follow the last card
+    // of its row (rows = this.cols cards).
+    cardsHtml(events, opts = {}) {
+      const at = opts.compact || !this.openKey ? -1 : events.findIndex(e => eventKey(e) === this.openKey);
+      const rowEnd = at < 0 ? -1 : Math.min(events.length - 1, (Math.floor(at / this.cols) + 1) * this.cols - 1);
+      return events.map((e, i) => this.cardHtml(e, opts) + (i === rowEnd ? this.detailHtml(events[at]) : '')).join('');
     },
 
     // Delegated clicks on any card container (data-act on the target).
@@ -1858,7 +1911,7 @@ function app() {
         case 'noop': return;
         case 'fav':
           this.toggleFavorite(e);
-          this.refocus(key, 'fav');
+          this.refocus(key, 'fav', ev.target.closest('.evx') ? '.evx' : '.ev');
           return;
         case 'gcal': this.openCalendar(e); return;
         case 'ics': downloadIcs(e); return;
@@ -1878,16 +1931,17 @@ function app() {
         }
         default:
           if (compact || this.isPhone || this.viewMode !== 'day') this.openSheet(e);
+          else if (this.openKey === key) this.collapseCard();   // second click on the active card
           else this.expandCard(e);
       }
     },
 
     // After an x-html re-render the clicked button is a new node: give the
     // new one focus so keyboard users don't fall back to <body>.
-    refocus(key, act) {
+    refocus(key, act, scope = '') {
       this.$nextTick(() => {
         if (document.activeElement && document.activeElement !== document.body && document.contains(document.activeElement)) return;
-        const el = document.querySelector(`[data-key="${CSS.escape(key)}"] [data-act="${act}"]`)
+        const el = document.querySelector(`${scope}[data-key="${CSS.escape(key)}"] [data-act="${act}"]`)
           || (this.sheetEvent && document.querySelector(`.sheet [data-act="${act}"]`));
         if (el) el.focus();
       });
@@ -1915,11 +1969,11 @@ function app() {
       this.openKey = key;
       this.syncEventParam(e);
       this.$nextTick(() => {
-        const card = document.querySelector(`.ev.is-open[data-key="${CSS.escape(key)}"]`);
-        if (!card) return;
-        card.querySelector('.ev-open').focus({ preventScroll: true });
-        const r = card.getBoundingClientRect();
-        if (r.top < 0 || r.bottom > window.innerHeight) card.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
+        const panel = document.querySelector(`.evx[data-key="${CSS.escape(key)}"]`);
+        if (!panel) return;
+        panel.querySelector('.evx-title').focus({ preventScroll: true });
+        const r = panel.getBoundingClientRect();
+        if (r.top < 0 || r.bottom > window.innerHeight) panel.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
       });
     },
 
@@ -1990,10 +2044,30 @@ function app() {
       if (d.dy > 90) close();
     },
 
-    flash(text) {
-      this.toast = text;
+    // Status line. With `undo`, it offers Undo for 5 seconds (kept open
+    // while the pointer or focus is on it).
+    flash(text, undo = null) {
+      UI.undo = undo;
+      this.toast = { text, undo: !!undo };
+      this.armToast(undo ? 5000 : 2600);
+    },
+    armToast(ms) {
       clearTimeout(UI.toastTimer);
-      UI.toastTimer = setTimeout(() => { this.toast = ''; }, 2600);
+      UI.toastTimer = setTimeout(() => { this.toast = null; UI.undo = null; }, ms);
+    },
+    holdToast() { clearTimeout(UI.toastTimer); },
+    undoToast() {
+      const undo = UI.undo;
+      this.toast = null;
+      UI.undo = null;
+      clearTimeout(UI.toastTimer);
+      if (undo) undo();
+    },
+
+    // Updates the shadow on the Filters footer: on while content is below it.
+    updateFpMore() {
+      const b = document.querySelector('.fp-body');
+      this.fpMore = !!b && b.scrollTop + b.clientHeight < b.scrollHeight - 1;
     },
 
     /* ── Map view ─────────────────────────────────────────────────────

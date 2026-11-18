@@ -113,23 +113,22 @@ test('a format restricts only the games that have it', () => {
 
 const at = (hm) => ev('One Piece', 'Standard', { at: `2026-11-18T${hm}:00+01:00` });
 
-test('slots and sections', () => {
+test('one set of boundaries: filter slots = day sections', () => {
   assert.equal(M.timeSlotOf(at('10:00')), 'morning');
   assert.equal(M.timeSlotOf(at('13:59')), 'morning');
   assert.equal(M.timeSlotOf(at('16:30')), 'afternoon');
   assert.equal(M.timeSlotOf(at('17:00')), 'evening');
-  assert.equal(M.timeSlotOf(at('20:30')), 'late');
-  assert.equal(M.sectionOf(at('20:30')), 'evening');
+  assert.equal(M.timeSlotOf(at('22:30')), 'evening');
   assert.equal(M.timeSlotOf(at('00:00')), 'unlisted');
-  assert.equal(M.passesTime(at('20:30'), ['evening']), false);
-  assert.equal(M.passesTime(at('20:30'), ['late']), true);
+  for (const hm of ['09:00', '14:00', '16:59', '17:00', '21:00']) assert.equal(M.sectionOf(at(hm)), M.timeSlotOf(at(hm)));
+  assert.deepEqual(M.TIME_SLOTS.map(s => s.words), M.DAY_SECTIONS.slice(1).map(s => s.words));
+  assert.equal(M.passesTime(at('21:00'), ['evening']), true);
   assert.equal(M.passesTime(at('00:00'), []), true);
 });
 
-test('daySections: ordered, non-empty, late counted inside Evening', () => {
+test('daySections: ordered and non-empty', () => {
   const s = M.daySections([at('00:00'), at('10:00'), at('18:00'), at('21:00')]);
   assert.deepEqual(s.map(x => [x.key, x.count]), [['unlisted', 1], ['morning', 1], ['evening', 2]]);
-  assert.equal(s[2].late, 1);
   assert.equal(s[2].words, 'from 17:00');
 });
 
@@ -158,10 +157,10 @@ test('dayStrip: load relative to the busiest day, past and today', () => {
 
 /* ── URL ─────────────────────────────────────────────────────────── */
 
-test('filters round-trip through the URL; unknown type/time values dropped', () => {
-  const p = new URLSearchParams('game=One%20Piece,Lorcana&format=Standard&type=casual,bogus&time=late,noon&q=op18&city=bilbao');
+test('filters round-trip through the URL; unknown type/time values (old "late") dropped', () => {
+  const p = new URLSearchParams('game=One%20Piece,Lorcana&format=Standard&type=casual,bogus&time=evening,late&q=op18&city=bilbao');
   const f = M.readFilterParams(p);
-  assert.deepEqual(f, { search: 'op18', game: ['One Piece', 'Lorcana'], store: [], format: ['Standard'], type: ['casual'], time: ['late'] });
+  assert.deepEqual(f, { search: 'op18', game: ['One Piece', 'Lorcana'], store: [], format: ['Standard'], type: ['casual'], time: ['evening'] });
   const out = M.writeFilterParams(new URLSearchParams('city=bilbao&store=X'), f);
   assert.equal(out.get('city'), 'bilbao');
   assert.equal(out.has('store'), false);
