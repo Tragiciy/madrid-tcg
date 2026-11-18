@@ -14,30 +14,27 @@ one click.
 
 ## Key features
 
-- **Two week views** — horizontal grid (default) and vertical per-day list.
-- **Faceted filters** — search by title, multi-select game / store / format.
-  Filters are bookmarkable via URL parameters. The store list always shows
-  every store in the dataset — stores with no events in the current week
-  remain visible and selectable (counts reflect the current week only).
+- **Day, Week and Map views** — Day (default): a strip of the week's 7 days, each with its event count
+  and a load bar, then the chosen day's events in Morning / Afternoon / Evening sections (the one with
+  the next event starts open). Week: the 7-column grid. Map: one pin per store.
+- **Game chips** — one chip per game this week, with a count; the games picked on the welcome screen
+  arrive here already selected.
+- **Filters panel** — store, format, event type, time of day, distance, presets. Formats come from the
+  data and depend on the games selected (shared formats merge into one chip). Format and event type are
+  separate: `public/model.js` splits the scraped `format` field (which mixes in "Prerelease") and derives
+  the type from `format_official` and the title. Every filter is kept in the URL.
 - **Filter presets** — save and restore named filter combinations. Mark one as default to have it applied automatically on fresh visits.
 - **First-run onboarding** — wizard on the first visit that sets initial game/store filters.
-- **Search within filter dropdowns** — each facet (game, store, format) has a search input to narrow long lists.
-- **Undo last filter action** — button that reverses the most recent filter change (up to 5 steps back).
-- **Favorites** — star any event to save it locally (persisted in `localStorage`). A "Show saved"
-  toggle appears in the filter bar once at least one event is saved; starred events are highlighted
-  in gold.
-- **Time-segment chips** — Morning (<12), Afternoon (12–16), Evening (16–19),
-  Late (19+); chips can be toggled to hide a segment, and segment headers in
-  the horizontal grid can be collapsed to compact a busy week.
-- **Per-game color accents** — each card carries a tint and accent based on its
-  game (Magic, Pokémon, One Piece, Lorcana, …).
+- **Favorites** — star any event to save it locally (persisted in `localStorage`). A "Saved"
+  toggle shows only them; saved cards carry a gold bar.
+- **Per-game colours** — each game has one colour (`--game-<slug>` in `styles.css`), used once per
+  card: the fill of its label.
 - **Week navigation** — Prev / Today / Next, with the current week range
   displayed.
-- **Today highlighting** — today's column is tinted; past segments and past
-  events on today are dimmed (never hidden).
-- **Add to Calendar** — every event card has a calendar button that opens a
-  pre-filled Google Calendar, iCalendar (.ics), or Outlook template.
-- **Near me** — one tap asks for the browser location. It filters to stores within 2, 5, 10 or 25 km,
+- **Today** — marked in teal with a "today" label; events that already started are dimmed (never hidden).
+- **Add to Calendar** — every event card has a Google Calendar button; an opened card also offers
+  an .ics file (Apple Calendar, Outlook).
+- **Near me** — the Map's Near me button, or a distance in Filters, asks for the browser location. It filters to stores within 2, 5, 10 or 25 km,
   using the store registry's coordinates, and shows the distance on each card. The position stays in
   memory only and is never stored or sent anywhere.
 - **Installable app (PWA)** — a manifest, icons and a service worker (`public/sw.js`). The site can be
@@ -47,18 +44,21 @@ one click.
   game image in WhatsApp, Telegram and social apps, then open the event in the calendar.
 - **Store submissions** — stores add their events at `/submit/`. Each submission becomes a
   GitHub issue, and approving it with the `approved` label publishes it with the next update.
-- **Event Detail Panel** — click any event for a full-detail slide-in panel
-  with store address and Google Maps link.
+- **Event cards** — a click opens the card in place on desktop (When / Where / Format, more events at
+  the same store, Google Calendar, directions, share, source link) and as a bottom sheet on phones.
 
 ## Tech stack
 
-- **Four static frontend files** in `public/`:
+- **Five static frontend files** in `public/`:
   - `index.html` — markup and Alpine.js directives (no inline CSS or JS)
   - `styles.css` — all styles: CSS custom properties, per-game palette, layout,
     responsive breakpoints
   - `app.js` — the Alpine `app()` factory, all runtime logic, state, and
     renderers
-  - `config.js` — static extension points: `SEGMENTS`, `GAME_CLASS_MAP`,
+  - `model.js` — pure calendar logic (format/type split, the Format block,
+    time of day, the day strip, filters ⇄ URL), tested with
+    `node --test 'tests/js/*.test.js'` (no dependencies)
+  - `config.js` — static extension points: `GAME_SHORT`, `GAME_CLASS_MAP`,
     and `STORE_META`, which is filled at runtime from `public/stores.json`
 - **Alpine.js v3.14.1** (loaded from CDN) — provides reactivity. The whole UI
   is one Alpine component (`x-data="app()"` on the `<html>` element).

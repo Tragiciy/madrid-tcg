@@ -13,11 +13,11 @@
  * To remove the service worker entirely, see docs/PROJECT_CONTEXT.md
  * ("PWA and offline" → kill switch). Deleting this file is NOT enough.
  */
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `tcg-${VERSION}`;
 const NETWORK_TIMEOUT_MS = 4000;
 const SHELL = [
-  '/', '/app.js', '/config.js', '/styles.css',
+  '/', '/app.js', '/model.js', '/config.js', '/styles.css',
   '/manifest.webmanifest', '/icons/icon-192.png',
   '/api/v1/madrid/events/upcoming.json', '/api/v1/madrid/stores.json', '/api/v1/madrid/index.json',
 ];

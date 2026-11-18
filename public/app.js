@@ -497,13 +497,6 @@ function decodeEventParam(value) {
   }
 }
 
-function segmentForHour(h) {
-  if (h < 12) return 'morning';
-  if (h < 16) return 'afternoon';
-  if (h < 19) return 'evening';
-  return 'late';
-}
-
 // Returns { iso, hour, minute, minutesSinceMidnight } in Europe/Madrid.
 // Builds a real Date whose internal time matches Madrid wall-clock by
 // roundtripping through toLocaleString('en-US', { timeZone: 'Europe/Madrid' }).
@@ -536,7 +529,7 @@ const CITY_ID_RE = /^[a-z]+(-[a-z]+)*$/;
 // Links that point at one event or filter (share pages, SEO pages) carry
 // ?city= for every city but the default; without it they mean Madrid, not
 // whatever city this visitor last chose.
-const CITY_SCOPED_PARAMS = ['event', 'w', 'game', 'store', 'format'];
+const CITY_SCOPED_PARAMS = ['event', 'w', 'game', 'store', 'format', 'type', 'time', 'q'];
 
 // The city to open: ?city=, else Madrid for a city-scoped link, else the
 // last one chosen, else the default. index.html runs the same rule inline
@@ -575,6 +568,85 @@ function madridToday() {
   return new Date(y, m - 1, d);
 }
 
+/* ── Rendering helpers ─────────────────────────────────────────────── */
+
+// Everything scraped goes through esc() before it reaches x-html.
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Line icons (24×24, stroke = currentColor). Directions is a pin, an
+// outside link is a diagonal arrow: the two are never the same glyph.
+const ICONS = {
+  pin:    '<path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/>',
+  star:   '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  cal:    '<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
+  ext:    '<path d="M7 17L17 7M9 7h8v8"/>',
+  share:  '<path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/>',
+  up:     '<path d="M6 14l6-6 6 6"/>',
+  down:   '<path d="M6 10l6 6 6-6"/>',
+  close:  '<path d="M6 6l12 12M18 6L6 18"/>',
+  file:   '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/>',
+};
+function icon(name, cls = '') {
+  return `<svg class="ico${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name]}</svg>`;
+}
+
+function gameLabel(game) {
+  return GAME_SHORT[game] || game || 'Unknown';
+}
+
+// Derived lists, computed once per change of their inputs. Kept outside
+// Alpine's reactive state: writing to it from a getter would re-trigger
+// the very effect that is reading it.
+const MEMO = new Map();
+function memo(name, key, fn) {
+  const hit = MEMO.get(name);
+  if (hit && hit.key === key) return hit.value;
+  const value = fn();
+  MEMO.set(name, { key, value });
+  return value;
+}
+
+// Types are derived from the title, so they are worth caching per event.
+const TYPE_CACHE = new Map();
+function typeOf(e) {
+  const k = eventKey(e);
+  if (!TYPE_CACHE.has(k)) TYPE_CACHE.set(k, TCG.eventType(e));
+  return TYPE_CACHE.get(k);
+}
+
+// DOM nodes the UI remembers (who opened a sheet, an ongoing swipe).
+// Never on Alpine's state: it would wrap them in proxies, and DOM APIs
+// such as document.contains() reject a proxy.
+const UI = { sheetOpener: null, filtersOpener: null, drag: null, toastTimer: null };
+
+// Focus an element as soon as it can take focus: a sheet shown by x-show
+// may become visible a frame after the state change.
+function focusSoon(find, tries = 6) {
+  const el = find();
+  if (el && el.offsetParent !== null) { el.focus({ preventScroll: true }); if (document.activeElement === el) return; }
+  if (tries > 0) setTimeout(() => focusSoon(find, tries - 1), 50);
+}
+
+const PHONE_MQ = '(max-width: 720px)';
+const VIEW_STORAGE_KEY = 'tcg-view-v3';
+const DISTANCES = [2, 5, 10, 25];
+const GAME_CHIPS_SHOWN = 6;   // desktop row; the rest behind "+N more"
+
+function startView() {
+  const v3 = localStorage.getItem(VIEW_STORAGE_KEY);
+  if (['day', 'week', 'map'].includes(v3)) return v3;
+  // The previous layout's choice: the grid is Week now; the list is Day.
+  const v2 = localStorage.getItem('tcg-view-v2');
+  if (v2 === 'horizontal') return 'week';
+  if (v2 === 'map') return 'map';
+  return 'day';
+}
+
 /* ── Alpine app ────────────────────────────────────────────────────── */
 function app() {
   return {
@@ -586,64 +658,59 @@ function app() {
     loadError:    null,
     weekStart:    weekMonday(madridToday()),
     weekIndex:    null,   // {"2026-W47": count, …} from the API index
-    filters:      { search: '', game: [], store: [], format: [] },
-    filterSearch: { game: '', store: '', format: '' },
+    // Filters. Lists: game / store / format / type (TCG.EVENT_TYPES keys) /
+    // time (TCG.TIME_SLOTS keys). All of them are kept in the URL.
+    filters:      { search: '', game: [], store: [], format: [], type: [], time: [] },
     savedPresets: [],
     defaultPresetId: null,
-    defaultPresetActive: false,
-    editingPresetId: null,
-    editingPresetSnapshot: null,
-    editingPresetName: '',
     onboardingOpen: false,
     onboardingCompleted: false,
     onboarding: { game: [], store: [] },
-    segmentFilter: { morning: true, afternoon: true, evening: true, late: true },
-    openFacet: null,
-    // Independent of segmentFilter: collapsed segments still occupy a
-    // grid row (alignment preserved) but their cards are hidden.
-    collapsedSegments: { morning: false, afternoon: false, evening: false, late: false },
-    // Vertical view collapses per day: { '2026-11-17:evening': true }.
-    collapsedDaySegs: {},
-    SEGMENTS,
-    showBackToTop: false,
-    // Phone jump bar: the day / segment currently at the top of the
-    // viewport (scroll-spy), highlighted in the sticky bar.
-    jumpDay: null,
-    jumpSeg: null,
-    filterHistory: [],       // stack of { filters, segmentFilter } snapshots; max 5
-    selectedEvent: null,
-    panelOpen: false,
-    calendarMenuOpen: false,
+    TIME_SLOTS: TCG.TIME_SLOTS,
+    EVENT_TYPES: TCG.EVENT_TYPES,
+    DAY_SECTIONS: TCG.DAY_SECTIONS,
+    DISTANCES,
     favorites:         [],    // array of eventKey strings
     showFavoritesOnly: false,
-    // "Near me": the visitor's position (kept in memory only — never stored
-    // or sent anywhere) and the radius filter in km.
+    // "Near me": the visitor's position (memory only — never stored or
+    // sent anywhere) and the distance filter in km (null = anywhere).
     nearMe:       null,
-    radiusKm:     5,
+    km:           null,
     geoStatus:    '',      // '', 'locating', or an error message
-    // Map view: the chosen day (null = the whole week), the selected store
-    // (display name) and a load/error message for the map itself.
     welcomeAllGames: false,   // welcome screen: "+N more" games opened
     WELCOME_TOP_GAMES: 8,
+    // Map view: the chosen day (null = the whole week), the selected store
+    // (display name) and a load/error message for the map itself.
     mapDay:       null,
     mapStore:     null,
     mapStatus:    '',
     mapFailed:    false,
     mapAttempt:   0,     // bumped by Retry / coming back online: re-runs drawMap
     offline:      !navigator.onLine,
-    // Reactive Europe/Madrid clock — refreshed every minute. Used to
-    // mark past segments and past events on today.
+    // Reactive Europe/Madrid clock — refreshed every minute.
     nowMadrid: readMadridNow(),
+    viewMode:  startView(),
+    isPhone:   window.matchMedia(PHONE_MQ).matches,
 
-    // Default to horizontal; respect localStorage if user previously
-    // switched to vertical. Key is versioned so that the old default-
-    // vertical era's persisted 'vertical' values don't carry over.
-    viewMode: localStorage.getItem('tcg-view-v2') || 'horizontal',
+    // Day view
+    selectedDay:  null,   // ISO date; null = today if in the week, else Monday
+    secOpen:      {},     // 'iso:section' → true/false, set by the user
+    openKey:      null,   // card expanded in place (Day view, desktop)
+    // Week view: rows folded by the user.
+    collapsedRows: {},
+    // Detail sheet (phones; Week and Map views on desktop)
+    sheetEvent:   null,
+    // Filters panel
+    filtersOpen:  false,
+    storePickerOpen: false,
+    storeQuery:   '',
+    gamesExpanded: false,
+    searchOpen:   false,  // phones: the search field under the header
+    toast:        '',
 
     /* ── Init ──────────────────────────────────────────────────────── */
     async init() {
-      // Alpine 3 calls init() itself; guard against a second call (an extra
-      // x-init="init()" once ran everything — every fetch — twice).
+      // Alpine 3 calls init() itself; guard against a second call.
       if (this._initialized) return;
       this._initialized = true;
       this.loadFavorites();
@@ -655,6 +722,12 @@ function app() {
       if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW registration failed', err));
       }
+      const mq = window.matchMedia(PHONE_MQ);
+      mq.addEventListener('change', () => {
+        this.isPhone = mq.matches;
+        // An in-place card becomes a sheet on a phone, and back.
+        if (this.isPhone && this.openKey) { const e = this.eventByKey(this.openKey); this.openKey = null; if (e) this.openSheet(e); }
+      });
       this.loadPresets();
       this.loadDefaultPreset();
       this.loadOnboardingState();
@@ -663,36 +736,18 @@ function app() {
       // (an event, a filter, a city) go straight to what they point at.
       if (!window.location.search && this.shouldShowOnboarding(false)) this.openOnboarding();
 
-      // Show Back to top after 400px scroll
-      window.addEventListener('scroll', () => {
-        this.showBackToTop = window.scrollY > 400;
-        this.onScrollSpy();
-      }, { passive: true });
       window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          if (this.onboardingOpen) {
-            this.skipOnboarding();
-          } else if (this.editingPresetId) {
-            this.cancelEditPreset();
-          } else if (this.calendarMenuOpen) {
-            this.calendarMenuOpen = false;
-          } else if (this.selectedEvent) {
-            this.closePanel();
-          } else if (this.openFacet) {
-            this.openFacet = null;
-          }
-        }
+        if (e.key !== 'Escape') return;
+        if (this.sheetEvent) this.closeSheet();
+        else if (this.filtersOpen) this.closeFilters();
+        else if (this.openKey) this.collapseCard();
+        else if (this.onboardingOpen) this.skipOnboarding();
+        else if (this.searchOpen) this.searchOpen = false;
       });
 
-      if (!localStorage.getItem('tcg-view-v2') && window.matchMedia('(max-width: 900px)').matches) {
-        this.viewMode = 'vertical';
-      }
-
-      // Run once immediately, then refresh the Madrid clock every minute
-      // so past-segment / past-event styling progresses without a reload.
       this.nowMadrid = readMadridNow();
       setInterval(() => { this.nowMadrid = readMadridNow(); }, 60_000);
-      
+
       fetch(`${API_ROOT}/cities.json`)
         .then(r => (r.ok ? r.json() : {})).then(d => { this.cities = d.cities || []; this.syncTitle(); })
         .catch(() => {});
@@ -711,61 +766,48 @@ function app() {
           this.loadFavorites();
         }
         // A ?city= link also becomes this visitor's city next time. Any city
-        // but the default keeps ?city= in the URL: filter and event links
-        // built from it would otherwise mean Madrid. Plain Madrid visits leave
-        // storage and the URL alone.
+        // but the default keeps ?city= in the URL.
         if (this.city !== DEFAULT_CITY || new URLSearchParams(window.location.search).has('city')) {
           this.rememberCity(this.city);
         }
         this.syncTitle();
         this.cleanupFavorites();
         const params = new URLSearchParams(window.location.search);
-        const hasUrlFilters = ['game', 'store', 'format'].some(f => params.get(f));
-        if (hasUrlFilters) {
-          this.applyFiltersFromUrl();
-        } else {
-          this.applyDefaultPreset();
-        }
+        const hasUrlFilters = TCG.URL_LISTS.concat('q').some(f => params.get(f));
+        if (hasUrlFilters) this.applyFiltersFromUrl();
+        else this.applyDefaultPreset();
         this.cleanupFilters({ syncUrl: false });
-        const rawEventParam = new URLSearchParams(window.location.search).get('event');
+        const rawEventParam = params.get('event');
         if (rawEventParam) {
           const decoded = decodeEventParam(rawEventParam);
-          const eventKey = decoded !== null ? decoded : rawEventParam;
-          const find = () => this.events.find(ev => this.eventKey(ev) === eventKey)
-            || this.events.find(ev => legacyEventKey(ev) === eventKey);
+          const key = decoded !== null ? decoded : rawEventParam;
+          const find = () => this.events.find(ev => eventKey(ev) === key)
+            || this.events.find(ev => legacyEventKey(ev) === key);
           let event = find();
           if (!event) {
             // Outside upcoming.json: load the event's week (from ?w=, or the
             // date inside older keys) and look again.
-            const m = eventKey.match(/\d{4}-\d{2}-\d{2}T/);
+            const m = key.match(/\d{4}-\d{2}-\d{2}T/);
             const week = params.get('w') || (m ? weekOfIso(m[0]) : null);
             if (week) {
               await this.loadWeek(week);
               event = find();
             }
           }
-          if (event) this.openPanel(event);
+          if (event) {
+            this.loading = false;
+            this.showEvent(event);
+          }
         }
       } catch (err) {
-        console.error('Failed to load events.json', err);
+        console.error('Failed to load events', err);
         this.loadError = 'Could not load events. Check your connection and try again.';
       } finally {
         this.loading = false;
       }
 
-      if (this.viewMode === 'vertical') {
-        this.$nextTick(() => {
-          requestAnimationFrame(() => this.scrollToCurrentSegment());
-        });
-      } else {
-        // Phones see ~2 day columns: start on today's, not on Monday's.
-        this.$nextTick(() => requestAnimationFrame(() => {
-          this.scrollColumnIntoView(this.nowMadrid.iso, 'auto');
-        }));
-      }
-      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
-
-      this.$watch('filters.search', () => this.cleanupFilters());
+      if (this.viewMode === 'week') this.scrollWeekToDay();
+      this.$watch('filters.search', () => this.cleanupFilters({ syncUrl: true }));
     },
 
     get apiBase() {
@@ -781,11 +823,7 @@ function app() {
     // Stores, the week index and upcoming events of one city, fetched but
     // not applied: callers apply them only if that city is still current.
     async fetchCityData(city) {
-      // Plain fetches: Cloudflare Pages serves JSON with
-      // `max-age=0, must-revalidate` + ETag, so the browser revalidates on
-      // every visit and gets a cheap 304 when the data hasn't changed.
       // URLs must match the preloads index.html injects.
-      // Stores and the week index are optional: the calendar works without.
       const base = `${API_ROOT}/${city}`;
       const storesReq = fetch(`${base}/stores.json`)
         .then(r => (r.ok ? r.json() : {})).catch(() => ({}));
@@ -800,8 +838,7 @@ function app() {
     // fetch started for the previous data is discarded when it lands.
     applyCityData({ upcoming, stores, index }) {
       this._dataGen = (this._dataGen || 0) + 1;
-      // STORE_META is not reactive: fill it before the events land, so
-      // nothing computed from the events sees stores without coordinates.
+      // STORE_META is not reactive: fill it before the events land.
       for (const k of Object.keys(STORE_META)) delete STORE_META[k];
       for (const s of stores.stores || []) STORE_META[s.name] = s;
       this._loadedWeeks = new Set();
@@ -810,8 +847,6 @@ function app() {
       this.weekIndex = index.weeks || null;
     },
 
-    // Persist the city and put it in the URL (the default city has no
-    // ?city=, so Madrid links stay as they were).
     rememberCity(id) {
       try { localStorage.setItem(CITY_STORAGE_KEY, id); } catch { /* storage blocked */ }
       const url = new URL(window.location.href);
@@ -826,8 +861,7 @@ function app() {
     },
 
     // Nothing changes until the new city's data has arrived: on failure the
-    // previous city stays fully in place. The switcher is disabled while
-    // loading, and the request counter drops answers that arrive late.
+    // previous city stays fully in place.
     async setCity(id) {
       if (id === this.city || !CITY_ID_RE.test(id) || this.loading) return;
       const request = (this._cityRequest = (this._cityRequest || 0) + 1);
@@ -845,17 +879,17 @@ function app() {
         return;
       }
       if (request !== this._cityRequest) return;
-      this.closePanel();
+      this.closeSheet();
+      this.openKey = null;
       this.city = id;
       this.applyCityData(data);
       this.rememberCity(id);
       // Stores are per city; games and formats carry over.
       this.filters.store = [];
-      this.filterHistory = [];
-      this.defaultPresetActive = false;
       this.mapStore = null;
       this.mapDay = null;
       this.nearMe = null;
+      this.km = null;
       MAP.fitKey = null;
       const c = this.cities.find(x => x.id === id);
       if (MAP.map && c) MAP.map.setView([c.lat, c.lng], MAP_DEFAULT_VIEW.zoom, { animate: false });
@@ -874,193 +908,44 @@ function app() {
 
     setView(mode) {
       this.viewMode = mode;
-      localStorage.setItem('tcg-view-v2', mode);
-      if (mode === 'map') {
-        MAP.fitKey = null;  // reopening the map shows every result again
-        return;
-      }
-      if (mode === 'vertical') {
-        this.$nextTick(() => {
-          requestAnimationFrame(() => this.scrollToCurrentSegment());
-        });
-      } else {
-        this.$nextTick(() => requestAnimationFrame(() => {
-          this.scrollColumnIntoView(this.jumpDay || this.nowMadrid.iso, 'auto');
-        }));
-      }
-      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
+      try { localStorage.setItem(VIEW_STORAGE_KEY, mode); } catch { /* storage blocked */ }
+      this.openKey = null;
+      if (mode === 'map') MAP.fitKey = null;  // reopening the map shows every result again
+      if (mode === 'week') this.scrollWeekToDay();
     },
 
-    scrollToCurrentSegment() {
-      const now = this.nowMadrid;
-      const currentHour = now.hour;
-      let targetSeg = null;
-      for (const seg of SEGMENTS) {
-        if (currentHour < seg.end) {
-          targetSeg = seg;
-          break;
+    // Week grid on phones shows two columns: start on the selected day.
+    scrollWeekToDay() {
+      this.$nextTick(() => requestAnimationFrame(() => {
+        const wrap = document.querySelector('.weekview');
+        const head = wrap && wrap.querySelector(`.whead[data-iso="${this.currentDay}"]`);
+        if (wrap && head && wrap.scrollWidth > wrap.clientWidth) {
+          wrap.scrollLeft = head.offsetLeft - wrap.firstElementChild.offsetLeft;
         }
-      }
-      if (!targetSeg) targetSeg = SEGMENTS[SEGMENTS.length - 1];
-      const today = document.getElementById('day-' + now.iso);
-      if (!today) return;
-      const el = today.querySelector(`[data-seg-key="${targetSeg.key}"]`);
-      (el || today).scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-    },
-
-    /* ── Scroll to a day column by ISO date ────────────────────────── */
-    scrollToDay(iso) {
-      const el = document.getElementById('day-' + iso);
-      if (el) el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-    },
-
-    /* ── Phone jump bar ─────────────────────────────────────────────
-         Day buttons scroll to that day (horizontally in the grid,
-         vertically in the list); segment buttons scroll to that time of
-         day (the grid row, or the segment inside the current day). */
-
-    // Height of the sticky jump bar (0 when it is hidden on wide screens),
-    // plus a little breathing room, so jump targets land below it.
-    jumpOffset() {
-      const bar = this.$refs.jumpBar;
-      if (!bar || getComputedStyle(bar).position !== 'sticky') return 8;
-      return bar.getBoundingClientRect().height + 8;
-    },
-
-    scrollWindowTo(el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - this.jumpOffset();
-      window.scrollTo({ top: Math.max(0, top), behavior: scrollBehavior() });
-    },
-
-    // Horizontal grid: bring a day's column to the left edge.
-    scrollColumnIntoView(iso, behavior = scrollBehavior()) {
-      const wrap = this.$refs.calWrap;
-      const el = document.getElementById('day-' + iso);
-      if (!wrap || !el || this.viewMode !== 'horizontal') return;
-      const left = wrap.scrollLeft + el.getBoundingClientRect().left - wrap.getBoundingClientRect().left;
-      wrap.scrollTo({ left: Math.max(0, left), behavior });
-    },
-
-    // While a jump animates, the scroll-spy would flick through every day
-    // it passes; pin the highlight to the target until scrolling has been
-    // idle for a moment (each scroll event re-arms the timer), so a second
-    // tap mid-animation still sees the day the user picked.
-    lockScrollSpy(idleMs = 400) {
-      clearTimeout(this._spyUnlock);
-      this._spyLocked = true;
-      // No recompute on unlock: near the page bottom the target can't reach
-      // the top, and the spy would snap the highlight back to what's above.
-      // The next manual scroll recomputes it.
-      this._spyUnlock = setTimeout(() => { this._spyLocked = false; }, idleMs);
-    },
-
-    // Events per segment on the day highlighted in the jump bar; segment
-    // buttons with 0 are disabled (nothing to jump to on that day).
-    get jumpDaySegCounts() {
-      const day = this.weekDays.find(d => d.iso === this.jumpDay);
-      const counts = {};
-      for (const s of SEGMENTS) counts[s.key] = day ? day.segmentMap[s.key].length : 0;
-      return counts;
-    },
-
-    jumpToDay(iso) {
-      this.jumpDay = iso;
-      this.lockScrollSpy();
-      if (this.viewMode === 'horizontal') {
-        this.scrollColumnIntoView(iso);
-        // From the filters above the grid, also bring the grid into view;
-        // inside the grid keep the current row (same time, other day).
-        const wrap = this.$refs.calWrap;
-        if (wrap && wrap.getBoundingClientRect().top > window.innerHeight / 2) {
-          this.scrollWindowTo(wrap);
-        }
-        return;
-      }
-      const el = document.getElementById('day-' + iso);
-      if (el) this.scrollWindowTo(el);
-    },
-
-    jumpToSegment(key) {
-      this.jumpSeg = key;
-      this.lockScrollSpy();
-      if (this.viewMode === 'horizontal') {
-        const cell = this.$refs.calWrap && this.$refs.calWrap.querySelector(`.seg-cell[data-seg="${key}"]`);
-        if (cell) this.scrollWindowTo(cell);
-        return;
-      }
-      // Vertical: that segment in the current day, else the next day with it.
-      // A collapsed block is opened, since the user asked to see it.
-      const days = this.weekDays;
-      const start = Math.max(0, days.findIndex(d => d.iso === (this.jumpDay || this.nowMadrid.iso)));
-      for (let i = start; i < days.length; i++) {
-        const dayEl = document.getElementById('day-' + days[i].iso);
-        const el = dayEl && dayEl.querySelector(`[data-seg-key="${key}"]`);
-        if (el) {
-          this.jumpDay = days[i].iso;
-          this.collapsedDaySegs[days[i].iso + ':' + key] = false;
-          this.scrollWindowTo(el);
-          return;
-        }
-      }
-    },
-
-    onScrollSpy() {
-      if (this._spyLocked) { this.lockScrollSpy(150); return; }
-      if (this._spyQueued) return;
-      this._spyQueued = true;
-      requestAnimationFrame(() => {
-        this._spyQueued = false;
-        this.updateScrollSpy();
-      });
-    },
-
-    updateScrollSpy() {
-      if (this._spyLocked) return;
-      const bar = this.$refs.jumpBar;
-      const wrap = this.$refs.calWrap;
-      if (!bar || !wrap || getComputedStyle(bar).position !== 'sticky') return;
-      const line = this.jumpOffset() + 12;
-      // Last element whose top edge has scrolled past the line under the bar.
-      const lastAbove = (els) => {
-        let hit = els[0] || null;
-        for (const el of els) if (el.getBoundingClientRect().top <= line) hit = el;
-        return hit;
-      };
-      if (this.viewMode === 'horizontal') {
-        const wl = wrap.getBoundingClientRect().left;
-        const day = [...wrap.querySelectorAll('.day-header-cell')]
-          .find(h => h.getBoundingClientRect().right - wl > 40);
-        if (day) this.jumpDay = day.id.slice(4);
-        const rows = this.activeSegments
-          .map(s => wrap.querySelector(`.seg-cell[data-seg="${s.key}"]`))
-          .filter(Boolean);
-        const row = lastAbove(rows);
-        if (row) this.jumpSeg = row.dataset.seg;
-        return;
-      }
-      const dayEl = lastAbove([...wrap.querySelectorAll('.day-col')]);
-      if (!dayEl) return;
-      this.jumpDay = dayEl.id.slice(4);
-      const seg = lastAbove([...dayEl.querySelectorAll('[data-seg-key]')]);
-      this.jumpSeg = seg ? seg.dataset.segKey : null;
+      }));
     },
 
     /* ── Navigation ────────────────────────────────────────────────── */
-    // Filters are week-scoped, so they are validated only once the week's
-    // events are loaded — otherwise a not-yet-fetched week would wipe them.
-    async prevWeek() {
-      this.weekStart = addDays(this.weekStart, -7);
+    async shiftWeek(n) {
+      const weekday = this.selectedDayIndex;
+      this.weekStart = addDays(this.weekStart, 7 * n);
+      // Same weekday in the new week, today when coming back to this week.
+      const days = this.weekIsos;
+      this.selectedDay = days.includes(this.nowMadrid.iso) ? this.nowMadrid.iso : days[weekday];
       this.mapDay = null;
+      this.openKey = null;
       await this.loadWeek(isoWeekOf(this.weekStart));
       this.cleanupFilters();
-      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
     },
-    async nextWeek() {
-      this.weekStart = addDays(this.weekStart, +7);
+    prevWeek() { return this.shiftWeek(-1); },
+    nextWeek() { return this.shiftWeek(+1); },
+
+    goToday() {
+      this.weekStart = weekMonday(madridToday());
+      this.selectedDay = this.nowMadrid.iso;
       this.mapDay = null;
-      await this.loadWeek(isoWeekOf(this.weekStart));
+      this.openKey = null;
       this.cleanupFilters();
-      this.$nextTick(() => requestAnimationFrame(() => this.updateScrollSpy()));
     },
 
     // Week ids whose events are already in this.events (not reactive state).
@@ -1094,86 +979,343 @@ function app() {
         console.warn('Failed to load week', week, err);
       }
     },
-    goToday() {
-      this.weekStart = weekMonday(madridToday());
-      this.mapDay = null;
-      this.cleanupFilters();
-      // In vertical view scroll to today after Alpine re-renders the week
-      if (this.viewMode === 'vertical') {
-        this.$nextTick(() => this.scrollToDay(readMadridNow().iso));
-      } else {
-        this.$nextTick(() => this.scrollColumnIntoView(readMadridNow().iso));
+
+    get weekIsos() {
+      return Array.from({ length: 7 }, (_, i) => isoDay(addDays(this.weekStart, i)));
+    },
+
+    get currentDay() {
+      const days = this.weekIsos;
+      return days.includes(this.selectedDay) ? this.selectedDay : TCG.defaultDay(days, this.nowMadrid.iso);
+    },
+
+    get selectedDayIndex() {
+      return Math.max(0, this.weekIsos.indexOf(this.currentDay));
+    },
+
+    pickDay(iso) {
+      this.selectedDay = iso;
+      this.openKey = null;
+    },
+
+    /* ── Filtering ─────────────────────────────────────────────────── */
+
+    // The current week's events (inactive future ones dropped: they await
+    // deletion), before any filter.
+    get weekBase() {
+      const from = isoDay(this.weekStart), to = isoDay(addDays(this.weekStart, 7));
+      return memo('weekBase', `${this._dataGen}|${this.events.length}|${from}|${this.nowMadrid.iso}`, () =>
+        this.events.filter(e => {
+          const day = e.datetime_start.slice(0, 10);
+          return day >= from && day < to && !(e.is_active === false && !this.isEventPast(e));
+        }));
+    },
+
+    // Formats per game this week: the Format block's options.
+    get byGame() {
+      const base = this.weekBase;
+      return memo('byGame', base, () => TCG.formatsByGame(base));
+    },
+
+    // Everything a match depends on, read once per filter change.
+    get matchCtx() {
+      const f = this.filters;
+      const byGame = this.byGame;   // first: refreshes weekBase, whose key is part of ours
+      const key = JSON.stringify([f, this.showFavoritesOnly && this.favorites, this.km, this.nearMe, MEMO.get('weekBase').key]);
+      return memo('matchCtx', key, () => ({
+        q: f.search.toLowerCase().trim(),
+        game: f.game.slice(), store: f.store.slice(), format: f.format.slice(),
+        type: f.type.slice(), time: f.time.slice(),
+        fav: this.showFavoritesOnly ? new Set(this.favorites) : null,
+        km: this.km && this.nearMe ? this.km : null,
+        byGame,
+        key,
+      }));
+    },
+
+    // Does an event pass every filter (but `ignore`, used for counts)?
+    passes(ctx, e, ignore) {
+      if (ctx.q && ignore !== 'search'
+        && !e.title.toLowerCase().includes(ctx.q) && !(e.store || '').toLowerCase().includes(ctx.q)) return false;
+      if (ctx.fav && !ctx.fav.has(eventKey(e))) return false;
+      if (ctx.km && ignore !== 'km') {
+        const km = this.storeDistanceKm(e.store);
+        if (km === null || km > ctx.km) return false;
       }
-    },
-
-    /* ── Faceted filter options ─────────────────────────────────────── */
-    get allStores() {
-      // Registry stores plus any store seen in the loaded weeks.
-      const values = new Set(Object.keys(STORE_META));
-      for (const e of this.events) {
-        const value = this.valueFor('store', e);
-        if (value) values.add(value);
+      if (ignore !== 'game') {
+        const g = TCG.gameOf(e);
+        if (ctx.game.length ? !ctx.game.includes(g) : g === 'Unknown') return false;
       }
-      return [...values].sort();
-    },
-    get gameOptions() {
-      return this.availableOptions('game');
-    },
-    get storeOptions() {
-      return this.allStores;
-    },
-    get formatOptions() {
-      return this.availableOptions('format');
+      if (ignore !== 'store' && ctx.store.length && !ctx.store.includes(e.store)) return false;
+      if (ignore !== 'format' && !TCG.passesFormat(e, ctx.format, ctx.byGame)) return false;
+      if (ignore !== 'type' && ctx.type.length && !ctx.type.includes(typeOf(e))) return false;
+      if (ignore !== 'time' && !TCG.passesTime(e, ctx.time)) return false;
+      return true;
     },
 
-    valueFor(field, e) {
-      if (field === 'game') return e.game || 'Unknown';
-      if (field === 'store') return e.store || 'Unknown';
-      if (field === 'format') return e.format || 'Unknown';
-      return '';
+    // This week's events after every filter.
+    get filteredWeek() {
+      const ctx = this.matchCtx;
+      return memo('filteredWeek', ctx, () =>
+        this.weekBase.filter(e => this.passes(ctx, e))
+          .sort((a, b) => a.datetime_start.localeCompare(b.datetime_start)));
     },
 
-    selectedValues(field) {
-      return Array.isArray(this.filters[field]) ? this.filters[field] : [];
+    // Events passing every filter but one, for that filter's counts.
+    except(field) {
+      const ctx = this.matchCtx;
+      return memo('except:' + field, ctx, () => this.weekBase.filter(e => this.passes(ctx, e, field)));
     },
 
-    isSelected(field, value) {
-      return this.selectedValues(field).includes(value);
+    get weekEventCount() {
+      return this.filteredWeek.length;
     },
 
-    toggleFacetPanel(field) {
-      this.openFacet = this.openFacet === field ? null : field;
+    /* ── 7 days of the current week ────────────────────────────────── */
+    get weekDays() {
+      const list = this.filteredWeek;
+      const today = this.nowMadrid.iso;
+      return memo('weekDays', `${MEMO.get('matchCtx').key}|${today}|${isoDay(this.weekStart)}`, () => {
+        const byDay = {};
+        for (const e of list) (byDay[e.datetime_start.slice(0, 10)] || (byDay[e.datetime_start.slice(0, 10)] = [])).push(e);
+        return this.weekIsos.map((iso, i) => {
+          const d = addDays(this.weekStart, i);
+          const events = byDay[iso] || [];
+          return {
+            iso, events,
+            dow: d.toLocaleDateString('en-GB', { weekday: 'short' }),
+            num: d.getDate(),
+            long: d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }),
+            isToday: iso === today,
+            isPast: iso < today,
+            sections: TCG.daySections(events),
+          };
+        });
+      });
     },
 
-    clearFacet(field) {
-      this._snapshotFilters();
-      this.filters[field] = [];
+    // The strip above the Day view: count + load bar per day.
+    get dayStrip() {
+      const days = this.weekDays;
+      const strip = TCG.dayStrip(days.map(d => ({ iso: d.iso, count: d.events.length })), this.nowMadrid.iso);
+      return strip.map((s, i) => Object.assign(s, { dow: days[i].dow, num: days[i].num, long: days[i].long }));
+    },
+
+    get day() {
+      return this.weekDays[this.selectedDayIndex];
+    },
+
+    isSecOpen(sec) {
+      const k = this.day.iso + ':' + sec.key;
+      if (k in this.secOpen) return this.secOpen[k];
+      if (this.filters.search.trim()) return true;  // searching: show every hit
+      return sec.key === TCG.defaultOpenSection(this.day.sections, {
+        isToday: this.day.isToday, nowMinutes: this.nowMadrid.minutesSinceMidnight,
+      });
+    },
+
+    toggleSec(sec) {
+      this.secOpen[this.day.iso + ':' + sec.key] = !this.isSecOpen(sec);
+    },
+
+    secTitle(sec) {
+      return sec.words ? `${sec.label} · ${sec.words}` : sec.label;
+    },
+
+    secHint(sec) {
+      if (!this.isSecOpen(sec)) return 'Show';
+      return sec.late ? `${sec.late} after 20:00` : '';
+    },
+
+    // Week view rows: the day sections that have events this week.
+    get weekRows() {
+      const days = this.weekDays;
+      return TCG.DAY_SECTIONS.filter(s => days.some(d => d.sections.some(x => x.key === s.key)));
+    },
+
+    get weekCells() {
+      const rows = this.weekRows, days = this.weekDays, out = [];
+      rows.forEach((row, r) => days.forEach((day, c) => {
+        const sec = day.sections.find(x => x.key === row.key);
+        const events = sec ? sec.events : [];
+        out.push({
+          // Changes with the events, so Alpine rebuilds the cell (x-html
+          // inside a reused x-for clone can otherwise keep stale cards).
+          renderKey: row.key + day.iso + ':' + events.map(e => e.id).join(','),
+          row, day, r, c, events,
+        });
+      }));
+      return out;
+    },
+
+    toggleRow(key) {
+      this.collapsedRows[key] = !this.collapsedRows[key];
+    },
+
+    /* ── Chips and the Filters panel ───────────────────────────────── */
+
+    // Game chips: this week's games in a stable order (busiest first,
+    // before filters), counts after the other filters.
+    get gameChips() {
+      const base = this.weekBase;
+      const order = memo('gameOrder', base, () => {
+        const n = {};
+        for (const e of base) n[TCG.gameOf(e)] = (n[TCG.gameOf(e)] || 0) + 1;
+        return n;
+      });
+      const counts = {};
+      for (const e of this.except('game')) counts[TCG.gameOf(e)] = (counts[TCG.gameOf(e)] || 0) + 1;
+      const sel = this.filters.game;
+      const games = new Set(Object.keys(order).filter(g => g !== 'Unknown').concat(sel));
+      return [...games]
+        .sort((a, b) => (order[b] || 0) - (order[a] || 0) || a.localeCompare(b))
+        .map((g, i) => ({
+          game: g, label: gameLabel(g), n: counts[g] || 0, on: sel.includes(g),
+          cls: this.getGameClass(g), extra: i >= GAME_CHIPS_SHOWN && !sel.includes(g),
+        }));
+    },
+
+    get hiddenGameCount() {
+      return this.gameChips.filter(c => c.extra).length;
+    },
+
+    isGameOn(game) {
+      return this.filters.game.includes(game);
+    },
+
+    toggleGame(game) {
+      const games = this.filters.game.slice();
+      const i = games.indexOf(game);
+      if (i >= 0) games.splice(i, 1); else games.push(game);
+      this.filters.game = games;
+      // Formats only the removed game had go with it.
+      this.filters.format = TCG.pruneFormats(this.filters.format, games, this.byGame);
+      this.openKey = null;
       this.cleanupFilters({ syncUrl: true });
+    },
+
+    // The Format block (three states, see model.js formatFacet). Games in
+    // chip order, so groups read in the same order as the chips.
+    get formatFacet() {
+      const order = this.gameChips.map(c => c.game);
+      const games = this.filters.game.slice().sort((a, b) => order.indexOf(a) - order.indexOf(b));
+      return TCG.formatFacet({
+        games, byGame: this.byGame, countable: this.except('format'), selected: this.filters.format,
+      });
+    },
+
+    toggleList(field, value) {
+      const list = this.filters[field].slice();
+      const i = list.indexOf(value);
+      if (i >= 0) list.splice(i, 1); else list.push(value);
+      this.filters[field] = list;
+      this.openKey = null;
+      this.cleanupFilters({ syncUrl: true });
+    },
+
+    // [{ key, label, n, on }] for type / time chips.
+    countChips(field, options) {
+      const counts = {};
+      const keyOf = field === 'type' ? typeOf : TCG.timeSlotOf;
+      for (const e of this.except(field)) { const k = keyOf(e); counts[k] = (counts[k] || 0) + 1; }
+      return options.map(o => ({ key: o.key, label: o.label, words: o.words || '', n: counts[o.key] || 0, on: this.filters[field].includes(o.key) }));
+    },
+
+    get typeChips() { return this.countChips('type', TCG.EVENT_TYPES); },
+    get timeChips() { return this.countChips('time', TCG.TIME_SLOTS); },
+
+    // Stores: every registry store plus any store seen in the loaded weeks.
+    get allStores() {
+      const values = new Set(Object.keys(STORE_META));
+      for (const e of this.events) if (e.store) values.add(e.store);
+      return [...values].sort((a, b) => a.localeCompare(b));
+    },
+
+    get storeOptions() {
+      const counts = {};
+      for (const e of this.except('store')) counts[e.store] = (counts[e.store] || 0) + 1;
+      const q = this.storeQuery.toLowerCase().trim();
+      const sel = this.filters.store;
+      return this.allStores
+        .filter(s => !q || s.toLowerCase().includes(q))
+        .map(s => ({ name: s, n: counts[s] || 0, on: sel.includes(s) }))
+        // Selected first, then stores with events this week, then the rest.
+        .sort((a, b) => (b.on - a.on) || ((b.n > 0) - (a.n > 0)) || a.name.localeCompare(b.name));
+    },
+
+    get storeSummary() {
+      const sel = this.filters.store;
+      if (!sel.length) return `All stores (${this.allStores.length})`;
+      return sel.length === 1 ? sel[0] : `${sel.length} stores`;
+    },
+
+    get activeFilterCount() {
+      return TCG.activeFilterCount(this.filters, this.km && this.nearMe ? this.km : null);
+    },
+
+    // "Filters: One Piece, Magic · Evening" next to the day title.
+    get filterSummary() {
+      const parts = this.filters.game.map(gameLabel)
+        .concat(this.filters.format, this.filters.type.map(t => TCG.TYPE_LABEL[t]),
+                this.filters.time.map(t => TCG.TIME_SLOTS.find(s => s.key === t).label),
+                this.filters.store);
+      if (this.km && this.nearMe) parts.push(`within ${this.km} km`);
+      if (this.showFavoritesOnly) parts.push('saved');
+      if (!parts.length) return '';
+      return 'Filters: ' + (parts.length > 4 ? parts.slice(0, 3).join(', ') + ` +${parts.length - 3}` : parts.join(', '));
+    },
+
+    openFilters() {
+      this.filtersOpen = true;
+      this.storePickerOpen = false;
+      UI.filtersOpener = document.activeElement;
+      this.lockScroll();
+      this.$nextTick(() => focusSoon(() => document.getElementById('filters-title')));
+    },
+
+    closeFilters() {
+      this.filtersOpen = false;
+      this.unlockScroll();
+      const back = UI.filtersOpener;
+      UI.filtersOpener = null;
+      if (back && document.contains(back)) back.focus();
+    },
+
+    // Distance: picking one asks for the location the first time.
+    setDistance(km) {
+      this.km = km;
+      if (km && !this.nearMe) this.locate();
+      this.cleanupFilters();
+    },
+
+    clearAll() {
+      this.km = null;
+      this.geoStatus = this.nearMe ? '' : this.geoStatus;
+      this.filters = { search: '', game: [], store: [], format: [], type: [], time: [] };
+      this.showFavoritesOnly = false;
+      this.storeQuery = '';
+      this.openKey = null;
+      this.cleanupFilters({ syncUrl: true });
+    },
+
+    toggleSaved() {
+      this.showFavoritesOnly = !this.showFavoritesOnly;
+      this.openKey = null;
+    },
+
+    /* ── Presets ────────────────────────────────────────────────────── */
+    presetFilters(p) {
+      const list = (v) => (Array.isArray(v) ? v.filter(x => typeof x === 'string' && x) : []);
+      const f = (p && p.filters) || {};
+      return { game: list(f.game), store: list(f.store), format: list(f.format), type: list(f.type), time: list(f.time) };
     },
 
     loadPresets() {
       try {
-        const raw = localStorage.getItem(PRESETS_STORAGE_KEY);
-        if (!raw) {
-          this.savedPresets = [];
-          return;
-        }
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) {
-          this.savedPresets = [];
-          return;
-        }
-        this.savedPresets = parsed
+        const parsed = JSON.parse(localStorage.getItem(PRESETS_STORAGE_KEY) || '[]');
+        this.savedPresets = (Array.isArray(parsed) ? parsed : [])
           .filter(p => p && typeof p === 'object')
-          .map(p => ({
-            id: String(p.id || ''),
-            name: String(p.name || '').trim(),
-            filters: {
-              game: Array.isArray(p.filters && p.filters.game) ? p.filters.game.filter(Boolean) : [],
-              store: Array.isArray(p.filters && p.filters.store) ? p.filters.store.filter(Boolean) : [],
-              format: Array.isArray(p.filters && p.filters.format) ? p.filters.format.filter(Boolean) : [],
-            },
-          }))
+          .map(p => ({ id: String(p.id || ''), name: String(p.name || '').trim(), filters: this.presetFilters(p) }))
           .filter(p => p.id && p.name);
       } catch (err) {
         console.warn('Failed to load saved presets', err);
@@ -1189,8 +1331,92 @@ function app() {
       }
     },
 
-    /* ── Favorites ──────────────────────────────────────────────────── */
+    currentPresetFilters() {
+      const f = this.filters;
+      return { game: f.game.slice(), store: f.store.slice(), format: f.format.slice(), type: f.type.slice(), time: f.time.slice() };
+    },
 
+    get canSavePreset() {
+      return Object.values(this.currentPresetFilters()).some(v => v.length);
+    },
+
+    saveCurrentPreset() {
+      if (!this.canSavePreset) return;
+      const name = window.prompt('Name this preset');
+      const trimmed = name ? name.trim() : '';
+      if (!trimmed) return;
+      const filters = this.currentPresetFilters();
+      const existing = this.savedPresets.find(p => p.name === trimmed);
+      if (existing) {
+        if (!window.confirm(`Replace preset "${trimmed}"?`)) return;
+        existing.filters = filters;
+      } else {
+        this.savedPresets.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), name: trimmed, filters });
+      }
+      this.persistPresets();
+      this.flash(`Preset “${trimmed}” saved`);
+    },
+
+    isPresetActive(p) {
+      return JSON.stringify(this.presetFilters(p)) === JSON.stringify(this.currentPresetFilters());
+    },
+
+    applyPreset(preset) {
+      if (!preset) return;
+      Object.assign(this.filters, this.presetFilters(preset));
+      this.openKey = null;
+      this.cleanupFilters({ syncUrl: true });
+    },
+
+    deletePreset(id) {
+      const p = this.savedPresets.find(x => x.id === id);
+      if (p && !window.confirm(`Delete preset "${p.name}"?`)) return;
+      this.savedPresets = this.savedPresets.filter(x => x.id !== id);
+      this.persistPresets();
+      if (this.defaultPresetId === id) {
+        this.defaultPresetId = null;
+        this.persistDefaultPreset();
+      }
+    },
+
+    loadDefaultPreset() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(DEFAULT_PRESET_STORAGE_KEY) || 'null');
+        this.defaultPresetId = (parsed && parsed.id) ? String(parsed.id) : null;
+      } catch (err) {
+        console.warn('Failed to load default preset', err);
+        this.defaultPresetId = null;
+      }
+    },
+
+    persistDefaultPreset() {
+      try {
+        if (this.defaultPresetId) localStorage.setItem(DEFAULT_PRESET_STORAGE_KEY, JSON.stringify({ id: this.defaultPresetId }));
+        else localStorage.removeItem(DEFAULT_PRESET_STORAGE_KEY);
+      } catch (err) {
+        console.warn('Failed to persist default preset', err);
+      }
+    },
+
+    setDefaultPreset(id) {
+      this.defaultPresetId = this.defaultPresetId === id ? null : id;
+      this.persistDefaultPreset();
+    },
+
+    // On a fresh visit (no filters in the URL) the default preset applies.
+    // The URL is left alone: the preset is this visitor's, not the link's.
+    applyDefaultPreset() {
+      if (!this.defaultPresetId) return;
+      const preset = this.savedPresets.find(p => p.id === this.defaultPresetId);
+      if (!preset) {
+        this.defaultPresetId = null;
+        this.persistDefaultPreset();
+        return;
+      }
+      Object.assign(this.filters, this.presetFilters(preset));
+    },
+
+    /* ── Favorites ──────────────────────────────────────────────────── */
     loadFavorites() {
       try {
         const weeks = JSON.parse(localStorage.getItem(this.favoritesKey(FAVORITE_WEEKS_STORAGE_KEY)) || '{}');
@@ -1219,11 +1445,11 @@ function app() {
 
     isFavorite(e) {
       if (!e) return false;
-      return this.favorites.includes(this.eventKey(e));
+      return this.favorites.includes(eventKey(e));
     },
 
     toggleFavorite(keyOrEvent) {
-      const key = typeof keyOrEvent === 'string' ? keyOrEvent : this.eventKey(keyOrEvent);
+      const key = typeof keyOrEvent === 'string' ? keyOrEvent : eventKey(keyOrEvent);
       const idx = this.favorites.indexOf(key);
       if (idx >= 0) this.favorites.splice(idx, 1);
       else          this.favorites.push(key);
@@ -1238,7 +1464,7 @@ function app() {
       return this.favorites.length;
     },
 
-    // Prune keys for events no longer present in events.json
+    // Prune keys for events no longer present in the data.
     cleanupFavorites() {
       const allKeys = new Set(this.events.map(e => eventKey(e)));
       const byLegacy = new Map();
@@ -1278,153 +1504,11 @@ function app() {
       if (changed) this.persistFavorites();
     },
 
-    saveCurrentPreset() {
-      const filters = {
-        game: this.selectedValues('game').slice(),
-        store: this.selectedValues('store').slice(),
-        format: this.selectedValues('format').slice(),
-      };
-      if (!filters.game.length && !filters.store.length && !filters.format.length) {
-        window.alert('Choose at least one game, store, or format before saving a preset.');
-        return;
-      }
-
-      const name = window.prompt('Preset name');
-      const trimmedName = name ? name.trim() : '';
-      if (!trimmedName) return;
-
-      const existing = this.savedPresets.find(p => p.name === trimmedName);
-      if (existing) {
-        if (!window.confirm(`Replace preset "${trimmedName}"?`)) return;
-        existing.filters = filters;
-        this.persistPresets();
-        return;
-      }
-
-      this.savedPresets.push({
-        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-        name: trimmedName,
-        filters,
-      });
-      this.persistPresets();
-    },
-
-    startEditPreset(preset) {
-      if (this.editingPresetId) return;
-      if (!preset || !preset.id) return;
-
-      this.editingPresetSnapshot = {
-        filters: {
-          search: this.filters.search,
-          game: this.filters.game.slice(),
-          store: this.filters.store.slice(),
-          format: this.filters.format.slice(),
-        },
-        defaultPresetActive: this.defaultPresetActive,
-      };
-
-      this.editingPresetId = preset.id;
-      this.editingPresetName = preset.name;
-
-      this.filters.game = Array.isArray(preset.filters.game) ? preset.filters.game.slice() : [];
-      this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
-      this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
-      this.defaultPresetActive = false;
-      this.openFacet = null;
-      this.cleanupFilters({ syncUrl: true });
-    },
-
-    saveEditedPreset() {
-      const preset = this.savedPresets.find(p => p.id === this.editingPresetId);
-      if (!preset) {
-        this.cancelEditPreset();
-        return;
-      }
-
-      const trimmedName = String(this.editingPresetName || '').trim();
-      if (!trimmedName) return;
-
-      preset.name = trimmedName;
-      preset.filters = {
-        game: this.selectedValues('game').slice(),
-        store: this.selectedValues('store').slice(),
-        format: this.selectedValues('format').slice(),
-      };
-
-      this.persistPresets();
-      this.editingPresetId = null;
-      this.editingPresetSnapshot = null;
-      this.editingPresetName = '';
-    },
-
-    cancelEditPreset() {
-      if (this.editingPresetSnapshot) {
-        this.filters = this.editingPresetSnapshot.filters;
-        this.defaultPresetActive = this.editingPresetSnapshot.defaultPresetActive;
-      }
-      this.editingPresetId = null;
-      this.editingPresetSnapshot = null;
-      this.editingPresetName = '';
-      this.cleanupFilters({ syncUrl: true });
-    },
-
-    applyPreset(preset) {
-      if (!preset || !preset.filters) return;
-      this._snapshotFilters();
-      this.filters.game = Array.isArray(preset.filters.game) ? preset.filters.game.slice() : [];
-      this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
-      this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
-      this.openFacet = null;
-      this.defaultPresetActive = (preset.id === this.defaultPresetId);
-      this.cleanupFilters({ syncUrl: true });
-    },
-
-    deletePreset(id) {
-      this.savedPresets = this.savedPresets.filter(p => p.id !== id);
-      this.persistPresets();
-      if (this.defaultPresetId === id) {
-        this.defaultPresetId = null;
-        this.persistDefaultPreset();
-      }
-    },
-
-    loadDefaultPreset() {
-      try {
-        const raw = localStorage.getItem(DEFAULT_PRESET_STORAGE_KEY);
-        if (!raw) {
-          this.defaultPresetId = null;
-          return;
-        }
-        const parsed = JSON.parse(raw);
-        this.defaultPresetId = (parsed && parsed.id) ? String(parsed.id) : null;
-      } catch (err) {
-        console.warn('Failed to load default preset', err);
-        this.defaultPresetId = null;
-      }
-    },
-
-    persistDefaultPreset() {
-      try {
-        if (this.defaultPresetId) {
-          localStorage.setItem(DEFAULT_PRESET_STORAGE_KEY, JSON.stringify({ id: this.defaultPresetId }));
-        } else {
-          localStorage.removeItem(DEFAULT_PRESET_STORAGE_KEY);
-        }
-      } catch (err) {
-        console.warn('Failed to persist default preset', err);
-      }
-    },
-
-    /* ── Onboarding ────────────────────────────────────────────────── */
+    /* ── Onboarding (welcome screen) ───────────────────────────────── */
     loadOnboardingState() {
       try {
-        const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY);
-        if (!raw) {
-          this.onboardingCompleted = false;
-          return;
-        }
-        const parsed = JSON.parse(raw);
-        this.onboardingCompleted = parsed && parsed.completed === true;
+        const parsed = JSON.parse(localStorage.getItem(ONBOARDING_STORAGE_KEY) || 'null');
+        this.onboardingCompleted = !!(parsed && parsed.completed === true);
       } catch (err) {
         console.warn('Failed to load onboarding state', err);
         this.onboardingCompleted = false;
@@ -1450,7 +1534,7 @@ function app() {
 
     openOnboarding() {
       this.onboardingOpen = true;
-      // Reopened from the footer: start from the games already chosen.
+      // Reopened from the brand / footer: start from the games already chosen.
       this.onboarding = { game: this.filters.game.slice(), store: [] };
     },
 
@@ -1464,7 +1548,6 @@ function app() {
         .map(game => ({ game, n: counts[game], color: gameColor(game) }));
     },
 
-    // The top games, plus any picked game further down (it stays visible).
     get welcomeGamesShown() {
       const all = this.welcomeGames;
       if (this.welcomeAllGames) return all;
@@ -1496,289 +1579,80 @@ function app() {
       this.persistOnboardingComplete();
     },
 
-    // view: 'map' for the map; otherwise the calendar in this device's
-    // usual layout (leaving the map if the screen was reopened from it).
+    // The games picked here become the game chips (and the default preset,
+    // so the next visit opens on them too).
     completeOnboarding(view) {
       if (view === 'map') {
         if (this.viewMode !== 'map') this.setView('map');
       } else if (this.viewMode === 'map') {
-        this.setView(window.matchMedia('(max-width: 900px)').matches ? 'vertical' : 'horizontal');
+        this.setView('day');
       }
-      const hasSelections = this.onboarding.game.length > 0 || this.onboarding.store.length > 0;
-      if (!hasSelections) {
-        // No games picked: show everything (and drop an earlier choice when
-        // the screen was reopened from the footer).
-        if (this.defaultPresetActive || this.filters.game.length) {
-          this.filters.game = [];
-          this.cleanupFilters({ syncUrl: false });
-        }
-        this.skipOnboarding();
-        return;
-      }
-
-      this.filters.game = this.onboarding.game.slice();
-      this.filters.store = this.onboarding.store.slice();
-      this.filters.format = [];
-      this.openFacet = null;
+      const games = this.onboarding.game.slice();
+      const removed = this.filters.game.filter(g => !games.includes(g));
+      this.filters.game = games;
+      if (removed.length) this.filters.format = TCG.pruneFormats(this.filters.format, games, this.byGame);
       this.cleanupFilters({ syncUrl: false });
-
-      const filters = { game: this.onboarding.game.slice(), store: this.onboarding.store.slice(), format: [] };
-      // Reopened from the footer: update the default preset, don't pile up
-      // "My default 2", "My default 3", ….
-      let preset = this.savedPresets.find(p => p.id === this.defaultPresetId);
-      if (preset) {
-        preset.filters = filters;
-      } else {
-        preset = {
-          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-          name: this.generateDefaultPresetName(),
-          filters,
-        };
-        this.savedPresets.push(preset);
+      if (games.length) {
+        const filters = Object.assign(this.currentPresetFilters(), { game: games });
+        // Reopened later: update the default preset, don't pile up copies.
+        let preset = this.savedPresets.find(p => p.id === this.defaultPresetId);
+        if (preset) preset.filters = filters;
+        else {
+          preset = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), name: this.generateDefaultPresetName(), filters };
+          this.savedPresets.push(preset);
+        }
+        this.persistPresets();
+        this.defaultPresetId = preset.id;
+        this.persistDefaultPreset();
       }
-      this.persistPresets();
-
-      this.defaultPresetId = preset.id;
-      this.persistDefaultPreset();
-      this.defaultPresetActive = true;
-
-      this.persistOnboardingComplete();
-      this.onboardingOpen = false;
+      this.skipOnboarding();
     },
 
     toggleOnboardingValue(field, value) {
       const arr = this.onboarding[field];
       const idx = arr.indexOf(value);
-      if (idx >= 0) {
-        arr.splice(idx, 1);
-      } else {
-        arr.push(value);
-      }
+      if (idx >= 0) arr.splice(idx, 1);
+      else arr.push(value);
     },
 
     generateDefaultPresetName() {
       const existingNames = new Set(this.savedPresets.map(p => p.name));
-      let name = 'My default';
+      const name = 'My games';
       if (!existingNames.has(name)) return name;
       let counter = 2;
-      while (existingNames.has(`${name} ${counter}`)) {
-        counter++;
-      }
+      while (existingNames.has(`${name} ${counter}`)) counter++;
       return `${name} ${counter}`;
     },
 
-    get onboardingGameOptions() {
-      return this.gameOptions.filter(g => g !== 'Unknown');
-    },
-
-    setDefaultPreset(id) {
-      if (this.defaultPresetId === id) {
-        this.defaultPresetId = null;
-      } else {
-        this.defaultPresetId = id;
-      }
-      this.persistDefaultPreset();
-    },
-
-    applyDefaultPreset() {
-      if (!this.defaultPresetId) return;
-      const preset = this.savedPresets.find(p => p.id === this.defaultPresetId);
-      if (!preset) {
-        this.defaultPresetId = null;
-        this.persistDefaultPreset();
-        return;
-      }
-      if (!preset.filters) return;
-      this.filters.game = Array.isArray(preset.filters.game) ? preset.filters.game.slice() : [];
-      this.filters.store = Array.isArray(preset.filters.store) ? preset.filters.store.slice() : [];
-      this.filters.format = Array.isArray(preset.filters.format) ? preset.filters.format.slice() : [];
-      this.openFacet = null;
-      this.defaultPresetActive = true;
-      // Intentionally do NOT sync URL on default preset application.
-    },
-
-    facetSummary(field, fallback) {
-      const values = this.selectedValues(field);
-      if (!values.length) return fallback;
-      if (values.length === 1) return values[0];
-      if (values.length === 2) return `${values[0]} + ${values[1]}`;
-      return `${values.length} ${this.facetPlural(field)}`;
-    },
-
-    facetPlural(field) {
-      return field === 'game' ? 'games' : field === 'store' ? 'stores' : 'formats';
-    },
-
-    availableOptions(field) {
-      const values = new Set();
-      for (const e of this.events) {
-        // Location is a view filter, not a facet: options (and the cleanup of
-        // selected values, which uses this list) ignore it, so turning "Near
-        // me" on never silently drops the user's game/format selections.
-        if (this.eventMatches(e, { ignore: field, includeWeek: true, ignoreFavorites: true, ignoreNearMe: true })) {
-          values.add(this.valueFor(field, e));
-        }
-      }
-      return [...values].sort();
-    },
-
-    filteredFacetOptions(field) {
-      const options = field === 'store' ? this.storeOptions : this.availableOptions(field);
-      const query = String(this.filterSearch[field] || '').toLowerCase().trim();
-      if (!query) return options;
-      return options.filter(opt => String(opt).toLowerCase().includes(query));
-    },
-
-    facetOptionCount(field, value) {
-      let count = 0;
-      for (const e of this.events) {
-        if (
-          this.valueFor(field, e) === value &&
-          this.eventMatches(e, { ignore: field, includeWeek: true })
-        ) {
-          count++;
-        }
-      }
-      return count;
-    },
-
-    /* ── Bookmarkable filter URLs ───────────────────────────────────── */
+    /* ── URL ───────────────────────────────────────────────────────── */
     syncFiltersToUrl() {
       const url = new URL(window.location.href);
-      for (const field of ['game', 'store', 'format']) {
-        const values = this.selectedValues(field);
-        if (values.length) {
-          url.searchParams.set(field, values.join(','));
-        } else {
-          url.searchParams.delete(field);
-        }
-      }
+      TCG.writeFilterParams(url.searchParams, this.filters);
       history.replaceState(null, '', url.toString());
     },
 
     applyFiltersFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      // Stores: any registry store; games/formats: what the loaded weeks have.
-      const valid = { game: new Set(), store: new Set(this.allStores), format: new Set() };
-      for (const e of this.events) {
-        valid.game.add(this.valueFor('game', e));
-        valid.store.add(this.valueFor('store', e));
-        valid.format.add(this.valueFor('format', e));
-      }
-      for (const field of ['game', 'store', 'format']) {
-        const raw = params.get(field);
-        if (!raw) {
-          this.filters[field] = [];
-          continue;
-        }
-        const values = [...new Set(raw.split(',').map(v => v.trim()).filter(Boolean))];
-        this.filters[field] = values.filter(v => valid[field].has(v));
-      }
+      const f = TCG.readFilterParams(new URLSearchParams(window.location.search));
+      const stores = new Set(this.allStores);
+      f.store = f.store.filter(s => stores.has(s));
+      Object.assign(this.filters, f);
     },
 
+    // Keeps the selection coherent: formats need a game, stores must exist.
     cleanupFilters({ syncUrl = false } = {}) {
-      for (const field of ['game', 'store', 'format']) {
-        const allowed = field === 'store'
-          ? new Set(this.allStores)
-          : new Set(this.availableOptions(field));
-        const next = this.selectedValues(field).filter(v => allowed.has(v));
-        if (next.length !== this.selectedValues(field).length) {
-          this.filters[field] = next;
-        }
+      if (!this.filters.game.length && this.filters.format.length) this.filters.format = [];
+      if (this.filters.store.length) {
+        const stores = new Set(this.allStores);
+        const next = this.filters.store.filter(s => stores.has(s));
+        if (next.length !== this.filters.store.length) this.filters.store = next;
       }
       // Map: a day chip the filters have emptied falls back to the week.
       if (this.mapDay && !this.mapEvents.length) this.mapDay = null;
       if (syncUrl) this.syncFiltersToUrl();
     },
 
-    /* ── Toggle a filter chip (game/store/format) ───────────────────── */
-    // If selected, remove it; otherwise add it to the facet group.
-    filterFromPanel(field, value) {
-      if (!value) return;
-      this.closePanel();
-      setTimeout(() => {
-        this.toggleFilter(field, value);
-      }, 220);
-    },
-
-    /* ── Filter undo history ─────────────────────────────────────── */
-    _snapshotFilters() {
-      this.filterHistory.push({
-        filters: {
-          search: this.filters.search,
-          game: this.filters.game.slice(),
-          store: this.filters.store.slice(),
-          format: this.filters.format.slice(),
-        },
-        segmentFilter: { ...this.segmentFilter },
-      });
-      if (this.filterHistory.length > 5) this.filterHistory.shift();
-    },
-
-    undoFilterAction() {
-      const snapshot = this.filterHistory.pop();
-      if (!snapshot) return;
-      this.filters.search = snapshot.filters.search;
-      this.filters.game = snapshot.filters.game;
-      this.filters.store = snapshot.filters.store;
-      this.filters.format = snapshot.filters.format;
-      this.segmentFilter = { ...snapshot.segmentFilter };
-      this.defaultPresetActive = false;
-      this.cleanupFilters({ syncUrl: true });
-    },
-
-    toggleFilter(field, value) {
-      if (!value) return;
-      this._snapshotFilters();
-      if (this.defaultPresetActive) {
-        this.filters[field] = [value];
-        this.defaultPresetActive = false;
-        this.cleanupFilters({ syncUrl: true });
-        return;
-      }
-      const values = this.selectedValues(field).slice();
-      const idx = values.indexOf(value);
-      if (idx >= 0) values.splice(idx, 1);
-      else values.push(value);
-      this.filters[field] = values;
-      this.cleanupFilters({ syncUrl: true });
-    },
-
-    /* ── Toggle a time-segment chip ─────────────────────────────────── */
-    toggleSegment(key) {
-      this._snapshotFilters();
-      this.segmentFilter[key] = !this.segmentFilter[key];
-      this.cleanupFilters();
-    },
-
-    /* ── Toggle a segment's collapsed state (cards hidden, header
-         visible). Independent of segmentFilter — collapse keeps the
-         row in the grid so alignment is preserved. */
-    toggleSegmentCollapse(key) {
-      this.collapsedSegments[key] = !this.collapsedSegments[key];
-    },
-
-    isDaySegCollapsed(iso, key) {
-      return !!this.collapsedDaySegs[iso + ':' + key];
-    },
-    toggleDaySegCollapse(iso, key) {
-      const k = iso + ':' + key;
-      this.collapsedDaySegs[k] = !this.collapsedDaySegs[k];
-    },
-
-    /* ── For today's column only: a segment is "past" iff its end
-         time has already elapsed. Otherwise it's upcoming (no class).
-         Returns false for non-today columns. */
-    isSegmentPast(segKey, dayIso) {
-      if (dayIso !== this.nowMadrid.iso) return false;
-      const s = SEGMENTS.find(x => x.key === segKey);
-      if (!s) return false;
-      return (s.end * 60) <= this.nowMadrid.minutesSinceMidnight;
-    },
-
-    /* ── True if the event already started (Europe/Madrid).
-         Compares full datetime: any earlier day is past; on the
-         same day, falls through to a time-of-day check. */
+    /* ── Time ──────────────────────────────────────────────────────── */
+    // True if the event already started (Europe/Madrid wall clock).
     isEventPast(e) {
       if (!e || !e.datetime_start) return false;
       const dayPart = e.datetime_start.slice(0, 10);
@@ -1789,172 +1663,337 @@ function app() {
       return (h * 60 + m) < this.nowMadrid.minutesSinceMidnight;
     },
 
-    /* ── Bucket an event ISO string into a segment key ──────────────── */
-    segmentOf(iso) {
-      return segmentForHour(parseInt(iso.slice(11, 13), 10));
+    get weekRangeLabel() {
+      const sun = addDays(this.weekStart, 6);
+      const sameMonth = sun.getMonth() === this.weekStart.getMonth();
+      const from = this.weekStart.toLocaleDateString('en-GB', sameMonth ? { day: 'numeric' } : { day: 'numeric', month: 'short' });
+      const to = sun.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      return `${from} – ${to}`;
     },
 
-    // Compare Madrid calendar dates as strings (same as weekDays bucketing),
-    // not instants against the browser's local midnight.
-    isInCurrentWeek(e) {
-      const day = e.datetime_start.slice(0, 10);
-      return day >= isoDay(this.weekStart) && day < isoDay(addDays(this.weekStart, 7));
+    get isThisWeek() {
+      return this.weekIsos.includes(this.nowMadrid.iso);
     },
 
-    eventMatches(e, opts = {}) {
-      // Past events are never hidden (only dimmed). Only suppress inactive future events
-      // (they are awaiting hard-deletion after 3 missed runs in the aggregator).
-      if (e.is_active === false && !this.isEventPast(e)) return false;
-      const ignore = opts.ignore || null;
-      const includeSegment = opts.includeSegment !== false;
-      const includeWeek = opts.includeWeek === true;
-      const s = this.filters.search.toLowerCase().trim();
-      if (s && !e.title.toLowerCase().includes(s)) return false;
-      if (this.showFavoritesOnly && !opts.ignoreFavorites && !this.isFavorite(e)) return false;
-      if (this.nearMe && this.radiusKm && !opts.ignoreNearMe) {
-        const km = this.storeDistanceKm(e.store);
-        if (km === null || km > this.radiusKm) return false;
-      }
-      if (includeWeek && !this.isInCurrentWeek(e)) return false;
-      if (includeSegment && !this.segmentFilter[this.segmentOf(e.datetime_start)]) return false;
-      for (const field of ['game', 'store', 'format']) {
-        if (ignore === field) continue;
-        const selected = this.selectedValues(field);
-        const value = this.valueFor(field, e);
-        // Default-hide Unknown game events unless the user explicitly selected them.
-        if (field === 'game' && value === 'Unknown' && !selected.includes('Unknown')) return false;
-        if (selected.length && !selected.includes(value)) return false;
-      }
-      return true;
+    formatTime(iso) {
+      if (!iso) return '';
+      return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
     },
 
-    /* ── Filtered event list (search/game/store/format/segment) ─────── */
-    get filteredEvents() {
-      return this.events.filter(e => this.eventMatches(e));
+    // "17:00", or "Time TBC" for the midnight placeholder sources send.
+    cardTime(e) {
+      return TCG.hasTime(e) ? this.formatTime(e.datetime_start) : 'Time TBC';
     },
 
-    /* ── Segments to render as global rows in horizontal view.
-         Order is fixed (Morning → Afternoon → Evening → Late).
-         A segment is included only if user-enabled AND has at least
-         one event in the current week (after non-segment filters). */
-    get activeSegments() {
-      const totals = this.segmentTotals;
-      return SEGMENTS.filter(s => this.segmentFilter[s.key] && totals[s.key] > 0);
+    formatDayShort(iso) {
+      const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' });
     },
 
-    /* ── Focus mode: only one segment is active → drop segment headers
-         from cells so the layout reads as a flat list per day. */
-    get focusMode() {
-      return this.activeSegments.length === 1;
+    formatDayMonth(iso) {
+      const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
     },
 
-    /* ── Lookup events for a specific (day, segment) cell. ─────────── */
-    cellEvents(day, segKey) {
-      return (day.segmentMap && day.segmentMap[segKey]) || [];
+    formatDomain(url) {
+      if (!url || typeof url !== 'string') return '';
+      try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
     },
 
-    /* ── Flat cell list for the horizontal grid.
-         Two flat lists are returned by separate getters:
-           cells       — one per (segment, day) pair, used to render
-                         placeholders/headers placed via grid-row/col.
-           cellsAndCards — Alpine refused to wire a nested
-                         <template x-for> in the cell content
-                         (the inner template stayed unprocessed),
-                         so we iterate events at the same outer
-                         level and place each card into its
-                         corresponding grid cell via inline style.
-                         This avoids any template nesting. */
-    get cells() {
-      const segs = this.activeSegments;
-      const days = this.weekDays;
-      const out = [];
-      for (let s = 0; s < segs.length; s++) {
-        for (let d = 0; d < days.length; d++) {
-          const seg = segs[s];
-          const day = days[d];
-          const events = (day.segmentMap && day.segmentMap[seg.key]) || [];
-          out.push({
-            key:     seg.key + '-' + day.iso,
-            // x-for key: changes whenever the cell's events do, so Alpine
-            // rebuilds the cell instead of refreshing its scope. A scope
-            // refresh alone can leave the x-html cards stale: Alpine 3's
-            // scheduler won't re-queue an effect that already ran in the
-            // current flush, so when events and filters change in one tick
-            // (startup with ?game=… or a default preset) the cards kept
-            // showing the unfiltered week.
-            renderKey: seg.key + '-' + day.iso + ':' + events.map(e => e.id).join(','),
-            seg, day, sIdx: s, dIdx: d,
-            events,
-            isEmpty: events.length === 0,
-            isToday: day.isToday,
-            isPast:  this.isSegmentPast(seg.key, day.iso),
-          });
+    /* ── Event cards (x-html: one builder for Day, Week and the sheet) ─ */
+
+    eventByKey(key) {
+      return this.events.find(e => eventKey(e) === key) || null;
+    },
+
+    // Game pill, format, type (when not a plain tournament), spots.
+    tagsHtml(e) {
+      const fmt = TCG.eventFormat(e);
+      const type = typeOf(e);
+      const bits = [];
+      if (fmt) bits.push(esc(fmt));
+      if (type !== 'tournament') bits.push(esc(TCG.TYPE_LABEL[type]));
+      const spots = attendanceBadge(e);
+      return `<span class="pill ${this.getGameClass(e.game)}">${esc(gameLabel(e.game))}</span>`
+        + (bits.length ? `<span class="ev-fmt">${bits.join(' · ')}</span>` : '')
+        + (spots ? `<span class="ev-spots${e.full && !e.participants ? ' is-full' : ''}">${esc(spots)}</span>` : '');
+    },
+
+    storeLine(e, { full = false } = {}) {
+      const km = this.storeDistanceLabel(e.store);
+      return `<span class="ev-store">${icon('pin')}<span class="ev-store-name">${esc(e.store)}</span>`
+        + (km ? `<span class="ev-km">· ${esc(full ? km + ' from you' : km)}</span>` : '') + `</span>`;
+    },
+
+    cardHtml(e, { compact = false } = {}) {
+      const key = eventKey(e);
+      const open = !compact && this.openKey === key;
+      if (open) return this.openCardHtml(e);
+      const fav = this.favorites.includes(key);
+      const cal = buildGoogleCalendarUrl(e);
+      const cls = ['ev', compact ? 'ev-compact' : '', this.isEventPast(e) ? 'is-past' : '', fav ? 'is-saved' : ''].filter(Boolean).join(' ');
+      return `<article class="${cls}" data-key="${esc(key)}">`
+        + `<div class="ev-time">${esc(this.cardTime(e))}</div>`
+        + `<div class="ev-main">`
+        +   `<h4 class="ev-title"><button type="button" class="ev-open" data-act="open" aria-expanded="false"${compact ? ' aria-haspopup="dialog"' : ''}>${esc(e.title)}</button></h4>`
+        +   this.storeLine(e)
+        +   `<div class="ev-tags">${this.tagsHtml(e)}</div>`
+        + `</div>`
+        + `<div class="ev-acts">`
+        +   `<button type="button" class="ib${fav ? ' is-on' : ''}" data-act="fav" aria-pressed="${fav}" aria-label="${fav ? 'Saved — remove' : 'Save'}: ${esc(e.title)}" title="${fav ? 'Remove from saved' : 'Save'}">${icon('star')}</button>`
+        +   (cal ? `<button type="button" class="ib" data-act="gcal" aria-label="Add to Google Calendar: ${esc(e.title)}" title="Add to Google Calendar">${icon('cal')}</button>` : '')
+        + `</div>`
+        + `</article>`;
+    },
+
+    // When / Where / Players / Format. Rows without data are left out.
+    factsHtml(e) {
+      const rows = [];
+      const end = e.datetime_end && e.datetime_end.slice(0, 10) === e.datetime_start.slice(0, 10)
+        ? ' – ' + this.formatTime(e.datetime_end) : '';
+      const when = TCG.hasTime(e)
+        ? `${this.formatDayMonth(e.datetime_start)}, ${this.formatTime(e.datetime_start)}${end}`
+        : `${this.formatDayMonth(e.datetime_start)} · time not listed`;
+      const cal = buildIcsContent(e) ? `<button type="button" class="linkish" data-act="ics">${icon('file')}Other calendar (.ics)</button>` : '';
+      rows.push(['When', esc(when), (this.isEventPast(e) ? 'Already started · ' : '') + cal]);
+      const addr = storeAddress(e);
+      const km = this.storeDistanceLabel(e.store);
+      const whereSub = [addr ? esc(addr) : '', km ? esc(km + ' from you') : ''].filter(Boolean).join(' · ');
+      rows.push(['Where', esc(e.store), whereSub]);
+      const players = attendanceDetail(e);
+      if (players) rows.push(['Players', esc(players[0].toUpperCase() + players.slice(1)), '']);
+      const fmt = [TCG.eventFormat(e), e.format_official && e.format_official !== e.format ? e.format_official : null,
+        e.best_of ? `best of ${e.best_of}` : null].filter(Boolean);
+      if (fmt.length) rows.push(['Format', esc(fmt.join(' · ')), '']);
+      return `<dl class="facts">` + rows.map(([k, v, sub]) =>
+        `<dt>${k}</dt><dd>${v}${sub ? `<small>${sub}</small>` : ''}</dd>`).join('') + `</dl>`;
+    },
+
+    // Up to three more events at the same store this week (still to come).
+    moreAtStore(e) {
+      const key = eventKey(e);
+      const all = this.weekBase.filter(x => x.store === e.store)
+        .sort((a, b) => a.datetime_start.localeCompare(b.datetime_start));
+      const next = all.filter(x => eventKey(x) !== key && !this.isEventPast(x)).slice(0, 3);
+      return { next, total: all.length };
+    },
+
+    moreHtml(e) {
+      const { next, total } = this.moreAtStore(e);
+      if (!next.length) return '';
+      return `<aside class="more"><h4>More at ${esc(e.store)} this week</h4><ul>`
+        + next.map(x => `<li><button type="button" class="more-row" data-act="goto" data-target="${esc(eventKey(x))}">`
+          + `<b>${esc(this.formatDayShort(x.datetime_start))}</b><span>${esc(x.title)}</span>`
+          + `<i class="dot ${this.getGameClass(x.game)}" title="${esc(gameLabel(x.game))}"></i></button></li>`).join('')
+        + `</ul>`
+        + (total > 1 ? `<button type="button" class="more-all" data-act="store-all">All ${total} events at this store →</button>` : '')
+        + `</aside>`;
+    },
+
+    sourceHtml(e, { row = false } = {}) {
+      const url = safeUrl(e.source_url);
+      if (!url) return '';
+      const domain = esc(this.formatDomain(url));
+      return row
+        ? `<a class="src-row" href="${esc(url)}" target="_blank" rel="noopener"><span>Source</span><b>${domain}</b>${icon('ext')}</a>`
+        : `<a class="src" href="${esc(url)}" target="_blank" rel="noopener">Source: ${domain} ${icon('ext')}</a>`;
+    },
+
+    // Card expanded in place (Day view, desktop): the whole grid row.
+    openCardHtml(e) {
+      const key = eventKey(e);
+      const fav = this.favorites.includes(key);
+      const cal = buildGoogleCalendarUrl(e);
+      const id = 'ev-' + key.replace(/[^a-zA-Z0-9]/g, '').slice(-24);
+      return `<article class="ev is-open ${this.getGameClass(e.game)}${fav ? ' is-saved' : ''}" data-key="${esc(key)}">`
+        + `<header class="evx-head" data-act="close">`
+        +   `<div class="evx-time">${esc(this.cardTime(e))}</div>`
+        +   `<div class="ev-main">`
+        +     `<h4 class="ev-title evx-title"><button type="button" class="ev-open" data-act="close" aria-expanded="true" aria-controls="${id}">${esc(e.title)}</button></h4>`
+        +     this.storeLine(e)
+        +     `<div class="ev-tags">${this.tagsHtml(e)}</div>`
+        +   `</div>`
+        +   `<button type="button" class="ib" data-act="close" aria-label="Collapse" title="Collapse (Esc)">${icon('up')}</button>`
+        + `</header>`
+        + `<div class="evx-body" id="${id}" data-act="noop">`
+        +   `<div>${this.factsHtml(e)}</div>`
+        +   this.moreHtml(e)
+        + `</div>`
+        + `<footer class="evx-acts" data-act="noop">`
+        +   (cal ? `<button type="button" class="btn btn-cta" data-act="gcal">${icon('cal')}Add to Google Calendar</button>` : '')
+        +   `<a class="btn" href="${esc(this.eventDirectionsUrl(e))}" target="_blank" rel="noopener">${icon('pin')}Directions</a>`
+        +   `<button type="button" class="btn${fav ? ' is-on' : ''}" data-act="fav" aria-pressed="${fav}">${icon('star')}${fav ? 'Saved' : 'Save'}</button>`
+        +   `<button type="button" class="btn" data-act="share">${icon('share')}Share</button>`
+        +   `<span class="sp"></span>${this.sourceHtml(e)}`
+        + `</footer>`
+        + `</article>`;
+    },
+
+    // The sheet's scrolling body (phones; Week/Map views on desktop).
+    sheetBodyHtml(e) {
+      if (!e) return '';
+      return `<div class="sh-when"><b>${esc(this.cardTime(e))}</b> ${esc(this.formatDayMonth(e.datetime_start))}</div>`
+        + `<h2 class="sh-title" id="sheet-title" tabindex="-1">${esc(e.title)}</h2>`
+        + `<div class="ev-tags">${this.tagsHtml(e)}</div>`
+        + this.factsHtml(e)
+        + this.sourceHtml(e, { row: true })
+        + this.moreHtml(e);
+    },
+
+    cardsHtml(events, opts) {
+      return events.map(e => this.cardHtml(e, opts)).join('');
+    },
+
+    // Delegated clicks on any card container (data-act on the target).
+    onCards(ev, { compact = false } = {}) {
+      if (ev.target.closest('a')) return;                      // links do their thing
+      const card = ev.target.closest('[data-key]');
+      const actEl = ev.target.closest('[data-act]');
+      const inSheet = !card && ev.target.closest('.sheet');
+      const key = card ? card.dataset.key : (inSheet && this.sheetEvent ? eventKey(this.sheetEvent) : null);
+      const e = key && this.eventByKey(key);
+      if (!e) return;
+      const act = actEl ? actEl.dataset.act : 'open';
+      switch (act) {
+        case 'noop': return;
+        case 'fav':
+          this.toggleFavorite(e);
+          this.refocus(key, 'fav');
+          return;
+        case 'gcal': this.openCalendar(e); return;
+        case 'ics': downloadIcs(e); return;
+        case 'share': this.shareEvent(e); return;
+        case 'close': this.collapseCard(); return;
+        case 'store-all':
+          this.filters.store = [e.store];
+          this.closeSheet();
+          this.collapseCard({ focus: false });
+          this.cleanupFilters({ syncUrl: true });
+          this.flash(`Showing ${e.store} only · Clear in Filters`);
+          return;
+        case 'goto': {
+          const other = this.eventByKey(actEl.dataset.target);
+          if (other) this.showEvent(other);
+          return;
         }
+        default:
+          if (compact || this.isPhone || this.viewMode !== 'day') this.openSheet(e);
+          else this.expandCard(e);
       }
-      return out;
     },
 
-    /* ── Total events per segment in the current week (any filter
-         applied EXCEPT segment filter — so chip counts stay stable) ── */
-    get segmentTotals() {
-      const totals = { morning: 0, afternoon: 0, evening: 0, late: 0 };
-      for (const e of this.events) {
-        if (!this.eventMatches(e, { includeSegment: false, includeWeek: true })) continue;
-        totals[this.segmentOf(e.datetime_start)]++;
-      }
-      return totals;
+    // After an x-html re-render the clicked button is a new node: give the
+    // new one focus so keyboard users don't fall back to <body>.
+    refocus(key, act) {
+      this.$nextTick(() => {
+        if (document.activeElement && document.activeElement !== document.body && document.contains(document.activeElement)) return;
+        const el = document.querySelector(`[data-key="${CSS.escape(key)}"] [data-act="${act}"]`)
+          || (this.sheetEvent && document.querySelector(`.sheet [data-act="${act}"]`));
+        if (el) el.focus();
+      });
     },
 
-    /* ── 7-day array for the current week ───────────────────────────── */
-    get weekDays() {
-      const todayISO = this.nowMadrid ? this.nowMadrid.iso : readMadridNow().iso;
-      const DOW_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-      // Build a map: ISO date → sorted events
-      const byDay = {};
-      for (const e of this.filteredEvents) {
-        const day = e.datetime_start.slice(0, 10);
-        if (!byDay[day]) byDay[day] = [];
-        byDay[day].push(e);
+    // Show an event wherever it lives: its day in the Day view (expanded
+    // in place on desktop), or the sheet.
+    showEvent(e) {
+      const day = e.datetime_start.slice(0, 10);
+      const [y, m, d] = day.split('-').map(Number);
+      this.weekStart = weekMonday(new Date(y, m - 1, d));
+      this.selectedDay = day;
+      if (this.viewMode === 'day' && !this.isPhone) {
+        this.closeSheet();
+        this.expandCard(e);
+      } else {
+        this.openSheet(e);
       }
+    },
 
-      const days = [];
-      for (let i = 0; i < 7; i++) {
-        const d = addDays(this.weekStart, i);
-        const iso = isoDay(d);
-        const evs = (byDay[iso] || []).slice().sort(
-          (a, b) => a.datetime_start.localeCompare(b.datetime_start)
-        );
+    expandCard(e) {
+      const key = eventKey(e);
+      // Its section must be open for the card to show.
+      this.secOpen[e.datetime_start.slice(0, 10) + ':' + TCG.sectionOf(e)] = true;
+      this.openKey = key;
+      this.syncEventParam(e);
+      this.$nextTick(() => {
+        const card = document.querySelector(`.ev.is-open[data-key="${CSS.escape(key)}"]`);
+        if (!card) return;
+        card.querySelector('.ev-open').focus({ preventScroll: true });
+        const r = card.getBoundingClientRect();
+        if (r.top < 0 || r.bottom > window.innerHeight) card.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
+      });
+    },
 
-        // Bucket events into segments. The map is exhaustive (one entry
-        // per segment, possibly empty) so the horizontal grid can ask
-        // "is this (day, segment) cell empty?" without a re-scan.
-        const buckets = { morning: [], afternoon: [], evening: [], late: [] };
-        for (const e of evs) buckets[this.segmentOf(e.datetime_start)].push(e);
-        // Vertical view still renders segments per-day, so we also keep
-        // the compact array (empties skipped) it expects.
-        const segments = SEGMENTS
-          .filter(s => buckets[s.key].length > 0)
-          .map(s => ({
-            key: s.key,
-            label: s.label,
-            shortRange: s.shortRange,
-            count: buckets[s.key].length,
-            events: buckets[s.key],
-          }));
+    collapseCard({ focus = true } = {}) {
+      const key = this.openKey;
+      if (!key) return;
+      this.openKey = null;
+      this.clearEventParam();
+      if (focus) this.$nextTick(() => {
+        const btn = document.querySelector(`.ev[data-key="${CSS.escape(key)}"] .ev-open`);
+        if (btn) btn.focus({ preventScroll: true });
+      });
+    },
 
-        days.push({
-          iso,
-          dow: DOW_LABELS[i],
-          dom: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
-          num: d.getDate(),
-          isToday: iso === todayISO,
-          events: evs,
-          segments,
-          segmentMap: buckets,
-        });
-      }
-      return days;
+    /* ── Sheet ─────────────────────────────────────────────────────── */
+    openSheet(e) {
+      if (!this.sheetEvent) UI.sheetOpener = document.activeElement;
+      this.sheetEvent = e;
+      this.syncEventParam(e);
+      this.lockScroll();
+      this.$nextTick(() => {
+        const body = document.querySelector('.sheet-body');
+        if (body) body.scrollTop = 0;
+        focusSoon(() => document.getElementById('sheet-title'));
+      });
+    },
+
+    closeSheet() {
+      if (!this.sheetEvent) return;
+      const key = eventKey(this.sheetEvent);
+      this.sheetEvent = null;
+      this.clearEventParam();
+      this.unlockScroll();
+      const back = UI.sheetOpener;
+      UI.sheetOpener = null;
+      this.$nextTick(() => {
+        const el = (back && document.contains(back) && back !== document.body) ? back
+          : document.querySelector(`[data-key="${CSS.escape(key)}"] .ev-open`);
+        if (el) el.focus({ preventScroll: true });
+      });
+    },
+
+    // Page scroll stays put under a sheet or the filters panel.
+    lockScroll() { document.documentElement.classList.add('sheet-open'); },
+    unlockScroll() {
+      if (!this.sheetEvent && !this.filtersOpen) document.documentElement.classList.remove('sheet-open');
+    },
+
+    // Swipe down to close (sheet and filters on phones). Starts only from
+    // the grip, or from the body when it is scrolled to the top.
+    dragStart(ev, el) {
+      const body = el.querySelector('.sheet-body, .fp-body');
+      const fromGrip = ev.target.closest('.grip');
+      if (!fromGrip && body && body.scrollTop > 0) return;
+      UI.drag = { el, y: ev.touches[0].clientY, dy: 0 };
+    },
+    dragMove(ev) {
+      const d = UI.drag;
+      if (!d) return;
+      d.dy = Math.max(0, ev.touches[0].clientY - d.y);
+      if (d.dy > 4) d.el.style.transform = `translateY(${d.dy}px)`;
+    },
+    dragEnd(close) {
+      const d = UI.drag;
+      UI.drag = null;
+      if (!d) return;
+      d.el.style.transform = '';
+      if (d.dy > 90) close();
+    },
+
+    flash(text) {
+      this.toast = text;
+      clearTimeout(UI.toastTimer);
+      UI.toastTimer = setTimeout(() => { this.toast = ''; }, 2600);
     },
 
     /* ── Map view ─────────────────────────────────────────────────────
@@ -1989,6 +2028,7 @@ function app() {
           events,
           count: events.length,
           games: ranked,
+          gameLabels: ranked.map(gameLabel),
           mix: ranked.map(game => ({ game, n: games[game] })),
           lat: meta.lat ?? null,
           lng: meta.lng ?? null,
@@ -2007,7 +2047,7 @@ function app() {
       const counts = {};
       for (const e of this.mapEvents) counts[e.game] = (counts[e.game] || 0) + 1;
       return Object.keys(counts).sort((a, b) => counts[b] - counts[a])
-        .map(game => ({ game, n: counts[game], color: gameColor(game) }));
+        .map(game => ({ game, label: gameLabel(game), n: counts[game], color: gameColor(game) }));
     },
 
     pinStyle(mix) {
@@ -2018,15 +2058,10 @@ function app() {
       return this.mapStore ? this.mapStores.find(s => s.name === this.mapStore) || null : null;
     },
 
-    get mapUnlocatedCount() {
-      return this.mapStores.filter(s => s.lat == null).reduce((n, s) => n + s.count, 0);
-    },
-
     // Changes only when the question changes; see renderStoreMap.
     get mapFitKey() {
-      // events.length: a week fetched after navigation must refit when it lands.
-      return JSON.stringify([this.city, isoDay(this.weekStart), this.mapDay, this.filters, this.segmentFilter,
-        this.showFavoritesOnly, this.nearMe, this.radiusKm, this.events.length]);
+      return JSON.stringify([this.city, isoDay(this.weekStart), this.mapDay, this.filters,
+        this.showFavoritesOnly, this.nearMe, this.km, this.events.length]);
     },
 
     // Called from x-effect. Every reactive input is read synchronously so the
@@ -2037,7 +2072,7 @@ function app() {
         stores: this.mapStores.map(s => ({ name: s.name, count: s.count, mix: s.mix, lat: s.lat, lng: s.lng })),
         selected: this.mapStore,
         me: this.nearMe ? { lat: this.nearMe.lat, lng: this.nearMe.lng } : null,
-        radiusKm: this.radiusKm,
+        radiusKm: this.km,
         fitKey: this.mapFitKey,
         onSelect: (name) => { this.mapStore = name; },
         centre: this.cities.find(c => c.id === this.city) || MAP_DEFAULT_VIEW,
@@ -2071,12 +2106,9 @@ function app() {
 
     // From the list under the map: select, centre the pin, show the map.
     pickMapStore(s) {
-      // Read the row first: setting mapStore re-renders the list, and the
-      // x-for scope `s` can then point at another row's data.
       const { name, lat } = s;
-      if (lat != null) MAP.focus = name;  // the redraw this triggers shows the pin
+      if (lat != null) MAP.focus = name;
       this.mapStore = name;
-      // Instant: a smooth page scroll cancels Leaflet's zoom animation.
       if (lat != null && this.$refs.mapEl) this.$refs.mapEl.scrollIntoView({ block: 'start' });
     },
 
@@ -2085,97 +2117,16 @@ function app() {
       return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(dest);
     },
 
-    formatDayShort(iso) {
-      const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
-      return new Date(y, m - 1, d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' });
+    // The event's own venue address first (chains have branches), then the
+    // store registry's coordinates, then the name.
+    eventDirectionsUrl(e) {
+      const meta = STORE_META[e.store] || {};
+      const dest = e.store_address ? `${e.store}, ${e.store_address}`
+        : (meta.lat != null ? `${meta.lat},${meta.lng}` : (meta.address || `${e.store}, ${this.cityName}`));
+      return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(dest);
     },
 
-    /* ── Week header label ──────────────────────────────────────────── */
-    get weekRangeLabel() {
-      const sun = addDays(this.weekStart, 6);
-      const from = this.weekStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-      const to   = sun.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-      return `${from} – ${to}`;
-    },
-
-    /* ── Events this week (after filters) ───────────────────────────── */
-    get weekEventCount() {
-      return this.weekDays.reduce((n, d) => n + d.events.length, 0);
-    },
-
-    /* ── Formatters ────────────────────────────────────────────────── */
-    formatTime(iso) {
-      if (!iso) return '';
-      return new Date(iso).toLocaleTimeString('en-GB', {
-        hour: '2-digit', minute: '2-digit',
-        timeZone: 'Europe/Madrid',
-      });
-    },
-
-    openEvent(e) {
-      this.openPanel(e);
-    },
-
-    openPanel(e) {
-      if (this._panelCloseTimeout) {
-        clearTimeout(this._panelCloseTimeout);
-        this._panelCloseTimeout = null;
-      }
-      this.selectedEvent = e;
-      this.panelOpen = true;
-      this.calendarMenuOpen = false;
-      document.body.classList.add('no-scroll');
-      this.syncEventParam(e);
-    },
-
-    closePanel() {
-      this.panelOpen = false;
-      this.calendarMenuOpen = false;
-      document.body.classList.remove('no-scroll');
-      this.clearEventParam();
-      if (this._panelCloseTimeout) {
-        clearTimeout(this._panelCloseTimeout);
-      }
-      this._panelCloseTimeout = setTimeout(() => {
-        if (!this.panelOpen) {
-          this.selectedEvent = null;
-        }
-        this._panelCloseTimeout = null;
-      }, 200);
-    },
-
-    formatDomain(url) {
-      if (!url || typeof url !== 'string') return '';
-      try {
-        const u = new URL(url);
-        return u.hostname.replace(/^www\./, '');
-      } catch {
-        return url;
-      }
-    },
-
-    formatDateLong(iso) {
-      if (!iso) return '';
-      const d = new Date(iso);
-      const datePart = d.toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        timeZone: 'Europe/Madrid',
-      });
-      const weekday = d.toLocaleDateString('en-GB', {
-        weekday: 'long',
-        timeZone: 'Europe/Madrid',
-      });
-      return datePart + ' · ' + weekday;
-    },
-
-    formatTimeRange(e) {
-      if (!e || !e.datetime_start) return '';
-      const start = this.formatTime(e.datetime_start);
-      if (e.datetime_end) return start + ' – ' + this.formatTime(e.datetime_end);
-      return '<span class="panel-time-prefix">Starts at</span> ' + start;
-    },
-
+    /* ── Calendar, links, sharing ──────────────────────────────────── */
     canAddToCalendar(e) {
       return Boolean(buildGoogleCalendarUrl(e));
     },
@@ -2183,28 +2134,6 @@ function app() {
     openCalendar(e) {
       const url = buildGoogleCalendarUrl(e);
       if (url) window.open(url, '_blank', 'noopener');
-    },
-
-    openCalendarProvider(e, provider) {
-      this.calendarMenuOpen = false;
-      if (!e || !e.datetime_start) return;
-
-      switch (provider) {
-        case 'google': {
-          const url = buildGoogleCalendarUrl(e);
-          if (url) window.open(url, '_blank', 'noopener');
-          break;
-        }
-        case 'apple': {
-          downloadIcs(e);
-          break;
-        }
-        case 'outlook': {
-          const url = buildOutlookUrl(e, 'https://outlook.live.com/calendar/0/deeplink/compose');
-          if (url) window.open(url, '_blank', 'noopener');
-          break;
-        }
-      }
     },
 
     eventKey(e) {
@@ -2217,7 +2146,7 @@ function app() {
       // only that page gives them a real preview (title, date, image).
       if (e.share) return new URL(e.share, window.location.origin).toString();
       const url = new URL(window.location.href);
-      url.searchParams.set('event', encodeEventParam(this.eventKey(e)));
+      url.searchParams.set('event', encodeEventParam(eventKey(e)));
       url.searchParams.set('w', weekOfIso(e.datetime_start));  // which week file has it
       return url.toString();
     },
@@ -2225,7 +2154,7 @@ function app() {
     syncEventParam(e) {
       if (!e) return;
       const url = new URL(window.location.href);
-      url.searchParams.set('event', encodeEventParam(this.eventKey(e)));
+      url.searchParams.set('event', encodeEventParam(eventKey(e)));
       url.searchParams.set('w', weekOfIso(e.datetime_start));
       history.replaceState(null, '', url.toString());
     },
@@ -2240,10 +2169,12 @@ function app() {
     copyEventLink(e) {
       if (!e) return;
       const text = this.eventUrl(e);
+      const done = () => this.flash('Link copied');
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(() => this.fallbackCopy(text));
+        navigator.clipboard.writeText(text).then(done, () => { this.fallbackCopy(text); done(); });
       } else {
         this.fallbackCopy(text);
+        done();
       }
     },
 
@@ -2262,131 +2193,25 @@ function app() {
       document.body.removeChild(ta);
     },
 
-
     shareEvent(e) {
       if (!e) return;
       const url = this.eventUrl(e);
-      if (navigator.share) {
-        navigator.share({
-          title: e.title || 'Event',
-          url: url,
-        }).catch(() => {
-          this.copyEventLink(e);
-        });
+      if (navigator.share && this.isPhone) {
+        navigator.share({ title: e.title || 'Event', url }).catch(() => {});
       } else {
         this.copyEventLink(e);
       }
     },
 
-    /* ── Card HTML for a horizontal grid cell.
-         Built as a string and injected via x-html on the cell's
-         .seg-cards div. We do this because Alpine's nested
-         <template x-for> inside the per-cell clones produced by the
-         outer x-for left the inner template unprocessed (the inner
-         x-for ran once with an empty array and never re-fired even
-         after events.json finished loading). x-html re-evaluates
-         reactively whenever cell.events changes, so the cards stay
-         in sync. Click handling is delegated at the grid level. */
-    cellCardsHtml(cell) {
-      const events = this.cellEvents(cell.day, cell.seg.key);
-      if (!events.length) return '';
-      const esc = s => String(s == null ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-      const out = [];
-      for (const e of events) {
-        const game = e.game || 'Unknown';
-        const fmt = e.format || 'Unknown';
-        const gameClass = this.getGameClass(e.game);
-        const past = this.isEventPast(e);
-        const time = this.formatTime(e.datetime_start);
-        const url = safeUrl(e.source_url) || '';
-        const calendarUrl = buildGoogleCalendarUrl(e);
-        const calendarButton = calendarUrl
-          ? `<button class="calendar-btn" type="button" data-calendar-url="${esc(calendarUrl)}" title="Add to Google Calendar" aria-label="Add to Google Calendar">` +
-              `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
-                `<path d="M8 2v4"></path><path d="M16 2v4"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path>` +
-              `</svg>` +
-              `<span>GCal</span>` +
-            `</button>`
-          : '';
-        const isFav = this.favorites.includes(eventKey(e));
-        const favButton = `<button class="fav-btn${isFav ? ' is-fav' : ''}" type="button" ` +
-          `data-fav-key="${esc(eventKey(e))}" ` +
-          `title="${isFav ? 'Remove from saved' : 'Save event'}" ` +
-          `aria-label="${isFav ? 'Remove from saved' : 'Save event'}">★</button>`;
-        out.push(
-          `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}${isFav ? ' is-favorite' : ''}" tabindex="0" data-event-key="${esc(eventKey(e))}">` +
-            `<div class="ev-card-top">` +
-              `<div class="ev-time">${esc(time)}</div>` +
-              `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
-              (this.nearMe && this.storeDistanceKm(e.store) !== null
-                ? `<div class="ev-distance">${esc(this.storeDistanceLabel(e.store))}</div>` : '') +
-            `</div>` +
-            `<div class="ev-title">${esc(e.title)}</div>` +
-            `<div class="ev-footer">` +
-              `<div class="ev-tags">` +
-                `<span class="tag game${this.isSelected('game', game) ? ' active' : ''}" data-filter="game" data-value="${esc(game)}">${esc(game)}</span>` +
-                `<span class="tag fmt${this.isSelected('format', fmt) ? ' active' : ''}" data-filter="format" data-value="${esc(fmt)}">${esc(fmt)}</span>` +
-
-              `</div>` +
-              // After the tags, not in the top row: grid columns are too
-              // narrow there and the store name would shrink to "I…".
-              (attendanceBadge(e)
-                ? `<div class="ev-attendance${e.full && !e.participants ? ' is-full' : ''}" title="${esc(attendanceDetail(e))}">👥 ${esc(attendanceBadge(e))}</div>` : '') +
-              `<div class="ev-actions">` + favButton + calendarButton + `</div>` +
-            `</div>` +
-          `</div>`
-        );
-      }
-      return out.join('');
-    },
-
-    /* ── Delegated click on the horizontal grid.
-         Chip click → toggle that filter and stop propagation.
-         Card click → open detail panel. */
-    // Enter / Space on a focused card behaves like a click on it.
-    onGridKey(ev) {
-      if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList.contains('ev-card')) {
-        ev.preventDefault();
-        this.onGridClick(ev);
-      }
-    },
-
     scrollBehavior,
-
-    onGridClick(ev) {
-      const favBtn = ev.target.closest('[data-fav-key]');
-      if (favBtn) {
-        ev.stopPropagation();
-        this.toggleFavorite(favBtn.dataset.favKey);
-        return;
-      }
-      const calendarButton = ev.target.closest('[data-calendar-url]');
-      if (calendarButton) {
-        ev.stopPropagation();
-        window.open(calendarButton.dataset.calendarUrl, '_blank', 'noopener');
-        return;
-      }
-      const tag = ev.target.closest('[data-filter]');
-      if (tag) {
-        ev.stopPropagation();
-        this.toggleFilter(tag.dataset.filter, tag.dataset.value);
-        return;
-      }
-      const card = ev.target.closest('.ev-card');
-      if (card) {
-        const key = card.dataset.eventKey;
-        const event = this.events.find(e => eventKey(e) === key);
-        if (event) this.openPanel(event);
-      }
-    },
+    icon,
+    gameLabel,
 
     getGameClass(game) {
       return GAME_CLASS_MAP[game] || 'game-unknown';
     },
 
+    /* ── Near me ───────────────────────────────────────────────────── */
     // Distance from the visitor to a store, or null (no position / no coords).
     storeDistanceKm(store) {
       const meta = STORE_META[store];
@@ -2397,13 +2222,8 @@ function app() {
       const km = this.storeDistanceKm(store);
       return km === null ? '' : formatKm(km);
     },
-    toggleNearMe() {
-      if (this.nearMe) {
-        this.nearMe = null;
-        this.geoStatus = '';
-        this.cleanupFilters();
-        return;
-      }
+
+    locate() {
       if (!navigator.geolocation) {
         this.geoStatus = 'Location is not available in this browser.';
         return;
@@ -2423,15 +2243,16 @@ function app() {
       );
     },
 
-    resetFilters() {
-      this.nearMe = null;
-      this.geoStatus = '';
-      this.filterHistory = [];
-      this.filters = { search: '', game: [], store: [], format: [] };
-      this.openFacet = null;
-      this.defaultPresetActive = false;
-      this.showFavoritesOnly = false;
-      this.cleanupFilters({ syncUrl: true });
+    // Map: "Near me" sorts by distance and shows you on the map.
+    toggleNearMe() {
+      if (this.nearMe) {
+        this.nearMe = null;
+        this.km = null;
+        this.geoStatus = '';
+        this.cleanupFilters();
+        return;
+      }
+      this.locate();
     },
   };
 }

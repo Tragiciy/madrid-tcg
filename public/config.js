@@ -1,9 +1,16 @@
-var SEGMENTS = [
-  { key: 'morning',   label: 'Morning',   range: '09:00 – 12:00', shortRange: '<12',   start: 0,  end: 12 },
-  { key: 'afternoon', label: 'Afternoon', range: '12:00 – 16:00', shortRange: '12–16', start: 12, end: 16 },
-  { key: 'evening',   label: 'Evening',   range: '16:00 – 19:00', shortRange: '16–19', start: 16, end: 19 },
-  { key: 'late',      label: 'Late',      range: '19:00+',        shortRange: '19+',   start: 19, end: 30 },
-];
+// Time-of-day slots and day sections live in model.js (TCG.TIME_SLOTS,
+// TCG.DAY_SECTIONS), next to the logic that uses them.
+
+// Short game names for chips and pills (the data keeps the full name).
+var GAME_SHORT = {
+  'Magic: The Gathering':      'Magic',
+  'Star Wars: Unlimited':      'Star Wars',
+  'Dragon Ball Fusion World':  'Dragon Ball FW',
+  'Dragon Ball Super Masters': 'DB Masters',
+  'Final Fantasy TCG':         'Final Fantasy',
+  'Gundam Card Game':          'Gundam',
+  'Cyberpunk TCG':             'Cyberpunk',
+};
 
 // Store details (address, coordinates, website, notes) keyed by display
 // name. Filled at runtime from api/v1/madrid/stores.json, which the
