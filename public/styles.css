@@ -261,7 +261,7 @@
   --fs-range: 20px;
   --fs-day-num-sm: 16px;
   --fs-sheet-title: 19px;
-  --fs-day-dow-sm: 11px;
+  --fs-day-dow-sm: 12px;              /* 12px floor, also in the phone day strip */
   --r-day: 16px;
   --r-sheet: 22px;
   --r-panel: 20px;
