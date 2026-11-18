@@ -152,6 +152,17 @@
     };
   }
 
+  /* ── Game chip order ────────────────────────────────────────────── */
+
+  // chips: [{ n, w, on }] — w = events this week before filters (the stable
+  // order: chips don't jump on every toggle), n = after the other filters
+  // (the number shown). Keeps the w order, but unpicked games that the
+  // current filters leave at 0 go last, so a "0" never sits among counts.
+  function orderGameChips(chips) {
+    const byW = chips.slice().sort((a, b) => (b.w || 0) - (a.w || 0));
+    return byW.filter(c => c.on || c.n > 0).concat(byW.filter(c => !c.on && !(c.n > 0)));
+  }
+
   /* ── Time of day ───────────────────────────────────────────────── */
 
   // Spanish hours: lunch ends the morning at 14:00, evening play starts at
@@ -271,7 +282,7 @@
 
   const api = {
     EVENT_TYPES, TYPE_LABEL, TIME_SLOTS, DAY_SECTIONS, URL_LISTS,
-    eventType, eventFormat, gameOf, formatsByGame, passesFormat, pruneFormats, formatFacet,
+    eventType, eventFormat, gameOf, orderGameChips, formatsByGame, passesFormat, pruneFormats, formatFacet,
     hasTime, timeSlotOf, sectionOf, passesTime, daySections, defaultOpenSection,
     dayStrip, defaultDay, readFilterParams, writeFilterParams, activeFilterCount,
   };

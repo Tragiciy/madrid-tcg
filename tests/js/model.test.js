@@ -109,6 +109,22 @@ test('a format restricts only the games that have it', () => {
   assert.equal(M.passesFormat(ev('One Piece', 'Sealed'), ['Standard'], byGame), false);
 });
 
+/* ── Game chip order ─────────────────────────────────────────────── */
+
+test('game chips: weekly order kept, unpicked zeros last', () => {
+  const chips = [
+    { game: 'Magic', w: 174, n: 88, on: true },
+    { game: 'Lorcana', w: 57, n: 34, on: false },
+    { game: 'Riftbound', w: 52, n: 37, on: false },   // more after filters, still after Lorcana
+    { game: 'Final Fantasy', w: 9, n: 0, on: false },
+    { game: 'MLP', w: 5, n: 0, on: false },
+    { game: 'Palworld', w: 1, n: 1, on: false },
+    { game: 'Gundam', w: 20, n: 0, on: true },        // picked: stays in place even at 0
+  ];
+  assert.deepEqual(M.orderGameChips(chips).map(c => c.game),
+    ['Magic', 'Lorcana', 'Riftbound', 'Gundam', 'Palworld', 'Final Fantasy', 'MLP']);
+});
+
 /* ── Time of day ─────────────────────────────────────────────────── */
 
 const at = (hm) => ev('One Piece', 'Standard', { at: `2026-11-18T${hm}:00+01:00` });

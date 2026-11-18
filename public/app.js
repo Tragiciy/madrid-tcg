@@ -1177,12 +1177,11 @@ function app() {
       for (const e of this.except('game')) counts[TCG.gameOf(e)] = (counts[TCG.gameOf(e)] || 0) + 1;
       const sel = this.filters.game;
       const games = new Set(Object.keys(order).filter(g => g !== 'Unknown').concat(sel));
-      return [...games]
-        .sort((a, b) => (order[b] || 0) - (order[a] || 0) || a.localeCompare(b))
-        .map((g, i) => ({
-          game: g, label: gameLabel(g), n: counts[g] || 0, w: order[g] || 0, on: sel.includes(g),
-          cls: this.getGameClass(g), extra: i >= GAME_CHIPS_SHOWN && !sel.includes(g),
-        }));
+      const chips = [...games].sort((a, b) => a.localeCompare(b)).map(g => ({
+        game: g, label: gameLabel(g), n: counts[g] || 0, w: order[g] || 0, on: sel.includes(g), cls: this.getGameClass(g),
+      }));
+      return TCG.orderGameChips(chips)
+        .map((c, i) => Object.assign(c, { extra: i >= GAME_CHIPS_SHOWN && !c.on }));
     },
 
     // Filters panel: picked games first, then this week's games (most
