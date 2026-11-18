@@ -47,6 +47,7 @@ from pipeline.pages import build_pages, write_pages
 from pipeline.publish import build_api, events_in, public_events, write_api
 from pipeline.runner import _discover_scrapers, flag_from_source, run_all_scrapers
 from pipeline.share import build_share_pages, write_share_pages
+from pipeline.time_fixes import apply_time_fixes
 from shared.cities import CITIES
 from shared.scraper_keywords import extract_format_for_event
 from shared.store_registry import StoreRegistry
@@ -101,6 +102,9 @@ def main() -> None:
         sys.exit(1)
     existing = apply_store_renames(drop_retired_stores(existing))
     existing = refresh_history(existing)
+    # Known source slips in start times (Bandai "05:00" for 17:00), also on
+    # history: past events are never re-scraped.
+    apply_time_fixes(existing, "stored events")
     previous_stats = load_previous_stats()
     logger.info(
         "Existing events on disk: %d  (previous stats run at %s)",
@@ -191,6 +195,9 @@ def main() -> None:
             e["format"] = "Prerelease"
             e["format_official"] = None
     by_game_after = Counter(e.get("game") or "Unknown" for e in fresh)
+    # Before dedup (step 4): a store scraper's copy of the event carries the
+    # right time, so the locator copy must match it to be recognised.
+    apply_time_fixes(fresh, "fresh events")
 
     # 4. Attribute legacy events to their scraper, unify store spellings
     #    across locators, and let a store's own scraper win over locator

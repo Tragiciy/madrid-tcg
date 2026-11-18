@@ -37,6 +37,8 @@ EVENT_FIELDS = (
     "title", "store", "store_id", "store_address", "game", "format",
     "format_official", "best_of", "datetime_start", "datetime_end", "source_url",
     "capacity", "registered", "participants", "full",
+    # Set when pipeline/time_fixes.py corrected the start time.
+    "time_corrected", "datetime_start_source",
 )
 STORE_FIELDS = ("id", "name", "address", "lat", "lng", "website", "notes")
 

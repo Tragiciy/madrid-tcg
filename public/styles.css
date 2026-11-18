@@ -817,6 +817,10 @@ input:focus, select:focus { border-color: var(--accent); }
 .cal-grid-h .ev-store-top { font-size: .6rem; }
 
 .ev-time  { font-size: .75rem; color: var(--text-muted); margin-bottom: .05rem; }
+/* Start time corrected by the pipeline (see the detail panel for the source's). */
+.time-fix { display: inline-flex; vertical-align: -.1em; margin-left: .2em; color: var(--text-muted); }
+.time-fix svg { width: .9em; height: .9em; }
+.panel-source-time { align-self: center; font-size: .8rem; color: var(--text-muted); }
 .ev-title { font-size: .82rem; font-weight: 700; line-height: 1.2; margin-bottom: .2rem; color: var(--text); }
 
 .ev-tags  { display: flex; flex-wrap: wrap; gap: .2rem; }

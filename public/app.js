@@ -2158,6 +2158,23 @@ function app() {
       return datePart + ' · ' + weekday;
     },
 
+    // The pipeline corrected this start time (pipeline/time_fixes.py): what
+    // the source said, for the detail panel; '' otherwise.
+    sourceTimeNote(e) {
+      return e && e.time_corrected && e.datetime_start_source
+        ? 'Source says ' + this.formatTime(e.datetime_start_source) : '';
+    },
+
+    // Small mark next to a corrected time on a card (no text on the card).
+    timeFixIcon(e) {
+      const note = this.sourceTimeNote(e);
+      if (!note) return '';
+      const label = `Time corrected. ${note} (a missing PM)`;
+      return `<span class="time-fix" role="img" aria-label="${label}" title="${label}">`
+        + `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">`
+        + `<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>`;
+    },
+
     formatTimeRange(e) {
       if (!e || !e.datetime_start) return '';
       const start = this.formatTime(e.datetime_start);
@@ -2308,7 +2325,7 @@ function app() {
         out.push(
           `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}${isFav ? ' is-favorite' : ''}" data-event-key="${esc(eventKey(e))}">` +
             `<div class="ev-card-top">` +
-              `<div class="ev-time">${esc(time)}</div>` +
+              `<div class="ev-time">${esc(time)}${this.timeFixIcon(e)}</div>` +
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
               (this.nearMe && this.storeDistanceKm(e.store) !== null
                 ? `<div class="ev-distance">${esc(this.storeDistanceLabel(e.store))}</div>` : '') +
