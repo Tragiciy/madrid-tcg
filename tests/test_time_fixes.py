@@ -3,9 +3,6 @@ import unittest
 
 from pipeline.publish import EVENT_FIELDS
 from pipeline.time_fixes import apply_time_fixes, correct_start_time
-from scrapers import locator_ravensburger
-from shared.locator_common import StoreResolver, venue_wall_clock
-from shared.store_registry import StoreRegistry
 
 
 def bandai(start, **kw):
@@ -88,60 +85,6 @@ class BandaiPmRuleTests(unittest.TestCase):
         self.assertIn('apply_time_fixes(fresh', main)
         # Fresh events are fixed before the locator/store dedup compares times.
         self.assertLess(main.index('apply_time_fixes(fresh'), main.index('drop_locator_duplicates('))
-
-
-def rv(start, zone, country="ES", end=None, name="Thursday Night Weekly Play (Constructed)"):
-    ev = {"id": 984072, "name": name, "start_datetime": start, "timezone": zone,
-          "is_end_datetime_estimated": end is None, "event_status": "SCHEDULED",
-          "store": {"id": 1, "name": "Kingdom Wargames", "country": country, "full_address": "12 Calle Arroyo de la Elipa, Madrid"}}
-    if end:
-        ev["end_datetime"] = end
-    return ev
-
-
-def parse(*raw):
-    resolver = StoreResolver(StoreRegistry({"ignore": {"names": [], "external": []}, "stores": []}))
-    return locator_ravensburger.parse_events(list(raw), resolver)
-
-
-class RavensburgerVenueZoneTests(unittest.TestCase):
-    """Spanish store, event in another zone: the typed time is Madrid time."""
-
-    def test_new_york_zone_on_a_spanish_store(self):
-        # Raw API, Kingdom Wargames: 02:00Z, America/New_York = Friday 21:00 there.
-        [e] = parse(rv("2026-11-21T02:00:00+00:00", "America/New_York"))
-        self.assertEqual(e["datetime_start"], "2026-11-20T21:00:00+01:00")
-        self.assertEqual(e["datetime_start_source"], "2026-11-21T03:00:00+01:00")
-        self.assertIs(e["time_corrected"], True)
-
-    def test_port_of_spain_and_end_time(self):
-        # Legadoxtudio: Sunday 15:00Z in Port of Spain (UTC-4) = 11:00 there.
-        [e] = parse(rv("2026-11-22T15:00:00+00:00", "America/Port_of_Spain", end="2026-11-22T19:00:00+00:00"))
-        self.assertEqual(e["datetime_start"], "2026-11-22T11:00:00+01:00")
-        self.assertEqual(e["datetime_end"], "2026-11-22T15:00:00+01:00")
-        self.assertEqual(e["datetime_start_source"], "2026-11-22T16:00:00+01:00")
-
-    def test_madrid_and_same_clock_zones_are_untouched(self):
-        for zone in ("Europe/Madrid", "Europe/Paris", None):
-            [e] = parse(rv("2026-11-20T17:00:00+00:00", zone))
-            self.assertEqual(e["datetime_start"], "2026-11-20T18:00:00+01:00", zone)
-            self.assertNotIn("time_corrected", e)
-            self.assertNotIn("datetime_start_source", e)
-
-    def test_store_outside_spain_is_untouched(self):
-        [e] = parse(rv("2026-11-21T02:00:00+00:00", "America/New_York", country="US"))
-        self.assertEqual(e["datetime_start"], "2026-11-21T03:00:00+01:00")
-        self.assertNotIn("time_corrected", e)
-
-    def test_not_touched_again_by_the_bandai_rule(self):
-        [e] = parse(rv("2026-11-21T02:00:00+00:00", "America/New_York"))
-        self.assertFalse(correct_start_time(e))
-
-    def test_wall_clock_helper(self):
-        self.assertEqual(venue_wall_clock("2026-11-24T22:30:00Z", "America/New_York"), "2026-11-24T17:30:00+01:00")
-        self.assertEqual(venue_wall_clock("2026-11-24T22:30:00Z", "Not/AZone"), "2026-11-24T23:30:00+01:00")
-        # Summer: New York 21:00 EDT → Madrid 21:00 CEST.
-        self.assertEqual(venue_wall_clock("2026-07-03T01:00:00Z", "America/New_York"), "2026-07-02T21:00:00+02:00")
 
 
 if __name__ == "__main__":

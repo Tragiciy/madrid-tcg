@@ -11,7 +11,7 @@ from typing import Optional
 from shared.cities import City, default as default_city
 from shared.locator_common import (
     TZ, StoreResolver, for_each_city, lookback_start, make_event, request_json, store_hint,
-    session, to_madrid_iso, venue_wall_clock, window,
+    session, to_madrid_iso, window,
 )
 
 logger = logging.getLogger(__name__)
@@ -54,30 +54,6 @@ def _fetch_events(sess, city: City) -> list[dict]:
     return upcoming + [ev for ev in past if ev["id"] not in seen]
 
 
-def event_times(ev: dict) -> tuple[Optional[str], Optional[str], Optional[str]]:
-    """(start, end, source_start) in Madrid time.
-
-    A few Spanish stores' events carry an American `timezone` (the
-    organizer account's): the API then stores their typed time as New York
-    or Port of Spain time — Kingdom Wargames' Friday 21:00 arrives as
-    Saturday 03:00 Madrid. For a store in Spain whose event zone is another
-    one, the wall-clock time in that zone is read as Madrid time.
-    source_start is what the source said, set only when the time changed
-    (Europe/Paris, same clock as Madrid, changes nothing).
-    """
-    raw_start, raw_end = ev.get("start_datetime") or "", ev.get("end_datetime") or ""
-    start = to_madrid_iso(raw_start)
-    end = to_madrid_iso(raw_end) if not ev.get("is_end_datetime_estimated") else None
-    zone = ev.get("timezone")
-    country = ((ev.get("store") or {}).get("country") or "").upper()
-    if not start or country != "ES" or not zone or zone == "Europe/Madrid":
-        return start, end, None
-    fixed = venue_wall_clock(raw_start, zone)
-    if not fixed or fixed == start:
-        return start, end, None
-    return fixed, (venue_wall_clock(raw_end, zone) if end else None), start
-
-
 def parse_events(raw_events: list[dict], resolver: StoreResolver,
                  city: Optional[City] = None) -> list[dict]:
     """Events of one city's search (default: the default city)."""
@@ -89,7 +65,7 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver,
         if (ev.get("event_status") or "").upper() in ("CANCELED", "CANCELLED"):
             continue
         store_info = ev.get("store") or {}
-        start, end, source_start = event_times(ev)
+        start = to_madrid_iso(ev.get("start_datetime") or "")
         if not store_info.get("name") or not start or not ev.get("name"):
             continue
         address = store_info.get("full_address") or ev.get("full_address") or ""
@@ -99,13 +75,14 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver,
         if store is StoreResolver.SKIP:
             continue
         finished = datetime.fromisoformat(start) <= datetime.now(TZ)
-        event = make_event(
+        out.append(make_event(
             title=ev["name"],
             store=store,
             store_address=address,
             game=GAME,
             start_iso=start,
-            end_iso=end,
+            end_iso=to_madrid_iso(ev.get("end_datetime") or "")
+            if not ev.get("is_end_datetime_estimated") else None,
             source_event_id=f"{SOURCE}:{ev['id']}",
             source_url=f"https://tcg.ravensburgerplay.com/events/{ev['id']}",
             format_hint=(ev.get("gameplay_format") or {}).get("name") or "",
@@ -116,12 +93,7 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver,
             if finished else None,
             hint=store_hint(SOURCE, store_info.get("id"), store_info["name"], address,
                             store_info.get("latitude"), store_info.get("longitude"), city=city),
-        )
-        if source_start:
-            # Same fields as pipeline/time_fixes.py (shown as "Source says …").
-            event["datetime_start_source"] = source_start
-            event["time_corrected"] = True
-        out.append(event)
+        ))
     return out
 
 
