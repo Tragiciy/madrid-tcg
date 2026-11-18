@@ -27,6 +27,24 @@
       }
     },
     {
+      "id": "cartorium",
+      "name": "Cartorium",
+      "city": "barcelona",
+      "address": "Carrer Victor Català, 1, bajos, 3, Parets del Vallés, Barcelona, 08150, Spain",
+      "lat": 41.57335,
+      "lng": 2.23745,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-18",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:24211"
+        ]
+      }
+    },
+    {
       "id": "d20-jocs",
       "name": "D20 Jocs",
       "city": "barcelona",
@@ -2140,6 +2158,24 @@
           "pokemon:04a61988-c53d-4909-ba59-3b56a459f9a9",
           "ravensburger:16759",
           "wizards:18454"
+        ]
+      }
+    },
+    {
+      "id": "goblin-trader-madrid-sur",
+      "name": "Goblin Trader - Madrid Sur",
+      "city": "madrid",
+      "address": "16 C. de Enrique Fuentes, Madrid, MD, 28026, Spain",
+      "lat": 40.3862453,
+      "lng": -3.711870300000001,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-18",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:18010"
         ]
       }
     },
@@ -4838,6 +4874,24 @@
           "bandai:19125",
           "playriftbound:019fbd07-b8a3-702d-9761-3938f44bf05c",
           "ravensburger:5448"
+        ]
+      }
+    },
+    {
+      "id": "distrito-zero-zaragoza",
+      "name": "DISTRITO ZERO ZARAGOZA",
+      "city": "zaragoza",
+      "address": "C. DE SAN JUAN DE LA CRUZ, 19, 50006 ZARAGOZA, SPAIN",
+      "lat": 41.641164,
+      "lng": -0.891132,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-18",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:c9cd883d-1dc7-4423-92bd-f94fb3e1a9e6"
         ]
       }
     },
