@@ -813,6 +813,16 @@ a:hover { color: var(--c-link-hover); }
 .more-all { background: none; border: none; border-radius: var(--r-xs); color: var(--c-link); font-size: var(--fs-sm); font-weight: var(--fw-bold); min-height: var(--tap); text-decoration: underline; }
 .more-all:hover { color: var(--c-link-hover); }
 
+/* Corrected start time: a small mark on the card, the source's time by
+   the source link. */
+.time-fix { color: var(--c-text-muted); display: inline-flex; margin-left: var(--sp-1); vertical-align: -.05em; }
+.time-fix .ico { height: var(--fs-xs); width: var(--fs-xs); }
+.evx-time .time-fix .ico { height: var(--fs-md); width: var(--fs-md); }
+/* Narrow time column: the mark sits under the time (inline in the week grid). */
+.ev:not(.ev-compact) .time-fix { display: flex; margin: var(--sp-1) 0 0; }
+.src-note { align-items: center; color: var(--c-text-muted); display: inline-flex; font-size: var(--fs-sm); font-weight: var(--fw-strong); gap: var(--sp-1); }
+.src-note .ico { height: var(--icon); width: var(--icon); }
+p.src-note { display: flex; margin: calc(-1 * var(--sp-2)) 0 var(--sp-4) var(--sp-5); }
 .src { align-items: center; color: var(--c-link); display: inline-flex; font-size: var(--fs-sm); font-weight: var(--fw-bold); gap: var(--sp-1); text-decoration: none; }
 .src:hover { text-decoration: underline; }
 .src-row {

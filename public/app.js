@@ -590,6 +590,7 @@ const ICONS = {
   down:   '<path d="M6 10l6 6 6-6"/>',
   close:  '<path d="M6 6l12 12M18 6L6 18"/>',
   file:   '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/>',
+  clock:  '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
 };
 function icon(name, cls = '') {
   return `<svg class="ico${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name]}</svg>`;
@@ -1777,7 +1778,7 @@ function app() {
       const aria = compact ? ' aria-haspopup="dialog"'
         : ` aria-expanded="${active}"` + (active ? ` aria-controls="${this.detailId(key)}"` : '');
       return `<article class="${cls}" data-key="${esc(key)}">`
-        + `<div class="ev-time">${esc(this.cardTime(e))}</div>`
+        + `<div class="ev-time">${esc(this.cardTime(e))}${this.timeFixIcon(e)}</div>`
         + `<div class="ev-main">`
         +   `<h4 class="ev-title"><button type="button" class="ev-open" data-act="open"${aria}>${esc(e.title)}</button></h4>`
         +   this.storeLine(e)
@@ -1838,6 +1839,26 @@ function app() {
         + `</aside>`;
     },
 
+    // The pipeline corrected this start time (pipeline/time_fixes.py):
+    // "Source says 05:00", shown next to the source link; '' otherwise.
+    sourceTimeNote(e) {
+      return e && e.time_corrected && e.datetime_start_source
+        ? 'Source says ' + this.formatTime(e.datetime_start_source) : '';
+    },
+
+    sourceNoteHtml(e, { block = false } = {}) {
+      const note = this.sourceTimeNote(e);
+      return note ? `<${block ? 'p' : 'span'} class="src-note">${icon('clock')}${esc(note)}</${block ? 'p' : 'span'}>` : '';
+    },
+
+    // On the card: only the corrected time and this small mark.
+    timeFixIcon(e) {
+      const note = this.sourceTimeNote(e);
+      if (!note) return '';
+      const label = `Time corrected. ${note} (a missing PM)`;
+      return `<span class="time-fix" role="img" aria-label="${esc(label)}" title="${esc(label)}">${icon('clock')}</span>`;
+    },
+
     sourceHtml(e, { row = false } = {}) {
       const url = safeUrl(e.source_url);
       if (!url) return '';
@@ -1855,7 +1876,7 @@ function app() {
       const cal = buildGoogleCalendarUrl(e);
       return `<section class="evx ${this.getGameClass(e.game)}${fav ? ' is-saved' : ''}" id="${this.detailId(key)}" data-key="${esc(key)}" aria-label="${esc(e.title)}">`
         + `<header class="evx-head" data-act="close">`
-        +   `<div class="evx-time">${esc(this.cardTime(e))}</div>`
+        +   `<div class="evx-time">${esc(this.cardTime(e))}${this.timeFixIcon(e)}</div>`
         +   `<div class="ev-main">`
         +     `<h4 class="ev-title evx-title" tabindex="-1">${esc(e.title)}</h4>`
         +     this.storeLine(e, { full: true })
@@ -1872,7 +1893,7 @@ function app() {
         +   `<a class="btn" href="${esc(this.eventDirectionsUrl(e))}" target="_blank" rel="noopener">${icon('pin')}Directions</a>`
         +   `<button type="button" class="btn${fav ? ' is-on' : ''}" data-act="fav" aria-pressed="${fav}">${icon('star')}${fav ? 'Saved' : 'Save'}</button>`
         +   `<button type="button" class="btn" data-act="share">${icon('share')}Share</button>`
-        +   `<span class="sp"></span>${this.sourceHtml(e)}`
+        +   `<span class="sp"></span>${this.sourceNoteHtml(e)}${this.sourceHtml(e)}`
         + `</footer>`
         + `</section>`;
     },
@@ -1885,6 +1906,7 @@ function app() {
         + `<div class="ev-tags">${this.tagsHtml(e)}</div>`
         + this.factsHtml(e)
         + this.sourceHtml(e, { row: true })
+        + this.sourceNoteHtml(e, { block: true })
         + this.moreHtml(e);
     },
 
