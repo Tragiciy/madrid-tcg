@@ -18,25 +18,17 @@ var GAME_SHORT = {
 // stores there.
 var STORE_META = {};
 
+// Games with their own colour (the 8 busiest; styles.css section 1). Any
+// other game gets 'game-other', the warm neutral.
 var GAME_CLASS_MAP = {
-  'Magic: The Gathering': 'game-mtg',
-  'Star Wars: Unlimited': 'game-starwars',
-  'Riftbound':            'game-riftbound',
-  'One Piece':            'game-onepiece',
-  'Pokémon':              'game-pokemon',
-  'Lorcana':              'game-lorcana',
-  'Digimon':              'game-digimon',
-  'Yu-Gi-Oh!':            'game-yugioh',
-  'Flesh and Blood':      'game-fab',
-  'Final Fantasy TCG':    'game-finalfantasy',
-  'Weiß Schwarz':         'game-weiss',
-  'Naruto Mythos':        'game-naruto',
-  'Cyberpunk TCG':        'game-cyberpunk',
-  'Gundam Card Game':     'game-gundam',
-  'Dragon Ball Fusion World':  'game-dbfw',
-  'Dragon Ball Super Masters': 'game-dbmasters',
-  'My Little Pony':       'game-mlp',
-  'Palworld':             'game-palworld',
+  'Magic: The Gathering':     'game-mtg',
+  'One Piece':                'game-onepiece',
+  'Pokémon':                  'game-pokemon',
+  'Riftbound':                'game-riftbound',
+  'Lorcana':                  'game-lorcana',
+  'Digimon':                  'game-digimon',
+  'Gundam Card Game':         'game-gundam',
+  'Dragon Ball Fusion World': 'game-dbfw',
 };
 
 // Map view (Leaflet, loaded on first open). Tiles are the standard

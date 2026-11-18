@@ -272,7 +272,7 @@ const gameColors = new Map();
 function gameColor(game) {
   if (!gameColors.has(game)) {
     const probe = document.createElement('span');
-    probe.className = GAME_CLASS_MAP[game] || 'game-unknown';
+    probe.className = GAME_CLASS_MAP[game] || 'game-other';
     probe.style.display = 'none';
     document.body.appendChild(probe);
     const c = getComputedStyle(probe).getPropertyValue('--card-accent').trim();
@@ -591,6 +591,7 @@ const ICONS = {
   close:  '<path d="M6 6l12 12M18 6L6 18"/>',
   file:   '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/>',
   clock:  '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  warn:   '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.5M12 16.2v.3"/>',
 };
 function icon(name, cls = '') {
   return `<svg class="ico${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name]}</svg>`;
@@ -1839,24 +1840,31 @@ function app() {
         + `</aside>`;
     },
 
-    // The pipeline corrected this start time (pipeline/time_fixes.py):
-    // "Source says 05:00", shown next to the source link; '' otherwise.
+    // Notes about a start time, shown next to the source link ('' when none):
+    // corrected by the pipeline (pipeline/time_fixes.py, time_corrected) →
+    // what the source said; kept but doubtful (time_uncertain) → a warning.
     sourceTimeNote(e) {
-      return e && e.time_corrected && e.datetime_start_source
-        ? 'Source says ' + this.formatTime(e.datetime_start_source) : '';
+      if (!e) return '';
+      if (e.time_corrected && e.datetime_start_source) return 'Source says ' + this.formatTime(e.datetime_start_source);
+      if (e.time_uncertain) return 'Time may be wrong · Source says ' + this.formatTime(e.datetime_start);
+      return '';
     },
 
     sourceNoteHtml(e, { block = false } = {}) {
       const note = this.sourceTimeNote(e);
-      return note ? `<${block ? 'p' : 'span'} class="src-note">${icon('clock')}${esc(note)}</${block ? 'p' : 'span'}>` : '';
+      if (!note) return '';
+      const tag = block ? 'p' : 'span';
+      const uncertain = !e.time_corrected;
+      return `<${tag} class="src-note${uncertain ? ' is-uncertain' : ''}">${icon(uncertain ? 'warn' : 'clock')}${esc(note)}</${tag}>`;
     },
 
-    // On the card: only the corrected time and this small mark.
+    // On the card: only the time and this small mark.
     timeFixIcon(e) {
       const note = this.sourceTimeNote(e);
       if (!note) return '';
-      const label = `Time corrected. ${note} (a missing PM)`;
-      return `<span class="time-fix" role="img" aria-label="${esc(label)}" title="${esc(label)}">${icon('clock')}</span>`;
+      const uncertain = !e.time_corrected;
+      const label = uncertain ? note.replace(' · ', '. ') : `Time corrected. ${note} (a missing PM)`;
+      return `<span class="time-fix${uncertain ? ' is-uncertain' : ''}" role="img" aria-label="${esc(label)}" title="${esc(label)}">${icon(uncertain ? 'warn' : 'clock')}</span>`;
     },
 
     sourceHtml(e, { row = false } = {}) {
@@ -2303,7 +2311,7 @@ function app() {
     gameLabel,
 
     getGameClass(game) {
-      return GAME_CLASS_MAP[game] || 'game-unknown';
+      return GAME_CLASS_MAP[game] || 'game-other';
     },
 
     /* ── Near me ───────────────────────────────────────────────────── */

@@ -177,6 +177,7 @@
 
   /* Status */
   --c-danger-text: #B42318;
+  --c-warn-ink: #92400E;               /* "time may be wrong" mark and note (7.1:1 on white) */
 
   /* Map */
   --c-pin-center: #FFFFFF;
@@ -198,7 +199,13 @@
 
 
   /* Redesign v2 (design-refs/mockup): Day view, chips, sheets */
-  --c-sel: #12706B;                    /* selected day, format chip, CTA */
+  --c-sel: #12706B;                    /* teal: selected day, view switch, CTA buttons */
+  /* Selected filter chips (format, type, time, distance, preset): ink, not
+     teal, so a selected chip never reads as the Riftbound pill. */
+  --c-chip-sel: #2B2118;
+  --c-on-chip-sel: #FFFFFF;
+  --c-on-chip-sel-soft: rgba(255, 255, 255, .85);
+  --c-chip-sel-hover: #4A3F33;
   --c-on-sel: #FFFFFF;
   --c-on-sel-soft: rgba(255, 255, 255, .9);
   --c-sel-track: rgba(255, 255, 255, .3);
@@ -284,55 +291,40 @@
 }
 
 /* ── 1. Game colours ──────────────────────────────────────────────
-   Deep, slightly retro fills with white ink: every one ≥ 4.6:1 with
-   white text, and every pair ≥ 19 ΔE76 apart (closest: Lorcana /
-   Yu-Gi-Oh). Coral and gold belong to the interface. A game's colour
-   appears once per card: the fill of its pill. */
+   Fixed by hand, not derived from volume. Own colours for the 8 games
+   with the most events (all cities, W46–W53 2026: Magic, One Piece,
+   Pokémon, Riftbound, Lorcana, Digimon, Gundam, Dragon Ball FW); every
+   other game gets the one warm neutral, and its name stays as text.
+   All 36 pairs of these 9 fills are >= 20 apart in CIEDE2000 (closest:
+   Pokémon / Gundam 20.7) and white text is >= 4.7:1 on each. A game's
+   colour appears once per card: the fill of its pill (or its dot).
+   Gundam is a blue slate and the neutral a warm grey: they differ in
+   hue (289° vs 89°), not just in lightness. */
 :root {
-  --game-mtg:          #7A4B2E;  /* card-back brown */
-  --game-onepiece:     #B8202E;  /* crimson */
-  --game-riftbound:    #0F7F8F;  /* deep teal — apart from Pokémon blue */
-  --game-pokemon:      #2F5FC4;  /* royal blue */
-  --game-lorcana:      #7446C2;  /* purple */
-  --game-digimon:      #2E7D4F;  /* green */
-  --game-gundam:       #4F5D75;  /* slate */
-  --game-cyberpunk:    #B0227A;  /* magenta */
-  --game-dbfw:         #A65A00;  /* amber brown */
-  --game-dbmasters:    #361917;  /* espresso — apart from Magic brown */
-  --game-starwars:     #22324F;  /* navy */
-  --game-fab:          #8E1F2F;  /* burgundy */
-  --game-yugioh:       #8A3FA0;  /* plum */
-  --game-mlp:          #5A1643;  /* plum — apart from Cyberpunk magenta */
-  --game-palworld:     #8C5467;  /* mauve — apart from Riftbound */
-  --game-finalfantasy: #14145D;  /* midnight — apart from Pokémon */
-  --game-weiss:        #1D871D;  /* green — apart from the greys */
-  --game-naruto:       #6B7A2A;  /* olive */
-  --game-unknown:      #6E675C;  /* warm grey */
-  --game-ink:          #FFFFFF;  /* text on every game fill */
+  --game-mtg:       #583725;  /* card-back brown */
+  --game-onepiece:  #B81F2E;  /* crimson */
+  --game-pokemon:   #0065D3;  /* royal blue */
+  --game-riftbound: #0F7F8F;  /* deep teal */
+  --game-lorcana:   #8338C3;  /* purple */
+  --game-digimon:   #2E7D4F;  /* green */
+  --game-gundam:    #343C62;  /* blue slate */
+  --game-dbfw:      #A65A00;  /* amber */
+  --game-other:     #777165;  /* warm neutral: every other game, and unknown */
+  --game-ink:       #FFFFFF;  /* text on every game fill */
 }
 
 /* Game classes (config.js GAME_CLASS_MAP) pick a row of the table.
-   app.js reads --card-accent from here for the map pins and legend. */
-:root { --card-accent: var(--game-unknown); --card-ink: var(--game-unknown-ink, var(--game-ink)); }
-.game-mtg          { --card-accent: var(--game-mtg);          --card-ink: var(--game-mtg-ink, var(--game-ink)); }
-.game-onepiece     { --card-accent: var(--game-onepiece);     --card-ink: var(--game-onepiece-ink, var(--game-ink)); }
-.game-riftbound    { --card-accent: var(--game-riftbound);    --card-ink: var(--game-riftbound-ink, var(--game-ink)); }
-.game-pokemon      { --card-accent: var(--game-pokemon);      --card-ink: var(--game-pokemon-ink, var(--game-ink)); }
-.game-lorcana      { --card-accent: var(--game-lorcana);      --card-ink: var(--game-lorcana-ink, var(--game-ink)); }
-.game-digimon      { --card-accent: var(--game-digimon);      --card-ink: var(--game-digimon-ink, var(--game-ink)); }
-.game-gundam       { --card-accent: var(--game-gundam);       --card-ink: var(--game-gundam-ink, var(--game-ink)); }
-.game-cyberpunk    { --card-accent: var(--game-cyberpunk);    --card-ink: var(--game-cyberpunk-ink, var(--game-ink)); }
-.game-dbfw         { --card-accent: var(--game-dbfw);         --card-ink: var(--game-dbfw-ink, var(--game-ink)); }
-.game-dbmasters    { --card-accent: var(--game-dbmasters);    --card-ink: var(--game-dbmasters-ink, var(--game-ink)); }
-.game-starwars     { --card-accent: var(--game-starwars);     --card-ink: var(--game-starwars-ink, var(--game-ink)); }
-.game-fab          { --card-accent: var(--game-fab);          --card-ink: var(--game-fab-ink, var(--game-ink)); }
-.game-yugioh       { --card-accent: var(--game-yugioh);       --card-ink: var(--game-yugioh-ink, var(--game-ink)); }
-.game-mlp          { --card-accent: var(--game-mlp);          --card-ink: var(--game-mlp-ink, var(--game-ink)); }
-.game-palworld     { --card-accent: var(--game-palworld);     --card-ink: var(--game-palworld-ink, var(--game-ink)); }
-.game-finalfantasy { --card-accent: var(--game-finalfantasy); --card-ink: var(--game-finalfantasy-ink, var(--game-ink)); }
-.game-weiss        { --card-accent: var(--game-weiss);        --card-ink: var(--game-weiss-ink, var(--game-ink)); }
-.game-naruto       { --card-accent: var(--game-naruto);       --card-ink: var(--game-naruto-ink, var(--game-ink)); }
-.game-unknown      { --card-accent: var(--game-unknown);      --card-ink: var(--game-unknown-ink, var(--game-ink)); }
+   app.js reads --card-accent from here for the map pins. */
+:root { --card-accent: var(--game-other); --card-ink: var(--game-ink); }
+.game-mtg       { --card-accent: var(--game-mtg); }
+.game-onepiece  { --card-accent: var(--game-onepiece); }
+.game-pokemon   { --card-accent: var(--game-pokemon); }
+.game-riftbound { --card-accent: var(--game-riftbound); }
+.game-lorcana   { --card-accent: var(--game-lorcana); }
+.game-digimon   { --card-accent: var(--game-digimon); }
+.game-gundam    { --card-accent: var(--game-gundam); }
+.game-dbfw      { --card-accent: var(--game-dbfw); }
+.game-other     { --card-accent: var(--game-other); }
 
 /* ════════════════════════════════════════════════════════════════
    2. COMPONENTS — tokens only (var(--…)): no raw colours, sizes,
@@ -822,6 +814,7 @@ a:hover { color: var(--c-link-hover); }
 .ev:not(.ev-compact) .time-fix { display: flex; margin: var(--sp-1) 0 0; }
 .src-note { align-items: center; color: var(--c-text-muted); display: inline-flex; font-size: var(--fs-sm); font-weight: var(--fw-strong); gap: var(--sp-1); }
 .src-note .ico { height: var(--icon); width: var(--icon); }
+.time-fix.is-uncertain, .src-note.is-uncertain { color: var(--c-warn-ink); }
 p.src-note { display: flex; margin: calc(-1 * var(--sp-2)) 0 var(--sp-4) var(--sp-5); }
 .src { align-items: center; color: var(--c-link); display: inline-flex; font-size: var(--fs-sm); font-weight: var(--fw-bold); gap: var(--sp-1); text-decoration: none; }
 .src:hover { text-decoration: underline; }
@@ -949,14 +942,15 @@ p.src-note { display: flex; margin: calc(-1 * var(--sp-2)) 0 var(--sp-4) var(--s
 .fchip-sub { color: var(--c-text-muted); font-size: var(--fs-xs); font-weight: var(--fw-medium); }
 .fchip:hover { border-color: var(--c-btn-hover-border); }
 .fchip:active { transform: scale(var(--press-scale)); }
-.fchip.on, .fchip.on:hover { background: var(--c-sel); border-color: var(--c-sel); color: var(--c-on-sel); }
-.fchip.on small, .fchip.on .fchip-sub { color: var(--c-on-sel-soft); }
+.fchip.on { background: var(--c-chip-sel); border-color: var(--c-chip-sel); color: var(--c-on-chip-sel); }
+.fchip.on:hover { background: var(--c-chip-sel-hover); border-color: var(--c-chip-sel-hover); color: var(--c-on-chip-sel); }
+.fchip.on small, .fchip.on .fchip-sub { color: var(--c-on-chip-sel-soft); }
 .fchip.off, .fchip:disabled { background: transparent; border-style: dashed; color: var(--c-chip-off-text); cursor: default; transform: none; }
 .fchip.off:hover, .fchip:disabled:hover { border-color: var(--c-border); }
 .dots { display: inline-flex; }
 .dots i { background: var(--card-accent); border-radius: var(--r-dot); box-shadow: 0 0 0 var(--sp-0) var(--c-dot-ring); height: var(--chip-dot-sm); width: var(--chip-dot-sm); }
 .dots i + i { margin-left: calc(-1 * var(--sp-1)); }
-.fchip.on .dots i { box-shadow: 0 0 0 var(--sp-0) var(--c-sel); }
+.fchip.on .dots i { box-shadow: 0 0 0 var(--sp-0) var(--c-chip-sel); }
 
 .rowsel {
   align-items: center;
@@ -983,10 +977,10 @@ p.src-note { display: flex; margin: calc(-1 * var(--sp-2)) 0 var(--sp-4) var(--s
 .check.is-zero span { color: var(--c-text-muted); }
 
 .preset { align-items: center; background: var(--c-surface); border: var(--bw) solid var(--c-border); border-radius: var(--r-chip); display: inline-flex; overflow: hidden; }
-.preset.on { border-color: var(--c-sel); }
+.preset.on { border-color: var(--c-chip-sel); box-shadow: 0 0 0 var(--bw) var(--c-chip-sel); }
 .preset-apply, .preset-x { background: none; border: none; font-size: var(--fs-btn); font-weight: var(--fw-bold); min-height: var(--ctl-h); }
 .preset-apply { padding: 0 var(--sp-2) 0 var(--sp-4); }
-.preset.on .preset-apply { color: var(--c-brand); }
+.preset.on .preset-apply { color: var(--c-text); }
 .preset-x { color: var(--c-text-muted); min-width: var(--ctl-h-sm); }
 .preset-x:hover, .preset-apply:hover { background: var(--c-hover); color: var(--c-text); }
 .preset-x[aria-pressed="true"] { color: var(--c-fav); }
