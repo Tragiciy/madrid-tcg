@@ -2158,6 +2158,30 @@ function app() {
       return datePart + ' · ' + weekday;
     },
 
+    // Notes about a start time, for the detail panel ('' when none):
+    // corrected by the pipeline (pipeline/time_fixes.py) → what the source
+    // said; kept but doubtful (time_uncertain) → a warning and the time.
+    sourceTimeNote(e) {
+      if (!e) return '';
+      if (e.time_corrected && e.datetime_start_source) return 'Source says ' + this.formatTime(e.datetime_start_source);
+      if (e.time_uncertain) return 'Time may be wrong · Source says ' + this.formatTime(e.datetime_start);
+      return '';
+    },
+
+    // Small mark next to such a time on a card (no text on the card).
+    timeFixIcon(e) {
+      const note = this.sourceTimeNote(e);
+      if (!note) return '';
+      const uncertain = !e.time_corrected;
+      const label = uncertain ? note.replace(' · ', '. ') : `Time corrected. ${note} (a missing PM)`;
+      const glyph = uncertain
+        ? `<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.5M12 16.2v.3"/>`
+        : `<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`;
+      return `<span class="time-fix${uncertain ? ' is-uncertain' : ''}" role="img" aria-label="${label}" title="${label}">`
+        + `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">`
+        + glyph + `</svg></span>`;
+    },
+
     formatTimeRange(e) {
       if (!e || !e.datetime_start) return '';
       const start = this.formatTime(e.datetime_start);
@@ -2308,7 +2332,7 @@ function app() {
         out.push(
           `<div class="ev-card ${gameClass}${past ? ' is-past' : ''}${isFav ? ' is-favorite' : ''}" data-event-key="${esc(eventKey(e))}">` +
             `<div class="ev-card-top">` +
-              `<div class="ev-time">${esc(time)}</div>` +
+              `<div class="ev-time">${esc(time)}${this.timeFixIcon(e)}</div>` +
               `<div class="ev-store-top${this.isSelected('store', e.store) ? ' active' : ''}" data-filter="store" data-value="${esc(e.store)}" title="${esc(e.store)}">${esc(e.store)}</div>` +
               (this.nearMe && this.storeDistanceKm(e.store) !== null
                 ? `<div class="ev-distance">${esc(this.storeDistanceLabel(e.store))}</div>` : '') +

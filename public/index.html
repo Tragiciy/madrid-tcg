@@ -485,7 +485,7 @@
                        :class="[ getGameClass(e.game), isEventPast(e) ? 'is-past' : '', isFavorite(e) ? 'is-favorite' : '' ]"
                        @click="openEvent(e)">
                     <div class="ev-card-top">
-                      <div class="ev-time" x-text="formatTime(e.datetime_start)"></div>
+                      <div class="ev-time"><span x-text="formatTime(e.datetime_start)"></span><span x-html="timeFixIcon(e)"></span></div>
                       <div class="ev-store-top"
                            :class="{ active: isSelected('store', e.store) }"
                            @click.stop="toggleFilter('store', e.store)"
@@ -642,6 +642,7 @@
           </div>
         </div>
         <a class="btn" :href="safeUrl(selectedEvent?.source_url)" target="_blank" rel="noopener" x-show="safeUrl(selectedEvent?.source_url)" @click.stop>Open Source</a>
+        <span class="panel-source-time" x-show="sourceTimeNote(selectedEvent)" x-text="sourceTimeNote(selectedEvent)"></span>
         <button class="btn" type="button" @click.stop="shareEvent(selectedEvent)">Share</button>
         <button class="btn fav-btn-panel"
                 :class="{ 'is-fav': isFavorite(selectedEvent) }"

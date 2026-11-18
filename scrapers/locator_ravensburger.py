@@ -7,6 +7,7 @@ per city (shared/cities.py).
 import logging
 from datetime import datetime
 from typing import Optional
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from shared.cities import City, default as default_city
 from shared.locator_common import (
@@ -54,6 +55,28 @@ def _fetch_events(sess, city: City) -> list[dict]:
     return upcoming + [ev for ev in past if ev["id"] not in seen]
 
 
+def time_uncertain(ev: dict, start_iso: str) -> bool:
+    """A Spanish store's event whose `timezone` is another clock.
+
+    Some organizer accounts are set to an American zone (America/New_York,
+    America/Port_of_Spain) and the stored time follows it: Kingdom Wargames
+    shows Saturday 03:00. Re-reading it in Madrid is not reliable either —
+    Metrópolis Center's own description of event 1009899 says 16:30 while
+    the raw time is 20:30 and the re-read one 14:30 — so the time is kept as
+    the source gives it and flagged. Zones with Madrid's clock (Europe/Paris)
+    are fine.
+    """
+    zone = ev.get("timezone")
+    country = ((ev.get("store") or {}).get("country") or "").upper()
+    if country != "ES" or not zone or zone == "Europe/Madrid":
+        return False
+    try:
+        at = datetime.fromisoformat(start_iso)
+        return at.astimezone(ZoneInfo(zone)).utcoffset() != at.astimezone(TZ).utcoffset()
+    except (ValueError, ZoneInfoNotFoundError):
+        return False
+
+
 def parse_events(raw_events: list[dict], resolver: StoreResolver,
                  city: Optional[City] = None) -> list[dict]:
     """Events of one city's search (default: the default city)."""
@@ -75,7 +98,7 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver,
         if store is StoreResolver.SKIP:
             continue
         finished = datetime.fromisoformat(start) <= datetime.now(TZ)
-        out.append(make_event(
+        event = make_event(
             title=ev["name"],
             store=store,
             store_address=address,
@@ -93,7 +116,10 @@ def parse_events(raw_events: list[dict], resolver: StoreResolver,
             if finished else None,
             hint=store_hint(SOURCE, store_info.get("id"), store_info["name"], address,
                             store_info.get("latitude"), store_info.get("longitude"), city=city),
-        ))
+        )
+        if time_uncertain(ev, start):
+            event["time_uncertain"] = True   # shown as "Time may be wrong · Source says …"
+        out.append(event)
     return out
 
 
