@@ -1826,7 +1826,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:30732"
+          "bandai:30732",
+          "wizards:24230"
         ]
       }
     },
@@ -2155,6 +2156,7 @@
           "bandai:17396",
           "melee:18191",
           "playriftbound:01a03f1c-e1a2-7644-9b8c-e64898f002aa",
+          "pokemon:02987e97-a5db-4d49-8158-3899f1370f0b",
           "pokemon:04a61988-c53d-4909-ba59-3b56a459f9a9",
           "ravensburger:16759",
           "wizards:18454"
@@ -3326,10 +3328,13 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "TSUKI CENTER"
+        ],
         "external": [
           "bandai:25774",
           "playriftbound:019ffbdb-0166-746b-a18d-1c5fe415891f",
+          "pokemon:a395e6f4-cf7a-4c88-bd20-de8429a60519",
           "ravensburger:53232",
           "wizards:24073"
         ]
@@ -3389,8 +3394,11 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "VORTEX TCG & GAMES"
+        ],
         "external": [
+          "bandai:31318",
           "wizards:23981"
         ]
       }
@@ -3410,6 +3418,7 @@
         "names": [],
         "external": [
           "bandai:21396",
+          "gem:wargen-wargames",
           "melee:10783",
           "playriftbound:019fb060-8d64-75b3-93ee-b0b7b51dea77",
           "ravensburger:5310",
@@ -4145,6 +4154,7 @@
         "external": [
           "bandai:16121",
           "playriftbound:019fc9e0-b064-74c3-bd13-35cb44589b34",
+          "pokemon:026a8a61-ef36-4fe4-947e-fee16cba3568",
           "pokemon:5500b4f4-c03b-479c-93e8-db554d2cf4b7"
         ]
       }
@@ -4437,6 +4447,24 @@
           "pokemon:075f44e9-de61-4faa-bf44-4601c4058402",
           "pokemon:16db42d6-78ed-4e36-8296-376f994c748e",
           "wizards:11621"
+        ]
+      }
+    },
+    {
+      "id": "dcomic-valencia",
+      "name": "Dcomic Valencia",
+      "city": "valencia",
+      "address": "Carrer del Dr. García Donato, 7, Algirós, 46021 València, Valencia, Espagne",
+      "lat": 39.4767018,
+      "lng": -0.3472405,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-19",
+      "aliases": {
+        "names": [],
+        "external": [
+          "playriftbound:01a0cf4b-5827-7b83-8abd-544feb39689c"
         ]
       }
     },
@@ -4840,6 +4868,24 @@
       }
     },
     {
+      "id": "tienda-geeklogia",
+      "name": "TIENDA GEEKLOGIA",
+      "city": "valencia",
+      "address": "31 C/ DE L'ACTOR MORA C/ ACTOR MORA 31 BAJO, VALÈNCIA, VC 46009, ES",
+      "lat": 39.486151,
+      "lng": -0.377687,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-19",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:ea322560-79d8-4c58-9b12-fda1c737b96f"
+        ]
+      }
+    },
+    {
       "id": "una-cosa-rara-tcg",
       "name": "una cosa rara tcg",
       "city": "valencia",
@@ -4889,9 +4935,12 @@
       "origin": "auto",
       "added_at": "2026-11-18",
       "aliases": {
-        "names": [],
+        "names": [
+          "Distrito Zero - Zaragoza"
+        ],
         "external": [
-          "pokemon:c9cd883d-1dc7-4423-92bd-f94fb3e1a9e6"
+          "pokemon:c9cd883d-1dc7-4423-92bd-f94fb3e1a9e6",
+          "wizards:24210"
         ]
       }
     },
