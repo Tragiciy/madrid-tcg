@@ -142,9 +142,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Doki Doki Daus"
+        ],
         "external": [
-          "pokemon:4aab910e-14e6-453b-a450-b23511f09323"
+          "pokemon:4aab910e-14e6-453b-a450-b23511f09323",
+          "wizards:20579"
         ]
       }
     },
@@ -1332,7 +1335,8 @@
         "names": [],
         "external": [
           "bandai:21636",
-          "playriftbound:019fb060-9846-7c15-a8ea-923c809f2743"
+          "playriftbound:019fb060-9846-7c15-a8ea-923c809f2743",
+          "ravensburger:42850"
         ]
       }
     },
@@ -1824,9 +1828,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "BETTOY COLECCIONISTAS"
+        ],
         "external": [
           "bandai:30732",
+          "pokemon:1b7ee1f2-bd41-40dc-b0a9-eeadad79e2d4",
           "wizards:24230"
         ]
       }
@@ -2496,9 +2503,12 @@
       "origin": "auto",
       "added_at": "2026-11-15",
       "aliases": {
-        "names": [],
+        "names": [
+          "La Guarida del vigilante"
+        ],
         "external": [
-          "bandai:9598"
+          "bandai:9598",
+          "wizards:17038"
         ]
       }
     },
@@ -3671,7 +3681,9 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "La Torre de Arcadia"
+        ],
         "external": [
           "wizards:18795"
         ]
@@ -4344,6 +4356,24 @@
       }
     },
     {
+      "id": "tokio-cantillana",
+      "name": "Tokio Cantillana",
+      "city": "sevilla",
+      "address": "1 C. Sánchez Cotán, Cantillana, AN, 41320, Spain",
+      "lat": 37.6131267,
+      "lng": -5.8245159,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-20",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:8926"
+        ]
+      }
+    },
+    {
       "id": "unchained-games",
       "name": "Unchained Games",
       "city": "sevilla",
@@ -4983,6 +5013,24 @@
           "bandai:19690",
           "ravensburger:32605",
           "wizards:20322"
+        ]
+      }
+    },
+    {
+      "id": "elrincondelcoleccionista",
+      "name": "ELRINCONDELCOLECCIONISTA",
+      "city": "zaragoza",
+      "address": "P.º DE LA INDEPENDENCIA, 24-26 CENTRO COMERCIAL, INDEPENDENCIA EL CARACOL, NIVEL -2. LOCAL 102, CASCO ANTIGUO, 50004 ZARAGOZA, SPAIN",
+      "lat": 41.650291,
+      "lng": -0.883504,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-20",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:7e46b3ce-2cde-4128-81c0-470c34bb5cb2"
         ]
       }
     },
