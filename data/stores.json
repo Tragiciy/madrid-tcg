@@ -1673,6 +1673,24 @@
       }
     },
     {
+      "id": "libreria-retuerto",
+      "name": "Libreria Retuerto",
+      "city": "bilbao",
+      "address": "Grupo Loitzaga 1 (Lonja), Barakaldo, Bk, 48900, Spain",
+      "lat": 43.28248,
+      "lng": -2.99672,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-21",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:11893"
+        ]
+      }
+    },
+    {
       "id": "mano-del-friki",
       "name": "Mano del Friki",
       "city": "bilbao",
@@ -1750,6 +1768,7 @@
         "external": [
           "bandai:2011",
           "melee:10594",
+          "playriftbound:01a0e727-818a-742a-8e8a-8a99bb18e037",
           "pokemon:238f382f-8c65-4ab1-8b9d-ca96de9d0aa2",
           "pokemon:ae0dc0e2-2db1-487b-a6ae-3de6ab2595f4",
           "ravensburger:114"
@@ -2075,7 +2094,8 @@
         ],
         "external": [
           "bandai:19123",
-          "melee:19823"
+          "melee:19823",
+          "wizards:11109"
         ]
       }
     },
@@ -2376,6 +2396,7 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
+          "JUPITER JUEGOS MADRID NORTE",
           "JUPITER MADRID NORTE",
           "Júpiter Alcobendas",
           "Júpiter Juegos"
@@ -2385,6 +2406,7 @@
           "melee:9695",
           "playriftbound:019fd809-80dc-7222-a8db-2f56684808bd",
           "pokemon:84e20a2c-de41-4729-af7f-8cfa95786591",
+          "pokemon:97c24872-827b-43a9-866a-dfdad1525ea8",
           "wizards:6154"
         ]
       }
@@ -4328,7 +4350,8 @@
         "names": [],
         "external": [
           "bandai:12317",
-          "playriftbound:01a02038-2391-72d8-b01c-32bee7427714"
+          "playriftbound:01a02038-2391-72d8-b01c-32bee7427714",
+          "wizards:18005"
         ]
       }
     },
@@ -5096,6 +5119,24 @@
           "playriftbound:019fbcd4-a624-7e2f-8dac-97c286a00fc5",
           "ravensburger:18830",
           "wizards:17637"
+        ]
+      }
+    },
+    {
+      "id": "tienda-gorilla-tactics",
+      "name": "TIENDA GORILLA TACTICS",
+      "city": "zaragoza",
+      "address": "AV. DE SAN JOSÉ, 99, 50008 ZARAGOZA, SPAIN",
+      "lat": 41.639435,
+      "lng": -0.874235,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-21",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:42c57f5d-6437-4fc4-bd65-5d2f93ba8d52"
         ]
       }
     },
