@@ -336,7 +336,8 @@
         "names": [],
         "external": [
           "bandai:765",
-          "gem:el-tesoro-del-dragon-blanco"
+          "gem:el-tesoro-del-dragon-blanco",
+          "wizards:13766"
         ]
       }
     },
@@ -481,6 +482,7 @@
         "names": [],
         "external": [
           "bandai:19574",
+          "playriftbound:019fbcd6-e4cd-7d41-ac7d-1d5f9952eda8",
           "wizards:16627"
         ]
       }
@@ -912,8 +914,11 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LALUNA PREMIÀ"
+        ],
         "external": [
+          "pokemon:7c64758a-a94a-496d-a282-3f7ea9f13c54",
           "pokemon:f13ee527-bb62-4d65-a46f-f68181c2a7bd"
         ]
       }
@@ -1357,6 +1362,7 @@
         ],
         "external": [
           "bandai:18668",
+          "playriftbound:01a0447b-f3e9-71b1-b9d9-5f910d963646",
           "pokemon:fcf5c679-68cb-4306-ae2e-7089d0adaeda",
           "ravensburger:36380"
         ]
@@ -1763,7 +1769,8 @@
       "aliases": {
         "names": [
           "ALCALA COMICS",
-          "ALCALÁ CÓMICS"
+          "ALCALÁ CÓMICS",
+          "Alcala Comics"
         ],
         "external": [
           "bandai:2011",
@@ -1771,7 +1778,8 @@
           "playriftbound:01a0e727-818a-742a-8e8a-8a99bb18e037",
           "pokemon:238f382f-8c65-4ab1-8b9d-ca96de9d0aa2",
           "pokemon:ae0dc0e2-2db1-487b-a6ae-3de6ab2595f4",
-          "ravensburger:114"
+          "ravensburger:114",
+          "wizards:11845"
         ]
       }
     },
@@ -2209,6 +2217,24 @@
       }
     },
     {
+      "id": "goblintrader-central",
+      "name": "Goblintrader Central",
+      "city": "madrid",
+      "address": "C. de Almanzor, 10,, Fuenlabrada, Madrid, 28944, Spain",
+      "lat": 40.281800185422505,
+      "lng": -3.807013018412884,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-22",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:18437"
+        ]
+      }
+    },
+    {
       "id": "goblintrader-central-fuenlabrada",
       "name": "Goblintrader Central (Fuenlabrada)",
       "city": "madrid",
@@ -2306,6 +2332,7 @@
         ],
         "external": [
           "bandai:5434",
+          "pokemon:3993f2d4-8dd6-49f3-9311-850b1a7b0470",
           "pokemon:3ba6a4a7-e318-488f-96aa-1a8d30121442",
           "wizards:15520"
         ]
@@ -2373,12 +2400,14 @@
       "added_at": "2026-11-16",
       "aliases": {
         "names": [
+          "JÚPITER ALCORCÓN",
           "JÚPITER JUEGOS ALCORCÓN"
         ],
         "external": [
           "melee:9748",
           "playriftbound:019fb060-8b3a-7a5e-b76a-69f43bb99127",
           "pokemon:34a99213-a075-42ab-bdf8-d6e35d4a4495",
+          "pokemon:fb31d63f-b567-4a83-96d5-c24c02acb368",
           "ravensburger:2708"
         ]
       }
@@ -2460,12 +2489,14 @@
       "added_at": "2026-11-15",
       "aliases": {
         "names": [
-          "KINGDOM WARGAMES"
+          "KINGDOM WARGAMES",
+          "KINGDOM WARGARMES"
         ],
         "external": [
           "bandai:15154",
           "melee:10198",
           "playriftbound:019fde73-a4e1-758a-bc24-f18112a4dd60",
+          "pokemon:eef8b92f-64d0-42f6-a652-72fe12c80c9d",
           "pokemon:fcffdd28-3a8d-469b-89e9-2f9857635286",
           "ravensburger:2782",
           "wizards:14264"
@@ -3046,12 +3077,14 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "SOMOS JUEGOS",
           "Somosjuegos"
         ],
         "external": [
           "melee:12512",
           "playriftbound:019fe088-c90e-7816-9ca6-658a15673b23",
-          "pokemon:c58ee8b9-6ca4-468b-a1b0-10df422e99b3"
+          "pokemon:c58ee8b9-6ca4-468b-a1b0-10df422e99b3",
+          "pokemon:f2aa789a-8972-470b-a714-bf43e72363a1"
         ]
       }
     },
@@ -3683,10 +3716,12 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "COMIC STORES",
           "Comic Stores"
         ],
         "external": [
           "bandai:21421",
+          "pokemon:bbdfdeb7-b927-43ce-b86a-c53a78705815",
           "wizards:11020"
         ]
       }
