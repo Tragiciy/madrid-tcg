@@ -591,6 +591,7 @@
         ],
         "external": [
           "bandai:735",
+          "gem:infernal-forge",
           "playriftbound:01a023da-4f0b-7307-b1a3-af81039677c2"
         ]
       }
@@ -1067,6 +1068,7 @@
         "external": [
           "bandai:1599",
           "playriftbound:019fb060-8d6b-7668-a948-e3bf20b66d65",
+          "pokemon:59d3d3ae-57c5-45c0-a172-e639739c4ee7",
           "pokemon:6736c420-752c-4128-8e8f-641f1fd050c0"
         ]
       }
@@ -1133,6 +1135,7 @@
         ],
         "external": [
           "bandai:4557",
+          "playriftbound:019fde73-a528-7d5b-9549-9f9033193236",
           "pokemon:28e9062b-2728-49f7-b5e3-8f3831242213"
         ]
       }
@@ -1199,6 +1202,7 @@
         ],
         "external": [
           "bandai:20332",
+          "playriftbound:019fb060-9358-7881-a9ae-e1d6ccf9ac26",
           "wizards:11019"
         ]
       }
@@ -1364,7 +1368,8 @@
           "bandai:18668",
           "playriftbound:01a0447b-f3e9-71b1-b9d9-5f910d963646",
           "pokemon:fcf5c679-68cb-4306-ae2e-7089d0adaeda",
-          "ravensburger:36380"
+          "ravensburger:36380",
+          "wizards:21507"
         ]
       }
     },
@@ -1860,6 +1865,7 @@
         ],
         "external": [
           "bandai:30732",
+          "playriftbound:01a17826-af89-78d5-9430-406dcd117332",
           "pokemon:1b7ee1f2-bd41-40dc-b0a9-eeadad79e2d4",
           "wizards:24230"
         ]
@@ -2332,6 +2338,7 @@
         ],
         "external": [
           "bandai:5434",
+          "playriftbound:01a047e7-a383-77fe-9545-666114fc2acd",
           "pokemon:3993f2d4-8dd6-49f3-9311-850b1a7b0470",
           "pokemon:3ba6a4a7-e318-488f-96aa-1a8d30121442",
           "wizards:15520"
@@ -2538,6 +2545,7 @@
         ],
         "external": [
           "bandai:26417",
+          "playriftbound:01a0f6a5-c107-7c08-bcb7-e7c27619997b",
           "pokemon:c806748d-fddc-4a98-9ef2-5930ab10c25a",
           "ravensburger:64123",
           "wizards:22698"
@@ -3556,7 +3564,8 @@
           "ZIAL TCG STORE"
         ],
         "external": [
-          "bandai:29007"
+          "bandai:29007",
+          "playriftbound:01a07e62-4dd0-7de8-84a6-d45d092e8489"
         ]
       }
     },
@@ -4470,6 +4479,7 @@
         ],
         "external": [
           "bandai:29990",
+          "playriftbound:019fd809-8c66-7291-b76e-1975886f0346",
           "ravensburger:66027",
           "wizards:23739"
         ]
@@ -4513,6 +4523,7 @@
         ],
         "external": [
           "bandai:19969",
+          "playriftbound:01a0edd3-59e5-7cf8-bee1-4fb3b2f0e122",
           "wizards:8159"
         ]
       }
@@ -5197,6 +5208,7 @@
           "bandai:19748",
           "gem:tpk-hobby-games",
           "playriftbound:01a01e6c-19dd-7814-8ea0-008be8fd59af",
+          "pokemon:86a7cb8d-123e-400d-8ec1-5b8156503403",
           "pokemon:a0d77a37-ee9a-48f2-978c-0be9c7143aee",
           "ravensburger:5084",
           "wizards:16637"
