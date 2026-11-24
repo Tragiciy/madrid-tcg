@@ -833,9 +833,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LA MAQUINA DEL TEMPS"
+        ],
         "external": [
           "bandai:374",
+          "playriftbound:01a03834-8802-7544-ba1a-d0ed0d08cc8f",
           "pokemon:72c68b30-f01c-44f9-ac9c-e4a824691dc5"
         ]
       }
@@ -1043,9 +1046,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Mathom Store"
+        ],
         "external": [
-          "bandai:20631"
+          "bandai:20631",
+          "ravensburger:3315"
         ]
       }
     },
@@ -1346,6 +1352,24 @@
           "bandai:21636",
           "playriftbound:019fb060-9846-7c15-a8ea-923c809f2743",
           "ravensburger:42850"
+        ]
+      }
+    },
+    {
+      "id": "tienda-geekkaos",
+      "name": "TIENDA GEEKKAOS",
+      "city": "barcelona",
+      "address": "RONDA MOSSÈN JACINT VERDAGUER, 55, LOCAL 1, 08304 MATARÓ, BARCELONA, SPAIN",
+      "lat": 41.544349,
+      "lng": 2.436513,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-24",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:1782d9c8-a6dd-4c2a-bb30-0a6981aa30cc"
         ]
       }
     },
@@ -1939,6 +1963,24 @@
       }
     },
     {
+      "id": "daruma",
+      "name": "DARUMA",
+      "city": "madrid",
+      "address": "C. DE BUTARQUE, 14, PUERTA B LOCAL 3, 28911 LEGANÉS, MADRID, SPAIN",
+      "lat": 40.330618,
+      "lng": -3.765788,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-24",
+      "aliases": {
+        "names": [],
+        "external": [
+          "pokemon:030dbf73-f40c-4125-8f50-7130adfb7a55"
+        ]
+      }
+    },
+    {
       "id": "deckeadittos",
       "name": "Deckeadittos",
       "city": "madrid",
@@ -2109,6 +2151,7 @@
         "external": [
           "bandai:19123",
           "melee:19823",
+          "playriftbound:019fb060-9797-765f-a1a1-3d57edf91b49",
           "wizards:11109"
         ]
       }
@@ -2316,6 +2359,7 @@
         ],
         "external": [
           "bandai:16676",
+          "playriftbound:019fba6f-0ca8-774d-86b1-4b46ab368e09",
           "pokemon:bd0b20ad-3877-4b7e-8160-fcbb557aefd1",
           "wizards:19290"
         ]
@@ -2864,6 +2908,7 @@
         "external": [
           "bandai:22158",
           "melee:19601",
+          "playriftbound:01a1c47a-54ba-75c4-8346-93a5d53e6174",
           "ravensburger:59506",
           "wizards:21913"
         ]
@@ -3920,6 +3965,7 @@
         "external": [
           "bandai:13000",
           "playriftbound:01a01014-60bc-75ee-bf9b-005d17593112",
+          "pokemon:503616f9-a514-4905-a2cf-d755ecf2950a",
           "ravensburger:3489",
           "wizards:13825"
         ]
@@ -4458,6 +4504,7 @@
         "external": [
           "bandai:21030",
           "playriftbound:019fb060-920f-79a7-88ba-b0443f15bfb4",
+          "pokemon:0ac64501-a2ac-413e-9ee3-0c4df1ae9c2d",
           "pokemon:743daff0-98cd-4871-a295-e9fa3e12c3cb"
         ]
       }
