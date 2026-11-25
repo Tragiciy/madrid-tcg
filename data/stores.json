@@ -899,9 +899,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "LALUNA"
+        ],
         "external": [
           "bandai:16340",
+          "pokemon:0a98fffc-0631-4711-9962-141edfc070cf",
           "wizards:17171"
         ]
       }
@@ -972,6 +975,24 @@
           "pokemon:1c3ac88a-7f18-4cd2-b194-53c770e94c8c",
           "ravensburger:3141",
           "wizards:19307"
+        ]
+      }
+    },
+    {
+      "id": "magia-de-tinta",
+      "name": "Magia de Tinta",
+      "city": "barcelona",
+      "address": "C/ España 3, Puigcerda, C, 17520, Spain",
+      "lat": 41.58231,
+      "lng": 2.25422,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-25",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:11186"
         ]
       }
     },
@@ -1760,9 +1781,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "SULACO"
+        ],
         "external": [
-          "bandai:2599"
+          "bandai:2599",
+          "pokemon:e15b1061-b511-47df-9cac-f7aa9b21497c"
         ]
       }
     },
@@ -4382,9 +4406,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "Laboratoritcg"
+        ],
         "external": [
-          "ravensburger:65537"
+          "ravensburger:65537",
+          "wizards:23740"
         ]
       }
     },
@@ -4505,7 +4532,8 @@
           "bandai:21030",
           "playriftbound:019fb060-920f-79a7-88ba-b0443f15bfb4",
           "pokemon:0ac64501-a2ac-413e-9ee3-0c4df1ae9c2d",
-          "pokemon:743daff0-98cd-4871-a295-e9fa3e12c3cb"
+          "pokemon:743daff0-98cd-4871-a295-e9fa3e12c3cb",
+          "wizards:14429"
         ]
       }
     },
@@ -4647,9 +4675,12 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "El Rinconcito de Saitama"
+        ],
         "external": [
-          "pokemon:3cc88e74-1999-4208-b5fc-2f74c4443dde"
+          "pokemon:3cc88e74-1999-4208-b5fc-2f74c4443dde",
+          "wizards:24341"
         ]
       }
     },
