@@ -1213,6 +1213,24 @@
       }
     },
     {
+      "id": "pinkork",
+      "name": "PINKORK",
+      "city": "barcelona",
+      "address": "Avda. Onze de Setembre, 32, La Llagosta, Barcelona, 08120, Spain",
+      "lat": 41.511890920896356,
+      "lng": 2.19223508430793,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-26",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:23921"
+        ]
+      }
+    },
+    {
       "id": "rincon-del-friki",
       "name": "Rincon del Friki",
       "city": "barcelona",
@@ -1540,6 +1558,24 @@
         "names": [],
         "external": [
           "ravensburger:5447"
+        ]
+      }
+    },
+    {
+      "id": "zero-latency-barcelona",
+      "name": "Zero Latency Barcelona",
+      "city": "barcelona",
+      "address": "Avinguda de Rio de Janeiro, 42, Nou Barris,, Barcelona, Barcelona, 08016, Spain",
+      "lat": 41.43526421892684,
+      "lng": 2.1817416926543465,
+      "website": null,
+      "notes": null,
+      "origin": "auto",
+      "added_at": "2026-11-26",
+      "aliases": {
+        "names": [],
+        "external": [
+          "wizards:22033"
         ]
       }
     },
@@ -2061,6 +2097,7 @@
           "melee:4488",
           "playriftbound:01a010b3-40f1-75c2-b470-da48bf5f58d3",
           "pokemon:9dd4baaa-aa6b-44a7-91d7-5bbf85cf18bd",
+          "pokemon:d26b3170-5a0a-4f11-ac29-14e5e68b8503",
           "ravensburger:2144"
         ]
       }
@@ -3264,7 +3301,8 @@
       "aliases": {
         "names": [],
         "external": [
-          "bandai:29535"
+          "bandai:29535",
+          "pokemon:fa3ef405-1e82-4ba1-af93-fb7c43897c71"
         ]
       }
     },
@@ -4079,6 +4117,7 @@
           "playriftbound:019fb060-8d9e-744e-b7a7-287a82cc6195",
           "pokemon:80a811cf-cc9e-44ff-b317-baecbbac6bf8",
           "pokemon:b42e2636-aff5-4e74-891e-7be0f5830dc6",
+          "ravensburger:16381",
           "wizards:19019"
         ]
       }
