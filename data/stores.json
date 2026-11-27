@@ -1163,7 +1163,8 @@
         "external": [
           "bandai:4557",
           "playriftbound:019fde73-a528-7d5b-9549-9f9033193236",
-          "pokemon:28e9062b-2728-49f7-b5e3-8f3831242213"
+          "pokemon:28e9062b-2728-49f7-b5e3-8f3831242213",
+          "wizards:13878"
         ]
       }
     },
@@ -1800,6 +1801,7 @@
         "external": [
           "bandai:19718",
           "playriftbound:019fd90d-aeac-7227-aa67-7a3bb035f96d",
+          "pokemon:2ed31402-2015-41d3-806a-7879cfd11a70",
           "pokemon:c0c33301-11c2-48b4-806c-d940580fe19f",
           "ravensburger:3299"
         ]
@@ -3343,13 +3345,15 @@
       "aliases": {
         "names": [
           "TEMPEST STORE",
-          "TEMPEST STORE SL"
+          "TEMPEST STORE SL",
+          "Tempest - Store"
         ],
         "external": [
           "bandai:19692",
           "melee:9824",
           "playriftbound:019fb060-919b-7f26-b0f4-bfe50a836816",
-          "pokemon:caacb39d-d268-4028-86ad-c7a3183d9ef1"
+          "pokemon:caacb39d-d268-4028-86ad-c7a3183d9ef1",
+          "wizards:6616"
         ]
       }
     },
@@ -4155,10 +4159,13 @@
       "origin": "auto",
       "added_at": "2026-11-17",
       "aliases": {
-        "names": [],
+        "names": [
+          "the golden rabbit"
+        ],
         "external": [
           "bandai:17294",
           "playriftbound:019ffc52-6af1-777f-8de4-1a4e06bfdad2",
+          "ravensburger:24412",
           "wizards:21202"
         ]
       }
@@ -5152,9 +5159,11 @@
       "added_at": "2026-11-18",
       "aliases": {
         "names": [
-          "Distrito Zero - Zaragoza"
+          "Distrito Zero - Zaragoza",
+          "Distrito Zero Zaragoza"
         ],
         "external": [
+          "bandai:32091",
           "pokemon:c9cd883d-1dc7-4423-92bd-f94fb3e1a9e6",
           "wizards:24210"
         ]
