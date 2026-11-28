@@ -3391,6 +3391,7 @@
         "names": [],
         "external": [
           "bandai:23573",
+          "gem:three-stones-games",
           "melee:16204",
           "playriftbound:01a04aca-40ce-7edd-b344-7a45238644cb",
           "ravensburger:24012",
@@ -4160,11 +4161,13 @@
       "added_at": "2026-11-17",
       "aliases": {
         "names": [
+          "THE GOLDEN RABBIT",
           "the golden rabbit"
         ],
         "external": [
           "bandai:17294",
           "playriftbound:019ffc52-6af1-777f-8de4-1a4e06bfdad2",
+          "pokemon:37bf385b-f4fe-483e-b648-17b0ed9e1419",
           "ravensburger:24412",
           "wizards:21202"
         ]
@@ -4768,7 +4771,8 @@
           "bandai:732",
           "gem:friki-galaxy",
           "playriftbound:019fb060-8e8e-712e-8471-1c762599e752",
-          "pokemon:35ec7dff-b026-4783-a4c4-5e4645b45f79"
+          "pokemon:35ec7dff-b026-4783-a4c4-5e4645b45f79",
+          "pokemon:e173b83e-8417-495b-a64e-6e3b901de90b"
         ]
       }
     },
@@ -4830,7 +4834,8 @@
         "external": [
           "bandai:1417",
           "playriftbound:01a00baa-2319-7b0c-9fae-b03147dbdbf7",
-          "ravensburger:13945"
+          "ravensburger:13945",
+          "wizards:14343"
         ]
       }
     },
